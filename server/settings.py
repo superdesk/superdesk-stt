@@ -56,3 +56,26 @@ BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 SECRET_KEY = env('SECRET_KEY', '')
 
 NO_TAKES = True
+
+SCHEMA = {
+    'text': {
+        'slugline': {},
+        'headline': {},
+        'language': {},
+        'genre': {},
+        'urgency': {},
+        'priority': {},
+        'anpa_category': {},
+        'subject': {},
+        'ednote': {},
+        'abstract': {},
+        'byline': {},
+        'dateline': {},
+        'body_html': {},
+        'sign_off': {},
+        'authors': {},
+        'place': {},
+        'usageterms': {},
+        'keywords': {},
+    }
+}
