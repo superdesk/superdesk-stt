@@ -79,3 +79,4 @@ SCHEMA = {
         'keywords': {},
     }
 }
+QCODE_MISSING_VOC = "create"
