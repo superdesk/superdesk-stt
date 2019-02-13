@@ -80,3 +80,7 @@ SCHEMA = {
     }
 }
 QCODE_MISSING_VOC = "create"
+
+INSTALLED_APPS = [
+    'stt.parser',
+]
