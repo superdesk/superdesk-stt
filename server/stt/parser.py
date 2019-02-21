@@ -19,6 +19,12 @@ class STTParser(STTNewsMLFeedParser):
             item.setdefault('subject', [])
             if item.get('place'):
                 for place in item['place']:
+                    if place.get('name') and place.get('qcode') and place.get('scheme') == 'sttlocmeta':
+                        item['subject'].append({
+                            'name': place['name'],
+                            'qcode': place['qcode'],
+                            'scheme': place['scheme'],
+                        })
                     for field in STT_LOCATION_MAP.values():
                         if place.get(field['name']) and place[field['name']] != NA and \
                                 place[field['name']] not in get_subject_names(item):
