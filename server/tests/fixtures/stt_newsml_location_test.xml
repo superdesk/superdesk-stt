@@ -83,6 +83,20 @@
       <name>Eurooppa</name>
     </broader>
   </assert>
+  <assert qcode="sttlocmeta:rich:20016">
+        <name>Myanmar</name>
+        <definition />
+        <geoAreaDetails />
+        <POIDetails>
+            <address>
+                <line> </line>
+                <postalCode />
+            </address>
+        </POIDetails>
+        <broader type="cpnat:geoArea" qcode="wldreg:142">
+            <name>Aasia</name>
+        </broader>
+  </assert>
   <contentSet>
     <inlineXML contenttype="xhtml/xml">
       <html>

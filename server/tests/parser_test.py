@@ -21,13 +21,25 @@ class STTParseTestCase(TestCase):
     def test_location_parsing(self):
         subject = self.item['subject']
 
-        locality = next((subj for subj in subject if subj.get('scheme') == 'locality'))
+        locality = next((subj for subj in subject if subj.get('qcode') == '392'))
         self.assertEqual('Tallinna', locality['name'])
-        self.assertEqual('392', locality['qcode'])
+        self.assertEqual('locality', locality['scheme'])
 
         with self.assertRaises(StopIteration):
             next((subj for subj in subject if subj.get('scheme') == 'state'))
 
-        country = next((subj for subj in subject if subj.get('scheme') == 'country'))
+        country = next((subj for subj in subject if subj.get('qcode') == '238'))
         self.assertEqual('Viro', country['name'])
-        self.assertEqual('238', country['qcode'])
+        self.assertEqual('country', country['scheme'])
+
+        region = next((subj for subj in subject if subj.get('qcode') == '150'))
+        self.assertEqual('Eurooppa', region['name'])
+        self.assertEqual('world_region', region['scheme'])
+
+        rich = next((subj for subj in subject if subj.get('qcode') == '20016'))
+        self.assertEqual('Myanmar', rich['name'])
+        self.assertEqual('sttlocmeta', rich['scheme'])
+
+        rich_reg = next((subj for subj in subject if subj.get('qcode') == '142'))
+        self.assertEqual('Aasia', rich_reg['name'])
+        self.assertEqual('world_region', rich_reg['scheme'])
