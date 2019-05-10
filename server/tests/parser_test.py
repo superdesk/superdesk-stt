@@ -43,3 +43,7 @@ class STTParseTestCase(TestCase):
         rich_reg = next((subj for subj in subject if subj.get('qcode') == '142'))
         self.assertEqual('Aasia', rich_reg['name'])
         self.assertEqual('world_region', rich_reg['scheme'])
+
+    def test_extra_fields(self):
+        self.assertEqual(self.item['extra']['sttidtype_textid'], '117616076')
+        self.assertEqual(self.item['extra']['newsItem_guid'], 'urn:newsml:stt.fi:20170131:101159380')
