@@ -33,7 +33,24 @@ class STTParser(STTNewsMLFeedParser):
                                 'qcode': place[field['qcode']],
                                 'scheme': field['name'],
                             })
+
+            self.set_extra_fields(item, xml)
         return items
+
+    def set_extra_fields(self, item, xml):
+        """ Adds extra fields"""
+
+        # newsItem guid
+        if 'uri' in item:
+            item.setdefault('extra', {})['newsItem_guid'] = item['uri']
+
+        # newsItem altId
+        try:
+            alt_id = xml.find(self.qname('contentMeta')).find(self.qname('altId')).text
+            if alt_id:
+                item.setdefault('extra', {})['sttidtype_textid'] = alt_id
+        except Exception:
+            pass
 
 
 register_feed_parser(STTParser.NAME, STTParser())
