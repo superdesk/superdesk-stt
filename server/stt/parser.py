@@ -52,5 +52,20 @@ class STTParser(STTNewsMLFeedParser):
         except Exception:
             pass
 
+        # creator fields
+        try:
+            creator_node = xml.find(self.qname('contentMeta')).find(self.qname('creator'))
+
+            if creator_node:
+                creator_name = creator_node.find(self.qname('name')).text
+                if creator_name:
+                    item.setdefault('extra', {})['creator_name'] = creator_name
+
+                creator_id = creator_node.attrib['qcode']
+                if creator_id:
+                    item.setdefault('extra', {})['creator_id'] = creator_id
+        except Exception:
+            pass
+
 
 register_feed_parser(STTParser.NAME, STTParser())

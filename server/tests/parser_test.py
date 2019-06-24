@@ -47,3 +47,5 @@ class STTParseTestCase(TestCase):
     def test_extra_fields(self):
         self.assertEqual(self.item['extra']['sttidtype_textid'], '117616076')
         self.assertEqual(self.item['extra']['newsItem_guid'], 'urn:newsml:stt.fi:20170131:101159380')
+        self.assertEqual(self.item['extra']['creator_name'], 'Areva Mari')
+        self.assertEqual(self.item['extra']['creator_id'], 'stteditorid:26634')
