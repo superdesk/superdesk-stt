@@ -45,7 +45,10 @@ class STTParseTestCase(TestCase):
         self.assertEqual('world_region', rich_reg['scheme'])
 
     def test_extra_fields(self):
+        self.assertEqual(self.item['urgency'], 3)
         self.assertEqual(self.item['extra']['sttidtype_textid'], '117616076')
         self.assertEqual(self.item['extra']['newsItem_guid'], 'urn:newsml:stt.fi:20170131:101159380')
         self.assertEqual(self.item['extra']['creator_name'], 'Areva Mari')
         self.assertEqual(self.item['extra']['creator_id'], 'stteditorid:26634')
+        self.assertEqual(self.item['extra']['filename'], '1029359.jpg')
+        self.assertEqual(self.item['extra']['stt_topics'], '490933')

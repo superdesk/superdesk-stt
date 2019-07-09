@@ -67,5 +67,27 @@ class STTParser(STTNewsMLFeedParser):
         except Exception:
             pass
 
+        # filename
+        try:
+            link_node = xml.find(self.qname('itemMeta')).find(self.qname('link'))
+
+            if link_node:
+                filename = link_node.find(self.qname('filename')).text
+                if filename:
+                    item.setdefault('extra', {})['filename'] = filename
+
+        except Exception:
+            pass
+
+        # stt-topics
+        try:
+            for subject in xml.find(self.qname('contentMeta')).findall(self.qname('subject')):
+                values = subject.get('qcode', '').split(':')
+                if len(values) and values[0] == 'stt-topics':
+                    item.setdefault('extra', {})['stt_topics'] = values[1]
+                    break
+        except Exception:
+            pass
+
 
 register_feed_parser(STTParser.NAME, STTParser())
