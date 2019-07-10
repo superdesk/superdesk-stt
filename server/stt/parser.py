@@ -49,7 +49,7 @@ class STTParser(STTNewsMLFeedParser):
             alt_id = xml.find(self.qname('contentMeta')).find(self.qname('altId')).text
             if alt_id:
                 item.setdefault('extra', {})['sttidtype_textid'] = alt_id
-        except Exception:
+        except AttributeError:
             pass
 
         # creator fields
@@ -61,10 +61,32 @@ class STTParser(STTNewsMLFeedParser):
                 if creator_name:
                     item.setdefault('extra', {})['creator_name'] = creator_name
 
-                creator_id = creator_node.attrib['qcode']
+                creator_id = creator_node.attrib.get('qcode')
                 if creator_id:
                     item.setdefault('extra', {})['creator_id'] = creator_id
-        except Exception:
+        except AttributeError:
+            pass
+
+        # filename
+        try:
+            link_node = xml.find(self.qname('itemMeta')).find(self.qname('link'))
+
+            if link_node:
+                filename = link_node.find(self.qname('filename')).text
+                if filename:
+                    item.setdefault('extra', {})['filename'] = filename
+
+        except AttributeError:
+            pass
+
+        # stt-topics
+        try:
+            for subject in xml.find(self.qname('contentMeta')).findall(self.qname('subject')):
+                values = subject.get('qcode', '').split(':')
+                if len(values) and values[0] == 'stt-topics':
+                    item.setdefault('extra', {})['stt_topics'] = values[1]
+                    break
+        except AttributeError:
             pass
 
 

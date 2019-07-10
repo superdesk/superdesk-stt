@@ -9,6 +9,10 @@
     <versionCreated/>
     <firstCreated/>
     <pubStatus qcode="stat:usable"/>
+    <link rel="irel:seeAlso" residref="urn:newsml:stt.fi:20190521:1029359" contenttype="image/jpeg">
+        <title role="drol:caption">Kauppaministeriön mukaan 90 päivän lisäaika tarvitaan, jotta Huawei ja sen kumppanit ehtivät sopeutua muutokseen. LEHTIKUVA/AFP </title>
+        <filename>1029359.jpg</filename>
+    </link>
   </itemMeta>
   <contentMeta>
     <urgency>3</urgency>
@@ -21,6 +25,7 @@
     <located type="loctyp:City">
       <name/>
     </located>
+    <subject type="cpnat:abstract" literal="Related topic id" qcode="stt-topics:490933"/>
     <subject type="cpnat:abstract" qcode="sttdepartment:9">
       <name>Politiikka</name>
     </subject>
