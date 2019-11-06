@@ -52,3 +52,7 @@ class STTParseTestCase(TestCase):
         self.assertEqual(self.item['extra']['creator_id'], 'stteditorid:26634')
         self.assertEqual(self.item['extra']['filename'], '1029359.jpg')
         self.assertEqual(self.item['extra']['stt_topics'], '490933')
+        self.assertEqual(self.item['extra']['stt_events'], '213870')
+        self.assertEqual(self.item['extra']['sttrating_webprio'], 4)
+        self.assertEqual(self.item['extra']['imagetype']['id'], '20')
+        self.assertEqual(self.item['extra']['imagetype']['name'], 'Kuvaaja paikalla')
