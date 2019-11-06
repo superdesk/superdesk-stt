@@ -38,7 +38,7 @@ class STTParser(STTNewsMLFeedParser):
         return items
 
     def set_extra_fields(self, item, xml):
-        """ Adds extra fields"""
+        """Adds extra fields"""
 
         # newsItem guid
         if 'uri' in item:
@@ -103,7 +103,8 @@ class STTParser(STTNewsMLFeedParser):
 
         # imagetype
         try:
-            get_name_value = lambda genre: genre.find(self.qname('name')).text
+            def get_name_value(genre):
+                return genre.find(self.qname('name')).text
 
             for genre in xml.find(self.qname('contentMeta')).findall(self.qname('genre')):
                 if genre.get('qcode') == 'sttdescription:imagetype':
