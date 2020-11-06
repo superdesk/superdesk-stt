@@ -16,8 +16,8 @@
   </itemMeta>
   <contentMeta>
     <urgency>3</urgency>
-    <contentCreated/>
-    <contentModified/>
+    <contentCreated>2011-05-01T10:44:43</contentCreated>
+    <contentModified>2011-05-01T10:44:43</contentModified>
     <creator qcode="stteditorid:26634">
       <name>Areva Mari</name>
     </creator>
@@ -25,7 +25,9 @@
     <located type="loctyp:City">
       <name/>
     </located>
+    <rating value="4" scalemin="1" scalemax="9" scaleunit="rscaleunit:number" ratingtype="sttrating:webprio"/>
     <subject type="cpnat:abstract" literal="Related topic id" qcode="stt-topics:490933"/>
+    <subject type="cpnat:abstract" literal="Event id related to topic" qcode="stt-events:213870"/>
     <subject type="cpnat:abstract" qcode="sttdepartment:9">
       <name>Politiikka</name>
     </subject>
@@ -67,6 +69,12 @@
     <genre qcode="sttversion:5">
       <name>Loppuversio</name>
       <related qcode="sttrel:actuallength" value="1882"/>
+    </genre>
+    <genre qcode="sttdescription:imagetype" literal="Imagetype ID">
+      <name>20</name>
+    </genre>
+    <genre qcode="sttdescription:imagetypename" literal="Imagetype NAME">
+      <name>Kuvaaja paikalla</name>
     </genre>
   </contentMeta>
   <assert qcode="sttlocmeta:default:7576">

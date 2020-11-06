@@ -38,7 +38,7 @@ class STTParser(STTNewsMLFeedParser):
         return items
 
     def set_extra_fields(self, item, xml):
-        """ Adds extra fields"""
+        """Adds extra fields"""
 
         # newsItem guid
         if 'uri' in item:
@@ -56,7 +56,7 @@ class STTParser(STTNewsMLFeedParser):
         try:
             creator_node = xml.find(self.qname('contentMeta')).find(self.qname('creator'))
 
-            if creator_node:
+            if creator_node is not None:
                 creator_name = creator_node.find(self.qname('name')).text
                 if creator_name:
                     item.setdefault('extra', {})['creator_name'] = creator_name
@@ -71,7 +71,7 @@ class STTParser(STTNewsMLFeedParser):
         try:
             link_node = xml.find(self.qname('itemMeta')).find(self.qname('link'))
 
-            if link_node:
+            if link_node is not None:
                 filename = link_node.find(self.qname('filename')).text
                 if filename:
                     item.setdefault('extra', {})['filename'] = filename
@@ -79,13 +79,38 @@ class STTParser(STTNewsMLFeedParser):
         except AttributeError:
             pass
 
-        # stt-topics
+        # stt-topics, stt-events
         try:
             for subject in xml.find(self.qname('contentMeta')).findall(self.qname('subject')):
                 values = subject.get('qcode', '').split(':')
-                if len(values) and values[0] == 'stt-topics':
-                    item.setdefault('extra', {})['stt_topics'] = values[1]
-                    break
+                if values:
+                    if values[0] == 'stt-topics':
+                        item.setdefault('extra', {})['stt_topics'] = values[1]
+                    elif values[0] == 'stt-events':
+                        item.setdefault('extra', {})['stt_events'] = values[1]
+        except AttributeError:
+            pass
+
+        # webprio
+        try:
+            for rating in xml.find(self.qname('contentMeta')).findall(self.qname('rating')):
+                if rating.get('ratingtype') == 'sttrating:webprio':
+                    value = rating.get('value')
+                    if value:
+                        item.setdefault('extra', {})['sttrating_webprio'] = int(value)
+        except (AttributeError, ValueError):
+            pass
+
+        # imagetype
+        try:
+            def get_name_value(genre):
+                return genre.find(self.qname('name')).text
+
+            for genre in xml.find(self.qname('contentMeta')).findall(self.qname('genre')):
+                if genre.get('qcode') == 'sttdescription:imagetype':
+                    item.setdefault('extra', {}).setdefault('imagetype', {})['id'] = get_name_value(genre)
+                elif genre.get('qcode') == 'sttdescription:imagetypename':
+                    item.setdefault('extra', {}).setdefault('imagetype', {})['name'] = get_name_value(genre)
         except AttributeError:
             pass
 
