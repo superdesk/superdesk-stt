@@ -84,3 +84,6 @@ QCODE_MISSING_VOC = "create"
 INSTALLED_APPS = [
     'stt.parser',
 ]
+
+HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em',
+                       'strong', 'i', 'b', 'a', 'pre')
