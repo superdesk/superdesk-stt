@@ -46,6 +46,9 @@ class STTParser(STTNewsMLFeedParser):
         # replace <pre> with <p>
         for pre in body_elt.findall('.//pre'):
             pre.tag = 'p'
+        # add target blank for all links
+        for a in body_elt.findall('.//a'):
+            a.attrib['target'] = '_blank'
 
         content = dict()
         content['contenttype'] = tree.attrib['contenttype']

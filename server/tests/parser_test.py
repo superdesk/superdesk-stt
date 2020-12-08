@@ -45,7 +45,7 @@ class STTParseTestCase(TestCase):
 
     def test_preserve_links(self):
         body_html = self.item['body_html']
-        expected_link_text = '<a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins </a>'
+        expected_link_text = '<a href="https://coronavirus.jhu.edu/map.html" target="_blank">Johns Hopkins </a>'
         self.assertIn(expected_link_text, body_html)
 
 
