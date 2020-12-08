@@ -1,3 +1,5 @@
+from superdesk import etree as sd_etree
+from superdesk.metadata.item import CONTENT_TYPE
 from superdesk.io.registry import register_feed_parser
 from superdesk.io.feed_parsers.stt_newsml import STTNewsMLFeedParser, STT_LOCATION_MAP
 
@@ -36,6 +38,32 @@ class STTParser(STTNewsMLFeedParser):
 
             self.set_extra_fields(item, xml)
         return items
+
+    def parse_inline_content(self, tree, item):
+        html_elt = tree.find(self.qname('html'))
+        body_elt = html_elt.find(self.qname('body'))
+        body_elt = sd_etree.clean_html(body_elt)
+        # replace <pre> with <p>
+        for pre in body_elt.findall('.//pre'):
+            pre.tag = 'p'
+        # add target blank for all links
+        for a in body_elt.findall('.//a'):
+            a.attrib['target'] = '_blank'
+
+        content = dict()
+        content['contenttype'] = tree.attrib['contenttype']
+
+        if len(body_elt) > 0:
+            contents = [sd_etree.to_string(e, encoding='unicode', method="html") for e in body_elt]
+            content['content'] = '\n'.join(contents)
+        elif body_elt.text:
+            content['content'] = '<p>' + body_elt.text + '</p>'
+            content['format'] = 'xhtml/xml'
+
+        if content.get('content'):
+            content['content'] = content['content'].replace('&lt;endash&gt;-&lt;/endash&gt;', '-')
+
+        return content
 
     def set_extra_fields(self, item, xml):
         """Adds extra fields"""

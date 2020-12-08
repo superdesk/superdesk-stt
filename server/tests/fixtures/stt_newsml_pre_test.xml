@@ -117,29 +117,9 @@
     <inlineXML contenttype="xhtml/xml">
       <html>
         <body>
-          <p>Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p>Yhdysvalloissa on <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins </a>-yliopiston keräämien tietojen mukaan raportoitu yli 7,7 miljoonaa koronatartuntaa ja yli 214&#8201;  000 koronavirukseen liitettyä kuolemaa.</p>
-          <p>Olen kuullut Barack Obaman siellä kaksi kertaa puhuvan ja ne ovat oleet hyvin hyödyllisiä. Se on myös erinomainen tapa verkostoitua. Siellä on hirvittävän iso määrä ihmisiä eri puolilta maailmaa, senaattoireta,edustajahuoneen jäseniä, kaikennäköistä väkeä. Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p/>
-          <p>Mikser ja Soini tapasivat tänään aamulla, ja Soini lähtee vielä tänään Yhdysvaltoihin </p>
-          <p/>
-          <p>- tässä tilanteessa hyvin tärkeä ja ajanakohtainene. </p>
-          <p/>
-          <p>Osallistun myös konkressin rukousaamiaiselle. </p>
-          <p/>
-          <p>–   Minulla ei ole kahdenkeskistä tapaamista Donald Trumpin kanssa, mutta mielenkiinnolla odotan, jos hän sinne tulee ja mitä hän sanoo. Olen kuullut Barack Obaman siellä kaksi kertaa puhuvan ja ne ovat oleet hyvin hyödyllisiä. Se on myös erinomainen tapa verkostoitua. Siellä on hirvittävän iso määrä ihmisiä eri puolilta maailmaa, senaattoireta,edustajahuoneen jäseniä, kaikennäköistä väkeä. Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p>Ulkoministeri Timo Soini vierailee 1.-4. helmikuuta Yhdysvalloissa Washington D.C:ssä. Vierailun tavoitteena on luoda suhteita Yhdysvaltojen uuteen hallintoon sekä käydä keskusteluja eri tahojen kanssa ajankohtaisista ulko- ja turvallisuuspoliittisista kysymyksistä sekä keskustella Suomen ja Yhdysvaltojen välisistä suhteista.  </p>
-          <p/>
-          <p>Ministeri Soini tapaa hallinnon ja kongressin ulko- ja turvallisuuspoliittisia vaikuttajia, mukaan lukien senaatin ulkoasiainvaliokunnan puheenjohtaja Bob Corkerin. Lisäksi ministeri Soini tapaa ajatushautomoiden edustajia.</p>
-          <p/>
-          <p>Vierailun aikana ministeri Soini osallistuu Yhdysvaltain kongressin isännöimälle kansalliselle rukousaamiaiselle, jossa on perinteisesti puhunut myös Yhdysvaltain presidentti.</p>
-          <p/>
+          <p>Normal paragraph</p>
+          <pre>It used to be a pre</pre>
+          <p>Normal paragraph again</p>
         </body>
       </html>
     </inlineXML>
