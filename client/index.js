@@ -1,7 +1,12 @@
 import {startApp} from 'superdesk-core/scripts/index';
 
 setTimeout(() => {
-    startApp([], {});
+    startApp([
+        {
+            id: 'planning-extension',
+            load: () => import('superdesk-planning/client/planning-extension'),
+        },
+    ], {});
 });
 
 export default angular.module('stt.superdesk', []);
