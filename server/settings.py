@@ -57,6 +57,8 @@ SECRET_KEY = env('SECRET_KEY', '')
 
 NO_TAKES = True
 
+DEFAULT_TIMEZONE = "Europe/Helsinki"
+
 SCHEMA = {
     'text': {
         'slugline': {},
@@ -83,6 +85,8 @@ QCODE_MISSING_VOC = "create"
 
 INSTALLED_APPS = [
     'stt.parser',
+    'stt.stt_events_ml',
+    'planning',
 ]
 
 HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em',
