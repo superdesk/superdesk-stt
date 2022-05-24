@@ -9,6 +9,7 @@ from stt.parser import STTParser
 class TestCase(CoreTestCase):
 
     fixture = None
+    parser_class = STTParser
 
     def setUp(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
@@ -16,7 +17,7 @@ class TestCase(CoreTestCase):
         provider = {'name': 'Test'}
         with self.ctx:
             with open(fixture, 'rb') as f:
-                parser = STTParser()
+                parser = self.parser_class()
                 self.xml_root = etree.parse(f).getroot()
                 self.item = parser.parse(self.xml_root, provider)[0]
 
