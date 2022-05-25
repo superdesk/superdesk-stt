@@ -75,6 +75,7 @@ jobs:
             ${{ runner.os }}-npm
             ${{ runner.os }}-
 
+      - run: git config --global url."https://git@".insteadOf git://
       - name: npm ci
         run: npm install --no-audit
 
