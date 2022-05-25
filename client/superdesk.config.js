@@ -6,13 +6,18 @@
  */
 module.exports = function(grunt) {
     return {
+        apps: [
+            'superdesk-planning',
+        ],
         importApps: [
             '../index',
+            'superdesk-planning',
         ],
         defaultRoute: '/workspace/personal',
         features: {
             swimlane: {defaultNumberOfColumns: 4},
-            noTakes: true
+            noTakes: true,
+            planning: true,
         },
         validatorMediaMetadata: {
             headline: {required: true},
@@ -22,6 +27,10 @@ module.exports = function(grunt) {
             byline: {required: false},
             usageterms: {required: false},
             copyrightnotice: {required: false}
-        }
+        },
+        workspace: {
+            planning: true,
+            assignments: true,
+        },
     };
 };

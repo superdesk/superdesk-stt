@@ -18,7 +18,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
+          python-version: 3.8
 
       - name: apt-get
         run: |
@@ -64,7 +64,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 14.x
 
       - name: cache npm
         uses: actions/cache@v2
@@ -75,8 +75,9 @@ jobs:
             ${{ runner.os }}-npm
             ${{ runner.os }}-
 
+      - run: git config --global url."https://git@".insteadOf git://
       - name: npm ci
-        run: npm ci
+        run: npm install --no-audit
 
       - name: grunt build
-        run: node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+        run: npm run build
