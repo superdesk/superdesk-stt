@@ -23,3 +23,18 @@ class STTEventsMLParserTest(TestCase):
         ]
         for subject in expected_subjects:
             self.assertIn(subject, subjects)
+
+    def test_locations(self):
+        self.assertEqual(len(self.item["location"]), 1)
+        location = self.item["location"][0]
+        self.assertEqual(location["address"]["extra"]["sttlocationalias"], "14068")
+        self.assertEqual(location["name"], "Sokos Hotel Presidentti")
+        self.assertEqual(location["address"]["title"], "Sokos Hotel Presidentti")
+        self.assertEqual(location["address"]["city"], "Helsinki")
+        self.assertEqual(location["address"]["extra"]["sttcity"], "35")
+        self.assertEqual(location["address"]["state"], "Uusimaa")
+        self.assertEqual(location["address"]["extra"]["sttstate"], "31")
+        self.assertEqual(location["address"]["country"], "Suomi")
+        self.assertEqual(location["address"]["extra"]["sttcountry"], "1")
+        self.assertEqual(location["address"]["extra"]["iso3166"], "iso3166-1a2:FI")
+        self.assertEqual(location["address"]["line"][0], "Eteläinen Rautatiekatu 4")
