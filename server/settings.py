@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'stt.parser',
     'stt.stt_events_ml',
     'planning',
+    'apps.languages',
 ]
 
 HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em',
