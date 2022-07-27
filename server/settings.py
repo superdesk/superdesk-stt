@@ -86,6 +86,7 @@ QCODE_MISSING_VOC = "create"
 INSTALLED_APPS = [
     'stt.parser',
     'stt.stt_events_ml',
+    'stt.stt_planning_ml',
     'planning',
     'apps.languages',
 ]
