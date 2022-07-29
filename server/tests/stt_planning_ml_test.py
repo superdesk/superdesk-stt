@@ -5,6 +5,7 @@ from stt.stt_planning_ml import STTPlanningMLParser
 class STTPlanningMLParserTest(TestCase):
     fixture = "planning_ml_584717.xml"
     parser_class = STTPlanningMLParser
+    add_stt_cvs = True
 
     def test_stt_metadata(self):
         # Extra metadata
