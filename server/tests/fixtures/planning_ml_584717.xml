@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" guid="urn:newsml:stt.fi:20220402:584717" version="1" standard="NewsML-G2" standardversion="2.12" conformance="power" xml:lang="fi">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
+<catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
+<itemMeta>
+<itemClass qcode="plinat:newscoverage"/>
+<provider literal="STT"/>
+<versionCreated>2022-03-25T09:12:43+02:00</versionCreated>
+<pubStatus qcode="stat:usable"/>
+<service qcode="sttservice:jpl"/>
+</itemMeta>
+<contentMeta>
+<contentCreated>2022-03-25T09:12:43+02:00</contentCreated>
+<contentModified>2022-03-25T09:12:43+02:00</contentModified>
+<headline>SDP:n puoluevaltuuston kokous</headline>
+<description role="drol:summary">Puoluevaltuuston kokouksen avaa klo 13.00 puoluevaltuuston puheenjohtaja, kuntaministeri Sirpa Paatero. Poliittisen tilannekatsauksen pitää SDP:n puheenjohtaja, pääministeri Sanna Marin. Tämän jälkeen kokous jatkuu suljettuna.</description>
+<subject qcode="stt-topics:584717">
+<related rel="sttrel:assigneddate" value="2022-04-02" valuedatatype="Date"/>
+</subject>
+<subject type="cpnat:department" qcode="sttdepartment:9">
+<name>Politiikka</name>
+</subject>
+</contentMeta>
+<newsCoverageSet>
+<newsCoverage id="ID_EVENT_259431" modified="2022-03-30T09:25:05+02:00">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:text"/>
+<headline>SDP:n puoluevaltuuston kokous</headline>
+<description>Puoluevaltuuston kokouksen avaa klo 13.00 puoluevaltuuston puheenjohtaja, kuntaministeri Sirpa Paatero. Poliittisen tilannekatsauksen pitää SDP:n puheenjohtaja, pääministeri Sanna Marin. Tämän jälkeen kokous jatkuu suljettuna.</description>
+<subject type="cpnat:event" qcode="urn:newsml:stt.fi:20220402:259431">
+<name>SDP:n puoluevaltuuston kokous</name>
+</subject>
+</planning>
+</newsCoverage>
+<newsCoverage id="ID_WORKREQUEST_159799">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:picture"/>
+<scheduled>2022-04-02T13:15:00+02:00</scheduled>
+<headline>ILMOO KUVAAJA !! SDP:n puoluevaltuuston kokous</headline>
+<subject type="ninat:text" qcode="urn:newsml:stt.fi:20220402124500:159799">
+<definition role="sttdescription:imagetarget">Kutsu medialle: SDP:n puoluevaltuuston kokous lauantaina 2.4. Helsingissä
+25.3.2022 08:53:54 | SDP
+Hyvä median edustaja,
+
+lämpimästi tervetuloa SDP:n puoluevaltuuston sääntömääräiseen kevätkokoukseen lauantaina 2.4.2022. Kokouspaikkana on Sokos Hotel Presidentti Helsingissä (os. Eteläinen Rautatiekatu 4).
+
+Median ilmoittautuminen lauantaina alkaa klo 12.30.
+
+Puoluevaltuuston kokouksen avaa klo 13.00 puoluevaltuuston puheenjohtaja, kuntaministeri Sirpa Paatero. Poliittisen tilannekatsauksen pitää SDP:n puheenjohtaja, pääministeri Sanna Marin. Tämän jälkeen kokous jatkuu suljettuna.
+
+Pyydämme ilmoittautumaan kokoukseen tämän lomakkeen kautta viimeistään keskiviikkona 30.3. klo 12.00 mennessä.
+
+Yhteyshenkilöt
+ 
+	
+Miia Järvi
+viestintäpäällikkö
+Puh: 	044 344 1585
+miia.jarvi@sdp.fi
+Lisätietoa julkaisijasta SDP
+SDP
+Siltasaarenkatu 18-20 C
+00530 HELSINKI
+
+09 478 988 (vaihde)
+http://www.sdp.fi</definition>
+<stt:workstartdate>2022-04-02T12:45:00+02:00</stt:workstartdate>
+</subject>
+<dateline>Sokos Hotel Presidentti, Helsinki</dateline>
+</planning>
+</newsCoverage>
+</newsCoverageSet>
+</planningItem>

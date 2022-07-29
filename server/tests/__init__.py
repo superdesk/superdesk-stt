@@ -3,6 +3,7 @@ import os
 from lxml import etree
 
 from superdesk.tests import TestCase as CoreTestCase
+from apps.prepopulate.app_populate import AppPopulateCommand
 from stt.parser import STTParser
 
 
@@ -10,8 +11,12 @@ class TestCase(CoreTestCase):
 
     fixture = None
     parser_class = STTParser
+    add_stt_cvs = False
 
     def setUp(self):
+        if self.add_stt_cvs:
+            self.addSttCVs()
+
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', self.fixture)
         provider = {'name': 'Test'}
@@ -26,3 +31,9 @@ class TestCase(CoreTestCase):
         # stt related configs
         self.app.config['HTML_TAGS_WHITELIST'] = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol',
                                                   'li', 'div', 'p', 'em', 'strong', 'i', 'b', 'a', 'pre')
+
+    def addSttCVs(self):
+        with self.app.app_context():
+            cmd = AppPopulateCommand()
+            filename = os.path.join(os.path.abspath(os.path.dirname("data/")), "vocabularies.json")
+            cmd.run(filename)
