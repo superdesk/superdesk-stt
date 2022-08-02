@@ -55,6 +55,22 @@ class STTEventsMLParser(EventsMLParser):
         except AttributeError:
             pass
 
+        # Add `sttEventType` if found to subject[scheme=event_type]
+        try:
+            related = concept.find(self.qname("related"))
+
+            if related is not None and related.get("rel", "") == "sttnat:sttEventType":
+                qcode_parts = related.get("qcode", "").split(":")
+                qcode = qcode_parts[1] if len(qcode_parts) == 2 else qcode_parts
+
+                item.setdefault("subject", []).append({
+                    "qcode": qcode,
+                    "name": related.find(self.qname("name")).text,
+                    "scheme": "event_type",
+                })
+        except AttributeError:
+            pass
+
         self.set_location_details(item, event_details.find(self.qname("location")))
 
     def set_location_details(self, item, location_xml):
