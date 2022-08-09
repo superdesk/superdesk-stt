@@ -11,7 +11,7 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(self.item["extra"]["stt_topics"], "584717")
 
         subjects = self.item["subject"]
-        self.assertEqual(len(subjects), 6)
+        self.assertEqual(len(subjects), 7)
 
         expected_subjects = [
             {"qcode": "9", "name": "Politiikka", "scheme": "sttdepartment"},
@@ -20,6 +20,7 @@ class STTEventsMLParserTest(TestCase):
             {"qcode": "11000000", "name": "Politiikka", "scheme": "sttsubj"},
             {"qcode": "11006000", "name": "Julkinen hallinto", "scheme": "sttsubj"},
             {"qcode": "11006009", "name": "Ministerit", "scheme": "sttsubj"},
+            {"qcode": "21", "name": "Mediatilaisuudet", "scheme": "event_type"},
         ]
         for subject in expected_subjects:
             self.assertIn(subject, subjects)

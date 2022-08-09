@@ -196,5 +196,22 @@
             {"is_active": true, "name": "Direct", "qcode": "direct"},
             {"is_active": true, "name": "Both", "qcode": "both"}
         ]
+    },
+    {
+        "_id": "event_type",
+        "display_name": "Event Types",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "multi selection",
+        "schema_field": "subject",
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
+        "service": {"all": 1},
+        "init_version": 1,
+        "items": []
     }
 ]
