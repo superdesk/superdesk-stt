@@ -213,5 +213,22 @@
         "service": {"all": 1},
         "init_version": 1,
         "items": []
+    },
+    {
+        "_id": "sttdepartment",
+        "display_name": "Department",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "multi selection",
+        "schema_field": "subject",
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
+        "service": {"all": 1},
+        "init_version": 1,
+        "items": []
     }
 ]
