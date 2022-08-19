@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'stt.parser',
     'stt.stt_events_ml',
     'stt.stt_planning_ml',
+    'stt.signal_hooks',
     'planning',
     'apps.languages',
 ]

@@ -48,6 +48,9 @@ jobs:
       - name: nosetests
         run: nosetests tests
 
+      - name: behave
+        run: behave --format progress2 --logging-level=ERROR
+
       - name: initialize data
         run: python manage.py app:initialize_data
 
