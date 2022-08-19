@@ -230,5 +230,22 @@
         "service": {"all": 1},
         "init_version": 1,
         "items": []
+    },
+    {
+        "_id": "sttsubj",
+        "display_name": "Subject",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "multi selection",
+        "schema_field": "subject",
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
+        "service": {"all": 1},
+        "init_version": 1,
+        "items": []
     }
 ]
