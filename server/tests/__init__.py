@@ -12,11 +12,16 @@ class TestCase(CoreTestCase):
     fixture = None
     parser_class = STTParser
     add_stt_cvs = False
+    parse_source = True
 
     def setUp(self):
         if self.add_stt_cvs:
             self.addSttCVs()
 
+        if self.parse_source:
+            self.parse_source_content()
+
+    def parse_source_content(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', self.fixture)
         provider = {'name': 'Test'}

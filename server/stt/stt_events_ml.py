@@ -62,10 +62,11 @@ class STTEventsMLParser(EventsMLParser):
             if related is not None and related.get("rel", "") == "sttnat:sttEventType":
                 qcode_parts = related.get("qcode", "").split(":")
                 qcode = qcode_parts[1] if len(qcode_parts) == 2 else qcode_parts
+                name = self.getVocabulary("event_type", qcode, related.find(self.qname("name")).text)
 
                 item.setdefault("subject", []).append({
                     "qcode": qcode,
-                    "name": related.find(self.qname("name")).text,
+                    "name": name,
                     "scheme": "event_type",
                 })
         except AttributeError:

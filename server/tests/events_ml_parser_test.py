@@ -39,3 +39,16 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(location["address"]["extra"]["sttcountry"], "1")
         self.assertEqual(location["address"]["extra"]["iso3166"], "iso3166-1a2:FI")
         self.assertEqual(location["address"]["line"][0], "Eteläinen Rautatiekatu 4")
+
+
+class STTEventsMLParserEventTypeCVTest(TestCase):
+    fixture = "events_ml_259431.xml"
+    parser_class = STTEventsMLParser
+    parse_source = False
+
+    def test_event_type_cv_updated(self):
+        self.assertIsNone(self.app.data.find_one("vocabularies", req=None, _id="event_type"))
+        self.parse_source_content()
+        event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
+        self.assertIsNotNone(event_types)
+        self.assertIn({"qcode": "21", "name": "Mediatilaisuudet", "is_active": True}, event_types["items"])
