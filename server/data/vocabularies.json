@@ -144,8 +144,12 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 1,
-        "items": []
+        "init_version": 2,
+        "items": [],
+        "schema": {
+            "name": {},
+            "qcode": {}
+        }
     },
     {
         "_id": "assignment_priority",
