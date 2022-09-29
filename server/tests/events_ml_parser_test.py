@@ -10,6 +10,12 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(self.item["extra"]["stt_events"], "259431")
         self.assertEqual(self.item["extra"]["stt_topics"], "584717")
 
+        self.assertTrue(self.item["invitation_details"].startswith("<p>"))
+        url = "www.foobar.com/event/invitation"
+        link = f'<a href="{url}" target="_blank">{url}</a>'
+        self.assertTrue(self.item["invitation_details"].startswith("<p>"))
+        self.assertIn(link, self.item["invitation_details"])
+
         subjects = self.item["subject"]
         self.assertEqual(len(subjects), 7)
 
@@ -39,6 +45,7 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(location["address"]["extra"]["sttcountry"], "1")
         self.assertEqual(location["address"]["extra"]["iso3166"], "iso3166-1a2:FI")
         self.assertEqual(location["address"]["line"][0], "Eteläinen Rautatiekatu 4")
+        self.assertEqual(location["address"]["details"], ["Knock 3 times"])
 
 
 class STTEventsMLParserEventTypeCVTest(TestCase):
