@@ -50,6 +50,8 @@ Siltasaarenkatu 18-20 C
 09 478 988 (vaihde)
 http://www.sdp.fi</note>
 <definition role="drol:summary">Puoluevaltuuston kokouksen avaa klo 13.00 puoluevaltuuston puheenjohtaja, kuntaministeri Sirpa Paatero. Poliittisen tilannekatsauksen pitää SDP:n puheenjohtaja, pääministeri Sanna Marin. Tämän jälkeen kokous jatkuu suljettuna.</definition>
+<note role="sttdescription:eventinv">Invitation details from www.foobar.com/event/invitation</note>
+<note role="sttdescription:eventloc">Knock 3 times</note>
 <related rel="sttnat:sttEventType" qcode="sttEventType:21">
 <name>Mediatilaisuudet</name>
 </related>

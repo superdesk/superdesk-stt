@@ -2,6 +2,7 @@ from xml.etree.ElementTree import Element
 
 from superdesk.utc import local_to_utc
 from superdesk.io.registry import register_feed_parser
+from superdesk.text_utils import plain_text_to_html
 from planning.feed_parsers.events_ml import EventsMLParser
 
 TIMEZONE = "Europe/Helsinki"
@@ -44,6 +45,17 @@ class STTEventsMLParser(EventsMLParser):
         except AttributeError:
             pass
 
+        location_notes = None
+        for note in concept.findall(self.qname("note")):
+            if not note.text:
+                continue
+
+            role = note.get("role")
+            if role == "sttdescription:eventinv":
+                item["invitation_details"] = plain_text_to_html(note.text)
+            elif role == "sttdescription:eventloc":
+                location_notes = note.text
+
         event_details = concept.find(self.qname("eventDetails"))
 
         # Add ``stt-topics``, if one found
@@ -72,14 +84,17 @@ class STTEventsMLParser(EventsMLParser):
         except AttributeError:
             pass
 
-        self.set_location_details(item, event_details.find(self.qname("location")))
+        self.set_location_details(item, event_details.find(self.qname("location")), location_notes)
 
-    def set_location_details(self, item, location_xml):
+    def set_location_details(self, item, location_xml, notes):
         """Add Location information, if found"""
         if location_xml is None:
             return
 
         location = {"address": {"extra": {}}}
+
+        if notes is not None:
+            location["details"] = [notes]
 
         try:
             name = location_xml.find(self.qname("name")).text
