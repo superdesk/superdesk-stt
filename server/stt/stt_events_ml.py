@@ -1,11 +1,44 @@
-from xml.etree.ElementTree import Element
+from typing import Optional, Dict, Any
 
+import logging
+from xml.etree.ElementTree import Element
+from bson import ObjectId
+
+from superdesk import get_resource_service
 from superdesk.utc import local_to_utc
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import plain_text_to_html
+from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
+logger = logging.getLogger(__name__)
 TIMEZONE = "Europe/Helsinki"
+
+NS = {
+    "stt": "http://www.stt-lehtikuva.fi/NewsML",
+}
+
+
+def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Attempt to find existing media contact using email, falling back to first_name/last_name combo"""
+
+    contacts_service = get_resource_service("contacts")
+    if len(contact.get("contact_email") or []):
+        cursor = contacts_service.search(
+            {"query": {"bool": {"must": [{"term": {"contact_email.keyword": contact["contact_email"][0]}}]}}}
+        )
+        if cursor.count():
+            return list(cursor)[0]
+
+    if contact.get("first_name") and contact.get("last_name"):
+        cursor = contacts_service.search({"query": {"bool": {"must": [
+            {"term": {"first_name.keyword": contact["first_name"]}},
+            {"term": {"last_name.keyword": contact["last_name"]}}
+        ]}}})
+        if cursor.count():
+            return list(cursor)[0]
+
+    return None
 
 
 class STTEventsMLParser(EventsMLParser):
@@ -85,6 +118,7 @@ class STTEventsMLParser(EventsMLParser):
             pass
 
         self.set_location_details(item, event_details.find(self.qname("location")), location_notes)
+        self.set_contact_details(item, event_details)
 
     def set_location_details(self, item, location_xml, notes):
         """Add Location information, if found"""
@@ -151,6 +185,50 @@ class STTEventsMLParser(EventsMLParser):
                 pass
 
         item["location"] = [location]
+
+    def set_contact_details(self, item: Dict[str, Any], event_details: Element):
+        contact_info = event_details.find(self.qname("contactInfo"))
+        if contact_info is None:
+            return
+
+        first_name = contact_info.find(self.qname("firstname", ns=NS["stt"]))
+        last_name = contact_info.find(self.qname("lastname", ns=NS["stt"]))
+        job_title = contact_info.find(self.qname("title", ns=NS["stt"]))
+        phone = contact_info.find(self.qname("phone"))
+        email = contact_info.find(self.qname("email"))
+        web = contact_info.find(self.qname("web"))
+
+        contact = {
+            "is_active": True,
+            "public": True,
+        }
+
+        if first_name is not None and first_name.text:
+            contact["first_name"] = first_name.text
+        if last_name is not None and last_name.text:
+            contact["last_name"] = last_name.text
+        if job_title is not None and job_title.text:
+            contact["job_title"] = job_title.text
+        if phone is not None and phone.text:
+            contact["contact_phone"] = [{
+                "number": phone.text,
+                "public": True,
+            }]
+        if email is not None and email.text:
+            contact["contact_email"] = [email.text]
+        if web is not None and web.text:
+            contact["website"] = web.text
+
+        try:
+            existing_contact = search_existing_contacts(contact)
+            item.setdefault("event_contact_info", [])
+            if existing_contact is not None:
+                item["event_contact_info"].append(ObjectId(existing_contact["_id"]))
+            else:
+                new_contact_id = get_resource_service("contacts").post([contact])[0]
+                item["event_contact_info"].append(new_contact_id)
+        except SuperdeskApiError:
+            logger.exception("Skip linking contact to ingested Event, as it failed")
 
 
 register_feed_parser(STTEventsMLParser.NAME, STTEventsMLParser())
