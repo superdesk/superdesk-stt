@@ -17,3 +17,7 @@ class STTPlanningMLParserTest(TestCase):
 
         # Associated Event ID
         self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:20220402:259431")
+
+        # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
+        self.assertEqual(len(self.item["coverages"]), 1)
+        self.assertEqual(self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799")

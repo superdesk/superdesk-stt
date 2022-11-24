@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from xml.etree.ElementTree import Element
 from eve.utils import config
 
@@ -41,21 +41,32 @@ class STTPlanningMLParser(PlanningMLParser):
 
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
-            event_id = self._get_linked_event_id(news_coverage_set)
-            if event_id:
-                item["event_item"] = event_id
-                item["extra"]["stt_events"] = event_id.split(":")[-1]
             self._create_temp_assignment_deliveries(item, news_coverage_set)
 
-    def _get_linked_event_id(self, news_coverage_set: Element):
-        for news_coverage_item in news_coverage_set.findall(self.qname("newsCoverage")):
-            planning = news_coverage_item.find(self.qname("planning"))
-            if planning is None:
-                continue
-            for subject_item in planning.findall(self.qname("subject")):
-                qcode = subject_item.get("qcode")
-                if qcode and subject_item.get("type") == "cpnat:event":
-                    return qcode
+    def get_coverage_details(self, news_coverage_item: Element, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        event_id = self._get_linked_event_id(news_coverage_item)
+        if event_id is not None:
+            # This entry is an Event and not an actual coverage
+            if not item.get("event_item"):
+                # If this is the first event found, then link this Planning item to it
+                item["event_item"] = event_id
+                item.setdefault("extra", {})["stt_events"] = event_id.split(":")[-1]
+
+            # Return ``None`` so this coverage isn't added to the Planning item
+            return None
+
+        return super().get_coverage_details(news_coverage_item, item)
+
+    def _get_linked_event_id(self, news_coverage_item: Element) -> Optional[str]:
+        planning = news_coverage_item.find(self.qname("planning"))
+        if planning is None:
+            return None
+        for subject_item in planning.findall(self.qname("subject")):
+            qcode = subject_item.get("qcode")
+            if qcode and subject_item.get("type") == "cpnat:event":
+                return qcode
+
+        return None
 
     def _create_temp_assignment_deliveries(self, item: Dict[str, Any], news_coverage_set: Element):
         """Create temporary delivery records for later mapping content to coverages"""
