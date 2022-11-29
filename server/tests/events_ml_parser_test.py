@@ -104,3 +104,31 @@ class STTEventsMLParserContactInfoTest(TestCase):
         # Process the source content, which should re-use the one in the DB
         self.parse_source_content()
         self.assertEqual(self.item["event_contact_info"][0], contact_id)
+
+    def test_search_contacts_case_insensitive(self):
+        contact_ids = get_resource_service("contacts").post([{
+            "is_active": True,
+            "public": True,
+            "first_name": "Marky Mark",
+            "last_name": "Funky",
+            "contact_email": ["foo2@bar.com"],
+            "contact_phone": [{
+                "number": "123 4567891,Mob:012-345 6781",
+                "public": True,
+            }]
+        }, {
+            "is_active": True,
+            "public": True,
+            "first_name": "Mark",
+            "last_name": "Funky",
+            "contact_email": ["foo3@bar.com"],
+            "contact_phone": [{
+                "number": "123 4567892,Mob:012-345 6782",
+                "public": True,
+            }]
+        }])
+
+        search_contact = {"first_name": "MARk", "last_name": "funky"}
+        self.assertEqual(search_existing_contacts(search_contact)["_id"], str(contact_ids[1]))
+        search_contact["first_name"] = "MARKY mark"
+        self.assertEqual(search_existing_contacts(search_contact)["_id"], str(contact_ids[0]))

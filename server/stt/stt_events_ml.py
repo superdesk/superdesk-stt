@@ -31,10 +31,20 @@ def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]
             return list(cursor)[0]
 
     if contact.get("first_name") and contact.get("last_name"):
-        cursor = contacts_service.search({"query": {"bool": {"must": [
-            {"term": {"first_name.keyword": contact["first_name"]}},
-            {"term": {"last_name.keyword": contact["last_name"]}}
-        ]}}})
+        first_name = contact["first_name"].lower()
+        last_name = contact["last_name"].lower()
+        cursor = contacts_service.search({
+            "query": {
+                "bool": {
+                    "must": [{
+                        "query_string": {
+                            "query": f'first_name:"{first_name}" AND last_name:"{last_name}"'
+                        }
+                    }]
+                }
+            },
+            "sort": ["_score"]
+        })
         if cursor.count():
             return list(cursor)[0]
 
@@ -215,7 +225,7 @@ class STTEventsMLParser(EventsMLParser):
                 "public": True,
             }]
         if email is not None and email.text:
-            contact["contact_email"] = [email.text]
+            contact["contact_email"] = [email.text.lower()]
         if web is not None and web.text:
             contact["website"] = web.text
 
