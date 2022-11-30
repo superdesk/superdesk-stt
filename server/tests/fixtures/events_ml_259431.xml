@@ -76,10 +76,12 @@ http://www.sdp.fi</note>
 <name>Ministerit</name>
 </subject>
 <contactInfo>
-<note>viestintäpäällikkö Miia Järvi Suomen Sosialidemokraattinen Puolue</note>
-<phone>Mob:044 344 1585</phone>
-<email>miia.jarvi@sdp.fi</email>
-<web/>
+<phone>123 4567890,Mob:012-345 6789</phone>
+<email>foo@bar.com</email>
+<web>www.foo.bar.com</web>
+<stt:firstname>foo</stt:firstname>
+<stt:lastname>bar</stt:lastname>
+<stt:title>Viestintäasiantuntija</stt:title>
 </contactInfo>
 <registration>Median ilmoittautuminen kokoukseen viim.  30.3. klo 12.00 mennessä: https://urly.fi/2xW8
 
