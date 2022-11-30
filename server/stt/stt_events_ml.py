@@ -33,15 +33,29 @@ def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]
     if contact.get("first_name") and contact.get("last_name"):
         first_name = contact["first_name"].lower()
         last_name = contact["last_name"].lower()
+
         cursor = contacts_service.search({
             "query": {
                 "bool": {
-                    "must": [{
-                        "query_string": {
-                            "query": f'first_name:"{first_name}" AND last_name:"{last_name}"'
-                        }
-                    }]
-                }
+                    "must": [
+                        {
+                            "match": {
+                                "first_name": {
+                                    "query": first_name.lower(),
+                                    "operator": "AND",
+                                },
+                            },
+                        },
+                        {
+                            "match": {
+                                "last_name": {
+                                    "query": last_name.lower(),
+                                    "operator": "AND",
+                                },
+                            },
+                        },
+                    ],
+                },
             },
             "sort": ["_score"]
         })
