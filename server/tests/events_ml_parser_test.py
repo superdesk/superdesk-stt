@@ -27,7 +27,7 @@ class STTEventsMLParserTest(TestCase):
             {"qcode": "11000000", "name": "Politiikka", "scheme": "sttsubj"},
             {"qcode": "11006000", "name": "Julkinen hallinto", "scheme": "sttsubj"},
             {"qcode": "11006009", "name": "Ministerit", "scheme": "sttsubj"},
-            {"qcode": "21", "name": "Mediatilaisuudet", "scheme": "event_type"},
+            {"qcode": "type21", "name": "Mediatilaisuudet", "scheme": "event_type"},
         ]
         for subject in expected_subjects:
             self.assertIn(subject, subjects)
@@ -59,7 +59,7 @@ class STTEventsMLParserEventTypeCVTest(TestCase):
         self.parse_source_content()
         event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
         self.assertIsNotNone(event_types)
-        self.assertIn({"qcode": "21", "name": "Mediatilaisuudet", "is_active": True}, event_types["items"])
+        self.assertIn({"qcode": "type21", "name": "Mediatilaisuudet", "is_active": True}, event_types["items"])
 
 
 class STTEventsMLParserContactInfoTest(TestCase):
