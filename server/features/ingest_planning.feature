@@ -247,3 +247,83 @@ Feature: Ingest STT Planning items
             "assignment_id": "#assignment._id#"
         }]}
         """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Spikes draft ingested planning on remove instruction
+        When we fetch from "STTPlanningML" ingest "planning_ml_584717.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "state": "ingested"
+        }]}
+        """
+        When we fetch from "STTPlanningML" ingest "planning_ml_584717_delete.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "state": "spiked"
+        }]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Unposts published ingested planning on remove instruction
+        When we fetch from "STTPlanningML" ingest "planning_ml_584717.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "state": "ingested"
+        }]}
+        """
+        When we post to "/planning/post"
+        """
+        {
+            "planning": "urn:newsml:stt.fi:20220402:584717",
+            "etag": "#planning._etag#",
+            "pubstatus": "usable"
+        }
+        """
+        Then we get OK response
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:584717"}"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "published_item": {
+                "state": "scheduled",
+                "pubstatus": "usable"
+            }
+        }]}
+        """
+        When we fetch from "STTPlanningML" ingest "planning_ml_584717_delete.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "state": "killed"
+        }]}
+        """
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:584717"}"
+        Then we get list with 2 items
+        """
+        {"_items": [{
+            "published_item": {
+                "state": "scheduled",
+                "pubstatus": "usable"
+            }
+        }, {
+            "published_item": {
+                "state": "killed",
+                "pubstatus": "cancelled"
+            }
+        }]}
+        """

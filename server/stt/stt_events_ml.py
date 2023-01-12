@@ -11,6 +11,8 @@ from superdesk.text_utils import plain_text_to_html
 from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
+from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning
+
 logger = logging.getLogger(__name__)
 TIMEZONE = "Europe/Helsinki"
 
@@ -77,10 +79,16 @@ class STTEventsMLParser(EventsMLParser):
 
     def parse(self, tree: Element, provider=None):
         items = super(STTEventsMLParser, self).parse(tree, provider)
+        items_to_ingest = []
         for item in items:
+            if planning_xml_contains_remove_signal(tree):
+                unpost_or_spike_event_or_planning(item)
+                # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
+                continue
             self.set_extra_fields(item, tree)
+            items_to_ingest.append(item)
 
-        return items
+        return items_to_ingest
 
     def datetime(self, value):
         """When there is no timezone info, assume it's Helsinki timezone."""
