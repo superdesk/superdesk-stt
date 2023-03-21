@@ -30,3 +30,18 @@ def unpost_or_spike_event_or_planning(item: Dict[str, Any]):
         get_resource_service(item_resource + "_spike").patch(original[config.ID_FIELD], original)
     elif original.get("pubstatus") != POST_STATE.CANCELLED:
         update_post_item({"pubstatus": POST_STATE.CANCELLED, "_etag": original["_etag"]}, original)
+
+
+def remove_date_portion_from_id(item_id: str) -> str:
+    """Removes the date portion from an ingested Event or Planning ID
+
+    Example Original: urn:newsml:stt.fi:20230317:276671
+    Example Response: urn:newsml:stt.fi:276671
+    """
+
+    id_parts = item_id.split(":")
+    if len(id_parts) == 5:
+        # Correct format to split, Remove the date portion of the ID
+        del id_parts[3]
+
+    return ":".join(id_parts)
