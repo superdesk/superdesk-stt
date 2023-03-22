@@ -7,7 +7,7 @@ from superdesk.utc import local_to_utc
 from superdesk.io.registry import register_feed_parser
 from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning
+from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, remove_date_portion_from_id
 
 TIMEZONE = "Europe/Helsinki"
 
@@ -21,6 +21,9 @@ class STTPlanningMLParser(PlanningMLParser):
         "sttdepartment": "sttdepartment",
         "sttsubj": "sttsubj",
     }
+
+    def get_item_id(self, tree: Element) -> str:
+        return remove_date_portion_from_id(super(STTPlanningMLParser, self).get_item_id(tree))
 
     def parse(self, tree: Element, provider=None):
         items = super(STTPlanningMLParser, self).parse(tree, provider)
