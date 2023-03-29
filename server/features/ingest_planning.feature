@@ -58,7 +58,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220330:437036",
+            "guid": "urn:newsml:stt.fi:437036",
             "ednote": "Miten taistelut etenev\u00e4t? Millaisia kansainv\u00e4lisi\u00e4 reaktioita syntyy? Ent\u00e4 miten tilanne Ven\u00e4j\u00e4ll\u00e4 el\u00e4\u00e4? Seuraamme p\u00e4iv\u00e4n tapahtumia ja tarkennamme paketointia.",
             "ingest_provider": "#providers.sttplanningml#",
             "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
@@ -141,7 +141,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "planning_item": "urn:newsml:stt.fi:20220330:437036",
+            "planning_item": "urn:newsml:stt.fi:437036",
             "coverage_item": "ID_TEXT_120123822",
             "priority": 6,
             "assigned_to": {
@@ -155,7 +155,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "_id": "urn:newsml:stt.fi:20220330:437036",
+            "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
                 "assigned_to": {
@@ -182,7 +182,7 @@ Feature: Ingest STT Planning items
 
     @auth
     @stt_cvs
-    @stt_providers @wip
+    @stt_providers
     Scenario: Link content to coverages on publish
         When we fetch from "STTPlanningML" ingest "planning_ml_link_content.xml"
         When we get "/assignments"
@@ -191,7 +191,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "_id": "urn:newsml:stt.fi:20220330:437036",
+            "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
                 "assigned_to": "__empty__"
@@ -209,7 +209,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "planning_item": "urn:newsml:stt.fi:20220330:437036",
+            "planning_item": "urn:newsml:stt.fi:437036",
             "coverage_item": "ID_TEXT_120123822",
             "priority": 6,
             "assigned_to": {
@@ -223,7 +223,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "_id": "urn:newsml:stt.fi:20220330:437036",
+            "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
                 "assigned_to": {
@@ -257,7 +257,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "guid": "urn:newsml:stt.fi:584717",
             "state": "ingested"
         }]}
         """
@@ -266,7 +266,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "guid": "urn:newsml:stt.fi:584717",
             "state": "spiked"
         }]}
         """
@@ -280,20 +280,20 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "guid": "urn:newsml:stt.fi:584717",
             "state": "ingested"
         }]}
         """
         When we post to "/planning/post"
         """
         {
-            "planning": "urn:newsml:stt.fi:20220402:584717",
+            "planning": "urn:newsml:stt.fi:584717",
             "etag": "#planning._etag#",
             "pubstatus": "usable"
         }
         """
         Then we get OK response
-        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:584717"}"
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:584717"}"
         Then we get list with 1 items
         """
         {"_items": [{
@@ -308,11 +308,11 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:584717",
+            "guid": "urn:newsml:stt.fi:584717",
             "state": "killed"
         }]}
         """
-        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:584717"}"
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:584717"}"
         Then we get list with 2 items
         """
         {"_items": [{

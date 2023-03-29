@@ -8,7 +8,7 @@ Feature: Ingest STT Event Items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:259431",
+            "guid": "urn:newsml:stt.fi:259431",
             "state": "ingested"
         }]}
         """
@@ -17,7 +17,7 @@ Feature: Ingest STT Event Items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:259431",
+            "guid": "urn:newsml:stt.fi:259431",
             "state": "spiked"
         }]}
         """
@@ -31,20 +31,20 @@ Feature: Ingest STT Event Items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:259431",
+            "guid": "urn:newsml:stt.fi:259431",
             "state": "ingested"
         }]}
         """
         When we post to "/events/post"
         """
         {
-            "event": "urn:newsml:stt.fi:20220402:259431",
+            "event": "urn:newsml:stt.fi:259431",
             "etag": "#events._etag#",
             "pubstatus": "usable"
         }
         """
         Then we get OK response
-        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:259431"}"
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:259431"}"
         Then we get list with 1 items
         """
         {"_items": [{
@@ -59,11 +59,11 @@ Feature: Ingest STT Event Items
         Then we get list with 1 items
         """
         {"_items": [{
-            "guid": "urn:newsml:stt.fi:20220402:259431",
+            "guid": "urn:newsml:stt.fi:259431",
             "state": "killed"
         }]}
         """
-        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:20220402:259431"}"
+        When we get "/published_planning?where={"item_id":"urn:newsml:stt.fi:259431"}"
         Then we get list with 2 items
         """
         {"_items": [{
