@@ -45,3 +45,7 @@ def remove_date_portion_from_id(item_id: str) -> str:
         del id_parts[3]
 
     return ":".join(id_parts)
+
+
+def original_item_exists(resource: str, item_id: str) -> bool:
+    return get_resource_service(resource).find_one(req=None, _id=item_id) is not None
