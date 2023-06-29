@@ -13,11 +13,26 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(self.item["extra"]["stt_topics"], "584717")
 
         # Subjects (only ``sttdepartment`` found in provided xml files)
-        self.assertIn({"qcode": "9", "name": "Politiikka", "scheme": "sttdepartment"}, self.item["subject"])
+        self.assertIn(
+            {"qcode": "9", "name": "Politiikka", "scheme": "sttdepartment"},
+            self.item["subject"],
+        )
 
         # Associated Event ID
         self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:20220402:259431")
 
         # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
         self.assertEqual(len(self.item["coverages"]), 1)
-        self.assertEqual(self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799")
+        self.assertEqual(
+            self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799"
+        )
+
+        # Urgency [STTNHUB-200]
+        self.assertIn(
+            {
+                "name": "Keskipitkä juttu (medium length)",
+                "qcode": "stturgency-3",
+                "scheme": "stturgency",
+            },
+            self.item["subject"],
+        )

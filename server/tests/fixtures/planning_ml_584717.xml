@@ -10,6 +10,7 @@
 <service qcode="sttservice:jpl"/>
 </itemMeta>
 <contentMeta>
+<urgency>3</urgency>
 <contentCreated>2022-03-25T09:12:43+02:00</contentCreated>
 <contentModified>2022-03-25T09:12:43+02:00</contentModified>
 <headline>SDP:n puoluevaltuuston kokous</headline>

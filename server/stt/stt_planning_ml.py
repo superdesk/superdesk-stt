@@ -7,7 +7,10 @@ from superdesk.utc import local_to_utc
 from superdesk.io.registry import register_feed_parser
 from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning
+from .common import (
+    planning_xml_contains_remove_signal,
+    unpost_or_spike_event_or_planning,
+)
 
 TIMEZONE = "Europe/Helsinki"
 
@@ -50,8 +53,13 @@ class STTPlanningMLParser(PlanningMLParser):
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
             self._create_temp_assignment_deliveries(item, news_coverage_set)
+        content_meta = tree.find(self.qname("contentMeta"))
+        if content_meta is not None:
+            self.set_urgency(content_meta, item)
 
-    def get_coverage_details(self, news_coverage_item: Element, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def get_coverage_details(
+        self, news_coverage_item: Element, item: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         event_id = self._get_linked_event_id(news_coverage_item)
         if event_id is not None:
             # This entry is an Event and not an actual coverage
@@ -76,7 +84,9 @@ class STTPlanningMLParser(PlanningMLParser):
 
         return None
 
-    def _create_temp_assignment_deliveries(self, item: Dict[str, Any], news_coverage_set: Element):
+    def _create_temp_assignment_deliveries(
+        self, item: Dict[str, Any], news_coverage_set: Element
+    ):
         """Create temporary delivery records for later mapping content to coverages"""
 
         delivery_service = get_resource_service("delivery")
@@ -100,14 +110,43 @@ class STTPlanningMLParser(PlanningMLParser):
                 # This will be used later to lookup when:
                 # * this Planning item has been created (if content already exists), or
                 # * the content for this ``coverage`` is published
-                deliveries.append({
-                    "planning_id": planning_id,
-                    "coverage_id": coverage_id,
-                    "item_id": content_guid
-                })
+                deliveries.append(
+                    {
+                        "planning_id": planning_id,
+                        "coverage_id": coverage_id,
+                        "item_id": content_guid,
+                    }
+                )
 
         if len(deliveries):
             delivery_service.post(deliveries)
+
+    def set_urgency(self, content_meta, item):
+        """set importance cv data in the subjects based on <urgency> tag [STTNHUB-200]"""
+
+        urgency_elt = content_meta.find(self.qname("urgency"))
+        if urgency_elt is not None and urgency_elt.text:
+            importance_list_items = (
+                get_resource_service("vocabularies")
+                .find_one(req=None, _id="stturgency")
+                .get("items", [])
+            )
+            matching_items = [
+                importance_item
+                for importance_item in importance_list_items
+                if f"stturgency-{'2' if urgency_elt.text == '3' else urgency_elt.text}"
+                == importance_item["qcode"]
+            ]
+            if matching_items:
+                item.get("subject").append(
+                    {
+                        "name": matching_items[0].get("name"),
+                        "qcode": f"stturgency-{urgency_elt.text}",
+                        "scheme": matching_items[0].get("scheme"),
+                    }
+                )
+
+        return item
 
 
 stt_planning_ml_parser = STTPlanningMLParser()

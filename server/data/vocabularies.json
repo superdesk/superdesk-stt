@@ -251,5 +251,31 @@
         "service": {"all": 1},
         "init_version": 1,
         "items": []
+    },
+    {
+        "_id": "stturgency",
+        "display_name": "Importance",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "selection_type": "single selection",
+        "items": [
+            {
+                "is_active": true, "name": "Pääaihe (main topic)", "qcode": "stturgency-1",
+                "scheme": "stturgency"
+            },
+            {
+                "is_active": true, "name": "Keskipitkä juttu (medium length)", "qcode": "stturgency-2",
+                "scheme": "stturgency"
+            },
+            {
+                "is_active": true, "name": "Lyhyt juttu (short article)", "qcode": "stturgency-4",
+                "scheme": "stturgency"
+            },
+            {
+                "is_active": true, "name": "Vain tulokset (only results)", "qcode": "stturgency-5",
+                "scheme": "stturgency"
+            }
+        ]
     }
 ]
