@@ -21,3 +21,8 @@ class STTPlanningMLParserTest(TestCase):
         # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
         self.assertEqual(len(self.item["coverages"]), 1)
         self.assertEqual(self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799")
+
+        # Urgency [STTNHUB-200]
+        print(self.item["subject"])
+        self.assertIn({'name': 'Keskipitkä juttu (medium length)', 'qcode': 'stturgency:3', 'scheme': 'stturgency'}, self.item["subject"])
+
