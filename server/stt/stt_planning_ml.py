@@ -50,6 +50,9 @@ class STTPlanningMLParser(PlanningMLParser):
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
             self._create_temp_assignment_deliveries(item, news_coverage_set)
+        content_meta = tree.find(self.qname("contentMeta"))
+        if content_meta is not None:
+            self.set_urgency(content_meta, item)
 
     def get_coverage_details(self, news_coverage_item: Element, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         event_id = self._get_linked_event_id(news_coverage_item)
@@ -109,6 +112,32 @@ class STTPlanningMLParser(PlanningMLParser):
         if len(deliveries):
             delivery_service.post(deliveries)
 
+    def set_urgency(self, content_meta, item):
+        """ set importance cv data in the subjects based on <urgency> tag [STTNHUB-200] """
+
+        urgency_elt = content_meta.find(self.qname("urgency"))
+        if urgency_elt is not None and urgency_elt.text:
+            importance_list_items = (
+                get_resource_service("vocabularies")
+                .find_one(req=None, _id="importance")
+                .get("items", [])
+            )
+            matching_items = [
+                importance_item
+                for importance_item in importance_list_items
+                if f"stturgency:{'2' if urgency_elt.text == '3' else urgency_elt.text}"
+                == importance_item["qcode"]
+            ]
+            if matching_items:
+                item.get("subject").append(
+                    {
+                        "name": matching_items[0].get("name"),
+                        "qcode": f"stturgency:{urgency_elt.text}",
+                        "scheme": matching_items[0].get("scheme"),
+                    }
+                )
+
+        return item
 
 stt_planning_ml_parser = STTPlanningMLParser()
 register_feed_parser(STTPlanningMLParser.NAME, stt_planning_ml_parser)
