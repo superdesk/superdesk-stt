@@ -31,7 +31,7 @@ class STTPlanningMLParserTest(TestCase):
         self.assertIn(
             {
                 "name": "Keskipitkä juttu (medium length)",
-                "qcode": "stturgency:3",
+                "qcode": "stturgency-3",
                 "scheme": "stturgency",
             },
             self.item["subject"],

@@ -128,20 +128,20 @@ class STTPlanningMLParser(PlanningMLParser):
         if urgency_elt is not None and urgency_elt.text:
             importance_list_items = (
                 get_resource_service("vocabularies")
-                .find_one(req=None, _id="importance")
+                .find_one(req=None, _id="stturgency")
                 .get("items", [])
             )
             matching_items = [
                 importance_item
                 for importance_item in importance_list_items
-                if f"stturgency:{'2' if urgency_elt.text == '3' else urgency_elt.text}"
+                if f"stturgency-{'2' if urgency_elt.text == '3' else urgency_elt.text}"
                 == importance_item["qcode"]
             ]
             if matching_items:
                 item.get("subject").append(
                     {
                         "name": matching_items[0].get("name"),
-                        "qcode": f"stturgency:{urgency_elt.text}",
+                        "qcode": f"stturgency-{urgency_elt.text}",
                         "scheme": matching_items[0].get("scheme"),
                     }
                 )
