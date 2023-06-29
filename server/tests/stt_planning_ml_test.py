@@ -28,7 +28,6 @@ class STTPlanningMLParserTest(TestCase):
         )
 
         # Urgency [STTNHUB-200]
-        print(self.item["subject"])
         self.assertIn(
             {
                 "name": "Keskipitkä juttu (medium length)",
