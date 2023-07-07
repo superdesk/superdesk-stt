@@ -8,48 +8,28 @@
         "selection_type": "do not show",
         "items": [
             {
-                "is_active": true,
-                "name": "Text",
-                "qcode": "text",
-                "content item type": "text",
-            },
-            {
-                "is_active": true,
-                "name": "Picture",
-                "qcode": "picture",
-                "content item type": "picture",
-            },
-            {
-                "is_active": true,
-                "name": "Video",
-                "qcode": "video",
-                "content item type": "video",
-            },
-            {
-                "is_active": true,
-                "name": "Audio",
-                "qcode": "audio",
-                "content item type": "audio",
-            },
-            {
-                "is_active": true,
-                "name": "Infographics",
-                "qcode": "infographics",
-                "content item type": "",
-            },
-            {
-                "is_active": true,
-                "name": "Live video",
-                "qcode": "live_video",
-                "content item type": "",
-            },
-            {
-                "is_active": true,
-                "name": "Live blog",
-                "qcode": "live_blog",
-                "content item type": "",
-            },
-        ],
+                "is_active": true, "name": "Text", "qcode": "text",
+                "content item type": "text"
+            }, {
+                "is_active": true, "name": "Picture", "qcode": "picture",
+                "content item type": "picture"
+            }, {
+                "is_active": true, "name": "Video", "qcode": "video",
+                "content item type": "video"
+            }, {
+                "is_active": true, "name": "Audio", "qcode": "audio",
+                "content item type": "audio"
+            }, {
+                "is_active": true, "name": "Infographics", "qcode": "infographics",
+                "content item type": ""
+            }, {
+                "is_active": true, "name": "Live video", "qcode": "live_video",
+                "content item type": ""
+            }, {
+                "is_active": true, "name": "Live blog", "qcode": "live_blog",
+                "content item type": ""
+            }
+        ]
     },
     {
         "_id": "eventoccurstatus",
@@ -60,48 +40,28 @@
         "selection_type": "do not show",
         "items": [
             {
-                "is_active": true,
-                "qcode": "eocstat:eos0",
-                "name": "Unplanned event",
-                "label": "Unplanned event",
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos1",
-                "name": "Planned, occurence planned only",
-                "label": "Planned, occurence planned only",
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos2",
-                "name": "Planned, occurence highly uncertain",
-                "label": "Planned, occurence highly uncertain",
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos3",
-                "name": "Planned, May occur",
-                "label": "Planned, May occur",
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos4",
-                "name": "Planned, occurence highly likely",
-                "label": "Planned, occurence highly likely",
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos5",
-                "name": "Planned, occurs certainly",
-                "label": "Planned, occurs certainly",
-            },
-            {
-                "is_active": false,
-                "qcode": "eocstat:eos6",
-                "name": "Planned, then cancelled",
-                "label": "Planned, then cancelled",
-            },
-        ],
+                "is_active": true, "qcode": "eocstat:eos0", "name": "Unplanned event",
+                "label": "Unplanned event"
+            }, {
+                "is_active": true, "qcode": "eocstat:eos1", "name": "Planned, occurence planned only",
+                "label": "Planned, occurence planned only"
+            }, {
+                "is_active": true, "qcode": "eocstat:eos2", "name": "Planned, occurence highly uncertain",
+                "label": "Planned, occurence highly uncertain"
+            }, {
+                "is_active": true, "qcode": "eocstat:eos3", "name": "Planned, May occur",
+                "label": "Planned, May occur"
+            }, {
+                "is_active": true, "qcode": "eocstat:eos4", "name": "Planned, occurence highly likely",
+                "label": "Planned, occurence highly likely"
+            }, {
+                "is_active": true, "qcode": "eocstat:eos5", "name": "Planned, occurs certainly",
+                "label": "Planned, occurs certainly"
+            }, {
+                "is_active": false, "qcode": "eocstat:eos6", "name": "Planned, then cancelled",
+                "label": "Planned, then cancelled"
+            }
+        ]
     },
     {
         "_id": "newscoveragestatus",
@@ -112,30 +72,22 @@
         "selection_type": "do not show",
         "items": [
             {
-                "is_active": true,
-                "qcode": "ncostat:int",
-                "name": "coverage intended",
-                "label": "Planned",
+                "is_active": true, "qcode": "ncostat:int", "name": "coverage intended",
+                "label": "Planned"
             },
             {
-                "is_active": true,
-                "qcode": "ncostat:notdec",
-                "name": "coverage not decided yet",
-                "label": "On merit",
+                "is_active": true, "qcode": "ncostat:notdec", "name": "coverage not decided yet",
+                "label": "On merit"
             },
             {
-                "is_active": false,
-                "qcode": "ncostat:notint",
-                "name": "coverage not intended",
-                "label": "Not planned",
+                "is_active": false, "qcode": "ncostat:notint", "name": "coverage not intended",
+                "label": "Not planned"
             },
             {
-                "is_active": true,
-                "qcode": "ncostat:onreq",
-                "name": "coverage upon request",
-                "label": "On request",
-            },
-        ],
+                "is_active": true, "qcode": "ncostat:onreq", "name": "coverage upon request",
+                "label": "On request"
+            }
+        ]
     },
     {
         "_id": "subscriber_types",
@@ -144,10 +96,7 @@
         "selection_type": "do not show",
         "init_version": 1,
         "items": [
-            {
-                "is_active": true,
-                "name": "All",
-                "qcode": "all",
+            {"is_active": true, "name": "All", "qcode": "all",
                 "formats": [
                     {"name": "NINJS", "qcode": "ninjs"},
                     {"name": "NINJSv2", "qcode": "ninjs2"},
@@ -159,17 +108,10 @@
                     {"name": "iMatrics", "qcode": "imatrics"},
                     {"name": "JSON Event", "qcode": "json_event"},
                     {"name": "JSON Planning", "qcode": "json_planning"},
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured",
-                    },
-                    {"name": "STT Events ML", "qcode": "stteventsml"},
-                ],
-            },
-            {
-                "is_active": true,
-                "name": "Digital/Internet",
-                "qcode": "digital",
+                    {"name": "JSON Planning Featured", "qcode": "json_planning_featured"},
+                    {"name": "STT Events ML", "qcode": "stteventsml"}
+                ]},
+            {"is_active": true, "name": "Digital/Internet", "qcode": "digital",
                 "formats": [
                     {"name": "NINJS", "qcode": "ninjs"},
                     {"name": "NINJSv2", "qcode": "ninjs2"},
@@ -181,31 +123,20 @@
                     {"name": "iMatrics", "qcode": "imatrics"},
                     {"name": "JSON Event", "qcode": "json_event"},
                     {"name": "JSON Planning", "qcode": "json_planning"},
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured",
-                    },
-                    {"name": "STT Events ML", "qcode": "stteventsml"},
-                ],
-            },
-            {
-                "is_active": true,
-                "name": "Wire/Paper",
-                "qcode": "wire",
+                    {"name": "JSON Planning Featured", "qcode": "json_planning_featured"},
+                    {"name": "STT Events ML", "qcode": "stteventsml"}
+                ]},
+            {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
                 "formats": [
                     {"name": "NITF", "qcode": "nitf"},
                     {"name": "Email", "qcode": "email"},
                     {"name": "Newsroom NINJS", "qcode": "newsroom ninjs"},
                     {"name": "JSON Event", "qcode": "json_event"},
                     {"name": "JSON Planning", "qcode": "json_planning"},
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured",
-                    },
-                    {"name": "STT Events ML", "qcode": "stteventsml"},
-                ],
-            },
-        ],
+                    {"name": "JSON Planning Featured", "qcode": "json_planning_featured"},
+                    {"name": "STT Events ML", "qcode": "stteventsml"}
+                ]}
+        ]
     },
     {
         "_id": "event_calendars",
@@ -215,7 +146,10 @@
         "selection_type": "do not show",
         "init_version": 2,
         "items": [],
-        "schema": {"name": {}, "qcode": {}},
+        "schema": {
+            "name": {},
+            "qcode": {}
+        }
     },
     {
         "_id": "assignment_priority",
@@ -227,8 +161,8 @@
         "items": [
             {"is_active": true, "name": "High", "qcode": 1},
             {"is_active": true, "name": "Medium", "qcode": 2},
-            {"is_active": true, "name": "Low", "qcode": 3},
-        ],
+            {"is_active": true, "name": "Low", "qcode": 3}
+        ]
     },
     {
         "_id": "type",
@@ -242,9 +176,9 @@
             {"is_active": true, "name": "video", "qcode": "video"},
             {"is_active": true, "name": "picture", "qcode": "picture"},
             {"is_active": true, "name": "graphic", "qcode": "graphic"},
-            {"is_active": true, "name": "composite", "qcode": "composite"},
+            {"is_active": true, "name": "composite", "qcode": "composite"}
         ],
-        "init_version": 1,
+        "init_version": 1
     },
     {
         "_id": "desk_types",
@@ -253,8 +187,8 @@
         "selection_type": "do not show",
         "items": [
             {"is_active": true, "name": "authoring", "qcode": "authoring"},
-            {"is_active": true, "name": "production", "qcode": "production"},
-        ],
+            {"is_active": true, "name": "production", "qcode": "production"}
+        ]
     },
     {
         "_id": "product_types",
@@ -264,8 +198,8 @@
         "items": [
             {"is_active": true, "name": "API", "qcode": "api"},
             {"is_active": true, "name": "Direct", "qcode": "direct"},
-            {"is_active": true, "name": "Both", "qcode": "both"},
-        ],
+            {"is_active": true, "name": "Both", "qcode": "both"}
+        ]
     },
     {
         "_id": "event_type",
@@ -274,10 +208,15 @@
         "unique_field": "qcode",
         "selection_type": "multi selection",
         "schema_field": "subject",
-        "schema": {"name": {}, "qcode": {}, "scheme": {}, "translations": {}},
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
         "service": {"all": 1},
         "init_version": 1,
-        "items": [],
+        "items": []
     },
     {
         "_id": "sttdepartment",
@@ -286,10 +225,15 @@
         "unique_field": "qcode",
         "selection_type": "multi selection",
         "schema_field": "subject",
-        "schema": {"name": {}, "qcode": {}, "scheme": {}, "translations": {}},
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
         "service": {"all": 1},
         "init_version": 1,
-        "items": [],
+        "items": []
     },
     {
         "_id": "sttsubj",
@@ -298,10 +242,15 @@
         "unique_field": "qcode",
         "selection_type": "multi selection",
         "schema_field": "subject",
-        "schema": {"name": {}, "qcode": {}, "scheme": {}, "translations": {}},
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "scheme": {},
+            "translations": {}
+        },
         "service": {"all": 1},
         "init_version": 1,
-        "items": [],
+        "items": []
     },
     {
         "_id": "stturgency",
@@ -312,29 +261,21 @@
         "selection_type": "single selection",
         "items": [
             {
-                "is_active": true,
-                "name": "Pääaihe",
-                "qcode": "stturgency-1",
-                "scheme": "stturgency",
+                "is_active": true, "name": "Pääaihe", "qcode": "stturgency-1",
+                "scheme": "stturgency"
             },
             {
-                "is_active": true,
-                "name": "Keskipitkä juttu",
-                "qcode": "stturgency-2",
-                "scheme": "stturgency",
+                "is_active": true, "name": "Keskipitkä juttu", "qcode": "stturgency-2",
+                "scheme": "stturgency"
             },
             {
-                "is_active": true,
-                "name": "Lyhyt juttu",
-                "qcode": "stturgency-4",
-                "scheme": "stturgency",
+                "is_active": true, "name": "Lyhyt juttu", "qcode": "stturgency-4",
+                "scheme": "stturgency"
             },
             {
-                "is_active": true,
-                "name": "Vain tulokset",
-                "qcode": "stturgency-5",
-                "scheme": "stturgency",
-            },
-        ],
-    },
+                "is_active": true, "name": "Vain tulokset", "qcode": "stturgency-5",
+                "scheme": "stturgency"
+            }
+        ]
+    }
 ]
