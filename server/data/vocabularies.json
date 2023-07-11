@@ -257,23 +257,23 @@
         "display_name": "Importance",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "selection_type": "single selection",
         "items": [
             {
-                "is_active": true, "name": "Pääaihe (main topic)", "qcode": "stturgency-1",
+                "is_active": true, "name": "Pääaihe", "qcode": "stturgency-1",
                 "scheme": "stturgency"
             },
             {
-                "is_active": true, "name": "Keskipitkä juttu (medium length)", "qcode": "stturgency-2",
+                "is_active": true, "name": "Keskipitkä juttu", "qcode": "stturgency-2",
                 "scheme": "stturgency"
             },
             {
-                "is_active": true, "name": "Lyhyt juttu (short article)", "qcode": "stturgency-4",
+                "is_active": true, "name": "Lyhyt juttu", "qcode": "stturgency-4",
                 "scheme": "stturgency"
             },
             {
-                "is_active": true, "name": "Vain tulokset (only results)", "qcode": "stturgency-5",
+                "is_active": true, "name": "Vain tulokset", "qcode": "stturgency-5",
                 "scheme": "stturgency"
             }
         ]
