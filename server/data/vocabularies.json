@@ -257,7 +257,7 @@
         "display_name": "Importance",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "selection_type": "single selection",
         "items": [
             {
