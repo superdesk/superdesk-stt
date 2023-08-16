@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" guid="urn:newsml:stt.fi:20230529:620121" version="1" standard="NewsML-G2" standardversion="2.12" conformance="power" xml:lang="fi">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
+<catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
+<itemMeta>
+<itemClass qcode="plinat:newscoverage"/>
+<provider literal="STT"/>
+<versionCreated>2023-05-15T14:50:03+02:00</versionCreated>
+<pubStatus qcode="stat:usable"/>
+</itemMeta>
+<contentMeta>
+<contentCreated>2023-05-15T14:50:03+02:00</contentCreated>
+<contentModified>2023-05-15T14:50:03+02:00</contentModified>
+<headline>Karelian Lock 23 -taisteluharjoituksen mediapäivä</headline>
+<description role="drol:summary">Maavoimien alueellinen taisteluharjoitus Karelian Lock 23 järjestetään Kouvolan, Luumäen ja Haminan alueilla 26.5–2.6.2023. Harjoituksessa kehitetään johtamisvalmiuksia ja yhteistoimintaa muiden puolustushaarojen kanssa. Harjoituksessa on mukana kansainvälisiä joukkoja Yhdysvaltojen maavoimista.
+Harjoituksen kokonaisvahvuus on yhteensä noin 7000 henkilöä ja 720 ajoneuvoa. Harjoitukseen osallistuu palkatun henkilökunnan lisäksi varusmiehiä ja reserviläisiä. Kansainvälisten joukkojen vahvuus harjoituksessa on noin 450 henkilöä.
+Mediatilaisuudessa on mahdollisuus tutustua harjoitukseen ja haastatella harjoitukseen osallistuvia joukkoja. </description>
+<subject qcode="stt-topics:620121">
+<related rel="sttrel:assigneddate" value="2023-05-29" valuedatatype="Date"/>
+</subject>
+<subject type="cpnat:department" qcode="sttdepartment:3">
+<name>Kotimaa</name>
+</subject>
+</contentMeta>
+<assert qcode="stt-topics:620121">
+<newsCoverageStatus qcode="ncostat:notint"/>
+</assert>
+<newsCoverageSet>
+<newsCoverage id="ID_TEXT_120844691">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:text"/>
+<scheduled>2023-06-01T19:30:00+02:00</scheduled>
+<headline>Sudanissa taistelut jatkuvat</headline>
+<description/>
+<subject qcode="stt-topics:621576" type="cpnat:abstract"/>
+<genre qcode="sttgenre:1">
+<name>Pääjuttu</name>
+<narrower qcode="sttversion:3"/>
+<narrower qcode="sttversion:4"/>
+<narrower qcode="sttversion:6"/>
+<related rel="sttrel:plannedlength" value="1900"/>
+</genre>
+</planning>
+<delivery>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20230601:105610660">
+<modified>2023-06-01T08:36:57+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20230601:105610662">
+<modified>2023-06-01T09:08:12+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20230601:105610660">
+<modified>2023-06-01T09:09:01+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20230601:105610641">
+<modified>2023-06-01T08:35:30+02:00</modified>
+</deliveredItemRef>
+</delivery>
+</newsCoverage>
+</newsCoverageSet>
+</planningItem>
