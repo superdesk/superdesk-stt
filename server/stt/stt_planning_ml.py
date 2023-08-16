@@ -28,11 +28,18 @@ class STTPlanningMLParser(PlanningMLParser):
     def parse(self, tree: Element, provider=None):
         items = super(STTPlanningMLParser, self).parse(tree, provider)
         items_to_ingest = []
+        planning_service = get_resource_service("planning")
         for item in items:
             if planning_xml_contains_remove_signal(tree):
                 unpost_or_spike_event_or_planning(item)
                 # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
                 continue
+
+            planning_item = planning_service.find_one(req=None, _id=item["_id"])
+            self.check_coverage(
+                item, planning_item, tree
+            ) if planning_item else self.set_placeholder_coverage(item, tree)
+
             self.set_extra_fields(item, tree)
             items_to_ingest.append(item)
 
@@ -147,6 +154,45 @@ class STTPlanningMLParser(PlanningMLParser):
                 )
 
         return item
+
+    def set_placeholder_coverage(self, item, tree):
+        """
+        Set a Placeholder Coverage if no coverages are provided in the parsed item
+        """
+        if not item.get("coverages"):
+            placeholder_coverage = [
+                {
+                    "coverage_id": f"placeholder_{item.get('guid')}",
+                    "workflow_status": "draft",
+                    "firstcreated": item.get("firstcreated"),
+                    "planning": {
+                        "slugline": "Placeholder Coverage",
+                        "g2_content_type": "text",
+                        "scheduled": item.get("planning_date"),
+                    },
+                    "flags": {"placeholder": True},
+                }
+            ]
+            item["coverages"] = placeholder_coverage
+
+        super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
+
+    def check_coverage(self, item, planning_item, tree):
+        # if existing item is found in the db update coverage details of that item based on new item.
+        if not planning_item.get("coverages"):
+            # Existing: No Coverages | Ingest: No Coverages
+            self.set_placeholder_coverage(item, tree)
+        elif not item.get("coverages"):
+            # Existing: Coverages | Ingest: No Coverages
+            self.set_placeholder_coverage(item, tree)
+        else:
+            # Existing: Coverages | Ingest: Coverages
+            for existing_coverage in planning_item["coverages"]:
+                if existing_coverage.get("flags", {}).get("placeholder"):
+                    # Existing: Placeholder Coverage | Ingest: Coverages
+                    planning_item["coverages"].remove(existing_coverage)
+            # Update news_coverage_status for provided coverages
+            super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
 
 
 stt_planning_ml_parser = STTPlanningMLParser()
