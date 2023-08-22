@@ -80,14 +80,15 @@ class STTEventsMLParserContactInfoTest(TestCase):
     }
 
     def test_create_new_contact(self):
-        # Make sure the contact doesn't already exist
+        # Make sure the contacts don't already exist
         self.assertIsNone(search_existing_contacts({"contact_email": ["foo@bar.com"]}))
+        self.assertIsNone(search_existing_contacts({"contact_email": ["steven@infosec.test"]}))
 
-        # Process the source content, which should create a new contact
+        # Process the source content, which should create new contacts
         self.parse_source_content()
         self.assertIsNotNone(self.item["event_contact_info"][0])
 
-        # Make sure the created contact has the correct details
+        # Make sure the created contacts have the correct details
         created_contact = search_existing_contacts({"contact_email": ["foo@bar.com"]})
         self.assertIsNotNone(created_contact)
         self.assertEqual(created_contact["first_name"], self.contact["first_name"])
@@ -95,6 +96,19 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertEqual(created_contact["contact_email"], self.contact["contact_email"])
         self.assertEqual(created_contact["job_title"], self.contact["job_title"])
         self.assertEqual(created_contact["contact_phone"], self.contact["contact_phone"])
+
+        self.assertIsNotNone(self.item["event_contact_info"][1])
+        created_contact = search_existing_contacts({"contact_email": ["steven@infosec.test"]})
+        self.assertIsNotNone(created_contact)
+        self.assertEqual(created_contact["first_name"], "Steven")
+        self.assertEqual(created_contact["last_name"], "Infosec")
+        self.assertEqual(created_contact["contact_email"], ["steven@infosec.test"])
+        self.assertEqual(created_contact["job_title"], "tiedotussihteeri")
+        self.assertEqual(created_contact["contact_phone"], [{
+            "number": "098 765 4321",
+            "public": True,
+        }])
+        self.assertEqual(created_contact["website"], "www.steven.infosec.test")
 
     def test_reuse_existing_contact(self):
         # Add the contact before processing the source content

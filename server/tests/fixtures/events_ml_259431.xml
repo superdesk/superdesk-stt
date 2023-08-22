@@ -83,6 +83,14 @@ http://www.sdp.fi</note>
 <stt:lastname>bar</stt:lastname>
 <stt:title>Viestintäasiantuntija</stt:title>
 </contactInfo>
+<contactInfo>
+<phone>098 765 4321</phone>
+<email>steven@infosec.test</email>
+<web>www.steven.infosec.test</web>
+<stt:firstname>Steven</stt:firstname>
+<stt:lastname>Infosec</stt:lastname>
+<stt:title>tiedotussihteeri</stt:title>
+</contactInfo>
 <registration>Median ilmoittautuminen kokoukseen viim.  30.3. klo 12.00 mennessä: https://urly.fi/2xW8
 
 Kokouspäivänä lauantaina median ilmoittautuminen alkaa klo 12.30.</registration>
