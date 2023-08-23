@@ -219,48 +219,45 @@ class STTEventsMLParser(EventsMLParser):
         item["location"] = [location]
 
     def set_contact_details(self, item: Dict[str, Any], event_details: Element):
-        contact_info = event_details.find(self.qname("contactInfo"))
-        if contact_info is None:
-            return
+        for contact_info in event_details.findall(self.qname("contactInfo")):
+            first_name = contact_info.find(self.qname("firstname", ns=NS["stt"]))
+            last_name = contact_info.find(self.qname("lastname", ns=NS["stt"]))
+            job_title = contact_info.find(self.qname("title", ns=NS["stt"]))
+            phone = contact_info.find(self.qname("phone"))
+            email = contact_info.find(self.qname("email"))
+            web = contact_info.find(self.qname("web"))
 
-        first_name = contact_info.find(self.qname("firstname", ns=NS["stt"]))
-        last_name = contact_info.find(self.qname("lastname", ns=NS["stt"]))
-        job_title = contact_info.find(self.qname("title", ns=NS["stt"]))
-        phone = contact_info.find(self.qname("phone"))
-        email = contact_info.find(self.qname("email"))
-        web = contact_info.find(self.qname("web"))
-
-        contact = {
-            "is_active": True,
-            "public": True,
-        }
-
-        if first_name is not None and first_name.text:
-            contact["first_name"] = first_name.text
-        if last_name is not None and last_name.text:
-            contact["last_name"] = last_name.text
-        if job_title is not None and job_title.text:
-            contact["job_title"] = job_title.text
-        if phone is not None and phone.text:
-            contact["contact_phone"] = [{
-                "number": phone.text,
+            contact = {
+                "is_active": True,
                 "public": True,
-            }]
-        if email is not None and email.text:
-            contact["contact_email"] = [email.text.lower()]
-        if web is not None and web.text:
-            contact["website"] = web.text
+            }
 
-        try:
-            existing_contact = search_existing_contacts(contact)
-            item.setdefault("event_contact_info", [])
-            if existing_contact is not None:
-                item["event_contact_info"].append(ObjectId(existing_contact["_id"]))
-            else:
-                new_contact_id = get_resource_service("contacts").post([contact])[0]
-                item["event_contact_info"].append(new_contact_id)
-        except SuperdeskApiError:
-            logger.exception("Skip linking contact to ingested Event, as it failed")
+            if first_name is not None and first_name.text:
+                contact["first_name"] = first_name.text
+            if last_name is not None and last_name.text:
+                contact["last_name"] = last_name.text
+            if job_title is not None and job_title.text:
+                contact["job_title"] = job_title.text
+            if phone is not None and phone.text:
+                contact["contact_phone"] = [{
+                    "number": phone.text,
+                    "public": True,
+                }]
+            if email is not None and email.text:
+                contact["contact_email"] = [email.text.lower()]
+            if web is not None and web.text:
+                contact["website"] = web.text
+
+            try:
+                existing_contact = search_existing_contacts(contact)
+                item.setdefault("event_contact_info", [])
+                if existing_contact is not None:
+                    item["event_contact_info"].append(ObjectId(existing_contact["_id"]))
+                else:
+                    new_contact_id = get_resource_service("contacts").post([contact])[0]
+                    item["event_contact_info"].append(new_contact_id)
+            except SuperdeskApiError:
+                logger.exception("Skip linking contact to ingested Event, as it failed")
 
 
 register_feed_parser(STTEventsMLParser.NAME, STTEventsMLParser())
