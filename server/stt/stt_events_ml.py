@@ -11,7 +11,8 @@ from superdesk.text_utils import plain_text_to_html
 from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning
+from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, \
+    remove_date_portion_from_id, original_item_exists
 
 logger = logging.getLogger(__name__)
 TIMEZONE = "Europe/Helsinki"
@@ -76,6 +77,10 @@ class STTEventsMLParser(EventsMLParser):
         "sttdepartment": "sttdepartment",
         "sttsubj": "sttsubj",
     }
+
+    def get_item_id(self, tree: Element) -> str:
+        item_id = super(STTEventsMLParser, self).get_item_id(tree)
+        return item_id if original_item_exists("events", item_id) else remove_date_portion_from_id(item_id)
 
     def parse(self, tree: Element, provider=None):
         items = super(STTEventsMLParser, self).parse(tree, provider)

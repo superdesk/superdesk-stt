@@ -7,10 +7,8 @@ from superdesk.utc import local_to_utc
 from superdesk.io.registry import register_feed_parser
 from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 
-from .common import (
-    planning_xml_contains_remove_signal,
-    unpost_or_spike_event_or_planning,
-)
+from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, \
+    remove_date_portion_from_id, original_item_exists
 
 TIMEZONE = "Europe/Helsinki"
 
@@ -24,6 +22,10 @@ class STTPlanningMLParser(PlanningMLParser):
         "sttdepartment": "sttdepartment",
         "sttsubj": "sttsubj",
     }
+
+    def get_item_id(self, tree: Element) -> str:
+        item_id = super(STTPlanningMLParser, self).get_item_id(tree)
+        return item_id if original_item_exists("planning", item_id) else remove_date_portion_from_id(item_id)
 
     def parse(self, tree: Element, provider=None):
         items = super(STTPlanningMLParser, self).parse(tree, provider)
@@ -87,7 +89,7 @@ class STTPlanningMLParser(PlanningMLParser):
         for subject_item in planning.findall(self.qname("subject")):
             qcode = subject_item.get("qcode")
             if qcode and subject_item.get("type") == "cpnat:event":
-                return qcode
+                return qcode if original_item_exists("events", qcode) else remove_date_portion_from_id(qcode)
 
         return None
 
