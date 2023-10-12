@@ -186,6 +186,8 @@ pyasn1-modules==0.3.0
     # via oauth2client
 pycparser==2.21
     # via cffi
+pymemcache==4.0.0
+    # via superdesk-core
 pymongo==3.11.4
     # via
     #   eve
