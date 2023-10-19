@@ -11,7 +11,7 @@ from superdesk.text_utils import plain_text_to_html
 from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning
+from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, transform_link_from_text
 
 logger = logging.getLogger(__name__)
 TIMEZONE = "Europe/Helsinki"
@@ -86,6 +86,20 @@ class STTEventsMLParser(EventsMLParser):
                 # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
                 continue
             self.set_extra_fields(item, tree)
+
+            fields = (
+                "definition_long",
+                "definition_short",
+                "ednote",
+                "internal_note",
+                "name",
+                "slugline",
+                "registration_details",
+                "invitation_details",
+                "accreditation_info",
+            )
+            transform_link_from_text(item, fields)
+
             items_to_ingest.append(item)
 
         return items_to_ingest
