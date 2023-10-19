@@ -11,6 +11,7 @@ class STTPlanningMLParserTest(TestCase):
     fixture = "planning_ml_584717.xml"
     parser_class = STTPlanningMLParser
     add_stt_cvs = True
+    max_diff = None
 
     def test_stt_metadata(self):
         # Extra metadata
@@ -166,4 +167,16 @@ class STTPlanningMLParserTest(TestCase):
         self.assertNotIn(
             "placeholder_urn:newsml:stt.fi:20230529:620121",
             dest["coverages"][0]["coverage_id"],
+        )
+
+    def test_text_link(self):
+        self.fixture = "planning_ml_link.xml"
+        self.parse_source_content()
+        self.assertEqual(
+            self.item["ednote"],
+            """Testi: Lisätietoja aiheesta erityisesti media-asiakkaille\n\n<a href="https://www.stt.fi">www.stt.fi</a> STT\n\n<a href="https://stt.fi">stt.fi</a>\n\n<a href="https://stt.fi/">https://stt.fi/</a>\n\nSTT""",  # noqa
+        )
+        self.assertEqual(
+            self.item["description_text"],
+            '<a href="https://www.stt.fi">www.stt.fi</a> \n\n<a href="https://stt.fi">stt.fi</a> \n\n<a href="https://stt.fi/">https://stt.fi/</a>',  # noqa
         )

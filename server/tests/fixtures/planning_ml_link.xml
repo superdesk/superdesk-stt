@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" guid="urn:newsml:stt.fi:20280911:631023" version="1" standard="NewsML-G2" standardversion="2.12" conformance="power" xml:lang="fi">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
+<catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
+<itemMeta>
+<itemClass qcode="plinat:newscoverage"/>
+<provider literal="STT"/>
+<versionCreated>2023-10-02T12:23:48+02:00</versionCreated>
+<pubStatus qcode="stat:usable"/>
+<edNote role="sttdescription:additionalinfo">Testi: Lisätietoja aiheesta erityisesti media-asiakkaille
+
+www.stt.fi STT
+
+stt.fi
+
+https://stt.fi/
+
+STT</edNote>
+</itemMeta>
+<contentMeta>
+<urgency>1</urgency>
+<contentCreated>2023-10-02T12:23:48+02:00</contentCreated>
+<contentModified>2023-10-02T12:23:48+02:00</contentModified>
+<headline>Testi/Luotsi</headline>
+<description role="drol:summary">www.stt.fi 
+
+stt.fi 
+
+https://stt.fi/</description>
+<subject qcode="stt-topics:631023">
+<note role="sttpresent:1">Toimittaja paikalla</note>
+<related rel="sttrel:assigneddate" value="2028-09-11" valuedatatype="Date"/>
+</subject>
+<subject type="cpnat:department" qcode="sttdepartment:3">
+<name>Kotimaa</name>
+</subject>
+</contentMeta>
+<assert qcode="stt-topics:631023">
+<newsCoverageStatus qcode="ncostat:int"/>
+</assert>
+<newsCoverageSet>
+<newsCoverage id="ID_EVENT_286323" modified="2023-10-02T12:23:57+02:00">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:text"/>
+<headline>Testi/Luotsi</headline>
+<description>www.stt.fi
+
+stt.fi
+
+https://stt.fi/</description>
+
+<subject type="cpnat:event" qcode="urn:newsml:stt.fi:20280911:286323">
+<name>Testi/Luotsi</name>
+</subject>
+</planning>
+</newsCoverage>
+<newsCoverage id="ID_WORKREQUEST_187845">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:picture"/>
+<scheduled>2023-10-04T00:00:00+02:00</scheduled>
+<headline>Testi/Luotsi</headline>
+<subject type="ninat:text" qcode="urn:newsml:stt.fi:20280911000000:187845">
+<definition role="sttdescription:imagetarget">.</definition>
+<stt:workstartdate>2028-09-11T00:00:00+02:00</stt:workstartdate>
+</subject>
+<genre qcode="sttimage:20">
+<name>Kuvaaja paikalla</name>
+<definition role="sttdescription:imagetype">-</definition>
+</genre>
+</planning>
+</newsCoverage>
+</newsCoverageSet>
+</planningItem>
