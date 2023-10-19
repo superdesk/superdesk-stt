@@ -11,7 +11,6 @@ class STTPlanningMLParserTest(TestCase):
     fixture = "planning_ml_584717.xml"
     parser_class = STTPlanningMLParser
     add_stt_cvs = True
-    max_diff = None
 
     def test_stt_metadata(self):
         # Extra metadata
