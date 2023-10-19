@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional
 from xml.etree.ElementTree import Element
 from eve.utils import config
+import re
 
 from superdesk import get_resource_service
 from superdesk.utc import local_to_utc
@@ -41,6 +42,7 @@ class STTPlanningMLParser(PlanningMLParser):
             ) if planning_item else self.set_placeholder_coverage(item, tree)
 
             self.set_extra_fields(item, tree)
+            self.transform_link_from_text(item)
             items_to_ingest.append(item)
 
         return items_to_ingest
@@ -193,6 +195,26 @@ class STTPlanningMLParser(PlanningMLParser):
                     planning_item["coverages"].remove(existing_coverage)
             # Update news_coverage_status for provided coverages
             super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
+
+    def transform_link_from_text(self, item):
+        fields = ("description_text", "headline", "slugline", "ednote", "abstract")
+        for field in fields:
+            if item.get(field):
+                url_pattern = re.compile(r"(https?://\S+|www\.\S+|\S+\.\S+)")
+
+                # Replace URLs with anchor tags and update the href attribute
+                def replace(match):
+                    url = match.group(0)
+                    if url.startswith("www."):
+                        url_with_https = "https://" + url
+                        return f'<a href="{url_with_https}">{url}</a>'
+                    elif not url.startswith(("http://", "https://")):
+                        url_with_https = "https://" + url
+                        return f'<a href="{url_with_https}">{url}</a>'
+                    else:
+                        return f'<a href="{url}">{url}</a>'
+
+                item[field] = url_pattern.sub(replace, item[field])
 
 
 stt_planning_ml_parser = STTPlanningMLParser()
