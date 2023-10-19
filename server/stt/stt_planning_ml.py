@@ -10,7 +10,7 @@ from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 from .common import (
     planning_xml_contains_remove_signal,
     unpost_or_spike_event_or_planning,
-    transform_link_from_text
+    transform_link_from_text,
 )
 
 TIMEZONE = "Europe/Helsinki"
@@ -198,6 +198,7 @@ class STTPlanningMLParser(PlanningMLParser):
                     planning_item["coverages"].remove(existing_coverage)
             # Update news_coverage_status for provided coverages
             super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
+
 
 stt_planning_ml_parser = STTPlanningMLParser()
 register_feed_parser(STTPlanningMLParser.NAME, stt_planning_ml_parser)

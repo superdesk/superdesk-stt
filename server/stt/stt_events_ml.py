@@ -11,7 +11,11 @@ from superdesk.text_utils import plain_text_to_html
 from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, transform_link_from_text
+from .common import (
+    planning_xml_contains_remove_signal,
+    unpost_or_spike_event_or_planning,
+    transform_link_from_text,
+)
 
 logger = logging.getLogger(__name__)
 TIMEZONE = "Europe/Helsinki"
@@ -27,7 +31,19 @@ def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]
     contacts_service = get_resource_service("contacts")
     if len(contact.get("contact_email") or []):
         cursor = contacts_service.search(
-            {"query": {"bool": {"must": [{"term": {"contact_email.keyword": contact["contact_email"][0]}}]}}}
+            {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "term": {
+                                    "contact_email.keyword": contact["contact_email"][0]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
         )
         if cursor.count():
             return list(cursor)[0]
@@ -36,31 +52,33 @@ def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]
         first_name = contact["first_name"].lower()
         last_name = contact["last_name"].lower()
 
-        cursor = contacts_service.search({
-            "query": {
-                "bool": {
-                    "must": [
-                        {
-                            "match": {
-                                "first_name": {
-                                    "query": first_name.lower(),
-                                    "operator": "AND",
+        cursor = contacts_service.search(
+            {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "first_name": {
+                                        "query": first_name.lower(),
+                                        "operator": "AND",
+                                    },
                                 },
                             },
-                        },
-                        {
-                            "match": {
-                                "last_name": {
-                                    "query": last_name.lower(),
-                                    "operator": "AND",
+                            {
+                                "match": {
+                                    "last_name": {
+                                        "query": last_name.lower(),
+                                        "operator": "AND",
+                                    },
                                 },
                             },
-                        },
-                    ],
+                        ],
+                    },
                 },
-            },
-            "sort": ["_score"]
-        })
+                "sort": ["_score"],
+            }
+        )
         if cursor.count():
             return list(cursor)[0]
 
@@ -153,17 +171,25 @@ class STTEventsMLParser(EventsMLParser):
             if related is not None and related.get("rel", "") == "sttnat:sttEventType":
                 qcode_parts = related.get("qcode", "").split(":")
                 qcode = qcode_parts[1] if len(qcode_parts) == 2 else qcode_parts
-                qcode = f"type{qcode}"  # add prefix to avoid conflict with sttdepartment
-                name = self.getVocabulary("event_type", qcode, related.find(self.qname("name")).text)
-                item.setdefault("subject", []).append({
-                    "qcode": qcode,
-                    "name": name,
-                    "scheme": "event_type",
-                })
+                qcode = (
+                    f"type{qcode}"  # add prefix to avoid conflict with sttdepartment
+                )
+                name = self.getVocabulary(
+                    "event_type", qcode, related.find(self.qname("name")).text
+                )
+                item.setdefault("subject", []).append(
+                    {
+                        "qcode": qcode,
+                        "name": name,
+                        "scheme": "event_type",
+                    }
+                )
         except AttributeError:
             pass
 
-        self.set_location_details(item, event_details.find(self.qname("location")), location_notes)
+        self.set_location_details(
+            item, event_details.find(self.qname("location")), location_notes
+        )
         self.set_contact_details(item, event_details)
 
     def set_location_details(self, item, location_xml, notes):
@@ -209,13 +235,19 @@ class STTEventsMLParser(EventsMLParser):
             elif values[0] == "sttcountry":
                 location["address"]["extra"]["sttcountry"] = values[1]
                 try:
-                    location["address"]["country"] = broader.find(self.qname("name")).text
-                    location["address"]["extra"]["iso3166"] = broader.find(self.qname("sameAs")).get("qcode")
+                    location["address"]["country"] = broader.find(
+                        self.qname("name")
+                    ).text
+                    location["address"]["extra"]["iso3166"] = broader.find(
+                        self.qname("sameAs")
+                    ).get("qcode")
                 except AttributeError:
                     continue
 
         try:
-            address = location_xml.find(self.qname("POIDetails")).find(self.qname("address"))
+            address = location_xml.find(self.qname("POIDetails")).find(
+                self.qname("address")
+            )
         except AttributeError:
             address = None
 
@@ -226,7 +258,9 @@ class STTEventsMLParser(EventsMLParser):
                 pass
 
             try:
-                location["address"]["postal_code"] = address.find(self.qname("postalCode")).text
+                location["address"]["postal_code"] = address.find(
+                    self.qname("postalCode")
+                ).text
             except AttributeError:
                 pass
 
@@ -256,10 +290,12 @@ class STTEventsMLParser(EventsMLParser):
         if job_title is not None and job_title.text:
             contact["job_title"] = job_title.text
         if phone is not None and phone.text:
-            contact["contact_phone"] = [{
-                "number": phone.text,
-                "public": True,
-            }]
+            contact["contact_phone"] = [
+                {
+                    "number": phone.text,
+                    "public": True,
+                }
+            ]
         if email is not None and email.text:
             contact["contact_email"] = [email.text.lower()]
         if web is not None and web.text:
