@@ -70,7 +70,7 @@ class STTPlanningMLParserTest(TestCase):
                     2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)
                 ),
                 "planning": {
-                    "slugline": "Placeholder Coverage",
+                    "slugline": "",
                     "g2_content_type": "text",
                     "scheduled": datetime(2023, 5, 28, 21, 0, tzinfo=tzutc()),
                 },
