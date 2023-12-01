@@ -168,7 +168,7 @@ class STTPlanningMLParser(PlanningMLParser):
                     "workflow_status": "draft",
                     "firstcreated": item.get("firstcreated"),
                     "planning": {
-                        "slugline": "Placeholder Coverage",
+                        "slugline": "",
                         "g2_content_type": "text",
                         "scheduled": item.get("planning_date"),
                     },

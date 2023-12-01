@@ -47,7 +47,7 @@ class STTPlanningMLParserTest(TestCase):
 
         self.fixture = "stt_planning_ml_placeholder.xml"
         self.parse_source_content()
-        self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:20230529:620121")
+        self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:620121")
         self.assertEqual(self.item["state"], "ingested")
         self.assertEqual(len(self.item["coverages"]), 1)
         self.assertEqual(
@@ -64,13 +64,13 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(
             self.item["coverages"][0],
             {
-                "coverage_id": "placeholder_urn:newsml:stt.fi:20230529:620121",
+                "coverage_id": "placeholder_urn:newsml:stt.fi:620121",
                 "workflow_status": "draft",
                 "firstcreated": datetime(
                     2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)
                 ),
                 "planning": {
-                    "slugline": "Placeholder Coverage",
+                    "slugline": "",
                     "g2_content_type": "text",
                     "scheduled": datetime(2023, 5, 28, 21, 0, tzinfo=tzutc()),
                 },
@@ -88,7 +88,7 @@ class STTPlanningMLParserTest(TestCase):
         self.fixture = "stt_planning_ml_placeholder-2.xml"
         self.parse_source_content()
         print(self.item["coverages"])
-        self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:20230529:620121")
+        self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:620121")
         self.assertEqual(len(self.item["coverages"]), 1)
         self.assertEqual(
             self.item["coverages"][0],
@@ -139,7 +139,7 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(len(dest["coverages"]), 1)
         coverage = dest["coverages"][0]
         self.assertEqual(
-            coverage["coverage_id"], "placeholder_urn:newsml:stt.fi:20230529:620121"
+            coverage["coverage_id"], "placeholder_urn:newsml:stt.fi:620121"
         )
         self.assertEqual(
             coverage["news_coverage_status"],
@@ -164,6 +164,6 @@ class STTPlanningMLParserTest(TestCase):
         ]
         self.assertEqual(len(dest["coverages"]), 1)
         self.assertNotIn(
-            "placeholder_urn:newsml:stt.fi:20230529:620121",
+            "placeholder_urn:newsml:stt.fi:620121",
             dest["coverages"][0]["coverage_id"],
         )

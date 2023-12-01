@@ -13,7 +13,7 @@ class STTEventsMLParserTest(TestCase):
 
         self.assertTrue(self.item["invitation_details"].startswith("<p>"))
         url = "www.foobar.com/event/invitation"
-        link = f'<a href="{url}" target="_blank">{url}</a>'
+        link = f'<a href="https://{url}" target="_blank">{url}</a>'
         self.assertTrue(self.item["invitation_details"].startswith("<p>"))
         self.assertIn(link, self.item["invitation_details"])
 
