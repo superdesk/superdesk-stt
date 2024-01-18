@@ -161,23 +161,29 @@ class STTPlanningMLParser(PlanningMLParser):
         """
         Set a Placeholder Coverage if no coverages are provided in the parsed item
         """
-        if not item.get("coverages"):
-            placeholder_coverage = [
-                {
-                    "coverage_id": f"placeholder_{item.get('guid')}",
-                    "workflow_status": "draft",
-                    "firstcreated": item.get("firstcreated"),
-                    "planning": {
-                        "slugline": "",
-                        "g2_content_type": "text",
-                        "scheduled": item.get("planning_date"),
-                    },
-                    "flags": {"placeholder": True},
-                }
-            ]
-            item["coverages"] = placeholder_coverage
 
-        super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
+        def get_coverage_type(coverage):
+            try:
+                return coverage["planning"]["g2_content_type"]
+            except (KeyError, TypeError):
+                return ""
+
+        item.setdefault("coverages", [])
+        if not any(True for coverage in item["coverages"] if get_coverage_type(coverage) == "text"):
+            # There are no text coverages for this item. Add a placeholder one now
+            item["coverages"].append({
+                "coverage_id": f"placeholder_{item.get('guid')}",
+                "workflow_status": "draft",
+                "firstcreated": item.get("firstcreated"),
+                "planning": {
+                    "slugline": "",
+                    "g2_content_type": "text",
+                    "scheduled": item.get("planning_date"),
+                },
+                "flags": {"placeholder": True},
+            })
+
+        self.parse_news_coverage_status(tree, item)
 
     def check_coverage(self, item, planning_item, tree):
         # if existing item is found in the db update coverage details of that item based on new item.
@@ -189,12 +195,21 @@ class STTPlanningMLParser(PlanningMLParser):
             self.set_placeholder_coverage(item, tree)
         else:
             # Existing: Coverages | Ingest: Coverages
-            for existing_coverage in planning_item["coverages"]:
-                if existing_coverage.get("flags", {}).get("placeholder"):
-                    # Existing: Placeholder Coverage | Ingest: Coverages
-                    planning_item["coverages"].remove(existing_coverage)
+            # Filter out any placeholder coverage
+            def is_placeholder_coverage(coverage):
+                try:
+                    return coverage["flags"]["placeholder"] is True
+                except (KeyError, TypeError):
+                    return False
+
+            planning_item["coverages"] = [
+                coverage
+                for coverage in planning_item["coverages"]
+                if not is_placeholder_coverage(coverage)
+            ]
+
             # Update news_coverage_status for provided coverages
-            super(STTPlanningMLParser, self).parse_news_coverage_status(tree, item)
+            self.parse_news_coverage_status(tree, item)
 
 
 stt_planning_ml_parser = STTPlanningMLParser()
