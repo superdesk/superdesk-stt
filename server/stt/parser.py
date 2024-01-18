@@ -3,6 +3,8 @@ from superdesk.metadata.item import CONTENT_TYPE
 from superdesk.io.registry import register_feed_parser
 from superdesk.io.feed_parsers.stt_newsml import STTNewsMLFeedParser, STT_LOCATION_MAP
 
+from .common import remove_date_portion_from_id
+
 
 NA = 'N/A'
 
@@ -71,6 +73,7 @@ class STTParser(STTNewsMLFeedParser):
         # newsItem guid
         if 'uri' in item:
             item.setdefault('extra', {})['newsItem_guid'] = item['uri']
+            item["uri"] = remove_date_portion_from_id(item["uri"])
 
         # newsItem altId
         try:

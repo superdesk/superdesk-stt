@@ -123,7 +123,7 @@ class STTPlanningMLParser(PlanningMLParser):
                     {
                         "planning_id": planning_id,
                         "coverage_id": coverage_id,
-                        "item_id": content_guid,
+                        "item_id": remove_date_portion_from_id(content_guid),
                     }
                 )
 

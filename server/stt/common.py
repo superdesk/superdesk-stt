@@ -43,6 +43,10 @@ def remove_date_portion_from_id(item_id: str) -> str:
     if len(id_parts) == 5:
         # Correct format to split, Remove the date portion of the ID
         del id_parts[3]
+    elif len(id_parts) == 6:
+        # ID includes version, remove the date and version portions of the ID
+        del id_parts[5]
+        del id_parts[3]
 
     return ":".join(id_parts)
 
