@@ -7,10 +7,9 @@ from flask import json
 
 from superdesk import get_resource_service, signals
 from superdesk.factory.app import SuperdeskEve
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 
 from planning.common import WORKFLOW_STATE, ASSIGNMENT_WORKFLOW_STATE
-from planning.signals import planning_created
+from planning.signals import planning_ingested
 
 from stt.stt_planning_ml import STTPlanningMLParser
 
@@ -19,48 +18,86 @@ logger = logging.getLogger(__name__)
 
 
 def init_app(_app: SuperdeskEve):
-    planning_created.connect(after_planning_created)
+    planning_ingested.connect(link_coverages_to_content)
     signals.item_publish.connect(before_content_published)
 
 
-def after_planning_created(_sender: Any, item: Dict[str, Any]):
+def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Optional[Dict[str, Any]] = None):
     """Link coverage(s) to content upon ingest (if content exists)"""
+
+    try:
+        planning_id = item[config.ID_FIELD]
+    except KeyError:
+        logger.error("Failed to link planning with content, _id is missing")
+        return
+
+    if not len(item.get("coverages") or []):
+        # No coverages on this Planning item, no need to continue
+        return
+
+    try:
+        if len(item["coverages"]) == 1 and item["coverages"][0]["flags"]["placeholder"] is True:
+            # There is only 1 coverage, and it is a placeholder coverage, no need to continue
+            return
+    except (KeyError, IndexError, TypeError):
+        return
 
     if not _is_ingested_by_stt_planning_ml(item):
         return
 
+    updates = {"coverages": deepcopy(item["coverages"])}
+    coverage_id_to_content_id_map: Dict[str, str] = {}
     delivery_service = get_resource_service("delivery")
-    planning_id = item.get(config.ID_FIELD)
-    updates = {"coverages": deepcopy(item.get("coverages") or [])}
-    coverages_updated = {}
+    planning_service = get_resource_service("planning")
     for coverage in updates["coverages"]:
-        coverage_id = coverage.get("coverage_id")
-        deliveries = delivery_service.get(req=None, lookup={
+        try:
+            coverage_id = coverage["coverage_id"]
+        except KeyError:
+            logger.error("Failed to link coverage with content, coverage_id is missing")
+            continue
+
+        try:
+            if coverage["flags"]["placeholder"] is True:
+                # This is a placeholder coverage, and will never be attached to content
+                continue
+        except (KeyError, TypeError):
+            pass
+
+        # Get the deliveries that aren't linked to an Assignment
+        # These deliveries are added in ``STTPlanningMLParser._create_temp_assignment_deliveries``
+        deliveries = delivery_service.get_from_mongo(req=None, lookup={
             "planning_id": planning_id,
             "coverage_id": coverage_id,
-        })
-        content = _get_content_item_by_uris([
-            delivery["item_id"]
-            for delivery in deliveries
-            if delivery.get("item_id") is not None
-        ])
+            "assignment_id": None,
+            "item_id": {"$ne": None}},
+        )
+        if not deliveries.count():
+            # No unlinked deliveries found for this Coverage
+            continue
+
+        content = _get_content_item_by_uris([delivery["item_id"] for delivery in deliveries])
         if content is None:
             # No content has been found
             # Linking will occur when content is published (see ``before_content_published``)
             continue
 
         _update_coverage_assignment_details(coverage, content)
-        coverages_updated[coverage_id] = content
+        coverage_id_to_content_id_map[coverage_id] = content[config.ID_FIELD]
 
-    updated_item = get_resource_service("planning").patch(planning_id, updates)
-    updated_coverage_ids = coverages_updated.keys()
+    updated_coverage_ids = coverage_id_to_content_id_map.keys()
+    if not len(updated_coverage_ids):
+        # No coverages were updated, no need to update the Planning item or link any content
+        return
+
+    # Update the planning item with the latest Assignment information, and link the coverages to the content
+    updated_item = planning_service.patch(planning_id, updates)
     for coverage in updated_item.get("coverages") or []:
         coverage_id = coverage.get("coverage_id")
         assignment_id = (coverage.get("assigned_to") or {}).get("assignment_id")
         if coverage_id not in updated_coverage_ids or assignment_id is None:
             continue
 
-        _link_assignment_and_content(assignment_id, coverage_id, coverages_updated[coverage_id]["_id"])
+        _link_assignment_and_content(assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id])
 
 
 def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[str, Any]):
@@ -110,18 +147,24 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
 
 
 def _is_ingested_by_stt_planning_ml(item: Dict[str, Any]) -> bool:
-    """Determine if the item was ingested by the STTPlanningMLParser parser"""
+    """Determine if the item was ingested by the ``STTPlanningMLParser`` parser"""
 
-    ingest_provider_id = item.get("ingest_provider")
-    if item.get(ITEM_STATE) != CONTENT_STATE.INGESTED or ingest_provider_id is None:
+    try:
+        if item["ingest_provider"] is None:
+            return False
+        ingest_provider_id = ObjectId(item["ingest_provider"])
+        ingest_provider = get_resource_service("ingest_providers").find_one(req=None, _id=ingest_provider_id)
+        return ingest_provider["feed_parser"] == STTPlanningMLParser.NAME
+    except (KeyError, TypeError):
         return False
-
-    ingest_provider = get_resource_service("ingest_providers").find_one(req=None, _id=ObjectId(ingest_provider_id))
-    return ingest_provider is not None and ingest_provider.get("feed_parser") == STTPlanningMLParser.NAME
 
 
 def _get_content_item_by_uris(uris: List[str]) -> Optional[Dict[str, Any]]:
-    """Get content item(s) by uri"""
+    """Get latest content item by uri"""
+
+    if not len(uris):
+        # No URIs were provided, so there
+        return None
 
     req = ParsedRequest()
     req.args = {
@@ -158,8 +201,12 @@ def _update_coverage_assignment_details(coverage: Dict[str, Any], content: Dict[
     })
 
 
-def _link_assignment_and_content(assignment_id: ObjectId, coverage_id: str, content_id: str,
-                                 skip_archive_update: Optional[bool] = False):
+def _link_assignment_and_content(
+    assignment_id: ObjectId,
+    coverage_id: str,
+    content_id: str,
+    skip_archive_update: Optional[bool] = False
+):
     """Remove all temporary delivery entries for this coverage and link assignment and content"""
 
     get_resource_service("delivery").delete_action(lookup={"coverage_id": coverage_id})

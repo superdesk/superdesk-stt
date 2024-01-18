@@ -123,7 +123,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "uri": "urn:newsml:stt.fi:20171219:101801633",
+            "uri": "urn:newsml:stt.fi:101801633",
             "assignment_id": "__no_value__",
             "priority": 6,
             "task": {
@@ -175,7 +175,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "uri": "urn:newsml:stt.fi:20171219:101801633",
+            "uri": "urn:newsml:stt.fi:101801633",
             "assignment_id": "#assignment._id#"
         }]}
         """
@@ -243,7 +243,7 @@ Feature: Ingest STT Planning items
         Then we get list with 1 items
         """
         {"_items": [{
-            "uri": "urn:newsml:stt.fi:20171219:101801633",
+            "uri": "urn:newsml:stt.fi:101801633",
             "assignment_id": "#assignment._id#"
         }]}
         """
@@ -325,5 +325,83 @@ Feature: Ingest STT Planning items
                 "state": "killed",
                 "pubstatus": "cancelled"
             }
+        }]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers @wip
+    Scenario: Link ingested coverages to content on update
+        # Ingest Planning with 0 coverages (1 placeholder)
+        When we fetch from "STTPlanningML" ingest "planning_ml_before_link_content.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "assigned_to": "__empty__",
+                "flags": {"placeholder": true}
+            }]
+        }]}
+        """
+        When we get "/assignments"
+        Then we get list with 0 items
+        # Ingest content
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "__no_value__"
+        }]}
+        """
+        When we get "/assignments"
+        Then we get list with 0 items
+        When we fetch from "STTPlanningML" ingest "planning_ml_link_content.xml"
+        When we get "/assignments"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "planning_item": "urn:newsml:stt.fi:437036",
+            "coverage_item": "ID_TEXT_120123822",
+            "priority": 6,
+            "assigned_to": {
+                "desk": "#desks._id#",
+                "state": "completed"
+            }
+        }]}
+        """
+        Then we store "assignment" with first item
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "assigned_to": {
+                    "assignment_id": "#assignment._id#",
+                    "desk": "#desks._id#",
+                    "user": null,
+                    "state": "completed",
+                    "priority": 6
+                }
+            }],
+            "extra": {
+                "stt_topics": "437036"
+            }
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "#assignment._id#"
         }]}
         """
