@@ -330,7 +330,7 @@ Feature: Ingest STT Planning items
 
     @auth
     @stt_cvs
-    @stt_providers @wip
+    @stt_providers
     Scenario: Link ingested coverages to content on update
         # Ingest Planning with 0 coverages (1 placeholder)
         When we fetch from "STTPlanningML" ingest "planning_ml_before_link_content.xml"
