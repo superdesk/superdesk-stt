@@ -1,7 +1,9 @@
+from unittest import mock
 from tests import TestCase
 from stt.stt_planning_ml import STTPlanningMLParser
 from datetime import datetime, timedelta
 from dateutil.tz import tzoffset, tzutc
+from superdesk.tests import TestCase as CoreTestCase
 from superdesk.io.commands.update_ingest import ingest_item
 from superdesk import get_resource_service
 from bson import ObjectId
@@ -27,7 +29,7 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
 
         # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
-        self.assertEqual(len(self.item["coverages"]), 1)
+        self.assertEqual(len(self.item["coverages"]), 2)
         self.assertEqual(
             self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799"
         )
@@ -167,3 +169,84 @@ class STTPlanningMLParserTest(TestCase):
             "placeholder_urn:newsml:stt.fi:620121",
             dest["coverages"][0]["coverage_id"],
         )
+
+
+def is_placeholder_coverage(coverage):
+    try:
+        return coverage["flags"]["placeholder"] is True
+    except (KeyError, TypeError):
+        return False
+
+
+class STTPlanningMLParserPlaceholderTests(CoreTestCase):
+    @mock.patch("stt.stt_planning_ml.STTPlanningMLParser.parse_news_coverage_status")
+    def test_set_placeholder_coverage(self, mock_parse_news_coverage_status):
+        parser = STTPlanningMLParser()
+
+        item = {}
+        parser.set_placeholder_coverage(item, None)
+        self.assertEqual(len(item["coverages"]), 1)
+        self.assertTrue(item["coverages"][0]["flags"]["placeholder"])
+
+        item = {"coverages": [{"planning": {"g2_content_type": "picture"}}]}
+        parser.set_placeholder_coverage(item, None)
+        self.assertEqual(len(item["coverages"]), 2)
+        self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
+        self.assertTrue(is_placeholder_coverage(item["coverages"][1]))
+
+        item = {"coverages": [
+            {"planning": {"g2_content_type": "text"}},
+            {"planning": {"g2_content_type": "picture"}},
+        ]}
+        parser.set_placeholder_coverage(item, None)
+        self.assertEqual(len(item["coverages"]), 2)
+        self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
+        self.assertFalse(is_placeholder_coverage(item["coverages"][1]))
+
+    @mock.patch("stt.stt_planning_ml.STTPlanningMLParser.parse_news_coverage_status")
+    def test_check_coverage_removes_placeholder(self, mock_parse_news_coverage_status):
+        parser = STTPlanningMLParser()
+
+        original = {"coverages": [
+            {
+                "coverage_id": "placeholder_cov",
+                "planning": {"g2_content_type": "text"},
+                "flags": {"placeholder": True},
+            },
+        ]}
+        updates = {"coverages": [
+            {
+                "coverage_id": "text_cov_1",
+                "planning": {"g2_content_type": "text"}
+            },
+        ]}
+        parser.check_coverage(original, updates, None)
+        self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
+        self.assertEqual(updates["coverages"][0]["coverage_id"], "text_cov_1")
+
+        original = {"coverages": [
+            {
+                "coverage_id": "pic_cov_1",
+                "planning": {"g2_content_type": "picture"}
+            },
+            {
+                "coverage_id": "placeholder_cov",
+                "planning": {"g2_content_type": "text"},
+                "flags": {"placeholder": True},
+            },
+        ]}
+        updates = {"coverages": [
+            {
+                "coverage_id": "pic_cov_1",
+                "planning": {"g2_content_type": "picture"}
+            },
+            {
+                "coverage_id": "text_cov_1",
+                "planning": {"g2_content_type": "text"}
+            },
+        ]}
+        parser.check_coverage(original, updates, None)
+        self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
+        self.assertFalse(is_placeholder_coverage(updates["coverages"][1]))
+        self.assertEqual(updates["coverages"][0]["coverage_id"], "pic_cov_1")
+        self.assertEqual(updates["coverages"][1]["coverage_id"], "text_cov_1")
