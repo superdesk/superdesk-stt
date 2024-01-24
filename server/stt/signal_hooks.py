@@ -40,7 +40,7 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
             # There is only 1 coverage, and it is a placeholder coverage, no need to continue
             return
     except (KeyError, IndexError, TypeError):
-        return
+        pass
 
     if not _is_ingested_by_stt_planning_ml(item):
         return
