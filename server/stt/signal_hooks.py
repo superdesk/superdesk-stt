@@ -60,6 +60,9 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
             if coverage["flags"]["placeholder"] is True:
                 # This is a placeholder coverage, and will never be attached to content
                 continue
+            elif coverage["assigned_to"]["assignment_id"] is not None:
+                # This coverage is already linked to an Assignment, no need to continue
+                continue
         except (KeyError, TypeError):
             pass
 
@@ -90,14 +93,30 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
         return
 
     # Update the planning item with the latest Assignment information, and link the coverages to the content
-    updated_item = planning_service.patch(planning_id, updates)
+    try:
+        updated_item = planning_service.patch(planning_id, updates)
+    except Exception as err:
+        logger.exception(err)
+        logger.error("Failed to update planning with newly linked coverages")
+        return
+
     for coverage in updated_item.get("coverages") or []:
-        coverage_id = coverage.get("coverage_id")
-        assignment_id = (coverage.get("assigned_to") or {}).get("assignment_id")
-        if coverage_id not in updated_coverage_ids or assignment_id is None:
+        try:
+            coverage_id = coverage["coverage_id"]
+            assignment_id = coverage["assigned_to"]["assignment_id"]
+        except (KeyError, TypeError):
+            # Either ``coverage_id`` or ``assignment_id`` is not defined
             continue
 
-        _link_assignment_and_content(assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id])
+        if assignment_id is None:
+            # This coverage has no Assignment, no need to link to content
+            continue
+
+        try:
+            _link_assignment_and_content(assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id])
+        except Exception as err:
+            logger.exception(err)
+            logger.error("Failed to link coverage assignment to content")
 
 
 def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[str, Any]):
@@ -132,7 +151,13 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
             continue
         _update_coverage_assignment_details(coverage, item)
 
-    updated_planning = planning_service.patch(planning_id, planning_updates)
+    try:
+        updated_planning = planning_service.patch(planning_id, planning_updates)
+    except Exception as err:
+        logger.exception(err)
+        logger.error("Failed to update planning with newly linked coverages")
+        return
+
     assignment_id = next(
         (coverage for coverage in updated_planning.get("coverages", []) if coverage.get("coverage_id") == coverage_id),
         {}
@@ -141,7 +166,13 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
         logger.warning(f"Failed to get 'assignment_id' of coverage '{coverage_id}'")
         return
 
-    _link_assignment_and_content(assignment_id, coverage_id, item.get("guid"), True)
+    try:
+        _link_assignment_and_content(assignment_id, coverage_id, item.get("guid"), True)
+    except Exception as err:
+        logger.exception(err)
+        logger.error("Failed to link coverage assignment to content")
+        return
+
     item["assignment_id"] = assignment_id
     updates["assignment_id"] = assignment_id
 
@@ -166,19 +197,23 @@ def _get_content_item_by_uris(uris: List[str]) -> Optional[Dict[str, Any]]:
         # No URIs were provided, so there
         return None
 
-    req = ParsedRequest()
-    req.args = {
-        "source": json.dumps({
-            "query": {"bool": {"must": [{"terms": {"uri": uris}}]}},
-            "sort": [{"rewrite_sequence": "asc"}],
-            "size": 1
-        }),
-        "repo": "archive,published,archived",
-    }
-    cursor = get_resource_service("search").get(req=req, lookup=None)
+    try:
+        req = ParsedRequest()
+        req.args = {
+            "source": json.dumps({
+                "query": {"bool": {"must": [{"terms": {"uri": uris}}]}},
+                "sort": [{"rewrite_sequence": "asc"}],
+                "size": 1
+            }),
+            "repo": "archive,published,archived",
+        }
+        cursor = get_resource_service("search").get(req=req, lookup=None)
 
-    if cursor.count():
-        return cursor[0]
+        if cursor.count():
+            return cursor[0]
+    except Exception as err:
+        logger.exception(err)
+        logger.error("Failed to retrieve list of content based on URIs")
 
     return None
 
@@ -194,7 +229,7 @@ def _update_coverage_assignment_details(coverage: Dict[str, Any], content: Dict[
             ASSIGNMENT_WORKFLOW_STATE.COMPLETED if content.get("pubstatus") is not None
             else ASSIGNMENT_WORKFLOW_STATE.IN_PROGRESS
         ),
-        "priority": content.get("priority", 2),
+        "priority": content.get("priority") or coverage["assigned_to"].get("priority") or 2,
         "user": content["task"]["user"],
         "assignor_desk": content["task"]["user"],
         "assignor_user": content["task"]["user"],
