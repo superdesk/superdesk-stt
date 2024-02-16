@@ -7,8 +7,10 @@ from flask import json
 
 from superdesk import get_resource_service, signals
 from superdesk.factory.app import SuperdeskEve
+from superdesk.metadata.utils import generate_guid
+from superdesk.metadata.item import GUID_NEWSML
 
-from planning.common import WORKFLOW_STATE, ASSIGNMENT_WORKFLOW_STATE
+from planning.common import WORKFLOW_STATE, ASSIGNMENT_WORKFLOW_STATE, get_coverage_status_from_cv
 from planning.signals import planning_ingested
 
 from stt.stt_planning_ml import STTPlanningMLParser
@@ -134,22 +136,72 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
         "item_id": item.get("uri"),
         "assignment_id": None
     })
-    if not deliveries.count():
-        # No ``delivery`` entries found without an Assignment
-        return
 
-    planning_id = deliveries[0].get("planning_id")
-    coverage_id = deliveries[0].get("coverage_id")
+    if deliveries.count():
+        planning_id = deliveries[0].get("planning_id")
+        coverage_id = deliveries[0].get("coverage_id")
+    else:
+        try:
+            topic_id = item["extra"]["stt_topics"]
+        except (KeyError, TypeError):
+            return
+
+        if not topic_id:
+            # A Topic ID was not found, unable to automatically create a coverage
+            return
+
+        planning_id = f"urn:newsml:stt.fi:{topic_id}"
+        coverage_id = None
+
     planning = planning_service.find_one(req=None, _id=planning_id)
     if not planning:
         logger.warning(f"Failed to link content to coverage: planning item '{planning_id}' not found")
         return
 
     planning_updates = {"coverages": deepcopy(planning.get("coverages") or [])}
-    for coverage in planning_updates["coverages"]:
-        if coverage.get("coverage_id") != coverage_id:
-            continue
+    if coverage_id is not None:
+        coverage = next(
+            (
+                coverage
+                for coverage in planning_updates["coverages"]
+                if coverage.get("coverage_id") == coverage_id
+            ),
+            None
+        )
+        if coverage is None:
+            logger.warning(f"Failed to find coverage '{coverage_id}' in planning item '{planning_id}'")
+            return
+
         _update_coverage_assignment_details(coverage, item)
+    else:
+        # Set the metadata for the new coverage
+        try:
+            content_id = item["uri"].split(":")[-1]
+            coverage_id = f"ID_TEXT_{content_id}"
+        except (KeyError, AttributeError, IndexError, TypeError):
+            # Unable to determine the ID for the item
+            # Create a new CoverageID
+            coverage_id = generate_guid(type=GUID_NEWSML)
+        new_coverage = {
+            "coverage_id": coverage_id,
+            "planning": {
+                "g2_content_type": "text",
+                "scheduled": item.get("firstpublished") or item.get("versioncreated"),
+            },
+            "news_coverage_status": get_coverage_status_from_cv("ncostat:int"),
+            "flags": {},
+        }
+        for field in ["genre", "headline", "language", "slugline", "subject"]:
+            if item.get(field):
+                new_coverage["planning"][field] = item[field]
+        _update_coverage_assignment_details(new_coverage, item)
+
+        # Remove placeholder text coverage and add the new one
+        planning_updates["coverages"] = [
+            coverage
+            for coverage in planning_updates["coverages"]
+            if not (coverage.get("flags") or {}).get("placeholder")
+        ] + [new_coverage]
 
     try:
         updated_planning = planning_service.patch(planning_id, planning_updates)
