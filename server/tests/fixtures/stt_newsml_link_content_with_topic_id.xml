@@ -26,6 +26,7 @@
 <name>STT</name>
 </infoSource>
 <altId environment="sttcounter:daily" type="sttidtype:runningnumber">stt 107</altId>
+<subject literal="Related topic id" qcode="stt-topics:437036" type="cpnat:abstract"/>
 <subject qcode="sttdepartment:9" type="cpnat:abstract">
 <name>Politics</name>
 </subject>

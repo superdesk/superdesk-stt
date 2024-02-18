@@ -130,9 +130,6 @@ Feature: Ingest STT Planning items
                 "desk": "#desks._id#",
                 "stage": "#desks.incoming_stage#",
                 "user": null
-            },
-            "extra": {
-                "stt_topics": "437036"
             }
         }]}
         """
@@ -403,5 +400,87 @@ Feature: Ingest STT Planning items
         {"_items": [{
             "uri": "urn:newsml:stt.fi:101801633",
             "assignment_id": "#assignment._id#"
+        }]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Creates new coverage on content ingest
+        # Ingest Planning with 0 coverages (1 placeholder)
+        When we fetch from "STTPlanningML" ingest "planning_ml_before_link_content.xml"
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "assigned_to": "__empty__",
+                "flags": {"placeholder": true}
+            }]
+        }]}
+        """
+        When we get "/assignments"
+        Then we get list with 0 items
+        # Ingest content
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content_with_topic_id.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "/assignments"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "planning_item": "urn:newsml:stt.fi:437036",
+            "coverage_item": "ID_TEXT_101801633",
+            "priority": 6,
+            "assigned_to": {
+                "desk": "#desks._id#",
+                "state": "completed"
+            }
+        }]}
+        """
+        Then we store "assignment" with first item
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "#assignment._id#"
+        }]}
+        """
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_101801633",
+                "assigned_to": {
+                    "assignment_id": "#assignment._id#",
+                    "desk": "#desks._id#",
+                    "user": null,
+                    "state": "completed",
+                    "priority": 6
+                },
+                "news_coverage_status": {"qcode": "ncostat:int", "name": "coverage intended"},
+                "workflow_status": "active",
+                "flags": {"placeholder": "__no_value__"},
+                "planning": {
+                    "g2_content_type": "text",
+                    "scheduled": "2017-12-25T09:16:43+0000",
+                    "headline": "Parliament passed the Alcohol Act and the government gained confidence*** TRANSLATED ***",
+                    "genre": [{"name": "P\u00e4\u00e4juttu", "qcode": "1"}],
+                    "subject": [
+                        {"name": "Politics", "qcode": "9", "scheme": "sttdepartment"},
+                        {"name": "Pika+", "qcode": "1", "scheme": "sttversion"},
+                        {"name": "Suomi", "qcode": "1", "scheme": "country"},
+                        {"name": "Eurooppa", "qcode": "150", "scheme": "world_region"}
+                    ]
+                }
+            }],
+            "extra": {
+                "stt_topics": "437036"
+            }
         }]}
         """
