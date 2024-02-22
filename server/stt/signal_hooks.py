@@ -8,7 +8,7 @@ from flask import json
 from superdesk import get_resource_service, signals
 from superdesk.factory.app import SuperdeskEve
 from superdesk.metadata.utils import generate_guid
-from superdesk.metadata.item import GUID_NEWSML
+from superdesk.metadata.item import GUID_NEWSML, CONTENT_STATE
 
 from planning.common import WORKFLOW_STATE, ASSIGNMENT_WORKFLOW_STATE, get_coverage_status_from_cv
 from planning.signals import planning_ingested
@@ -301,4 +301,5 @@ def _link_assignment_and_content(
         "assignment_id": assignment_id,
         "item_id": content_id,
         "skip_archive_update": skip_archive_update,
+        "item_state": CONTENT_STATE.PUBLISHED,
     }])
