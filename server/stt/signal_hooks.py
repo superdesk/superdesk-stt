@@ -191,9 +191,15 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
             "news_coverage_status": get_coverage_status_from_cv("ncostat:int"),
             "flags": {},
         }
-        for field in ["genre", "headline", "language", "slugline", "subject"]:
+        for field in ["genre", "language", "subject"]:
             if item.get(field):
                 new_coverage["planning"][field] = item[field]
+
+        if item.get("slugline", "").strip():
+            new_coverage["planning"]["slugline"] = item["slugline"].strip()
+        elif item.get("headline", "").strip():
+            new_coverage["planning"]["slugline"] = item["headline"].strip()
+
         _update_coverage_assignment_details(new_coverage, item)
 
         # Remove placeholder text coverage and add the new one
