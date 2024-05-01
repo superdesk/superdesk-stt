@@ -86,6 +86,7 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
             # Linking will occur when content is published (see ``before_content_published``)
             continue
 
+        _copy_metadata_from_article_to_coverage(coverage, content)
         _update_coverage_assignment_details(coverage, content)
         coverage_id_to_content_id_map[coverage_id] = content[config.ID_FIELD]
 
@@ -172,6 +173,7 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
             logger.warning(f"Failed to find coverage '{coverage_id}' in planning item '{planning_id}'")
             return
 
+        _copy_metadata_from_article_to_coverage(coverage, item)
         _update_coverage_assignment_details(coverage, item)
     else:
         # Set the metadata for the new coverage
@@ -184,22 +186,11 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
             coverage_id = generate_guid(type=GUID_NEWSML)
         new_coverage = {
             "coverage_id": coverage_id,
-            "planning": {
-                "g2_content_type": "text",
-                "scheduled": item.get("firstpublished") or item.get("versioncreated"),
-            },
+            "planning": {"g2_content_type": "text"},
             "news_coverage_status": get_coverage_status_from_cv("ncostat:int"),
             "flags": {},
         }
-        for field in ["genre", "language", "subject"]:
-            if item.get(field):
-                new_coverage["planning"][field] = item[field]
-
-        if item.get("slugline", "").strip():
-            new_coverage["planning"]["slugline"] = item["slugline"].strip()
-        elif item.get("headline", "").strip():
-            new_coverage["planning"]["slugline"] = item["headline"].strip()
-
+        _copy_metadata_from_article_to_coverage(new_coverage, item)
         _update_coverage_assignment_details(new_coverage, item)
 
         # Remove placeholder text coverage and add the new one
@@ -292,6 +283,20 @@ def _update_coverage_assignment_details(coverage: Dict[str, Any], content: Dict[
         "assignor_desk": content["task"]["user"],
         "assignor_user": content["task"]["user"],
     })
+
+
+def _copy_metadata_from_article_to_coverage(coverage: Dict[str, Any], content: Dict[str, Any]):
+    coverage.setdefault("planning", {})
+    coverage["planning"]["scheduled"] = content.get("firstpublished") or content.get("versioncreated")
+
+    for field in ["genre", "language", "subject"]:
+        if content.get(field):
+            coverage["planning"][field] = content[field]
+
+    if content.get("slugline", "").strip():
+        coverage["planning"]["slugline"] = content["slugline"].strip()
+    elif content.get("headline", "").strip():
+        coverage["planning"]["slugline"] = content["headline"].strip()
 
 
 def _link_assignment_and_content(
