@@ -14,6 +14,7 @@ from planning.common import WORKFLOW_STATE, ASSIGNMENT_WORKFLOW_STATE, get_cover
 from planning.signals import planning_ingested
 
 from stt.stt_planning_ml import STTPlanningMLParser
+from stt.common import is_online_version
 
 
 logger = logging.getLogger(__name__)
@@ -126,6 +127,12 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
 
     if item.get("assignment_id") is not None:
         # This item is already linked to a coverage
+        # no need to continue
+        return
+
+    if is_online_version(item):
+        # This article has an STTVersion of Nettiuutiset (Online News)
+        # and no coverage is to be created or attached to this content
         # no need to continue
         return
 
