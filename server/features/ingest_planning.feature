@@ -328,84 +328,6 @@ Feature: Ingest STT Planning items
     @auth
     @stt_cvs
     @stt_providers
-    Scenario: Link ingested coverages to content on update
-        # Ingest Planning with 0 coverages (1 placeholder)
-        When we fetch from "STTPlanningML" ingest "planning_ml_before_link_content.xml"
-        When we get "/planning"
-        Then we get list with 1 items
-        """
-        {"_items": [{
-            "_id": "urn:newsml:stt.fi:437036",
-            "coverages": [{
-                "assigned_to": "__empty__",
-                "flags": {"placeholder": true}
-            }]
-        }]}
-        """
-        When we get "/assignments"
-        Then we get list with 0 items
-        # Ingest content
-        When we fetch from "STTNewsML" ingest "stt_newsml_link_content.xml" using routing_scheme
-        """
-        #routing_schemes._id#
-        """
-        When we get "published"
-        Then we get list with 1 items
-        """
-        {"_items": [{
-            "uri": "urn:newsml:stt.fi:101801633",
-            "assignment_id": "__no_value__"
-        }]}
-        """
-        When we get "/assignments"
-        Then we get list with 0 items
-        When we fetch from "STTPlanningML" ingest "planning_ml_link_content.xml"
-        When we get "/assignments"
-        Then we get list with 1 items
-        """
-        {"_items": [{
-            "planning_item": "urn:newsml:stt.fi:437036",
-            "coverage_item": "ID_TEXT_120123822",
-            "priority": 6,
-            "assigned_to": {
-                "desk": "#desks._id#",
-                "state": "completed"
-            }
-        }]}
-        """
-        Then we store "assignment" with first item
-        When we get "/planning"
-        Then we get list with 1 items
-        """
-        {"_items": [{
-            "_id": "urn:newsml:stt.fi:437036",
-            "coverages": [{
-                "coverage_id": "ID_TEXT_120123822",
-                "assigned_to": {
-                    "assignment_id": "#assignment._id#",
-                    "desk": "#desks._id#",
-                    "user": null,
-                    "state": "completed",
-                    "priority": 6
-                }
-            }],
-            "extra": {
-                "stt_topics": "437036"
-            }
-        }]}
-        """
-        When we get "published"
-        Then we get list with 1 items
-        """
-        {"_items": [{
-            "uri": "urn:newsml:stt.fi:101801633",
-            "assignment_id": "#assignment._id#"
-        }]}
-        """
-
-    @auth
-    @stt_cvs
-    @stt_providers
     Scenario: Creates new coverage on content ingest
         # Ingest Planning with 0 coverages (1 placeholder)
         When we fetch from "STTPlanningML" ingest "planning_ml_before_link_content.xml"
@@ -432,7 +354,7 @@ Feature: Ingest STT Planning items
         """
         {"_items": [{
             "planning_item": "urn:newsml:stt.fi:437036",
-            "coverage_item": "ID_TEXT_101801633",
+            "coverage_item": "ID_TEXT_120123822",
             "priority": 6,
             "assigned_to": {
                 "desk": "#desks._id#",
@@ -455,7 +377,7 @@ Feature: Ingest STT Planning items
         {"_items": [{
             "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
-                "coverage_id": "ID_TEXT_101801633",
+                "coverage_id": "ID_TEXT_120123822",
                 "assigned_to": {
                     "assignment_id": "#assignment._id#",
                     "desk": "#desks._id#",
@@ -483,4 +405,93 @@ Feature: Ingest STT Planning items
                 "stt_topics": "437036"
             }
         }]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Groups content to a single coverage based on STT Article ID
+        When we fetch from "STTPlanningML" ingest "planning_ml_link_content.xml"
+        When we get "/assignments"
+        Then we get list with 0 items
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{"coverage_id": "ID_TEXT_120123822"}]
+        }]}
+        """
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "/assignments"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "planning_item": "urn:newsml:stt.fi:437036",
+            "coverage_item": "ID_TEXT_120123822"
+        }]}
+        """
+        Then we store "assignment_1" with first item
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "assigned_to": {"assignment_id": "#assignment_1._id#"}
+            }]
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "#assignment_1._id#"
+        }]}
+        """
+        And we store "content_1" with first item
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content_2.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "published"
+        Then we get list with 2 items
+        And we store "content_1" with 1 item
+        And we store "content_2" with 2 item
+        When we get "/assignments"
+        Then we get list with 2 items
+        """
+        {"_items": [
+            {
+                "planning_item": "urn:newsml:stt.fi:437036",
+                "coverage_item": "ID_TEXT_120123822",
+                "item_ids": ["#content_1.guid#"]
+            },
+            {
+                "planning_item": "urn:newsml:stt.fi:437036",
+                "coverage_item": "ID_TEXT_120123822",
+                "item_ids": ["#content_2.guid#"]
+            }
+        ]}
+        """
+        And we store "assignment_1" with 1 item
+        And we store "assignment_2" with 2 item
+        When we get "published"
+        Then we get list with 2 items
+        """
+        {"_items": [
+            {
+                "uri": "urn:newsml:stt.fi:101801633",
+                "assignment_id": "#assignment_1._id#"
+            },
+            {
+                "uri": "urn:newsml:stt.fi:101801733",
+                "assignment_id": "#assignment_2._id#"
+            }
+        ]}
         """
