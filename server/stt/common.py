@@ -53,3 +53,13 @@ def remove_date_portion_from_id(item_id: str) -> str:
 
 def original_item_exists(resource: str, item_id: str) -> bool:
     return get_resource_service(resource).find_one(req=None, _id=item_id) is not None
+
+
+def is_online_version(item: Dict[str, Any]) -> bool:
+    return next(
+        (
+            subject for subject in (item.get("subject") or [])
+            if subject.get("scheme") == "sttversion" and subject.get("qcode") == "6"
+        ),
+        None
+    ) is not None
