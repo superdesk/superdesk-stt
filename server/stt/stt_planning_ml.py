@@ -158,6 +158,7 @@ class STTPlanningMLParser(PlanningMLParser):
                         "planning_id": planning_id,
                         "coverage_id": coverage_id,
                         "item_id": content_uri,
+                        "assignment_id": None,
                     }
                 )
 
