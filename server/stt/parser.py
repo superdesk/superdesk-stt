@@ -77,9 +77,10 @@ class STTParser(STTNewsMLFeedParser):
 
         # newsItem altId
         try:
-            alt_id = xml.find(self.qname('contentMeta')).find(self.qname('altId')).text
-            if alt_id:
-                item.setdefault('extra', {})['sttidtype_textid'] = alt_id
+            for alt_id in xml.find(self.qname('contentMeta')).findall(self.qname('altId')):
+                if alt_id.get("type") == "sttidtype:textid" and alt_id.text:
+                    # textid is STT's Article ID
+                    item.setdefault('extra', {})['sttidtype_textid'] = alt_id.text
         except AttributeError:
             pass
 
