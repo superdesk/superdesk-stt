@@ -32,5 +32,6 @@ module.exports = function(grunt) {
             planning: true,
             assignments: true,
         },
+        planning_default_view: 'PLANNING',
     };
 };

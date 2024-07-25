@@ -94,3 +94,5 @@ INSTALLED_APPS = [
 
 HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em',
                        'strong', 'i', 'b', 'a', 'pre')
+
+PLANNING_EVENT_LINK_METHOD = "many_secondary"
