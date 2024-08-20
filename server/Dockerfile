@@ -12,6 +12,8 @@ pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl \
 libjpeg-dev zlib1g-dev \
 # magic
 libmagic-dev \
+# windowns
+dos2unix \
 && rm -rf /var/lib/apt/lists/* 
 
 # setup venv
@@ -33,6 +35,8 @@ ENV CELERYBEAT_SCHEDULE_FILENAME=/tmp/celerybeatschedule.db
 ENV TZ=Europe/Prague
 
 COPY . .
+
+RUN dos2unix /opt/superdesk/docker/start.sh
 
 ENTRYPOINT [ "/opt/superdesk/docker/start.sh" ]
 CMD ["honcho", "start"]
