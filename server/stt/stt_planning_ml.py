@@ -1,6 +1,8 @@
 from typing import Dict, Any, Optional, Set
 from xml.etree.ElementTree import Element
 from eve.utils import config
+from datetime import datetime
+import pytz
 
 from superdesk import get_resource_service
 from superdesk.utc import local_to_utc
@@ -46,6 +48,16 @@ class STTPlanningMLParser(PlanningMLParser):
 
     def datetime(self, value: str):
         """When there is no timezone info, assume it's Helsinki timezone."""
+
+        # First check if the value provided is a date only
+        # And store the date/time as midnight in UTC
+        try:
+            date_value = datetime.strptime(value, "%Y-%m-%d")
+            return date_value.replace(tzinfo=pytz.utc)
+        except ValueError:
+            pass
+
+        # Value provides more than date, try other formats
         parsed = super().datetime(value)
         if "+" not in value:
             return local_to_utc(TIMEZONE, parsed)

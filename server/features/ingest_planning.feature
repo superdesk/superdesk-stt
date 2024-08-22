@@ -63,7 +63,7 @@ Feature: Ingest STT Planning items
             "ingest_provider": "#providers.sttplanningml#",
             "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
             "name": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
-            "planning_date": "2022-03-29T21:00:00+0000",
+            "planning_date": "2022-03-30T00:00:00+0000",
             "source": "stt",
             "state": "ingested",
             "subject": [{
@@ -83,7 +83,7 @@ Feature: Ingest STT Planning items
                 "planning": {
                     "g2_content_type": "text",
                     "slugline": "UKRAINA // Y\u00f6n seurantaa",
-                    "scheduled": "2022-03-29T21:00:00+0000",
+                    "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttgenre:1",
                         "name": "P\u00e4\u00e4juttu"
@@ -101,7 +101,7 @@ Feature: Ingest STT Planning items
                 "planning": {
                     "g2_content_type": "picture",
                     "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
-                    "scheduled": "2022-03-29T21:00:00+0000",
+                    "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttimage:27",
                         "name": "Kv. kuvaa"

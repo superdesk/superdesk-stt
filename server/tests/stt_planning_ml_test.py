@@ -74,7 +74,7 @@ class STTPlanningMLParserTest(TestCase):
                 "planning": {
                     "slugline": "",
                     "g2_content_type": "text",
-                    "scheduled": datetime(2023, 5, 28, 21, 0, tzinfo=tzutc()),
+                    "scheduled": datetime(2023, 5, 29, 0, 0, tzinfo=tzutc()),
                 },
                 "flags": {"placeholder": True},
                 "news_coverage_status": {
