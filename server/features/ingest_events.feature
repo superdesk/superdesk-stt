@@ -18,7 +18,7 @@ Feature: Ingest STT Event Items
         """
         {"_items": [{
             "guid": "urn:newsml:stt.fi:259431",
-            "state": "spiked"
+            "state": "killed"
         }]}
         """
 
@@ -35,12 +35,12 @@ Feature: Ingest STT Event Items
             "state": "ingested"
         }]}
         """
-        When we post to "/events/post"
+        When we patch "/events/urn:newsml:stt.fi:259431"
         """
         {
-            "event": "urn:newsml:stt.fi:259431",
-            "etag": "#events._etag#",
-            "pubstatus": "usable"
+            "pubstatus": "usable",
+            "state": "scheduled",
+            "update_method": "single"
         }
         """
         Then we get OK response
