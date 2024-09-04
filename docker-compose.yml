@@ -6,7 +6,7 @@ services:
     networks:
       - superdesk
     ports:
-      - "27017:27017"
+      - "27017:27018"
 
   redis:
     image: redis:alpine
