@@ -16,7 +16,6 @@ class STTPlanningMLParserTest(TestCase):
 
     def test_stt_metadata(self):
         # Extra metadata
-        self.assertEqual(self.item["extra"]["stt_events"], "259431")
         self.assertEqual(self.item["extra"]["stt_topics"], "584717")
 
         # Subjects (only ``sttdepartment`` found in provided xml files)
@@ -25,8 +24,8 @@ class STTPlanningMLParserTest(TestCase):
             self.item["subject"],
         )
 
-        # Associated Event ID
-        self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
+        # Associated Event is missing
+        assert "event_item" not in self.item
 
         # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
         self.assertEqual(len(self.item["coverages"]), 2)
@@ -43,6 +42,12 @@ class STTPlanningMLParserTest(TestCase):
             },
             self.item["subject"],
         )
+
+    def test_event_link(self):
+        self.app.data.insert("events", [{"_id": "urn:newsml:stt.fi:259431"}])
+        self.parse_source_content()
+        self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
+        self.assertEqual(self.item["extra"]["stt_events"], "259431")
 
     def test_placeholder_coverage(self):
         # Case 1 : If Ingest Item does not contain any Coverage

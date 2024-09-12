@@ -1,8 +1,10 @@
+import pytz
+import logging
+
 from typing import Dict, Any, Optional, Set
 from xml.etree.ElementTree import Element
 from eve.utils import config
 from datetime import datetime
-import pytz
 
 from superdesk import get_resource_service
 from superdesk.utc import local_to_utc
@@ -16,6 +18,12 @@ from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_o
     remove_date_portion_from_id, original_item_exists
 
 TIMEZONE = "Europe/Helsinki"
+
+logger = logging.getLogger(__name__)
+
+
+class EventNotFound(Exception):
+    pass
 
 
 class STTPlanningMLParser(PlanningMLParser):
@@ -76,7 +84,10 @@ class STTPlanningMLParser(PlanningMLParser):
             self.set_urgency(content_meta, item)
 
     def get_coverage_details(self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]):
-        event_id = self._get_linked_event_id(news_coverage_elt)
+        try:
+            event_id = self._get_linked_event_id(news_coverage_elt)
+        except EventNotFound:
+            return None
         if event_id is not None:
             # This entry is an Event and not an actual coverage
             if not item.get("event_item"):
@@ -96,8 +107,13 @@ class STTPlanningMLParser(PlanningMLParser):
         for subject_item in planning.findall(self.qname("subject")):
             qcode = subject_item.get("qcode")
             if qcode and subject_item.get("type") == "cpnat:event":
-                return qcode if original_item_exists("events", qcode) else remove_date_portion_from_id(qcode)
-
+                if original_item_exists("events", qcode):
+                    return qcode
+                short_qcode = remove_date_portion_from_id(qcode)
+                if original_item_exists("events", short_qcode):
+                    return short_qcode
+                logger.warning("Linked event not found", extra={"event": qcode})
+                raise EventNotFound()
         return None
 
     def _create_temp_assignment_deliveries(
