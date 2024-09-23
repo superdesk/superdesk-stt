@@ -22,6 +22,7 @@ NS = {
 }
 
 
+
 def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Attempt to find existing media contact using email, falling back to first_name/last_name combo"""
 
