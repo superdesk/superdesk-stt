@@ -22,7 +22,6 @@ NS = {
 }
 
 
-
 def search_existing_contacts(contact: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Attempt to find existing media contact using email, falling back to first_name/last_name combo"""
 
@@ -230,7 +229,7 @@ class STTEventsMLParser(EventsMLParser):
             last_name = contact_info.find(self.qname("lastname", ns=NS["stt"]))
             job_title = contact_info.find(self.qname("title", ns=NS["stt"]))
             phone = contact_info.find(self.qname("phone"))
-            organization = contact_info.find(self.qname("organization", ns=NS["stt"])) 
+            organization = contact_info.find(self.qname("organization", ns=NS["stt"]))
             email = contact_info.find(self.qname("email"))
             web = contact_info.find(self.qname("web"))
 
@@ -245,8 +244,8 @@ class STTEventsMLParser(EventsMLParser):
                 contact["last_name"] = last_name.text
             if job_title is not None and job_title.text:
                 contact["job_title"] = job_title.text
-            if organization is not None and organization.text: 
-                contact["organisation"] = organization.text    
+            if organization is not None and organization.text:
+                contact["organisation"] = organization.text
             if phone is not None and phone.text:
                 contact["contact_phone"] = [{
                     "number": phone.text,
