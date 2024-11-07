@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, Union
 import logging
 from copy import deepcopy
 
@@ -77,10 +77,7 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
             # No coverages on this Planning item, no need to continue
             return
 
-        coverage_ids: List[str] = []
         for coverage in coverages:
-            coverage_ids.append(coverage["coverage_id"])
-
             # Remove assignee information and set state to DRAFT
             coverage.pop("assigned_to", None)
             coverage["workflow_status"] = WORKFLOW_STATE.DRAFT
@@ -101,7 +98,7 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
                 update_assignment_on_link_unlink(None, content_item)
 
         # Delete all delivery entries for this Planning item
-        delivery_service.delete_action(lookup={"coverage_id": {"$in": coverage_ids}})
+        delivery_service.delete_action(lookup={"planning_id": item_id})
 
         # Delete all assignments for this Planning item directly
         # Note: skips ``on_delete`` and ``on_deleted`` hooks, due to validation issues
