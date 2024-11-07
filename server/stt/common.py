@@ -35,7 +35,6 @@ def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
         unlink_item_from_all_content(original)
     except Exception:
         logger.exception("Failed to unlink content from item", extra={"item_id": item["guid"]})
-        return
 
     if not original.get("pubstatus") and original.get(ITEM_STATE) in [
         WORKFLOW_STATE.INGESTED,
