@@ -108,7 +108,7 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
         get_resource_service("assignments").delete(lookup={"planning_item": item_id})
 
         # Update the Planning item, to update its coverage assignee and workflow_status
-        planning_service.system_update(item_id, {"coverages": coverages})
+        planning_service.system_update(item_id, {"coverages": coverages}, item)
 
 
 def remove_date_portion_from_id(item_id: str) -> str:
