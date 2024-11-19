@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<planningItem
+    xmlns="http://iptc.org/std/nar/2006-10-01/"
+    xmlns:stt="http://www.stt-lehtikuva.fi/NewsML"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd"
+    guid="urn:newsml:stt.fi:20220330:437036"
+    version="2"
+    standard="NewsML-G2"
+    standardversion="2.12"
+    conformance="power"
+    xml:lang="fi"
+>
+    <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
+    <catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
+    <itemMeta>
+        <itemClass qcode="plinat:newscoverage"/>
+        <provider literal="STT"/>
+        <versionCreated>2022-03-22T14:54:59+02:00</versionCreated>
+        <pubStatus qcode="stat:usable"/>
+        <edNote role="sttdescription:additionalinfo">Miten taistelut etenevät? Millaisia kansainvälisiä reaktioita syntyy? Entä miten tilanne Venäjällä elää? Seuraamme päivän tapahtumia ja tarkennamme paketointia.</edNote>
+    </itemMeta>
+    <contentMeta>
+        <contentCreated>2022-03-22T14:54:59+02:00</contentCreated>
+        <contentModified>2022-03-22T14:54:59+02:00</contentModified>
+        <headline>Miten tilanne Ukrainan sodan ympärillä ja Ukrainassa kehittyy?</headline>
+        <description role="drol:summary"/>
+        <subject qcode="stt-topics:437036">
+            <related rel="sttrel:assigneddate" value="2022-03-30" valuedatatype="Date"/>
+        </subject>
+        <subject type="cpnat:department" qcode="sttdepartment:14">
+            <name>Ulkomaat</name>
+        </subject>
+    </contentMeta>
+    <assert qcode="stt-topics:437036">
+        <newsCoverageStatus qcode="ncostat:int"/>
+    </assert>
+    <newsCoverageSet>
+        <newsCoverage id="ID_EVENT_259431" modified="2022-03-30T09:25:05+02:00">
+            <planning>
+                <g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+                <itemClass qcode="ninat:text"/>
+                <headline>SDP:n puoluevaltuuston kokous</headline>
+                <description>Puoluevaltuuston kokouksen avaa klo 13.00 puoluevaltuuston puheenjohtaja, kuntaministeri Sirpa Paatero. Poliittisen tilannekatsauksen pitää SDP:n puheenjohtaja, pääministeri Sanna Marin. Tämän jälkeen kokous jatkuu suljettuna.</description>
+                <subject type="cpnat:event" qcode="urn:newsml:stt.fi:20220402:259431">
+                    <name>SDP:n puoluevaltuuston kokous</name>
+                </subject>
+            </planning>
+        </newsCoverage>
+        <newsCoverage id="ID_TEXT_120123822">
+            <planning>
+                <g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+                <itemClass qcode="ninat:text"/>
+                <headline>UKRAINA // Yön seurantaa</headline>
+                <description/>
+                <subject qcode="stt-topics:437036" type="cpnat:abstract"/>
+                <genre qcode="sttgenre:1">
+                    <name>Pääjuttu</name>
+                    <narrower qcode="sttversion:3"/>
+                    <narrower qcode="sttversion:4"/>
+                    <narrower qcode="sttversion:6"/>
+                    <narrower qcode="sttversion:7"/>
+                    <related rel="sttrel:plannedlength" value="3150"/>
+                </genre>
+            </planning>
+            <delivery>
+                <deliveredItemRef guidref="urn:newsml:stt.fi:20171219:101801633">
+                    <modified>2022-03-30T09:15:40+02:00</modified>
+                    <version/>
+                </deliveredItemRef>
+            </delivery>
+        </newsCoverage>
+        <newsCoverage id="ID_WORKREQUEST_159700">
+            <planning>
+                <g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+                <itemClass qcode="ninat:picture"/>
+                <headline>Miten tilanne Ukrainan sodan ympärillä ja Ukrainassa kehittyy?</headline>
+                <subject type="ninat:text" qcode="urn:newsml:stt.fi:20220330000000:159700">
+                    <stt:workstartdate>2022-03-30T00:00:00+02:00</stt:workstartdate>
+                    <stt:workenddate>2022-03-30T00:00:00+02:00</stt:workenddate>
+                </subject>
+                <dateline>Ukraina</dateline>
+                <genre qcode="sttimage:27">
+                    <name>Kv. kuvaa</name>
+                </genre>
+            </planning>
+        </newsCoverage>
+    </newsCoverageSet>
+</planningItem>

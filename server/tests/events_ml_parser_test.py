@@ -71,6 +71,7 @@ class STTEventsMLParserContactInfoTest(TestCase):
         "public": True,
         "first_name": "foo",
         "last_name": "bar",
+        "organisation": "Foobar",
         "contact_email": ["foo@bar.com"],
         "job_title": "Viestintäasiantuntija",
         "contact_phone": [{
@@ -95,6 +96,7 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertEqual(created_contact["last_name"], self.contact["last_name"])
         self.assertEqual(created_contact["contact_email"], self.contact["contact_email"])
         self.assertEqual(created_contact["job_title"], self.contact["job_title"])
+        self.assertEqual(created_contact["organisation"], self.contact["organisation"])
         self.assertEqual(created_contact["contact_phone"], self.contact["contact_phone"])
 
         self.assertIsNotNone(self.item["event_contact_info"][1])
