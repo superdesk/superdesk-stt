@@ -1,8 +1,9 @@
+import logging
+
 from typing import Optional, Dict, Any, List
 from bson import ObjectId
 from copy import deepcopy
-import logging
-from eve.utils import config, ParsedRequest
+from eve.utils import ParsedRequest
 from flask import json
 
 from superdesk import get_resource_service, signals
@@ -19,7 +20,7 @@ from planning.common import (
 from planning.signals import planning_ingested
 
 from stt.stt_planning_ml import STTPlanningMLParser
-from stt.common import is_online_version
+from stt.common import Item, is_online_version
 
 
 logger = logging.getLogger(__name__)
@@ -30,11 +31,13 @@ def init_app(_app: SuperdeskEve):
     signals.item_publish.connect(before_content_published)
 
 
-def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Optional[Dict[str, Any]] = None):
+def link_coverages_to_content(
+    _sender: Any, item: Item, original: Optional[Item] = None
+):
     """Link coverage(s) to content upon ingest (if content exists)"""
 
     try:
-        planning_id = item[config.ID_FIELD]
+        planning_id = item["_id"]
     except KeyError:
         logger.error("Failed to link planning with content, _id is missing")
         return
@@ -44,7 +47,10 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
         return
 
     try:
-        if len(item["coverages"]) == 1 and item["coverages"][0]["flags"]["placeholder"] is True:
+        if (
+            len(item["coverages"]) == 1
+            and item["coverages"][0]["flags"]["placeholder"] is True
+        ):
             # There is only 1 coverage, and it is a placeholder coverage, no need to continue
             return
     except (KeyError, IndexError, TypeError):
@@ -76,17 +82,22 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
 
         # Get the deliveries that aren't linked to an Assignment
         # These deliveries are added in ``STTPlanningMLParser._create_temp_assignment_deliveries``
-        deliveries = delivery_service.get_from_mongo(req=None, lookup={
-            "planning_id": planning_id,
-            "coverage_id": coverage_id,
-            "assignment_id": None,
-            "item_id": {"$ne": None}},
+        deliveries = delivery_service.get_from_mongo(
+            req=None,
+            lookup={
+                "planning_id": planning_id,
+                "coverage_id": coverage_id,
+                "assignment_id": None,
+                "item_id": {"$ne": None},
+            },
         )
         if not deliveries.count():
             # No unlinked deliveries found for this Coverage
             continue
 
-        content = _get_content_item_by_uris([delivery["item_id"] for delivery in deliveries])
+        content = _get_content_item_by_uris(
+            [delivery["item_id"] for delivery in deliveries]
+        )
         if content is None:
             # No content has been found
             # Linking will occur when content is published (see ``before_content_published``)
@@ -94,7 +105,7 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
 
         _copy_metadata_from_article_to_coverage(coverage, content)
         _update_coverage_assignment_details(coverage, content)
-        coverage_id_to_content_id_map[coverage_id] = content[config.ID_FIELD]
+        coverage_id_to_content_id_map[coverage_id] = content["_id"]
 
     updated_coverage_ids = coverage_id_to_content_id_map.keys()
     if not len(updated_coverage_ids):
@@ -121,13 +132,15 @@ def link_coverages_to_content(_sender: Any, item: Dict[str, Any], original: Opti
             continue
 
         try:
-            _link_assignment_and_content(assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id])
+            _link_assignment_and_content(
+                assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id]
+            )
         except Exception as err:
             logger.exception(err)
             logger.error("Failed to link coverage assignment to content")
 
 
-def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[str, Any]):
+def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
     """Link content to coverage before publishing"""
 
     if item.get("assignment_id") is not None:
@@ -144,10 +157,9 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
     delivery_service = get_resource_service("delivery")
     planning_service = get_resource_service("planning")
 
-    deliveries = delivery_service.get(req=None, lookup={
-        "item_id": item.get("uri"),
-        "assignment_id": None
-    })
+    deliveries = delivery_service.get(
+        req=None, lookup={"item_id": item.get("uri"), "assignment_id": None}
+    )
 
     assignment_id = None
 
@@ -169,10 +181,13 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
 
     planning = planning_service.find_one(req=None, _id=planning_id)
     if not planning:
-        logger.warning("Failed to link content to coverage: Planning item not found", extra=dict(
-            content_guid=item.get("guid"),
-            planning_id=planning_id,
-        ))
+        logger.warning(
+            "Failed to link content to coverage: Planning item not found",
+            extra=dict(
+                content_guid=item.get("guid"),
+                planning_id=planning_id,
+            ),
+        )
         return
 
     planning_updates = {"coverages": deepcopy(planning.get("coverages") or [])}
@@ -184,14 +199,17 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
                 for coverage in planning_updates["coverages"]
                 if coverage.get("coverage_id") == coverage_id
             ),
-            None
+            None,
         )
         if coverage is None:
-            logger.warning("Failed to find coverage in planning item", extra=dict(
-                content_guid=item.get("guid"),
-                planning_id=planning_id,
-                coverage_id=coverage_id,
-            ))
+            logger.warning(
+                "Failed to find coverage in planning item",
+                extra=dict(
+                    content_guid=item.get("guid"),
+                    planning_id=planning_id,
+                    coverage_id=coverage_id,
+                ),
+            )
             return
 
         _copy_metadata_from_article_to_coverage(coverage, item)
@@ -202,10 +220,13 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
             stt_article_id = item["extra"]["sttidtype_textid"]
             coverage_id = f"ID_TEXT_{stt_article_id}"
         except (KeyError, TypeError):
-            logger.error("Failed to find the STT Article ID from the content, unable to continue", extra=dict(
-                content_guid=item.get("guid"),
-                planning_id=planning_id,
-            ))
+            logger.error(
+                "Failed to find the STT Article ID from the content, unable to continue",
+                extra=dict(
+                    content_guid=item.get("guid"),
+                    planning_id=planning_id,
+                ),
+            )
             return
 
         existing_coverage = next(
@@ -214,13 +235,15 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
                 for coverage in planning_updates["coverages"]
                 if coverage.get("coverage_id") == coverage_id
             ),
-            None
+            None,
         )
         if existing_coverage:
             # A Coverage ID with STT's Article ID already exists
             # Use that to link this content to
             try:
-                coverage_has_assignment = bool(existing_coverage["assigned_to"]["assignment_id"])
+                coverage_has_assignment = bool(
+                    existing_coverage["assigned_to"]["assignment_id"]
+                )
             except (KeyError, TypeError):
                 coverage_has_assignment = False
 
@@ -233,27 +256,36 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
                 # An Assignment already exists for this coverage,
                 # Add another Assignment for this coverage, and link it to the content
                 try:
-                    assignment_id = get_resource_service("assignments").post([{
-                        "assigned_to": {
-                            "desk": (item.get("task") or {}).get("desk"),
-                            "state": ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
-                        },
-                        "planning_item": planning_id,
-                        "coverage_item": coverage_id,
-                        "planning": deepcopy(existing_coverage.get("planning")),
-                        "priority": (
-                            item.get("priority") or
-                            (existing_coverage.get("assigned_to") or {}).get("priority") or
-                            2
-                        ),
-                        "description_text": planning.get("description_text")
-                    }])[0]
+                    assignment_id = get_resource_service("assignments").post(
+                        [
+                            {
+                                "assigned_to": {
+                                    "desk": (item.get("task") or {}).get("desk"),
+                                    "state": ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+                                },
+                                "planning_item": planning_id,
+                                "coverage_item": coverage_id,
+                                "planning": deepcopy(existing_coverage.get("planning")),
+                                "priority": (
+                                    item.get("priority")
+                                    or (existing_coverage.get("assigned_to") or {}).get(
+                                        "priority"
+                                    )
+                                    or 2
+                                ),
+                                "description_text": planning.get("description_text"),
+                            }
+                        ]
+                    )[0]
                 except Exception:
-                    logger.exception("Failed to create the new Assignment", extra=dict(
-                        content_guid=item.get("guid"),
-                        planning_id=planning_id,
-                        coverage_id=coverage_id,
-                    ))
+                    logger.exception(
+                        "Failed to create the new Assignment",
+                        extra=dict(
+                            content_guid=item.get("guid"),
+                            planning_id=planning_id,
+                            coverage_id=coverage_id,
+                        ),
+                    )
                     return
 
                 # No need to update Planning item directly, as there are no changes to coverages
@@ -293,50 +325,64 @@ def before_content_published(_sender: Any, item: Dict[str, Any], updates: Dict[s
 
     if assignment_id is None:
         # Assignment ID is not currently known, grab it from the latest Coverage information
-        assignment_id = next(
-            (
-                coverage
-                for coverage in updated_planning.get("coverages", [])
-                if coverage.get("coverage_id") == coverage_id
-            ),
-            {}
-        ).get("assigned_to", {}).get("assignment_id")
+        assignment_id = (
+            next(  # type: ignore
+                (
+                    coverage
+                    for coverage in updated_planning.get("coverages", [])
+                    if coverage.get("coverage_id") == coverage_id
+                ),
+                {},
+            )
+            .get("assigned_to", {})
+            .get("assignment_id")
+        )
         if not assignment_id:
-            logger.error("Failed to get 'assignment_id' of coverage", extra=dict(
-                content_guid=item.get("guid"),
-                planning_id=planning_id,
-                coverage_id=coverage_id,
-            ))
+            logger.error(
+                "Failed to get 'assignment_id' of coverage",
+                extra=dict(
+                    content_guid=item.get("guid"),
+                    planning_id=planning_id,
+                    coverage_id=coverage_id,
+                ),
+            )
             return
 
     try:
-        _link_assignment_and_content(assignment_id, coverage_id, item.get("guid"), True)
+        _link_assignment_and_content(
+            assignment_id, coverage_id, str(item.get("guid")), True
+        )
     except Exception:
-        logger.exception("Failed to link coverage assignment to content", extra=dict(
-            content_guid=item.get("guid"),
-            planning_id=planning_id,
-            coverage_id=coverage_id,
-        ))
+        logger.exception(
+            "Failed to link coverage assignment to content",
+            extra=dict(
+                content_guid=item.get("guid"),
+                planning_id=planning_id,
+                coverage_id=coverage_id,
+            ),
+        )
         return
 
     item["assignment_id"] = assignment_id
     updates["assignment_id"] = assignment_id
 
 
-def _is_ingested_by_stt_planning_ml(item: Dict[str, Any]) -> bool:
+def _is_ingested_by_stt_planning_ml(item: Item) -> bool:
     """Determine if the item was ingested by the ``STTPlanningMLParser`` parser"""
 
     try:
         if item["ingest_provider"] is None:
             return False
         ingest_provider_id = ObjectId(item["ingest_provider"])
-        ingest_provider = get_resource_service("ingest_providers").find_one(req=None, _id=ingest_provider_id)
+        ingest_provider = get_resource_service("ingest_providers").find_one(
+            req=None, _id=ingest_provider_id
+        )
         return ingest_provider["feed_parser"] == STTPlanningMLParser.NAME
     except (KeyError, TypeError):
         return False
 
 
-def _get_content_item_by_uris(uris: List[str]) -> Optional[Dict[str, Any]]:
+def _get_content_item_by_uris(uris: List[str]) -> Optional[Item]:
     """Get latest content item by uri"""
 
     if not len(uris):
@@ -346,11 +392,13 @@ def _get_content_item_by_uris(uris: List[str]) -> Optional[Dict[str, Any]]:
     try:
         req = ParsedRequest()
         req.args = {
-            "source": json.dumps({
-                "query": {"bool": {"must": [{"terms": {"uri": uris}}]}},
-                "sort": [{"rewrite_sequence": "asc"}],
-                "size": 1
-            }),
+            "source": json.dumps(
+                {
+                    "query": {"bool": {"must": [{"terms": {"uri": uris}}]}},
+                    "sort": [{"rewrite_sequence": "asc"}],
+                    "size": 1,
+                }
+            ),
             "repo": "archive,published,archived",
         }
         cursor = get_resource_service("search").get(req=req, lookup=None)
@@ -358,36 +406,48 @@ def _get_content_item_by_uris(uris: List[str]) -> Optional[Dict[str, Any]]:
         if cursor.count():
             return cursor[0]
     except Exception:
-        logger.exception("Failed to retrieve list of content based on URIs", extra=dict(uris=uris))
+        logger.exception(
+            "Failed to retrieve list of content based on URIs", extra=dict(uris=uris)
+        )
 
     return None
 
 
-def _update_coverage_assignment_details(coverage: Dict[str, Any], content: Dict[str, Any]):
+def _update_coverage_assignment_details(
+    coverage: Dict[str, Any],
+    content: Item,
+):
     """Assign Desk, workflow state etc to coverage"""
 
     coverage["workflow_status"] = WORKFLOW_STATE.ACTIVE
     coverage.setdefault("assigned_to", {})
-    coverage["assigned_to"].update({
-        "desk": (content.get("task") or {}).get("desk"),
-        "state": (
-            ASSIGNMENT_WORKFLOW_STATE.COMPLETED if content.get("pubstatus") is not None
-            else ASSIGNMENT_WORKFLOW_STATE.IN_PROGRESS
-        ),
-        "priority": content.get("priority") or coverage["assigned_to"].get("priority") or 2,
-        "user": content["task"]["user"],
-        "assignor_desk": content["task"]["user"],
-        "assignor_user": content["task"]["user"],
-    })
+    coverage["assigned_to"].update(
+        {
+            "desk": (content.get("task") or {}).get("desk"),
+            "state": (
+                ASSIGNMENT_WORKFLOW_STATE.COMPLETED
+                if content.get("pubstatus") is not None
+                else ASSIGNMENT_WORKFLOW_STATE.IN_PROGRESS
+            ),
+            "priority": content.get("priority")
+            or coverage["assigned_to"].get("priority")
+            or 2,
+            "user": content["task"]["user"],
+            "assignor_desk": content["task"]["user"],
+            "assignor_user": content["task"]["user"],
+        }
+    )
 
 
-def _copy_metadata_from_article_to_coverage(coverage: Dict[str, Any], content: Dict[str, Any]):
+def _copy_metadata_from_article_to_coverage(coverage: Dict[str, Any], content: Item):
     coverage.setdefault("planning", {})
-    coverage["planning"]["scheduled"] = content.get("firstpublished") or content.get("versioncreated")
+    coverage["planning"]["scheduled"] = content.get("firstpublished") or content.get(
+        "versioncreated"
+    )
 
     for field in ["genre", "language", "subject"]:
         if content.get(field):
-            coverage["planning"][field] = content[field]
+            coverage["planning"][field] = content[field]  # type: ignore
 
     if content.get("slugline", "").strip():
         coverage["planning"]["slugline"] = content["slugline"].strip()
@@ -399,14 +459,20 @@ def _link_assignment_and_content(
     assignment_id: ObjectId,
     coverage_id: str,
     content_id: str,
-    skip_archive_update: Optional[bool] = False
+    skip_archive_update: Optional[bool] = False,
 ):
     """Remove all temporary delivery entries for this coverage and link assignment and content"""
 
-    get_resource_service("delivery").delete_action(lookup={"coverage_id": coverage_id, "assignment_id": None})
-    get_resource_service("assignments_link").post([{
-        "assignment_id": assignment_id,
-        "item_id": content_id,
-        "skip_archive_update": skip_archive_update,
-        "item_state": CONTENT_STATE.PUBLISHED,
-    }])
+    get_resource_service("delivery").delete_action(
+        lookup={"coverage_id": coverage_id, "assignment_id": None}
+    )
+    get_resource_service("assignments_link").post(
+        [
+            {
+                "assignment_id": assignment_id,
+                "item_id": content_id,
+                "skip_archive_update": skip_archive_update,
+                "item_state": CONTENT_STATE.PUBLISHED,
+            }
+        ]
+    )

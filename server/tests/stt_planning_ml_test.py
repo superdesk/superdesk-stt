@@ -199,10 +199,12 @@ class STTPlanningMLParserPlaceholderTests(CoreTestCase):
         self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
         self.assertTrue(is_placeholder_coverage(item["coverages"][1]))
 
-        item = {"coverages": [
-            {"planning": {"g2_content_type": "text"}},
-            {"planning": {"g2_content_type": "picture"}},
-        ]}
+        item = {
+            "coverages": [
+                {"planning": {"g2_content_type": "text"}},
+                {"planning": {"g2_content_type": "picture"}},
+            ]
+        }
         parser.set_placeholder_coverage(item, None)
         self.assertEqual(len(item["coverages"]), 2)
         self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
@@ -212,44 +214,46 @@ class STTPlanningMLParserPlaceholderTests(CoreTestCase):
     def test_check_coverage_removes_placeholder(self, mock_parse_news_coverage_status):
         parser = STTPlanningMLParser()
 
-        original = {"coverages": [
-            {
-                "coverage_id": "placeholder_cov",
-                "planning": {"g2_content_type": "text"},
-                "flags": {"placeholder": True},
-            },
-        ]}
-        updates = {"coverages": [
-            {
-                "coverage_id": "text_cov_1",
-                "planning": {"g2_content_type": "text"}
-            },
-        ]}
+        original = {
+            "coverages": [
+                {
+                    "coverage_id": "placeholder_cov",
+                    "planning": {"g2_content_type": "text"},
+                    "flags": {"placeholder": True},
+                },
+            ]
+        }
+        updates = {
+            "coverages": [
+                {"coverage_id": "text_cov_1", "planning": {"g2_content_type": "text"}},
+            ]
+        }
         parser.check_coverage(original, updates, None)
         self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
         self.assertEqual(updates["coverages"][0]["coverage_id"], "text_cov_1")
 
-        original = {"coverages": [
-            {
-                "coverage_id": "pic_cov_1",
-                "planning": {"g2_content_type": "picture"}
-            },
-            {
-                "coverage_id": "placeholder_cov",
-                "planning": {"g2_content_type": "text"},
-                "flags": {"placeholder": True},
-            },
-        ]}
-        updates = {"coverages": [
-            {
-                "coverage_id": "pic_cov_1",
-                "planning": {"g2_content_type": "picture"}
-            },
-            {
-                "coverage_id": "text_cov_1",
-                "planning": {"g2_content_type": "text"}
-            },
-        ]}
+        original = {
+            "coverages": [
+                {
+                    "coverage_id": "pic_cov_1",
+                    "planning": {"g2_content_type": "picture"},
+                },
+                {
+                    "coverage_id": "placeholder_cov",
+                    "planning": {"g2_content_type": "text"},
+                    "flags": {"placeholder": True},
+                },
+            ]
+        }
+        updates = {
+            "coverages": [
+                {
+                    "coverage_id": "pic_cov_1",
+                    "planning": {"g2_content_type": "picture"},
+                },
+                {"coverage_id": "text_cov_1", "planning": {"g2_content_type": "text"}},
+            ]
+        }
         parser.check_coverage(original, updates, None)
         self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
         self.assertFalse(is_placeholder_coverage(updates["coverages"][1]))
