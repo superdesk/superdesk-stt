@@ -1,40 +1,70 @@
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, TypedDict
 import logging
 from copy import deepcopy
 
-from xml.etree.ElementTree import Element
+from lxml.etree import Element
 from eve.utils import config
 
 from superdesk import get_resource_service
 from superdesk.metadata.item import ITEM_TYPE, ITEM_STATE
-from planning.common import WORKFLOW_STATE, POST_STATE, update_post_item, update_assignment_on_link_unlink
+from planning.common import (
+    WORKFLOW_STATE,
+    POST_STATE,
+    update_post_item,
+    update_assignment_on_link_unlink,
+)
 
 
 logger = logging.getLogger(__name__)
+
+
+class Item(TypedDict):
+    _id: str
+    guid: str
+    coverages: list[Any]
+    ingest_provider: str
+    subject: list[dict[str, str]]
+    extra: dict[str, str]
+    headline: str
+    slugline: str
+    task: dict[str, str]
+    assignment_id: str
+    genre: str
+    language: str
 
 
 def planning_xml_contains_remove_signal(xml: Element) -> bool:
     """Returns ``True`` if the ``sttinstruct:remove`` signal is included, ``False`` otherwise"""
 
     namespaces = {"iptc": "http://iptc.org/std/nar/2006-10-01/"}
-    if xml.xpath("//iptc:itemMeta/iptc:signal[@qcode='sttinstruct:remove']", namespaces=namespaces):
+    if xml.xpath(
+        "//iptc:itemMeta/iptc:signal[@qcode='sttinstruct:remove']",
+        namespaces=namespaces,
+    ):
         return True
     return False
 
 
 def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
     item_resource = "events" if item.get(ITEM_TYPE) == "event" else "planning"
-    original: Union[Dict[str, Any], None] = get_resource_service(item_resource).find_one(req=None, _id=item["guid"])
+    original: Union[Dict[str, Any], None] = get_resource_service(
+        item_resource
+    ).find_one(req=None, _id=item["guid"])
 
     if not original:
-        logger.error("Failed to spike/cancel ingested item: item not found", extra={"item_id": item["guid"]})
+        logger.error(
+            "Failed to spike/cancel ingested item: item not found",
+            extra={"item_id": item["guid"]},
+        )
         return
 
     # Wrap ``unlink_item_from_all_content`` in a try...except, so if it fails the item is still spiked/cancelled
     try:
         unlink_item_from_all_content(original)
     except Exception:
-        logger.exception("Failed to unlink content from item", extra={"item_id": item["guid"]})
+        logger.exception(
+            "Failed to unlink content from item", extra={"item_id": item["guid"]}
+        )
 
     if not original.get("pubstatus") and original.get(ITEM_STATE) in [
         WORKFLOW_STATE.INGESTED,
@@ -42,9 +72,13 @@ def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
         WORKFLOW_STATE.POSTPONED,
         WORKFLOW_STATE.CANCELLED,
     ]:
-        get_resource_service(item_resource + "_spike").patch(original[config.ID_FIELD], original)
+        get_resource_service(item_resource + "_spike").patch(
+            original[config.ID_FIELD], original
+        )
     elif original.get("pubstatus") != POST_STATE.CANCELLED:
-        update_post_item({"pubstatus": POST_STATE.CANCELLED, "_etag": original["_etag"]}, original)
+        update_post_item(
+            {"pubstatus": POST_STATE.CANCELLED, "_etag": original["_etag"]}, original
+        )
 
 
 def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
@@ -81,7 +115,9 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
             coverage.pop("assigned_to", None)
             coverage["workflow_status"] = WORKFLOW_STATE.DRAFT
 
-            for content_link in delivery_service.find(where={"coverage_id": coverage["coverage_id"]}):
+            for content_link in delivery_service.find(
+                where={"coverage_id": coverage["coverage_id"]}
+            ):
                 content_id = content_link.get("item_id")
                 if not content_id:
                     # Content ID not on this delivery, no need to unlink
@@ -130,11 +166,15 @@ def original_item_exists(resource: str, item_id: str) -> bool:
     return get_resource_service(resource).find_one(req=None, _id=item_id) is not None
 
 
-def is_online_version(item: Dict[str, Any]) -> bool:
-    return next(
-        (
-            subject for subject in (item.get("subject") or [])
-            if subject.get("scheme") == "sttversion" and subject.get("qcode") == "6"
-        ),
-        None
-    ) is not None
+def is_online_version(item: Item) -> bool:
+    return (
+        next(
+            (
+                subject
+                for subject in (item.get("subject") or [])
+                if subject.get("scheme") == "sttversion" and subject.get("qcode") == "6"
+            ),
+            None,
+        )
+        is not None
+    )

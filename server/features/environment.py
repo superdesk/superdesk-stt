@@ -12,7 +12,11 @@ from typing import Dict, Any
 from os import path
 
 from superdesk import get_resource_service, etree
-from superdesk.tests.environment import before_feature, before_step, after_scenario   # noqa
+from superdesk.tests.environment import (  # noqa: F401
+    before_feature,
+    before_step,
+    after_scenario,
+)
 from superdesk.tests.environment import setup_before_all, setup_before_scenario
 from superdesk.io.commands.update_ingest import ingest_items
 from superdesk.io.feeding_services.file_service import FileFeedingService
@@ -24,31 +28,35 @@ from settings import INSTALLED_APPS
 
 def before_all(context):
     config = {
-        'INSTALLED_APPS': INSTALLED_APPS,
-        'ELASTICSEARCH_FORCE_REFRESH': True,
+        "INSTALLED_APPS": INSTALLED_APPS,
+        "ELASTICSEARCH_FORCE_REFRESH": True,
     }
     setup_before_all(context, config, app_factory=get_app)
 
 
 def before_scenario(context, scenario):
     config = {
-        'INSTALLED_APPS': INSTALLED_APPS,
-        'ELASTICSEARCH_FORCE_REFRESH': True,
+        "INSTALLED_APPS": INSTALLED_APPS,
+        "ELASTICSEARCH_FORCE_REFRESH": True,
     }
     setup_before_scenario(context, scenario, config, app_factory=get_app)
 
-    if 'stt_providers' in scenario.tags:
+    if "stt_providers" in scenario.tags:
         setup_stt_providers(context)
 
-    if 'stt_cvs' in scenario.tags:
+    if "stt_cvs" in scenario.tags:
         with context.app.app_context():
             cmd = AppPopulateCommand()
-            filename = path.join(path.abspath(path.dirname("data/")), "vocabularies.json")
+            filename = path.join(
+                path.abspath(path.dirname("data/")), "vocabularies.json"
+            )
             cmd.run(filename)
 
 
 def _construct_file_ingest_provider(name: str, parser: str) -> Dict[str, Any]:
-    path_to_fixtures = path.join(path.abspath(path.dirname(__file__)), "../tests/fixtures")
+    path_to_fixtures = path.join(
+        path.abspath(path.dirname(__file__)), "../tests/fixtures"
+    )
 
     return {
         "name": name,
@@ -62,7 +70,9 @@ def _construct_file_ingest_provider(name: str, parser: str) -> Dict[str, Any]:
 
 
 def mock_fetch_ingest(self: FileFeedingService, guid: str):
-    path_to_fixtures = path.join(path.abspath(path.dirname(__file__)), "../tests/fixtures")
+    path_to_fixtures = path.join(
+        path.abspath(path.dirname(__file__)), "../tests/fixtures"
+    )
     file_path = path.join(path_to_fixtures, guid)
     feeding_parser = self.get_feed_parser(self.provider)
 
