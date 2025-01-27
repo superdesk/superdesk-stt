@@ -14,85 +14,105 @@ from pathlib import Path
 
 
 def env(variable, fallback_value=None):
-    env_value = os.environ.get(variable, '')
+    env_value = os.environ.get(variable, "")
     if len(env_value) == 0:
         return fallback_value
     else:
         if env_value == "__EMPTY__":
-            return ''
+            return ""
         else:
             return env_value
 
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
-init_data = Path(ABS_PATH) / 'data'
+init_data = Path(ABS_PATH) / "data"
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
 
 RENDITIONS = {
-    'picture': {
-        'thumbnail': {'width': 220, 'height': 120},
-        'viewImage': {'width': 640, 'height': 640},
-        'baseImage': {'width': 1400, 'height': 1400},
+    "picture": {
+        "thumbnail": {"width": 220, "height": 120},
+        "viewImage": {"width": 640, "height": 640},
+        "baseImage": {"width": 1400, "height": 1400},
     },
-    'avatar': {
-        'thumbnail': {'width': 60, 'height': 60},
-        'viewImage': {'width': 200, 'height': 200},
-    }
+    "avatar": {
+        "thumbnail": {"width": 60, "height": 60},
+        "viewImage": {"width": 200, "height": 200},
+    },
 }
 
-WS_HOST = env('WSHOST', '0.0.0.0')
-WS_PORT = env('WSPORT', '5100')
+WS_HOST = env("WSHOST", "0.0.0.0")
+WS_PORT = env("WSPORT", "5100")
 
-LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
+LOG_CONFIG_FILE = env("LOG_CONFIG_FILE", "logging_config.yml")
 
-REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
-if env('REDIS_PORT'):
-    REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
-BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
+REDIS_URL = env("REDIS_URL", "redis://localhost:6379")
+if env("REDIS_PORT"):
+    REDIS_URL = env("REDIS_PORT").replace("tcp:", "redis:")
+BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 
-SECRET_KEY = env('SECRET_KEY', '')
+SECRET_KEY = env("SECRET_KEY", "")
 
 NO_TAKES = True
 
 DEFAULT_TIMEZONE = "Europe/Helsinki"
 
 SCHEMA = {
-    'text': {
-        'slugline': {},
-        'headline': {},
-        'language': {},
-        'genre': {},
-        'urgency': {},
-        'priority': {},
-        'anpa_category': {},
-        'subject': {},
-        'ednote': {},
-        'abstract': {},
-        'byline': {},
-        'dateline': {},
-        'body_html': {},
-        'sign_off': {},
-        'authors': {},
-        'place': {},
-        'usageterms': {},
-        'keywords': {},
+    "text": {
+        "slugline": {},
+        "headline": {},
+        "language": {},
+        "genre": {},
+        "urgency": {},
+        "priority": {},
+        "anpa_category": {},
+        "subject": {},
+        "ednote": {},
+        "abstract": {},
+        "byline": {},
+        "dateline": {},
+        "body_html": {},
+        "sign_off": {},
+        "authors": {},
+        "place": {},
+        "usageterms": {},
+        "keywords": {},
     }
 }
 QCODE_MISSING_VOC = "create"
 
 INSTALLED_APPS = [
-    'stt.parser',
-    'stt.stt_events_ml',
-    'stt.stt_planning_ml',
-    'stt.signal_hooks',
-    'planning',
-    'apps.languages',
+    "stt.parser",
+    "stt.stt_events_ml",
+    "stt.stt_planning_ml",
+    "stt.signal_hooks",
+    "planning",
+    "apps.languages",
 ]
 
-HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em',
-                       'strong', 'i', 'b', 'a', 'pre')
+HTML_TAGS_WHITELIST = (
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h6",
+    "blockquote",
+    "figure",
+    "ul",
+    "ol",
+    "li",
+    "div",
+    "p",
+    "em",
+    "strong",
+    "i",
+    "b",
+    "a",
+    "pre",
+)
 
 PLANNING_EVENT_LINK_METHOD = "many_secondary"
+
+PLANNING_PLANNING_ALL_DAY = True
