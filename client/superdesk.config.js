@@ -27,9 +27,6 @@ module.exports = function (grunt) {
       planning: true,
       assignments: true,
     },
-    server: {
-      url: "http://localhost:5050/api",
-    },
     spellcheckers: { fi: "stt_fin" },
   };
 };
