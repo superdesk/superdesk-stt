@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 OPT_API_KEY = "STT_FIN_API_KEY"
 API_URL = "https://api.lingsoft.fi/lmc/{method}/"
 
+
 class SttFin(SpellcheckerBase):
     """STT grammar/spellchecker integration
 
@@ -43,11 +44,13 @@ class SttFin(SpellcheckerBase):
                 "domain": "Standard",
                 "options": {
                     "Format": "json",
-                }
+                },
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            r = requests.post(check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT)
+            r = requests.post(
+                check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT
+            )
             if r.status_code != 200:
                 logger.error("STT check failed status code: {}".format(r.status_code))
                 # get the error message from the response
@@ -56,7 +59,11 @@ class SttFin(SpellcheckerBase):
                 except Exception:
                     error_message = r.text
                 logger.error("STT check failed: {}".format(error_message))
-                raise SuperdeskApiError.internalError("Unexpected return code from {}: {}".format(self.name, error_message))
+                raise SuperdeskApiError.internalError(
+                    "Unexpected return code from {}: {}".format(
+                        self.name, error_message
+                    )
+                )
 
             data = r.json()
             # response json should be like
@@ -114,17 +121,23 @@ class SttFin(SpellcheckerBase):
                 "domain": "Standard",
                 "options": {
                     "Format": "json",
-                }
+                },
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            r = requests.post(check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT)
+            r = requests.post(
+                check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT
+            )
             if r.status_code != 200:
-                raise SuperdeskApiError.internalError("Unexpected return code from {}".format(self.name))
+                raise SuperdeskApiError.internalError(
+                    "Unexpected return code from {}".format(self.name)
+                )
             data = r.json()
             suggestions = []
             for err in data.get("errors", []):
-                suggestions.extend([{"text": s["userText"]} for s in err.get("suggestions", [])])
+                suggestions.extend(
+                    [{"text": s["userText"]} for s in err.get("suggestions", [])]
+                )
 
             return {"suggestions": self.list2suggestions(suggestions)}
         except Exception as e:
