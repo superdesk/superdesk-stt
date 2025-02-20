@@ -4,33 +4,32 @@
  * working directory, but other files may also be specified using relative paths with
  * the SUPERDESK_CONFIG environment variable or the grunt --config flag.
  */
-module.exports = function(grunt) {
-    return {
-        apps: [
-            'superdesk-planning',
-        ],
-        importApps: [
-            '../index',
-            'superdesk-planning',
-        ],
-        defaultRoute: '/workspace/personal',
-        features: {
-            swimlane: {defaultNumberOfColumns: 4},
-            noTakes: true,
-            planning: true,
-        },
-        validatorMediaMetadata: {
-            headline: {required: true},
-            alt_text: {required: true},
-            description_text: {required: true},
-            copyrightholder: {required: false},
-            byline: {required: false},
-            usageterms: {required: false},
-            copyrightnotice: {required: false}
-        },
-        workspace: {
-            planning: true,
-            assignments: true,
-        },
-    };
+module.exports = function (grunt) {
+  return {
+    apps: ["superdesk-planning"],
+    importApps: ["../index", "superdesk-planning"],
+    defaultRoute: "/workspace/personal",
+    features: {
+      swimlane: { defaultNumberOfColumns: 4 },
+      noTakes: true,
+      planning: true,
+    },
+    validatorMediaMetadata: {
+      headline: { required: true },
+      alt_text: { required: true },
+      description_text: { required: true },
+      copyrightholder: { required: false },
+      byline: { required: false },
+      usageterms: { required: false },
+      copyrightnotice: { required: false },
+    },
+    workspace: {
+      planning: true,
+      assignments: true,
+    },
+    server: {
+      url: "http://localhost:5050/api",
+    },
+    spellcheckers: { fi: "stt_fin" },
+  };
 };
