@@ -17,7 +17,7 @@ from superdesk.text_checkers.spellcheckers.base import SpellcheckerBase
 
 logger = logging.getLogger(__name__)
 OPT_API_KEY = "STT_FIN_API_KEY"
-API_URL = "https://api.lingsoft.fi/lmc/{method}/"
+OPT_API_URL_KEY = "STT_FIN_API_URL"
 
 
 class SttFin(SpellcheckerBase):
@@ -34,10 +34,11 @@ class SttFin(SpellcheckerBase):
     def __init__(self, app):
         super().__init__(app)
         self.api_key = self.config.get(OPT_API_KEY, os.environ.get(OPT_API_KEY))
+        self.api_url = self.config.get(OPT_API_URL_KEY, os.environ.get(OPT_API_URL_KEY))
 
     def check(self, text, language=None):
         try:
-            check_url = API_URL.format(method="proof")
+            check_url = self.api_url.format(method="proof")
             data = {
                 "text": text,
                 "language": "fi",
@@ -114,7 +115,7 @@ class SttFin(SpellcheckerBase):
 
     def suggest(self, text, language=None):
         try:
-            check_url = API_URL.format(method="proof")
+            check_url = self.api_url.format(method="proof")
             data = {
                 "text": text,
                 "language": "fi",
@@ -149,6 +150,13 @@ class SttFin(SpellcheckerBase):
             logger.warning(
                 "API key is not set for {label}, please set {opt} variable to use it".format(
                     label=self.label, opt=OPT_API_KEY
+                )
+            )
+            return False
+        if not self.api_url:
+            logger.warning(
+                "API URL is not set for {label}, please set {opt} variable to use it".format(
+                    label=self.label, opt=OPT_API_URL_KEY
                 )
             )
             return False
