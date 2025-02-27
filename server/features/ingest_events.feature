@@ -18,7 +18,7 @@ Feature: Ingest STT Event Items
         """
         {"_items": [{
             "guid": "urn:newsml:stt.fi:259431",
-            "state": "killed"
+            "state": "spiked"
         }]}
         """
 
