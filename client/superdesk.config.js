@@ -13,6 +13,7 @@ module.exports = function (grunt) {
       swimlane: { defaultNumberOfColumns: 4 },
       noTakes: true,
       planning: true,
+      searchShortcut: true,
     },
     validatorMediaMetadata: {
       headline: { required: true },
@@ -28,5 +29,8 @@ module.exports = function (grunt) {
       assignments: true,
     },
     spellcheckers: { fi: "stt_fin" },
+    server: {
+      url: "http://localhost:5050/api",
+    },
   };
 };

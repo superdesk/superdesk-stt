@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "planning",
     "apps.languages",
     "stt.spellcheckers.stt_fin",
+    "stt.search_providers.newshub",
 ]
 
 HTML_TAGS_WHITELIST = (

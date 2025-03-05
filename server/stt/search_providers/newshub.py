@@ -1,0 +1,127 @@
+import superdesk
+import arrow
+import logging
+from urllib.parse import urljoin
+import requests
+
+from superdesk.utils import ListCursor
+
+logger = logging.getLogger(__name__)
+session = requests.Session()
+TIMEOUT = 10
+
+
+def get_nested_value(data, key):
+    for part in key.split("."):
+        data = data.get(part)
+        if data is None:
+            return None
+    return data
+
+
+class NewshubListCursor(ListCursor):
+    def __init__(self, docs, count):
+        super().__init__(docs)
+        self._count = count
+
+    def count(self, **kwargs):
+        return self._count
+
+
+class NewshubSearchProvider(superdesk.SearchProvider):
+    label = "Newshub"
+    base_url = "https://stt-uat.newshub.pro/newsapi/v1/"
+    api_token = None
+    search_endpoint = "news/search"
+    items_field = "_items"
+    count_field = "_meta.total"
+    PERIODS = {
+        "day": {"days": -1},
+        "week": {"weeks": -1},
+        "month": {"months": -1},
+        "year": {"years": -1},
+    }
+
+    def __init__(self, provider):
+        logger.info(f"Newshub search provider: init {provider}")
+        super().__init__(provider)
+        self.base_url = provider.get("config", {}).get("url") or self.base_url
+        self.api_token = provider.get("config", {}).get("password")
+        self.content_types = {
+            c["_id"] for c in superdesk.get_resource_service("content_types").find({})
+        }
+
+    def url(self, resource):
+        return urljoin(self.base_url, resource.lstrip("/"))
+
+    def extend_data_item(self, item):
+        # add "_fetchable": True, to the item
+        item["_fetchable"] = True
+        return item
+
+    def find(self, query, params=None):
+        logger.info(f"Query: {query}")
+        logger.info(f"Params: {params}")
+        api_params = {
+            "page_size": query.get("size", 25),
+        }
+        if params:
+            dates = params.get("dates", {})
+            if dates.get("start"):
+                api_params["start_date"] = self._get_date(dates["start"], start=True)
+            if dates.get("end"):
+                api_params["end_date"] = self._get_date(dates["end"])
+
+            period = params.get("period")
+            if period and self.PERIODS.get(period):
+                # override value of search by date
+                api_params.update(self._get_period(period))
+        logger.info(f"API params: {api_params}")
+
+        try:
+            data = self.api_get(self.search_endpoint, api_params)
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request failed: {e}")
+            return NewshubListCursor([], 0)
+        docs = [self.extend_data_item(item) for item in data.get(self.items_field, [])]
+        total = get_nested_value(data, self.count_field)
+
+        return NewshubListCursor(docs, total)
+
+    def _get_period(self, period):
+        today = arrow.now(superdesk.app.config["DEFAULT_TIMEZONE"])
+        return {
+            "start_date": today.shift(**self.PERIODS.get(period)).format("YYYY-MM-DD")
+            + "T00:00:00",
+            "end_date": today.format("YYYY-MM-DD") + "T23:59:59",
+        }
+
+    def api_get(self, endpoint, params):
+        # Add self.api_token as Bearer token
+        session.headers.update({"Authorization": f"Bearer {self.api_token}"})
+        resp = session.get(self.url(endpoint), params=params, timeout=TIMEOUT)
+        resp.raise_for_status()
+        return resp.json()
+
+    def _get_date(self, date, start=False):
+        try:
+            # if start, add hours to the date like 00:00:00
+            if start:
+                return arrow.get(date, "DD/MM/YYYY").format("YYYY-MM-DD") + "T00:00:00"
+            # otherwise add hours to the date like 23:59:59
+            return arrow.get(date, "DD/MM/YYYY").format("YYYY-MM-DD") + "T23:59:59"
+        except arrow.parser.ParserError:
+            logger.error(f"Error parsing date: {date}")
+            return ""
+
+    def available(self):
+        if not self.api_token:
+            logger.warning(
+                "API token is not set for {label}, please set it to the password variable to use it"
+            )
+            return False
+        return True
+
+
+def init_app(app):
+    superdesk.register_search_provider("newshub", provider_class=NewshubSearchProvider)
