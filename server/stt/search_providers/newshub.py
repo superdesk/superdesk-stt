@@ -47,9 +47,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         super().__init__(provider)
         self.base_url = provider.get("config", {}).get("url") or self.base_url
         self.api_token = provider.get("config", {}).get("password")
-        self.content_types = {
-            c["_id"] for c in superdesk.get_resource_service("content_types").find({})
-        }
+        # self.content_types = {
+        #     c["_id"] for c in superdesk.get_resource_service("content_types").find({})
+        # }
 
     def url(self, resource):
         return urljoin(self.base_url, resource.lstrip("/"))
@@ -76,17 +76,74 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             if period and self.PERIODS.get(period):
                 # override value of search by date
                 api_params.update(self._get_period(period))
+            if params.get("sort"):
+                api_params["sort"] = params["sort"]
+            if params.get("urgency"):
+                api_params["urgency"] = params["urgency"]
+            if params.get("genre"):
+                api_params["genre"] = params["genre"]
+            if params.get("subject"):
+                api_params["subject"] = params["subject"]
+
+        api_params["q"] = self.get_search_text(query)
+
         logger.info(f"API params: {api_params}")
 
         try:
             data = self.api_get(self.search_endpoint, api_params)
+            if not data or not data.get(self.items_field):
+                logger.warning("No items found.")
+                return NewshubListCursor([], 0)
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
             return NewshubListCursor([], 0)
         docs = [self.extend_data_item(item) for item in data.get(self.items_field, [])]
         total = get_nested_value(data, self.count_field)
 
+        if total is None:
+            logger.warning("Total count is None.")
+            return NewshubListCursor([], 0)
+
         return NewshubListCursor(docs, total)
+
+    def fetch(self, item_id):
+        logger.info(f"Fetch item: {item_id}")
+        api_params = {
+            # this should be like _id:"urn:newsml:stt.fi::106858998"
+            "q": f'_id:"urn:newsml:stt.fi::{item_id}"',
+        }
+        try:
+            data = self.api_get(self.search_endpoint, api_params)
+            if not data:
+                logger.warning("No item found.")
+                return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request failed: {e}")
+            return None
+        return self.extend_data_item(data)
+
+    def api_get(self, endpoint, params):
+        # Add self.api_token as Bearer token
+        session.headers.update({"Authorization": f"Bearer {self.api_token}"})
+        resp = session.get(self.url(endpoint), params=params, timeout=TIMEOUT)
+        resp.raise_for_status()
+        return resp.json()
+
+    def get_search_text(self, query):
+        try:
+            searchText = query["query"]["filtered"]["query"]["query_string"]["query"]
+        except KeyError:
+            searchText = ""
+        try:
+            # check also for '_id' from query
+            if query["query"]["filtered"]["filter"]["or"]:
+                for condition in query["query"]["filtered"]["filter"]["or"]:
+                    if "term" in condition:
+                        searchText = f'_id:"{condition["term"]["_id"]}"'
+                        break
+        except KeyError:
+            pass
+        return searchText or None
 
     def _get_period(self, period):
         today = arrow.now(superdesk.app.config["DEFAULT_TIMEZONE"])
@@ -95,13 +152,6 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             + "T00:00:00",
             "end_date": today.format("YYYY-MM-DD") + "T23:59:59",
         }
-
-    def api_get(self, endpoint, params):
-        # Add self.api_token as Bearer token
-        session.headers.update({"Authorization": f"Bearer {self.api_token}"})
-        resp = session.get(self.url(endpoint), params=params, timeout=TIMEOUT)
-        resp.raise_for_status()
-        return resp.json()
 
     def _get_date(self, date, start=False):
         try:
