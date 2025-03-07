@@ -1,4 +1,5 @@
 import {startApp} from 'superdesk-core/scripts/index';
+import newshub from './stt/newshub';
 
 setTimeout(() => {
     startApp([
@@ -11,3 +12,6 @@ setTimeout(() => {
 
 export default angular.module('stt.superdesk', []);
 
+export default angular.module('stt', [
+    newshub.name,
+]);
