@@ -1,9 +1,8 @@
 import angular from "angular";
-
 import NewshubSearchController from "./NewshubSearchController";
 
 export default angular
-  .module("stt.newshub", [])
+  .module("stt.newshub", ["superdesk.apps.authoring.metadata"])
   .controller("NewshubSearchController", NewshubSearchController)
   .run([
     "$templateCache",

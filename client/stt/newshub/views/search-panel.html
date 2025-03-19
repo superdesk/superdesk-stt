@@ -1,43 +1,47 @@
 <fieldset ng-controller="NewshubSearchController as searchPanel">
 
     <div class="field">
-        <label for="search-headline">{{:: 'Urgency' | translate}}</label>
-        <div class="control">
-            <input type="text" id="search-urgency" ng-model="params.urgency" tabindex="1">
-        </div>
-    </div>
-    <div class="field">
-        <label for="search-genre">{{:: 'Genre' | translate}}</label>
-        <div class="control">
-            <input type="text" id="search-genre" ng-model="params.genre" tabindex="2">
-        </div>
-    </div>
-
-    <div class="field">
         <label class="search-label" translate>{{:: 'Period' | translate}}</label>
-        <select ng-model="params.period">
+        <select ng-model="searchPanel.params.period">
             <option ng-repeat="period in searchPanel.periods" value="{{ period.id }}">{{ period.name }}</option>
         </select>
     </div>
     <!-- add subjects -->
     <div class="field">
         <label class="search-label" translate>{{:: 'Subjects' | translate}}</label>
-        <select ng-model="params.subject">
+        <select ng-model="searchPanel.params.subject">
             <option ng-repeat="subject in searchPanel.subjects.items" value="{{ subject.qcode }}">{{ subject.name }}</option>
         </select>
+    </div>
+    <div class="form__row" ng-repeat="cv in searchPanel.cvs track by cv._id">
+        <label class="form-label form__row-label" for="search-{{cv.display_name}}">
+            {{cv.display_name | translate}}
+        </label>
+        <div id="search-{{cv.display_name}}">
+            <div id="{{cv.display_name}}" sd-meta-terms
+                ng-model="searchPanel.params[cv._id]"
+                data-item="selecteditems"
+                data-field="{{cv._id}}"
+                data-unique="qcode"
+                data-list="cv.items"
+                data-reload-list="true"
+                data-header="true"
+                data-change="itemSearch(selecteditems, cv._id)"
+                ></div>
+        </div>
     </div>
     <div class="form__row form__row--flex form__row--small-padding">
         <div class="form__row-item">
             <label class="form-label" translate>{{:: 'From' | translate}}</label>
             <div sd-datepicker
-                ng-model="params.dates.start"
+                ng-model="searchPanel.params.dates.start"
                 data-on-change="onDatesChange()"
             ></div>
         </div>
         <div class="form__row-item">
             <label class="form-label" translate>{{:: 'To' | translate}}</label>
             <div sd-datepicker
-                ng-model="params.dates.end"
+                ng-model="searchPanel.params.dates.end"
                 data-on-change="onDatesChange()"
             ></div>
         </div>
