@@ -26,9 +26,9 @@ blinker==1.9.0
     #   flask-mail
     #   sentry-sdk
     #   superdesk-core
-boto3==1.37.4
+boto3==1.37.18
     # via superdesk-core
-botocore==1.37.4
+botocore==1.37.18
     # via
     #   boto3
     #   s3transfer
@@ -76,9 +76,9 @@ cryptography==44.0.2
     # via
     #   authlib
     #   jwcrypto
-deepdiff==8.2.0
+deepdiff==8.4.2
     # via superdesk-planning
-draftjs-exporter[lxml]==2.1.0
+draftjs-exporter[lxml]==5.1.0
     # via superdesk-core
 ecs-logging==2.2.0
     # via elastic-apm
@@ -201,7 +201,7 @@ pymongo==3.11.4
     #   eve
     #   mongolock
     #   superdesk-core
-pyparsing==3.2.1
+pyparsing==3.2.2
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
@@ -244,9 +244,9 @@ requests-oauthlib==2.0.0
     # via python-twitter
 rsa==4.9
     # via oauth2client
-s3transfer==0.11.3
+s3transfer==0.11.4
     # via boto3
-sentry-sdk[flask]==2.22.0
+sentry-sdk[flask]==2.24.0
     # via superdesk-core
 sgmllib3k==1.0.0
     # via feedparser
@@ -265,7 +265,7 @@ types-python-dateutil==2.9.0.20241206
     # via arrow
 typing-extensions==4.12.2
     # via jwcrypto
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   celery
     #   kombu
@@ -288,7 +288,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-websockets==15.0
+websockets==15.0.1
     # via superdesk-core
 werkzeug==1.0.1
     # via
