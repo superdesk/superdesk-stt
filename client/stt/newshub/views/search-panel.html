@@ -2,18 +2,18 @@
 
     <div class="field">
         <label class="search-label" translate>{{:: 'Period' | translate}}</label>
-        <select ng-model="searchPanel.params.period">
+        <select ng-model="params.period">
             <option ng-repeat="period in searchPanel.periods" value="{{ period.id }}">{{ period.name }}</option>
         </select>
     </div>
     <!-- add subjects -->
-    <div class="field">
+    <!-- <div class="field">
         <label class="search-label" translate>{{:: 'Subjects' | translate}}</label>
         <select ng-model="searchPanel.params.subject">
             <option ng-repeat="subject in searchPanel.subjects.items" value="{{ subject.qcode }}">{{ subject.name }}</option>
         </select>
-    </div>
-    <div class="form__row" ng-repeat="cv in searchPanel.cvs track by cv._id">
+    </div> -->
+    <!-- <div class="form__row" ng-repeat="cv in searchPanel.cvs track by cv._id">
         <label class="form-label form__row-label" for="search-{{cv.display_name}}">
             {{cv.display_name | translate}}
         </label>
@@ -29,19 +29,19 @@
                 data-change="itemSearch(selecteditems, cv._id)"
                 ></div>
         </div>
-    </div>
+    </div> -->
     <div class="form__row form__row--flex form__row--small-padding">
         <div class="form__row-item">
             <label class="form-label" translate>{{:: 'From' | translate}}</label>
             <div sd-datepicker
-                ng-model="searchPanel.params.dates.start"
+                ng-model="params.dates.start"
                 data-on-change="onDatesChange()"
             ></div>
         </div>
         <div class="form__row-item">
             <label class="form-label" translate>{{:: 'To' | translate}}</label>
             <div sd-datepicker
-                ng-model="searchPanel.params.dates.end"
+                ng-model="params.dates.end"
                 data-on-change="onDatesChange()"
             ></div>
         </div>

@@ -85,54 +85,40 @@ export default class NewshubSearchController {
         console.error("Error initializing metadata:", error);
       });
 
-    $scope.$watch(
-      () => this.params["sttsubj"],
-      (newVal, oldVal) => {
-        if (angular.isObject(newVal) && newVal.qcode) {
-          this.params["sttsubj"] = newVal.qcode;
-        }
-      }
-    );
-
-    $scope.$watch(
-      () => this.params["sttdepartment"],
-      (newVal, oldVal) => {
-        console.log("sttdepartment newVal", newVal);
-        if (angular.isObject(newVal) && newVal.qcode) {
-          this.params["sttdepartment"] = newVal.qcode;
-        }
-      }
-    );
-
-    $scope.$watch(
-      () => this.params["sttgenre"],
-      (newVal, oldVal) => {
-        if (angular.isObject(newVal) && newVal.qcode) {
-          this.params["sttgenre"] = newVal.qcode;
-        }
-      }
-    );
-
-    $scope.$watch(
-      () => this.params["stturgency"],
-      (newVal, oldVal) => {
-        if (angular.isObject(newVal) && newVal.qcode) {
-          this.params["stturgency"] = newVal.qcode;
-        }
-      }
-    );
+    // $scope.$watch(
+    //   () => this.params["sttsubj"],
+    //   (newVal, oldVal) => {
+    //     if (angular.isObject(newVal) && newVal.qcode) {
+    //       this.params["sttsubj"] = newVal.qcode;
+    //     }
+    //   }
+    // );
 
     // $scope.$watch(
-    //   () => desks.active.desk,
-    //   (activeDeskId) => {
-    //     content
-    //       .getDeskProfiles(
-    //         activeDeskId ? desks.getCurrentDesk() : null,
-    //         $scope.item.profile
-    //       )
-    //       .then((profiles) => {
-    //         $scope.desk_content_types = profiles;
-    //       });
+    //   () => this.params["sttdepartment"],
+    //   (newVal, oldVal) => {
+    //     console.log("sttdepartment newVal", newVal);
+    //     if (angular.isObject(newVal) && newVal.qcode) {
+    //       this.params["sttdepartment"] = newVal.qcode;
+    //     }
+    //   }
+    // );
+
+    // $scope.$watch(
+    //   () => this.params["sttgenre"],
+    //   (newVal, oldVal) => {
+    //     if (angular.isObject(newVal) && newVal.qcode) {
+    //       this.params["sttgenre"] = newVal.qcode;
+    //     }
+    //   }
+    // );
+
+    // $scope.$watch(
+    //   () => this.params["stturgency"],
+    //   (newVal, oldVal) => {
+    //     if (angular.isObject(newVal) && newVal.qcode) {
+    //       this.params["stturgency"] = newVal.qcode;
+    //     }
     //   }
     // );
 
