@@ -30,6 +30,7 @@ class NewshubListCursor(ListCursor):
 
 class NewshubSearchProvider(superdesk.SearchProvider):
     label = "Newshub"
+    # TODO: set the base_url to the production URL when ready
     base_url = "https://stt-uat.newshub.pro/newsapi/v1/"
     api_token = None
     search_endpoint = "news/search"
@@ -47,9 +48,6 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         super().__init__(provider)
         self.base_url = provider.get("config", {}).get("url") or self.base_url
         self.api_token = provider.get("config", {}).get("password")
-        # self.content_types = {
-        #     c["_id"] for c in superdesk.get_resource_service("content_types").find({})
-        # }
 
     def url(self, resource):
         return urljoin(self.base_url, resource.lstrip("/"))
