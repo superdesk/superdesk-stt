@@ -73,17 +73,17 @@ export default class NewshubSearchController {
     // Call the async initialization (fire-and-forget)
     this.initialize();
 
-    metadata
-      .initialize()
-      .then(() => {
-        $scope.metadata = metadata.values;
-        console.log("metadata.values", metadata.values);
-        return preferencesService.get();
-      })
-      .then(this.setAvailableSttDepartments.bind(this))
-      .catch((error) => {
-        console.error("Error initializing metadata:", error);
-      });
+    // metadata
+    //   .initialize()
+    //   .then(() => {
+    //     $scope.metadata = metadata.values;
+    //     console.log("metadata.values", metadata.values);
+    //     return preferencesService.get();
+    //   })
+    //   .then(this.setAvailableSttDepartments.bind(this))
+    //   .catch((error) => {
+    //     console.error("Error initializing metadata:", error);
+    //   });
 
     // $scope.$watch(
     //   () => this.params["sttsubj"],
@@ -123,16 +123,16 @@ export default class NewshubSearchController {
     // );
 
     // Setup listeners (example shown)
-    $rootScope.$on("vocabularies:created", (event, data) => {
-      api.find("vocabularies", data.vocabulary_id).then((cv) => {
-        this.cvs = this.cvs.concat([cv]);
-      });
-    });
-    $rootScope.$on("vocabularies:updated", (event, data) => {
-      api.find("vocabularies", data.vocabulary_id).then((cv) => {
-        this.cvs = this.cvs.map((_cv) => (_cv._id === cv._id ? cv : _cv));
-      });
-    });
+    // $rootScope.$on("vocabularies:created", (event, data) => {
+    //   api.find("vocabularies", data.vocabulary_id).then((cv) => {
+    //     this.cvs = this.cvs.concat([cv]);
+    //   });
+    // });
+    // $rootScope.$on("vocabularies:updated", (event, data) => {
+    //   api.find("vocabularies", data.vocabulary_id).then((cv) => {
+    //     this.cvs = this.cvs.map((_cv) => (_cv._id === cv._id ? cv : _cv));
+    //   });
+    // });
   }
   /**
    * Builds a list of categories available for selection in scope. Used by
@@ -142,26 +142,26 @@ export default class NewshubSearchController {
    * @param {Object} prefs - user preferences setting, including the
    *   preferred categories settings, among other things
    */
-  private setAvailableSttDepartments(prefs) {
-    var all, // all available categories
-      filtered,
-      // user's department preference settings , i.e. a map
-      // object (<department_code> --> true/false)
-      userPrefs;
+  // private setAvailableSttDepartments(prefs) {
+  //   var all, // all available categories
+  //     filtered,
+  //     // user's department preference settings , i.e. a map
+  //     // object (<department_code> --> true/false)
+  //     userPrefs;
 
-    all = this.metadata.values.sttdepartment || [];
-    console.log("prefs: ", prefs);
-    // userPrefs = prefs["sttdepartment:preferred"].selected;
-    filtered = _.filter(
-      all,
-      (dept) => _.isEmpty(userPrefs) || userPrefs[dept.qcode]
-    );
-    this.$scope.availableDepartments = _.sortBy(filtered, "name");
-    console.log(
-      "this.$scope.availableDepartments",
-      this.$scope.availableDepartments
-    );
-  }
+  //   all = this.metadata.values.sttdepartment || [];
+  //   console.log("prefs: ", prefs);
+  //   // userPrefs = prefs["sttdepartment:preferred"].selected;
+  //   filtered = _.filter(
+  //     all,
+  //     (dept) => _.isEmpty(userPrefs) || userPrefs[dept.qcode]
+  //   );
+  //   this.$scope.availableDepartments = _.sortBy(filtered, "name");
+  //   console.log(
+  //     "this.$scope.availableDepartments",
+  //     this.$scope.availableDepartments
+  //   );
+  // }
   /**
    * Builds a list of company_codes available for selection in scope. Used by
    * the "company_codes" menu in the Authoring metadata section.
