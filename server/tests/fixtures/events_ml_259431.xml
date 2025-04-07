@@ -76,6 +76,7 @@ http://www.sdp.fi</note>
 <name>Ministerit</name>
 </subject>
 <contactInfo>
+<stt:organization>Foobar</stt:organization>
 <phone>123 4567890,Mob:012-345 6789</phone>
 <email>foo@bar.com</email>
 <web>www.foo.bar.com</web>

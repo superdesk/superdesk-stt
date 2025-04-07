@@ -23,10 +23,10 @@ class TestCase(CoreTestCase):
 
     def parse_source_content(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
-        fixture = os.path.join(dirname, 'fixtures', self.fixture)
-        provider = {'name': 'Test'}
+        fixture = os.path.join(dirname, "fixtures", self.fixture)
+        provider = {"name": "Test"}
         with self.ctx:
-            with open(fixture, 'rb') as f:
+            with open(fixture, "rb") as f:
                 parser = self.parser_class()
                 self.xml_root = etree.parse(f).getroot()
                 self.item = parser.parse(self.xml_root, provider)[0]
@@ -34,11 +34,31 @@ class TestCase(CoreTestCase):
     def setUpForChildren(self):
         super().setUpForChildren()
         # stt related configs
-        self.app.config['HTML_TAGS_WHITELIST'] = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol',
-                                                  'li', 'div', 'p', 'em', 'strong', 'i', 'b', 'a', 'pre')
+        self.app.config["HTML_TAGS_WHITELIST"] = (
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h6",
+            "blockquote",
+            "figure",
+            "ul",
+            "ol",
+            "li",
+            "div",
+            "p",
+            "em",
+            "strong",
+            "i",
+            "b",
+            "a",
+            "pre",
+        )
 
     def addSttCVs(self):
         with self.app.app_context():
             cmd = AppPopulateCommand()
-            filename = os.path.join(os.path.abspath(os.path.dirname("data/")), "vocabularies.json")
+            filename = os.path.join(
+                os.path.abspath(os.path.dirname("data/")), "vocabularies.json"
+            )
             cmd.run(filename)

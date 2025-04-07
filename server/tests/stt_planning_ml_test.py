@@ -16,7 +16,6 @@ class STTPlanningMLParserTest(TestCase):
 
     def test_stt_metadata(self):
         # Extra metadata
-        self.assertEqual(self.item["extra"]["stt_events"], "259431")
         self.assertEqual(self.item["extra"]["stt_topics"], "584717")
 
         # Subjects (only ``sttdepartment`` found in provided xml files)
@@ -25,8 +24,8 @@ class STTPlanningMLParserTest(TestCase):
             self.item["subject"],
         )
 
-        # Associated Event ID
-        self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
+        # Associated Event is missing
+        assert "event_item" not in self.item
 
         # Make sure the coverage with ``subject.type=='cpnat:event`` is not included
         self.assertEqual(len(self.item["coverages"]), 2)
@@ -43,6 +42,12 @@ class STTPlanningMLParserTest(TestCase):
             },
             self.item["subject"],
         )
+
+    def test_event_link(self):
+        self.app.data.insert("events", [{"_id": "urn:newsml:stt.fi:259431"}])
+        self.parse_source_content()
+        self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
+        self.assertEqual(self.item["extra"]["stt_events"], "259431")
 
     def test_placeholder_coverage(self):
         # Case 1 : If Ingest Item does not contain any Coverage
@@ -74,7 +79,7 @@ class STTPlanningMLParserTest(TestCase):
                 "planning": {
                     "slugline": "",
                     "g2_content_type": "text",
-                    "scheduled": datetime(2023, 5, 28, 21, 0, tzinfo=tzutc()),
+                    "scheduled": datetime(2023, 5, 29, 0, 0, tzinfo=tzutc()),
                 },
                 "flags": {"placeholder": True},
                 "news_coverage_status": {
@@ -194,10 +199,12 @@ class STTPlanningMLParserPlaceholderTests(CoreTestCase):
         self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
         self.assertTrue(is_placeholder_coverage(item["coverages"][1]))
 
-        item = {"coverages": [
-            {"planning": {"g2_content_type": "text"}},
-            {"planning": {"g2_content_type": "picture"}},
-        ]}
+        item = {
+            "coverages": [
+                {"planning": {"g2_content_type": "text"}},
+                {"planning": {"g2_content_type": "picture"}},
+            ]
+        }
         parser.set_placeholder_coverage(item, None)
         self.assertEqual(len(item["coverages"]), 2)
         self.assertFalse(is_placeholder_coverage(item["coverages"][0]))
@@ -207,44 +214,46 @@ class STTPlanningMLParserPlaceholderTests(CoreTestCase):
     def test_check_coverage_removes_placeholder(self, mock_parse_news_coverage_status):
         parser = STTPlanningMLParser()
 
-        original = {"coverages": [
-            {
-                "coverage_id": "placeholder_cov",
-                "planning": {"g2_content_type": "text"},
-                "flags": {"placeholder": True},
-            },
-        ]}
-        updates = {"coverages": [
-            {
-                "coverage_id": "text_cov_1",
-                "planning": {"g2_content_type": "text"}
-            },
-        ]}
+        original = {
+            "coverages": [
+                {
+                    "coverage_id": "placeholder_cov",
+                    "planning": {"g2_content_type": "text"},
+                    "flags": {"placeholder": True},
+                },
+            ]
+        }
+        updates = {
+            "coverages": [
+                {"coverage_id": "text_cov_1", "planning": {"g2_content_type": "text"}},
+            ]
+        }
         parser.check_coverage(original, updates, None)
         self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
         self.assertEqual(updates["coverages"][0]["coverage_id"], "text_cov_1")
 
-        original = {"coverages": [
-            {
-                "coverage_id": "pic_cov_1",
-                "planning": {"g2_content_type": "picture"}
-            },
-            {
-                "coverage_id": "placeholder_cov",
-                "planning": {"g2_content_type": "text"},
-                "flags": {"placeholder": True},
-            },
-        ]}
-        updates = {"coverages": [
-            {
-                "coverage_id": "pic_cov_1",
-                "planning": {"g2_content_type": "picture"}
-            },
-            {
-                "coverage_id": "text_cov_1",
-                "planning": {"g2_content_type": "text"}
-            },
-        ]}
+        original = {
+            "coverages": [
+                {
+                    "coverage_id": "pic_cov_1",
+                    "planning": {"g2_content_type": "picture"},
+                },
+                {
+                    "coverage_id": "placeholder_cov",
+                    "planning": {"g2_content_type": "text"},
+                    "flags": {"placeholder": True},
+                },
+            ]
+        }
+        updates = {
+            "coverages": [
+                {
+                    "coverage_id": "pic_cov_1",
+                    "planning": {"g2_content_type": "picture"},
+                },
+                {"coverage_id": "text_cov_1", "planning": {"g2_content_type": "text"}},
+            ]
+        }
         parser.check_coverage(original, updates, None)
         self.assertFalse(is_placeholder_coverage(updates["coverages"][0]))
         self.assertFalse(is_placeholder_coverage(updates["coverages"][1]))

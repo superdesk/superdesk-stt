@@ -63,7 +63,7 @@ Feature: Ingest STT Planning items
             "ingest_provider": "#providers.sttplanningml#",
             "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
             "name": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
-            "planning_date": "2022-03-29T21:00:00+0000",
+            "planning_date": "2022-03-30T00:00:00+0000",
             "source": "stt",
             "state": "ingested",
             "subject": [{
@@ -83,7 +83,7 @@ Feature: Ingest STT Planning items
                 "planning": {
                     "g2_content_type": "text",
                     "slugline": "UKRAINA // Y\u00f6n seurantaa",
-                    "scheduled": "2022-03-29T21:00:00+0000",
+                    "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttgenre:1",
                         "name": "P\u00e4\u00e4juttu"
@@ -101,7 +101,7 @@ Feature: Ingest STT Planning items
                 "planning": {
                     "g2_content_type": "picture",
                     "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
-                    "scheduled": "2022-03-29T21:00:00+0000",
+                    "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttimage:27",
                         "name": "Kv. kuvaa"
@@ -494,4 +494,129 @@ Feature: Ingest STT Planning items
                 "assignment_id": "#assignment_2._id#"
             }
         ]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Unlinks content from planning on remove signal
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we fetch from "STTPlanningML" ingest "planning_ml_link_content.xml"
+        When we get "/assignments"
+        Then we get list with 1 items
+        Then we store "assignment" with first item
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "workflow_status": "active",
+                "assigned_to": {
+                    "assignment_id": "#assignment._id#",
+                    "desk": "#desks._id#",
+                    "user": null,
+                    "state": "completed",
+                    "priority": 6
+                }
+            }]
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "#assignment._id#"
+        }]}
+        """
+        When we fetch from "STTPlanningML" ingest "planning_ml_link_content_delete.xml"
+        When we get "/assignments"
+        Then we get list with 0 items
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "assigned_to": "__empty__",
+                "workflow_status": "draft"
+            }]
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": null
+        }]}
+        """
+
+    @auth
+    @stt_cvs
+    @stt_providers
+    Scenario: Unlinks content from event on remove signal
+        When we fetch from "STTNewsML" ingest "stt_newsml_link_content.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we fetch from "STTEventsML" ingest "events_ml_259431.xml"
+        When we fetch from "STTPlanningML" ingest "planning_ml_437036_link_content_and_event.xml"
+        When we get "/assignments"
+        Then we get list with 1 items
+        Then we store "assignment" with first item
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "workflow_status": "active",
+                "assigned_to": {
+                    "assignment_id": "#assignment._id#",
+                    "desk": "#desks._id#",
+                    "user": null,
+                    "state": "completed",
+                    "priority": 6
+                }
+            }]
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": "#assignment._id#"
+        }]}
+        """
+        When we fetch from "STTEventsML" ingest "events_ml_259431_delete.xml"
+        When we get "/assignments"
+        Then we get list with 0 items
+        When we get "/planning"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "_id": "urn:newsml:stt.fi:437036",
+            "coverages": [{
+                "coverage_id": "ID_TEXT_120123822",
+                "assigned_to": "__empty__",
+                "workflow_status": "draft"
+            }]
+        }]}
+        """
+        When we get "published"
+        Then we get list with 1 items
+        """
+        {"_items": [{
+            "uri": "urn:newsml:stt.fi:101801633",
+            "assignment_id": null
+        }]}
         """

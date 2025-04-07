@@ -55,11 +55,14 @@ BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 
 SECRET_KEY = env("SECRET_KEY", "")
 
+STT_FIN_API_KEY = env("STT_FIN_API_KEY", "")
+STT_FIN_API_URL = env("STT_FIN_API_URL", "")
+
 NO_TAKES = True
 
 DEFAULT_TIMEZONE = "Europe/Helsinki"
 
-SCHEMA = {
+SCHEMA: dict[str, dict[str, dict]] = {
     "text": {
         "slugline": {},
         "headline": {},
@@ -90,6 +93,7 @@ INSTALLED_APPS = [
     "stt.signal_hooks",
     "planning",
     "apps.languages",
+    "stt.spellcheckers.stt_fin",
 ]
 
 HTML_TAGS_WHITELIST = (

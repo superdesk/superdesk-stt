@@ -1,6 +1,10 @@
+import pytz
+import logging
+
 from typing import Dict, Any, Optional, Set
 from xml.etree.ElementTree import Element
 from eve.utils import config
+from datetime import datetime
 
 from superdesk import get_resource_service
 from superdesk.utc import local_to_utc
@@ -10,10 +14,20 @@ from planning.types import Planning
 from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 from planning.common import get_coverage_from_planning
 
-from .common import planning_xml_contains_remove_signal, unpost_or_spike_event_or_planning, \
-    remove_date_portion_from_id, original_item_exists
+from .common import (
+    planning_xml_contains_remove_signal,
+    unpost_or_spike_event_or_planning,
+    remove_date_portion_from_id,
+    original_item_exists,
+)
 
 TIMEZONE = "Europe/Helsinki"
+
+logger = logging.getLogger(__name__)
+
+
+class EventNotFound(Exception):
+    pass
 
 
 class STTPlanningMLParser(PlanningMLParser):
@@ -28,9 +42,15 @@ class STTPlanningMLParser(PlanningMLParser):
 
     def get_item_id(self, tree: Element) -> str:
         item_id = super(STTPlanningMLParser, self).get_item_id(tree)
-        return item_id if original_item_exists("planning", item_id) else remove_date_portion_from_id(item_id)
+        return (
+            item_id
+            if original_item_exists("planning", item_id)
+            else remove_date_portion_from_id(item_id)
+        )
 
-    def parse_item(self, tree: Element, original: Optional[Planning]) -> Optional[Planning]:
+    def parse_item(
+        self, tree: Element, original: Optional[Planning]
+    ) -> Optional[Planning]:
         if original is not None and planning_xml_contains_remove_signal(tree):
             unpost_or_spike_event_or_planning(original)
             # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
@@ -40,18 +60,34 @@ class STTPlanningMLParser(PlanningMLParser):
         if item is None:
             return None
 
-        self.check_coverage(item, original, tree) if original else self.set_placeholder_coverage(item, tree)
+        (
+            self.check_coverage(item, original, tree)
+            if original
+            else self.set_placeholder_coverage(item, tree)
+        )
         self.set_extra_fields(tree, item, original)
         return item
 
     def datetime(self, value: str):
         """When there is no timezone info, assume it's Helsinki timezone."""
+
+        # First check if the value provided is a date only
+        # And store the date/time as midnight in UTC
+        try:
+            date_value = datetime.strptime(value, "%Y-%m-%d")
+            return date_value.replace(tzinfo=pytz.utc)
+        except ValueError:
+            pass
+
+        # Value provides more than date, try other formats
         parsed = super().datetime(value)
         if "+" not in value:
             return local_to_utc(TIMEZONE, parsed)
         return parsed
 
-    def set_extra_fields(self, tree: Element, item: Dict[str, Any], original: Optional[Planning]):
+    def set_extra_fields(
+        self, tree: Element, item: Dict[str, Any], original: Optional[Planning]
+    ):
         """Adds extra fields"""
 
         item.setdefault("extra", {})["stt_topics"] = item["guid"].split(":")[-1]
@@ -63,8 +99,13 @@ class STTPlanningMLParser(PlanningMLParser):
         if content_meta is not None:
             self.set_urgency(content_meta, item)
 
-    def get_coverage_details(self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]):
-        event_id = self._get_linked_event_id(news_coverage_elt)
+    def get_coverage_details(
+        self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]
+    ):
+        try:
+            event_id = self._get_linked_event_id(news_coverage_elt)
+        except EventNotFound:
+            return None
         if event_id is not None:
             # This entry is an Event and not an actual coverage
             if not item.get("event_item"):
@@ -84,15 +125,17 @@ class STTPlanningMLParser(PlanningMLParser):
         for subject_item in planning.findall(self.qname("subject")):
             qcode = subject_item.get("qcode")
             if qcode and subject_item.get("type") == "cpnat:event":
-                return qcode if original_item_exists("events", qcode) else remove_date_portion_from_id(qcode)
-
+                if original_item_exists("events", qcode):
+                    return qcode
+                short_qcode = remove_date_portion_from_id(qcode)
+                if original_item_exists("events", short_qcode):
+                    return short_qcode
+                logger.warning("Linked event not found", extra={"event": qcode})
+                raise EventNotFound()
         return None
 
     def _create_temp_assignment_deliveries(
-        self,
-        news_coverage_set: Element,
-        item: Planning,
-        original: Optional[Planning]
+        self, news_coverage_set: Element, item: Planning, original: Optional[Planning]
     ):
         """Create temporary delivery records for later mapping content to coverages"""
 
@@ -103,7 +146,9 @@ class STTPlanningMLParser(PlanningMLParser):
 
         existing_deliveries: Dict[str, Set[str]] = {}
         if original is not None:
-            for entry in delivery_service.get_from_mongo(req=None, lookup={"planning_id": planning_id}):
+            for entry in delivery_service.get_from_mongo(
+                req=None, lookup={"planning_id": planning_id}
+            ):
                 try:
                     existing_deliveries.setdefault(entry["coverage_id"], set())
                     existing_deliveries[entry["coverage_id"]].add(entry["item_id"])
@@ -117,10 +162,15 @@ class STTPlanningMLParser(PlanningMLParser):
                 continue
 
             coverage_id = news_coverage_item.get("id")
-            original_coverage = get_coverage_from_planning(original, coverage_id) if original else None
+            original_coverage = (
+                get_coverage_from_planning(original, coverage_id) if original else None
+            )
 
             try:
-                if original_coverage["assigned_to"]["assignment_id"] is not None:
+                if (
+                    original_coverage
+                    and original_coverage["assigned_to"]["assignment_id"] is not None
+                ):
                     # This coverage is already linked to an Assignment
                     # No need to create a temporary delivery record
                     continue
@@ -141,7 +191,9 @@ class STTPlanningMLParser(PlanningMLParser):
                 content_uris_processed.add(content_uri)
 
                 try:
-                    if content_uri in existing_deliveries[coverage_id]:
+                    if coverage_id and content_uri in existing_deliveries.get(
+                        coverage_id, set()
+                    ):
                         # A delivery entry already exists for this content's ``uri``
                         # No need to create another one
                         continue
@@ -204,19 +256,25 @@ class STTPlanningMLParser(PlanningMLParser):
                 return ""
 
         item.setdefault("coverages", [])
-        if not any(True for coverage in item["coverages"] if get_coverage_type(coverage) == "text"):
+        if not any(
+            True
+            for coverage in item["coverages"]
+            if get_coverage_type(coverage) == "text"
+        ):
             # There are no text coverages for this item. Add a placeholder one now
-            item["coverages"].append({
-                "coverage_id": f"placeholder_{item.get('guid')}",
-                "workflow_status": "draft",
-                "firstcreated": item.get("firstcreated"),
-                "planning": {
-                    "slugline": "",
-                    "g2_content_type": "text",
-                    "scheduled": item.get("planning_date"),
-                },
-                "flags": {"placeholder": True},
-            })
+            item["coverages"].append(
+                {
+                    "coverage_id": f"placeholder_{item.get('guid')}",
+                    "workflow_status": "draft",
+                    "firstcreated": item.get("firstcreated"),
+                    "planning": {
+                        "slugline": "",
+                        "g2_content_type": "text",
+                        "scheduled": item.get("planning_date"),
+                    },
+                    "flags": {"placeholder": True},
+                }
+            )
 
         self.parse_news_coverage_status(tree, item)
 

@@ -33,6 +33,7 @@ module.exports = function(grunt) {
             assignments: true,
         },
         planning_default_view: 'PLANNING',
+        spellcheckers: { fi: "stt_fin" },
         profileLanguages: [
             'en',
             'fi_FI',
