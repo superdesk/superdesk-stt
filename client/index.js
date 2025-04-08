@@ -10,8 +10,6 @@ setTimeout(() => {
     ], {});
 });
 
-export default angular.module('stt.superdesk', []);
-
 export default angular.module('stt', [
     newshub.name,
 ]);
