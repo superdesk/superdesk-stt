@@ -171,5 +171,8 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         return True
 
 
+superdesk.register_search_provider("newshub", provider_class=NewshubSearchProvider)
+
+
 def init_app(app):
-    superdesk.register_search_provider("newshub", provider_class=NewshubSearchProvider)
+    pass
