@@ -96,19 +96,21 @@ class SttFin(SpellcheckerBase):
                 ]
             }
             """
-
             err_list = []
+            check_data = {"errors": err_list}
             for err in data.get("errors", []):
                 ercorr_data = {
                     "startOffset": err.get("start"),
                     "text": err.get("range"),
                     "type": "spelling",
                     "explanation": err.get("explanation"),
-                    "suggestions": err.get("suggestions", []),
+                    "suggestions": [
+                        {"text": s["userText"]} for s in err.get("suggestions", [])
+                    ],
                 }
                 err_list.append(ercorr_data)
 
-            return {"errors": err_list}
+            return check_data
         except Exception as e:
             logger.error("STT check failed: {}".format(e))
             return {"errors": []}
@@ -135,11 +137,10 @@ class SttFin(SpellcheckerBase):
                 )
             data = r.json()
             suggestions = []
+            # NOTE: "errors" is a list of errors, each error has a list of suggestions
             for err in data.get("errors", []):
-                suggestions.extend(
-                    [{"text": s["userText"]} for s in err.get("suggestions", [])]
-                )
-
+                # suggestions should be like list of strings
+                suggestions.extend([s["userText"] for s in err.get("suggestions", [])])
             return {"suggestions": self.list2suggestions(suggestions)}
         except Exception as e:
             logger.error("STT suggest failed: {}".format(e))
