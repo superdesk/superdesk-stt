@@ -1,9 +1,12 @@
 # from superdesk import get_resource_service
 from apps.publish.content.common import ITEM_PUBLISH
+from superdesk.editor_utils import generate_fields
 from .helpers.auto_translate_item import AutoTranslateItem
 import logging
 
 logger = logging.getLogger(__name__)
+
+FIELDS = ("headline", "body_html")
 
 
 def get_headline_for_item(translated_item):
@@ -25,23 +28,23 @@ def get_body_html_for_item(translated_item):
 
     *** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***
     """
-    body_html = "<h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2>\n\n*** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***"
+    body_html = "<h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2><br /><strong>*** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***</strong>"
     # then add english version of the text
-    body_html += f"{translated_item.get('translated_text_en', '')}"
+    body_html += f"<br /><p>{translated_item.get('translated_text_en', '')}</p>"
     # then add this text:
     """
     *** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***
     """
-    body_html += "\n\n*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***"
+    body_html += "<br /><strong>*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***</strong>"
     # and then add swedish version of the text
-    body_html += f"\n\n{translated_item.get('translated_text_sv', '')}"
+    body_html += f"<br /><p>{translated_item.get('translated_text_sv', '')}</p>"
     # then add:
     """
     *** ORIGINAL TEXT ***
     """
-    body_html += "\n\n*** ORIGINAL TEXT ***"
+    body_html += "<br /><strong>*** ORIGINAL TEXT ***</strong>"
     # and then add the original text
-    body_html += f"\n\n{translated_item.get('original_text', '')}"
+    body_html += f"<br /><p>{translated_item.get('original_text', '')}</p>"
     # and return the body html
     return body_html
 
@@ -68,30 +71,12 @@ def auto_translate_and_publish(item, **kwargs):
         item["language"] = "en"
         item["headline"] = get_headline_for_item(translated_item)
         html = get_body_html_for_item(translated_item)
-
-        # 1) replace the stored HTML
         item["body_html"] = html
-        # 2) manually construct a minimal DraftJS state
-        #    (this will display raw HTML tags as text, or you can strip tags if you need)
-        draft_state = {
-            "blocks": [
-                {
-                    "key": "auto",
-                    "text": html,
-                    "type": "unstyled",
-                    "depth": 0,
-                    "inlineStyleRanges": [],
-                    "entityRanges": [],
-                    "data": {},
-                }
-            ],
-            "entityMap": {},
-        }
-
-        item.setdefault("fields_meta", {}).setdefault("body_html", {})[
-            "draftjsState"
-        ] = [draft_state]
-        logger.info("New item: %s", item)
+        generate_fields(item, FIELDS, force=True, reload=True)
+        logger.info("New item body_html: %s", item["body_html"])
+        logger.info("New item headline: %s", item["headline"])
+        logger.info("New item language: %s", item["language"])
+        logger.info("New item operation: %s", item["operation"])
         return item
     except Exception as e:
         logger.error("Error during Auto Translate and Publish macro: %s", str(e))
