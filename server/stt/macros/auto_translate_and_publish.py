@@ -1,6 +1,6 @@
 # from superdesk import get_resource_service
 from apps.publish.content.common import ITEM_PUBLISH
-from .helpers.auto_translate_item import auto_translate_item
+from .helpers.auto_translate_item import AutoTranslateItem
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,9 +50,8 @@ def auto_translate_and_publish(item, **kwargs):
     """This macro runs two macros auto_translate_item and desk_routing."""
 
     try:
-        # macro_service = get_resource_service("macros")
-        # desk_routing_macro = macro_service.get_macro_by_name("desk_routing")
-        translated_item = auto_translate_item(item, **kwargs)
+        translate = AutoTranslateItem()
+        translated_item = translate.auto_translate_item(item, **kwargs)
         # translated_item includes:
         #   original_headline
         #   original_text
@@ -68,11 +67,34 @@ def auto_translate_and_publish(item, **kwargs):
         item["operation"] = ITEM_PUBLISH
         item["language"] = "en"
         item["headline"] = get_headline_for_item(translated_item)
-        item["body_html"] = get_body_html_for_item(translated_item)
-        # desk_routing_macro["callback"](item, **kwargs)
+        html = get_body_html_for_item(translated_item)
+
+        # 1) replace the stored HTML
+        item["body_html"] = html
+        # 2) manually construct a minimal DraftJS state
+        #    (this will display raw HTML tags as text, or you can strip tags if you need)
+        draft_state = {
+            "blocks": [
+                {
+                    "key": "auto",
+                    "text": html,
+                    "type": "unstyled",
+                    "depth": 0,
+                    "inlineStyleRanges": [],
+                    "entityRanges": [],
+                    "data": {},
+                }
+            ],
+            "entityMap": {},
+        }
+
+        item.setdefault("fields_meta", {}).setdefault("body_html", {})[
+            "draftjsState"
+        ] = [draft_state]
+        logger.info("New item: %s", item)
         return item
     except Exception as e:
-        logger.error("Error during desk incoming rule macro: %s", str(e))
+        logger.error("Error during Auto Translate and Publish macro: %s", str(e))
         return item
 
 
