@@ -10,13 +10,15 @@
 
 import logging
 import re
-
+import os
+from pathlib import Path
+from google.oauth2 import service_account
 from google.cloud import translate_v3 as translate
 
 logger = logging.getLogger(__name__)
 
 
-def translate_text(text, target_language="es"):
+def translate_text(text, target_language="en-US"):
     """
     Translates text into the target language.
 
@@ -28,13 +30,35 @@ def translate_text(text, target_language="es"):
         str: The translated text.
     """
     # Initialize the translation client.
-    client = translate.Client()
-
+    service_account_path = Path(__file__).parent / "service-account.json"
+    # check that the service account file exists
+    if not service_account_path.exists():
+        logger.error("Service account file not found: %s", service_account_path)
+        raise FileNotFoundError(
+            f"Service account file not found: {service_account_path}"
+        )
+    credentials = service_account.Credentials.from_service_account_file(
+        str(service_account_path)
+    )
+    # Set up the translation client with credentials
+    client = translate.TranslationServiceClient(credentials=credentials)
+    parent = (
+        f"projects/{os.getenv('GOOGLE_CLOUD_TRANSLATE_PROJECT_ID')}/locations/global"
+    )
     # Translate the text.
-    result = client.translate(text, target_language=target_language)
+    # text should be list of strings
+    if isinstance(text, str):
+        text = [text]
+    result = client.translate_text(
+        request={
+            "parent": parent,
+            "contents": text,  # Note: "contents" is the correct argument name for a list of strings.
+            "target_language_code": target_language,
+        }
+    )
 
     # The API returns a dictionary; the translated text is stored under the key 'translatedText'.
-    return result.get("translatedText")
+    return result.translations[0].translated_text
 
 
 def auto_translate_item(item, **kwargs):
@@ -55,24 +79,22 @@ def auto_translate_item(item, **kwargs):
 
         headline_to_translate = item.get("headline", "")
         translated_headline_en = translate_text(
-            headline_to_translate, target_language="en"
+            headline_to_translate, target_language="en-US"
         )
-        translated_headline_sv = translate_text(
-            headline_to_translate, target_language="sv"
-        )
+        # translated_headline_sv = translate_text(
+        #     headline_to_translate, target_language="sv"
+        # )
         translated_headline = {
             "translated_headline_en": translated_headline_en,
-            "translated_headline_sv": translated_headline_sv,
             "original_headline": headline_to_translate,
         }
         logger.info("Translated headline: %s", translated_headline)
-        translated_text_en = translate_text(text_to_translate, target_language="en")
+        translated_text_en = translate_text(text_to_translate, target_language="en-US")
         translated_text_sv = translate_text(text_to_translate, target_language="sv")
         translated_item = {
             "original_headline": headline_to_translate,
             "original_text": text_to_translate,
             "translated_headline_en": translated_headline_en,
-            "translated_headline_sv": translated_headline_sv,
             "translated_text_en": translated_text_en,
             "translated_text_sv": translated_text_sv,
             "error": False,
@@ -87,8 +109,8 @@ def auto_translate_item(item, **kwargs):
         }
 
 
-name = "Auto Translate Item"
-label = name
-callback = auto_translate_item
-access_type = "backend"
-action_type = "direct"
+# name = "Auto Translate Item"
+# label = name
+# callback = auto_translate_item
+# access_type = "backend"
+# action_type = "direct"

@@ -1,6 +1,6 @@
 # from superdesk import get_resource_service
 from apps.publish.content.common import ITEM_PUBLISH
-from .auto_translate_item import auto_translate_item
+from .helpers.auto_translate_item import auto_translate_item
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ def get_body_html_for_item(translated_item):
     return body_html
 
 
-def desk_incoming_rule_macro(item, **kwargs):
+def auto_translate_and_publish(item, **kwargs):
     """This macro runs two macros auto_translate_item and desk_routing."""
 
     try:
@@ -57,7 +57,6 @@ def desk_incoming_rule_macro(item, **kwargs):
         #   original_headline
         #   original_text
         #   translated_headline_en
-        #   translated_headline_sv
         #   translated_text_en
         #   translated_text_sv
         #   error
@@ -77,8 +76,8 @@ def desk_incoming_rule_macro(item, **kwargs):
         return item
 
 
-name = "desk_incoming_rule_macro"
-label = "Desk Incoming Rule Macro"
-callback = desk_incoming_rule_macro
+name = "auto_translate_and_publish_macro"
+label = "Auto Translate and Publish"
+callback = auto_translate_and_publish
 access_type = "frontend"
 action_type = "direct"
