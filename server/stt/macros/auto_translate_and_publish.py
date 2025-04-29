@@ -21,30 +21,31 @@ def get_headline_for_item(translated_item):
     return headline
 
 
-def get_body_html_for_item(translated_item):
+def get_body_html_for_item(translated_item, item):
     # body html needs to start like this:
     """
     <h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2>
 
     *** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***
     """
-    body_html = "<h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2><br /><strong>*** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***</strong>"
+    body_html = "<h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2>"
+    body_html += "<p><b>*** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***</b></p>"
     # then add english version of the text
-    body_html += f"<br /><p>{translated_item.get('translated_text_en', '')}</p>"
+    body_html += f"{translated_item.get('translated_text_en', '')}"
     # then add this text:
     """
     *** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***
     """
-    body_html += "<br /><strong>*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***</strong>"
+    body_html += "<p><b>*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***</b></p>"
     # and then add swedish version of the text
-    body_html += f"<br /><p>{translated_item.get('translated_text_sv', '')}</p>"
+    body_html += f"{translated_item.get('translated_text_sv', '')}"
     # then add:
     """
     *** ORIGINAL TEXT ***
     """
-    body_html += "<br /><strong>*** ORIGINAL TEXT ***</strong>"
+    body_html += "<p><b>*** ORIGINAL TEXT ***</b></p>"
     # and then add the original text
-    body_html += f"<br /><p>{translated_item.get('original_text', '')}</p>"
+    body_html += f"{item.get('body_html', '')}"
     # and return the body html
     return body_html
 
@@ -70,13 +71,10 @@ def auto_translate_and_publish(item, **kwargs):
         item["operation"] = ITEM_PUBLISH
         item["language"] = "en"
         item["headline"] = get_headline_for_item(translated_item)
-        html = get_body_html_for_item(translated_item)
+        html = get_body_html_for_item(translated_item, item)
+        logger.info("Generated body_html: %s", html)
         item["body_html"] = html
         generate_fields(item, FIELDS, force=True, reload=True)
-        logger.info("New item body_html: %s", item["body_html"])
-        logger.info("New item headline: %s", item["headline"])
-        logger.info("New item language: %s", item["language"])
-        logger.info("New item operation: %s", item["operation"])
         return item
     except Exception as e:
         logger.error("Error during Auto Translate and Publish macro: %s", str(e))
@@ -88,3 +86,4 @@ label = "Auto Translate and Publish"
 callback = auto_translate_and_publish
 access_type = "frontend"
 action_type = "direct"
+replace_type = "editor_state"
