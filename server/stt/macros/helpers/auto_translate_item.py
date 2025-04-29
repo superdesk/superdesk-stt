@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-import re
 import os
 import json
 from google.oauth2 import service_account
@@ -38,7 +37,9 @@ class AutoTranslateItem:
             logger.error(
                 "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON: %s", e
             )
-            raise
+            raise ValueError(
+                "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON"
+            ) from e
         credentials = service_account.Credentials.from_service_account_info(info)
         self.client = translate.TranslationServiceClient(credentials=credentials)
 
@@ -49,7 +50,7 @@ class AutoTranslateItem:
         self.parent = f"projects/{project_id}/locations/global"
         self.logger = logger
 
-    def translate_text(self, text, target_language="en-US"):  # noqa: N802
+    def translate_text(self, text, target_language="en-US"):
         """
         Translates text (string or list) into the target language.
         Returns the translated string.
@@ -65,16 +66,13 @@ class AutoTranslateItem:
         )
         return result.translations[0].translated_text
 
-    def auto_translate_item(self, item, **kwargs):  # noqa: N802
+    def auto_translate_item(self, item, **kwargs):
         """
         Auto translate an item dict by extracting body_html and headline,
         removing HTML tags, calling translate_text, and returning a summary dict.
         """
         try:
-            body_html = item.get("body_html", "")
-            text_to_translate = re.sub(r"<[^>]+>", "", body_html)
-            self.logger.info("Auto translating item: %s", text_to_translate)
-
+            text_to_translate = item.get("body_html", "")
             headline = item.get("headline", "")
             translated_headline_en = self.translate_text(headline, "en-US")
             translated_text_en = self.translate_text(text_to_translate, "en-US")
@@ -88,7 +86,6 @@ class AutoTranslateItem:
                 "translated_text_sv": translated_text_sv,
                 "error": False,
             }
-            self.logger.info("Translated item: %s", translated_item)
             return translated_item
         except Exception as e:
             self.logger.error("Error during translation: %s", e)
