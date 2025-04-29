@@ -72,7 +72,6 @@ def auto_translate_and_publish(item, **kwargs):
         item["language"] = "en"
         item["headline"] = get_headline_for_item(translated_item)
         html = get_body_html_for_item(translated_item, item)
-        logger.info("Generated body_html: %s", html)
         item["body_html"] = html
         generate_fields(item, FIELDS, force=True, reload=True)
         return item
