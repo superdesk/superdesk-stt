@@ -47,19 +47,6 @@ class STTTTNINJSFeedParser(NINJSFeedParser):
         item['body_html'] = self.sanitise_stt_tt_html(ninjs.get('body_html5'))
         return self._transform_from_stt_tt_ninjs(item)
 
-  #  def _transform_from_stt_tt_ninjs(self, item):
-  #      subject_name = 'Urheilu' if self.is_sport_item else 'Utenriks'
-  #      item['subject'] = item.get('subject', []) + [{
-  #          'name': subject_name,
-  #          'scheme': 'sttsubj',
-  #          'qcode': subject_name
-  #      }]
-  #
-  #       item['anpa_category'] = item.get('anpa_category', []) + [{
-  #          'name': 'Nyhetstjenesten',
-  #         'qcode': 'n'
-  #    }]
-  
         return item
 
     def datetime(self, string):
