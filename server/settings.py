@@ -30,7 +30,7 @@ init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
-LOCATORS_DATA_FILE = os.path.join(ABS_PATH,"data","locators.json")
+LOCATORS_DATA_FILE = os.path.join(ABS_PATH, "data", "locators.json")
 
 
 RENDITIONS = {
@@ -59,7 +59,7 @@ SECRET_KEY = env('SECRET_KEY', '')
 STT_FIN_API_KEY = env("STT_FIN_API_KEY", "")
 STT_FIN_API_URL = env("STT_FIN_API_URL", "")
 
-# disable takes 
+# disable takes
 NO_TAKES = True
 
 # default timezone
@@ -68,7 +68,7 @@ DEFAULT_TIMEZONE = "Europe/Helsinki"
 # which day is start of week
 START_OF_WEEK = 1
 
-# pagination 
+# pagination
 PAGINATION_LIMIT = 500
 PAGINATION_DEFAULT = PAGINATION_LIMIT
 
@@ -135,10 +135,10 @@ INSTALLED_APPS = [
 # enable legal archive is enabled
 LEGAL_ARCHIVE = True
 
-########## EXPIRY ########## 
+# EXPIRY
 
-# expiry of content in production 
-CONTENT_EXPIRY_MINUTES = 43200 # 30 days
+# expiry of content in production
+CONTENT_EXPIRY_MINUTES = 43200
 
 # expiry of spiked content. If unspecified, Desk expiry value is used
 SPIKE_EXPIRY_MINUTES = int(env('SPIKE_EXPIRY_MINUTES', 3 * 24 * 60))
@@ -169,12 +169,12 @@ MAX_EXPIRY_QUERY_LIMIT = int(env('MAX_EXPIRY_QUERY_LIMIT', 1000))
 # Disallowed characters for text fields (validation needs to be enabled in content profile)
 # DISALLOWED_CHARACTERS = ['!', '#', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
 
-########## AUTHORING CONFIG ########## 
+# AUTHORING CONFIG
 
 # allow non-desk members to duplicate content
 WORKFLOW_ALLOW_DUPLICATE_TO_NON_MEMBERS = True
 
-# enable slugline autocompletion 
+# enable slugline autocompletion
 ARCHIVE_AUTOCOMPLETE = True
 # display published slugs from the last X days
 ARCHIVE_AUTOCOMPLETE_DAYS = 7
@@ -193,7 +193,7 @@ PUBLISH_ASSOCIATED_ITEMS = False
 # enable corrections workflow = corrections can be sent to desks before "send correction"/publish action
 CORRECTIONS_WORKFLOW = True
 
-########## PLANNING CONFIG ########## 
+# PLANNING CONFIG
 
 # fields to be inherited between events and planning
 SYNC_EVENT_FIELDS_TO_PLANNING = [
@@ -228,7 +228,7 @@ PLANNING_EVENT_TEMPLATES_ENABLED = env('PLANNING_EVENT_TEMPLATES_ENABLED', 'true
 
 # Template for export events as articles that overwrites default template
 # default: https://github.com/superdesk/superdesk-planning/blob/develop/server/planning/planning_export_templates.py
-# EVENT_EXPORT_BODY_TEMPLATE 
+# EVENT_EXPORT_BODY_TEMPLATE
 
 # Template for export plannings as articles that overwrites default template
 # PLANNING_EXPORT_BODY_TEMPLATE
@@ -236,7 +236,7 @@ PLANNING_EVENT_TEMPLATES_ENABLED = env('PLANNING_EVENT_TEMPLATES_ENABLED', 'true
 # duration of of long event ??? Defaults to -1 = disabled
 # LONG_EVENT_DURATION_THRESHOLD
 
-########## ASSIGNMENTS CONFIG ########## 
+# ASSIGNMENTS CONFIG
 
 # Enable or disable the fulfill assignments task
 ENABLE_FULFILL_ASSIGNMENTS = env('ENABLE_FULFILL_ASSIGNMENTS', 'true')
@@ -250,7 +250,7 @@ PLANNING_CHECK_FOR_ASSIGNMENT_ON_PUBLISH = env('PLANNING_CHECK_FOR_ASSIGNMENT_ON
 # check for unfulfilled assignments when sending a story from an authoring to production desk (based on slugline)
 PLANNING_CHECK_FOR_ASSIGNMENT_ON_SEND = env('PLANNING_CHECK_FOR_ASSIGNMENT_ON_SEND', 'true')
 
-# link updates to coverages  
+# link updates to coverages
 PLANNING_LINK_UPDATES_TO_COVERAGES = env('PLANNING_LINK_UPDATES_TO_COVERAGES', 'false')
 
 # Desk IDs to display fulfil challenge on publish (requires PLANNING_CHECK_FOR_ASSIGNMENT_ON_PUBLISH=true)
@@ -264,7 +264,7 @@ PLANNING_FULFIL_ON_PUBLISH_FOR_DESKS = env(
     '57b0f07ea5398f41862b951e'  # Court Production
 )
 
-########## XMP ########## 
+# XMP
 
 # use XMP for picture assignments
 PLANNING_USE_XMP_FOR_PIC_ASSIGNMENTS = env('PLANNING_USE_XMP_FOR_PIC_ASSIGNMENTS', 'true')
@@ -294,7 +294,7 @@ PLANNING_XMP_ASSIGNMENT_MAPPING = {
     'atribute_key': '{http://ns.adobe.com/photoshop/1.0/}TransmissionReference'
 }
 
-########## ANALYTICS MODULE ########## 
+# ANALYTICS MODULE
 
 # Highcharts Export Server - default settings
 ANALYTICS_ENABLE_SCHEDULED_REPORTS = env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
