@@ -10,6 +10,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
+from typing import Any
 from pathlib import Path
 
 
@@ -113,7 +114,7 @@ SCHEMA = {
         'usageterms': {},
         'keywords': {},
     }
-}
+}  # type: dict[Any, Any]
 
 # add missing item in CVs on ingest
 QCODE_MISSING_VOC = "create"
