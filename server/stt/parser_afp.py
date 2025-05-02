@@ -37,9 +37,17 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
             {"pattern": "^03[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
             {"pattern": "^04[0-9]+$", "mappingid": "11", "mappingstr": "Talous"},
             {"pattern": "^05[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
-            {"pattern": "^06[0-9]+$", "mappingid": "13", "mappingstr": "Toimituksille tiedoksi"},
+            {
+                "pattern": "^06[0-9]+$",
+                "mappingid": "13",
+                "mappingstr": "Toimituksille tiedoksi",
+            },
             {"pattern": "^07[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
-            {"pattern": "^08[0-9]+$", "mappingid": "13", "mappingstr": "Toimituksille tiedoksi"},
+            {
+                "pattern": "^08[0-9]+$",
+                "mappingid": "13",
+                "mappingstr": "Toimituksille tiedoksi",
+            },
             {"pattern": "^09[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
             {"pattern": "^10[0-9]+$", "mappingid": "11", "mappingstr": "Talous"},
             {"pattern": "^11[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
@@ -52,8 +60,14 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
         ]
 
         item = super().parse(xml, provider)
-        item["firstcreated"] = utc.localize(item["firstcreated"]) if item.get("firstcreated") else utcnow()
-        item["versioncreated"] = utc.localize(item["versioncreated"]) if item.get("versioncreated") else utcnow()
+        item["firstcreated"] = (
+            utc.localize(item["firstcreated"]) if item.get("firstcreated") else utcnow()
+        )
+        item["versioncreated"] = (
+            utc.localize(item["versioncreated"])
+            if item.get("versioncreated")
+            else utcnow()
+        )
 
         item["subject"] = []
 
@@ -84,7 +98,11 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
                     # If match is not found add it to the subjects
                     if alreadyAdded is False:
                         item["subject"].append(
-                            {"qcode": p["mappingid"], "name": p["mappingstr"], "scheme": "sttdepartment"}
+                            {
+                                "qcode": p["mappingid"],
+                                "name": p["mappingstr"],
+                                "scheme": "sttdepartment",
+                            }
                         )
 
         # Check if there is not subjects found. Then use default value for it: Ulkomaat

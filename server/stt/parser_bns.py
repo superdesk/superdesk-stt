@@ -41,20 +41,28 @@ class BNSNewsMLFeedParser(NewsMLTwoFeedParser):
         item["body_html"] = ""
 
         # Get department value from XML
-        dep = xml.xpath("/NewsML/NewsItem/NewsComponent/TopicSet/Topic/FormalName")[0].text
+        dep = xml.xpath("/NewsML/NewsItem/NewsComponent/TopicSet/Topic/FormalName")[
+            0
+        ].text
 
         # Parse dep value and choose STT corresponding department: Ulkomaat or talous
         match = re.search("^.*B$", dep)
 
         # If last character is B then departmen is talous
         if match is not None:
-            item["subject"].append({"qcode": "11", "name": "Talous", "scheme": "sttdepartment"})
+            item["subject"].append(
+                {"qcode": "11", "name": "Talous", "scheme": "sttdepartment"}
+            )
         # Otherwise all other values default to department ulkomaat
         else:
-            item["subject"].append({"qcode": "14", "name": "Ulkomaat", "scheme": "sttdepartment"})
+            item["subject"].append(
+                {"qcode": "14", "name": "Ulkomaat", "scheme": "sttdepartment"}
+            )
 
         # Get body paragraps
-        paragraphs = xml.xpath("/NewsML/NewsItem/NewsComponent/ContentItem/DataContent/html/body//p")
+        paragraphs = xml.xpath(
+            "/NewsML/NewsItem/NewsComponent/ContentItem/DataContent/html/body//p"
+        )
 
         # Concatenate all paragaphs into single string in body_html
         for p in paragraphs:
