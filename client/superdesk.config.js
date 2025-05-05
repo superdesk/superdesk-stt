@@ -24,10 +24,6 @@ module.exports = function(grunt) {
         
         /* landing page after login */
         defaultRoute: '/workspace/monitoring',
-        server: {
-            url: "http://172.16.109.15:5000/api",
-            ws: "ws://172.16.109.15:5100/ws"
-        },
         
         /* enable changing content profile for stories */
         item_profile: {
