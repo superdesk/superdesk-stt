@@ -56,6 +56,10 @@ BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 SECRET_KEY = env("SECRET_KEY", "")
 STT_FIN_API_KEY = env("STT_FIN_API_KEY", "")
 STT_FIN_API_URL = env("STT_FIN_API_URL", "")
+GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON = env(
+    "GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON", ""
+)
+GOOGLE_CLOUD_TRANSLATE_PROJECT_ID = env("GOOGLE_CLOUD_TRANSLATE_PROJECT_ID", "")
 
 NO_TAKES = True
 
@@ -93,6 +97,7 @@ INSTALLED_APPS = [
     "planning",
     "apps.languages",
     "stt.spellcheckers.stt_fin",
+    "stt.macros",
 ]
 
 HTML_TAGS_WHITELIST = (
