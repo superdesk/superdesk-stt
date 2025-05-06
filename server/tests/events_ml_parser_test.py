@@ -187,3 +187,41 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertEqual(
             search_existing_contacts(search_contact)["_id"], str(contact_ids[0])
         )
+
+    def test_location_saved_to_db(self):
+        locations_service = get_resource_service("locations")
+
+        self.location_data = {
+            "name": "Sokos Hotel Presidentti",
+            "address": {
+                "title": "Sokos Hotel Presidentti",
+                "city": "Helsinki",
+                "state": "Uusimaa",
+                "country": "Suomi",
+                "line": ["Eteläinen Rautatiekatu 4"],
+                "extra": {
+                    "sttlocationalias": "14068",
+                    "sttcity": "35",
+                    "sttstate": "31",
+                    "sttcountry": "1",
+                    "iso3166": "iso3166-1a2:FI",
+                },
+            },
+            "details": ["Knock 3 times"],
+        }
+
+        existing = locations_service.find_one(req=None, name="Sokos Hotel Presidentti")
+        if not existing:
+            location_id = locations_service.post([self.location_data])[0]
+        else:
+            location_id = existing["_id"]
+
+        # Parse the content
+        self.parse_source_content()
+
+        item = self.item
+        self.assertIn("location", item)
+        location = item["location"][0]
+
+        # Assert the item is using the seeded location
+        self.assertEqual(str(location["location_id"]), str(location_id))

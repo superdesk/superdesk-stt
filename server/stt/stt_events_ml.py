@@ -25,6 +25,8 @@ NS = {
     "stt": "http://www.stt-lehtikuva.fi/NewsML",
 }
 
+from typing import List, TypedDict, Optional
+
 
 class ContactPhone(TypedDict):
     number: str
@@ -38,8 +40,8 @@ class ContactDetails(TypedDict, total=False):
     last_name: str
     job_title: str
     organisation: str
-    contact_phone: list[ContactPhone]
-    contact_email: list[str]
+    contact_phone: List[ContactPhone]  # Instead of list[ContactPhone]
+    contact_email: List[str]  # Instead of list[str]
     website: str
 
 
@@ -276,7 +278,24 @@ class STTEventsMLParser(EventsMLParser):
             except AttributeError:
                 pass
 
-        item["location"] = [location]
+        # Save location to database if it doesn't exist
+        locations_service = get_resource_service("locations")
+        if locations_service is not None:
+            try:
+                existing_location = locations_service.find_one(
+                    req=None,
+                    name=location.get("name"),
+                    **{"address.city": location.get("address", {}).get("city")},
+                )
+                if existing_location:
+                    location_id = existing_location["_id"]
+                else:
+                    location_id = locations_service.post([location])[0]
+
+                # Store both the full location data and reference ID
+                item["location"] = [{**location, "location_id": location_id}]
+            except AttributeError:
+                pass
 
     def set_contact_details(self, item: Dict[str, Any], event_details: Element):
         for contact_info in event_details.findall(self.qname("contactInfo")):
