@@ -25,8 +25,6 @@ NS = {
     "stt": "http://www.stt-lehtikuva.fi/NewsML",
 }
 
-from typing import List, TypedDict, Optional
-
 
 class ContactPhone(TypedDict):
     number: str
@@ -40,8 +38,8 @@ class ContactDetails(TypedDict, total=False):
     last_name: str
     job_title: str
     organisation: str
-    contact_phone: List[ContactPhone]  # Instead of list[ContactPhone]
-    contact_email: List[str]  # Instead of list[str]
+    contact_phone: list[ContactPhone]
+    contact_email: list[str]
     website: str
 
 
