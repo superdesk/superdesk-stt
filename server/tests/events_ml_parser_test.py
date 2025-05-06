@@ -210,7 +210,11 @@ class STTEventsMLParserContactInfoTest(TestCase):
             "details": ["Knock 3 times"],
         }
 
-        existing = locations_service.find_one(req=None, name="Sokos Hotel Presidentti")
+        stt_id = self.location_data["address"]["extra"]["sttlocationalias"]
+        guid = f"urn:stt:location:{stt_id}"
+        self.location_data["guid"] = guid
+
+        existing = locations_service.find_one(req=None, guid=guid)
         if not existing:
             location_id = locations_service.post([self.location_data])[0]
         else:
@@ -223,5 +227,4 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertIn("location", item)
         location = item["location"][0]
 
-        # Assert the item is using the seeded location
-        self.assertEqual(str(location["location_id"]), str(location_id))
+        self.assertEqual(str(location["_id"]), str(location_id))

@@ -280,18 +280,29 @@ class STTEventsMLParser(EventsMLParser):
         locations_service = get_resource_service("locations")
         if locations_service is not None:
             try:
-                existing_location = locations_service.find_one(
-                    req=None,
-                    name=location.get("name"),
-                    **{"address.city": location.get("address", {}).get("city")},
+                stt_id = (
+                    location.get("address", {}).get("extra", {}).get("sttlocationalias")
                 )
-                if existing_location:
-                    location_id = existing_location["_id"]
-                else:
-                    location_id = locations_service.post([location])[0]
+                custom_guid = f"urn:stt:location:{stt_id}" if stt_id else None
 
-                # Store both the full location data and reference ID
-                item["location"] = [{**location, "location_id": location_id}]
+                existing_location = (
+                    locations_service.find_one(req=None, guid=custom_guid)
+                    if custom_guid
+                    else None
+                )
+
+                if existing_location:
+                    saved_location = existing_location
+                else:
+                    if custom_guid:
+                        location["guid"] = custom_guid
+                    location_ids = locations_service.post([location])
+                    location_id = location_ids[0]
+                    saved_location = locations_service.find_one(
+                        req=None, _id=location_id
+                    )
+
+                item["location"] = [saved_location]
             except AttributeError:
                 pass
 
