@@ -283,26 +283,26 @@ class STTEventsMLParser(EventsMLParser):
                 stt_id = (
                     location.get("address", {}).get("extra", {}).get("sttlocationalias")
                 )
-                custom_guid = f"urn:stt:location:{stt_id}" if stt_id else None
 
-                existing_location = (
-                    locations_service.find_one(req=None, guid=custom_guid)
-                    if custom_guid
-                    else None
-                )
-
-                if existing_location:
-                    saved_location = existing_location
-                else:
-                    if custom_guid:
-                        location["guid"] = custom_guid
-                    location_ids = locations_service.post([location])
-                    location_id = location_ids[0]
-                    saved_location = locations_service.find_one(
-                        req=None, _id=location_id
+                if stt_id:
+                    custom_guid = f"urn:stt:location:{stt_id}"
+                    existing_location = locations_service.find_one(
+                        req=None, guid=custom_guid
                     )
 
-                item["location"] = [saved_location]
+                    if existing_location:
+                        saved_location = existing_location
+                    else:
+                        location["guid"] = custom_guid
+                        location_ids = locations_service.post([location])
+                        saved_location = locations_service.find_one(
+                            req=None, _id=location_ids[0]
+                        )
+
+                    item["location"] = [saved_location]
+                else:
+                    item["location"] = [location]
+
             except AttributeError:
                 pass
 
