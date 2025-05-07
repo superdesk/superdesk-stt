@@ -291,7 +291,14 @@ class STTEventsMLParser(EventsMLParser):
                     )
 
                     if existing_location:
-                        saved_location = existing_location
+                        updated_location = {**existing_location, **location}
+                        location_id = existing_location["_id"]
+                        locations_service.update(
+                            location_id, updated_location, existing_location
+                        )
+                        saved_location = locations_service.find_one(
+                            req=None, _id=location_id
+                        )
                     else:
                         location["guid"] = custom_guid
                         location_ids = locations_service.post([location])
