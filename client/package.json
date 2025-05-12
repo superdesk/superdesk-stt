@@ -8,7 +8,7 @@
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
-        "start": "npx serve dist -l 9000"
+        "start": "npx grunt server"
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.0.19"
