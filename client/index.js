@@ -1,4 +1,5 @@
 import {startApp} from 'superdesk-core/scripts/index';
+import './stt.css';
 
 setTimeout(() => {
     startApp([
