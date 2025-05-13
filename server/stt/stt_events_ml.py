@@ -276,7 +276,42 @@ class STTEventsMLParser(EventsMLParser):
             except AttributeError:
                 pass
 
-        item["location"] = [location]
+        # Save location to database if it doesn't exist
+        locations_service = get_resource_service("locations")
+        if locations_service is not None:
+            try:
+                stt_id = (
+                    location.get("address", {}).get("extra", {}).get("sttlocationalias")
+                )
+
+                if stt_id:
+                    custom_guid = f"urn:stt:location:{stt_id}"
+                    existing_location = locations_service.find_one(
+                        req=None, guid=custom_guid
+                    )
+
+                    if existing_location:
+                        updated_location = {**existing_location, **location}
+                        location_id = existing_location["_id"]
+                        locations_service.update(
+                            location_id, updated_location, existing_location
+                        )
+                        saved_location = locations_service.find_one(
+                            req=None, _id=location_id
+                        )
+                    else:
+                        location["guid"] = custom_guid
+                        location_ids = locations_service.post([location])
+                        saved_location = locations_service.find_one(
+                            req=None, _id=location_ids[0]
+                        )
+
+                    item["location"] = [saved_location]
+                else:
+                    item["location"] = [location]
+
+            except AttributeError:
+                pass
 
     def set_contact_details(self, item: Dict[str, Any], event_details: Element):
         for contact_info in event_details.findall(self.qname("contactInfo")):

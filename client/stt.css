@@ -1,0 +1,9 @@
+/* Override spelling-errors to make it more visible in the editor */
+.spelling-error {
+	background-color: #ffff00;
+}
+
+/* To remove the uppercase effect from the slugline/topic name */
+.sd-text__slugline, .sd-list-item__slugline, .field--slugline {
+   text-transform: none !important;
+}
