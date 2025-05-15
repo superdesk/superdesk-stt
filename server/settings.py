@@ -62,6 +62,7 @@ GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON = env(
     "GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON", ""
 )
 GOOGLE_CLOUD_TRANSLATE_PROJECT_ID = env("GOOGLE_CLOUD_TRANSLATE_PROJECT_ID", "")
+STT_AI_URL = env("STT_AI_URL", "")
 
 # disable takes
 NO_TAKES = True
@@ -136,6 +137,7 @@ INSTALLED_APPS = [
     "stt.spellcheckers.stt_fin",
     "stt.macros",
     "stt.search_providers.newshub",
+    "stt.ai_proxy",
 ]
 
 # enable legal archive is enabled
