@@ -193,6 +193,7 @@ class STTEventsMLParserContactInfoTest(TestCase):
 
         self.location_data = {
             "name": "Sokos Hotel Presidentti",
+            "unique_name": "Sokos Hotel Presidentti",
             "address": {
                 "title": "Sokos Hotel Presidentti",
                 "city": "Helsinki",
