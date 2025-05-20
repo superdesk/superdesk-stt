@@ -217,7 +217,18 @@ class STTEventsMLParser(EventsMLParser):
         try:
             name = location_xml.find(self.qname("name")).text
             location["name"] = name
-            location["unique_name"] = name
+            address_xml = location_xml.find(self.qname("POIDetails")).find(
+                self.qname("address")
+            )
+            city = (
+                address_xml.find(self.qname("locality")).find(self.qname("name")).text
+            )
+            country = (
+                address_xml.find(self.qname("country")).find(self.qname("name")).text
+            )
+            location["unique_name"] = (
+                f"{name}, {city}, {country}" if (city and country) else name
+            )
             location["address"]["title"] = name
         except AttributeError:
             pass
