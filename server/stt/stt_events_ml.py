@@ -217,6 +217,7 @@ class STTEventsMLParser(EventsMLParser):
         try:
             name = location_xml.find(self.qname("name")).text
             location["name"] = name
+            location["unique_name"] = name
             location["address"]["title"] = name
         except AttributeError:
             pass
