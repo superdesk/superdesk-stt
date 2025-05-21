@@ -204,8 +204,12 @@ class STTEventsMLParser(EventsMLParser):
         )
         self.set_contact_details(item, event_details)
 
+    def _construct_unique_name(self, parts):
+        """Helper to construct a unique name from non-empty parts."""
+        return ", ".join(part for part in parts if part)
+
     def set_location_details(self, item, location_xml, notes):
-        """Add Location information, if found"""
+        """Set location details from XML, including name, address title, and a unique_name combining name, city, and country."""
         if location_xml is None:
             return
 
@@ -215,9 +219,33 @@ class STTEventsMLParser(EventsMLParser):
             location["details"] = [notes]
 
         try:
-            name = location_xml.find(self.qname("name")).text
-            location["name"] = name
-            location["address"]["title"] = name
+            poi_name_el = location_xml.find(self.qname("name"))
+            poi_name = poi_name_el.text if poi_name_el is not None else None
+            location["name"] = poi_name
+            poi_details = location_xml.find(self.qname("POIDetails"))
+            address_xml = (
+                poi_details.find(self.qname("address"))
+                if poi_details is not None
+                else None
+            )
+
+            city = None
+            country = None
+
+            if address_xml is not None:
+                locality = address_xml.find(self.qname("locality"))
+                if locality is not None:
+                    city_name = locality.find(self.qname("name"))
+                    city = city_name.text if city_name is not None else None
+
+                country_el = address_xml.find(self.qname("country"))
+                if country_el is not None:
+                    country_name = country_el.find(self.qname("name"))
+                    country = country_name.text if country_name is not None else None
+            location["unique_name"] = self._construct_unique_name(
+                [poi_name, city, country]
+            )
+            location["address"]["title"] = poi_name
         except AttributeError:
             pass
 

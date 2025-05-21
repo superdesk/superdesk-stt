@@ -193,6 +193,7 @@ class STTEventsMLParserContactInfoTest(TestCase):
 
         self.location_data = {
             "name": "Sokos Hotel Presidentti",
+            "unique_name": "Sokos Hotel Presidentti, Helsinki, Suomi",
             "address": {
                 "title": "Sokos Hotel Presidentti",
                 "city": "Helsinki",
@@ -228,3 +229,7 @@ class STTEventsMLParserContactInfoTest(TestCase):
         location = item["location"][0]
 
         self.assertEqual(str(location["_id"]), str(location_id))
+        self.assertEqual(location["name"], "Sokos Hotel Presidentti")
+        self.assertEqual(
+            location["unique_name"], "Sokos Hotel Presidentti, Helsinki, Suomi"
+        )
