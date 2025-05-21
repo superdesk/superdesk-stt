@@ -238,9 +238,7 @@ class STTEventsMLParser(EventsMLParser):
                 if country_el is not None:
                     country_name = country_el.find(self.qname("name"))
                     country = country_name.text if country_name is not None else None
-            location["unique_name"] = (
-                f"{name}, {city}, {country}" if (city and country) else name
-            )
+            location["unique_name"] = ", ".join(filter(bool, [name, city, country]))
             location["address"]["title"] = name
         except AttributeError:
             pass
