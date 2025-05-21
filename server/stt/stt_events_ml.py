@@ -204,8 +204,12 @@ class STTEventsMLParser(EventsMLParser):
         )
         self.set_contact_details(item, event_details)
 
+    def _construct_unique_name(self, parts):
+        """Helper to construct a unique name from non-empty parts."""
+        return ", ".join(part for part in parts if part)
+
     def set_location_details(self, item, location_xml, notes):
-        """Add Location information, if found"""
+        """Set location details from XML, including name, address title, and a unique_name combining name, city, and country."""
         if location_xml is None:
             return
 
@@ -215,9 +219,9 @@ class STTEventsMLParser(EventsMLParser):
             location["details"] = [notes]
 
         try:
-            name_el = location_xml.find(self.qname("name"))
-            name = name_el.text if name_el is not None else None
-            location["name"] = name
+            poi_name_el = location_xml.find(self.qname("name"))
+            poi_name = poi_name_el.text if poi_name_el is not None else None
+            location["name"] = poi_name
             poi_details = location_xml.find(self.qname("POIDetails"))
             address_xml = (
                 poi_details.find(self.qname("address"))
@@ -238,8 +242,10 @@ class STTEventsMLParser(EventsMLParser):
                 if country_el is not None:
                     country_name = country_el.find(self.qname("name"))
                     country = country_name.text if country_name is not None else None
-            location["unique_name"] = ", ".join(filter(bool, [name, city, country]))
-            location["address"]["title"] = name
+            location["unique_name"] = self._construct_unique_name(
+                [poi_name, city, country]
+            )
+            location["address"]["title"] = poi_name
         except AttributeError:
             pass
 
