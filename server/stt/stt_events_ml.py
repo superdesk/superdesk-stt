@@ -215,17 +215,29 @@ class STTEventsMLParser(EventsMLParser):
             location["details"] = [notes]
 
         try:
-            name = location_xml.find(self.qname("name")).text
+            name_el = location_xml.find(self.qname("name"))
+            name = name_el.text if name_el is not None else None
             location["name"] = name
-            address_xml = location_xml.find(self.qname("POIDetails")).find(
-                self.qname("address")
+            poi_details = location_xml.find(self.qname("POIDetails"))
+            address_xml = (
+                poi_details.find(self.qname("address"))
+                if poi_details is not None
+                else None
             )
-            city = (
-                address_xml.find(self.qname("locality")).find(self.qname("name")).text
-            )
-            country = (
-                address_xml.find(self.qname("country")).find(self.qname("name")).text
-            )
+
+            city = None
+            country = None
+
+            if address_xml is not None:
+                locality = address_xml.find(self.qname("locality"))
+                if locality is not None:
+                    city_name = locality.find(self.qname("name"))
+                    city = city_name.text if city_name is not None else None
+
+                country_el = address_xml.find(self.qname("country"))
+                if country_el is not None:
+                    country_name = country_el.find(self.qname("name"))
+                    country = country_name.text if country_name is not None else None
             location["unique_name"] = (
                 f"{name}, {city}, {country}" if (city and country) else name
             )
