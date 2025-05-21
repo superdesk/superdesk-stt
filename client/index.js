@@ -15,6 +15,26 @@ setTimeout(() => {
           import('superdesk-core/scripts/extensions/ai-widget').then(
             (widget) => {
               widget.configure((superdesk) => ({
+                translations: {
+                  translateActionIntegration: true,
+                  generateTranslations: (article, language) => {
+                    return superdesk
+                      .httpRequestJsonLocal({
+                        method: 'POST',
+                        path: '/stt/ai',
+                        payload: {
+                          language: language,
+                          text: article.body_html,
+                          type: 'translation',
+                        },
+                      })
+                      .then((result) => result.response)
+                      .catch((err) => {
+                        console.error('Error generating translations:', err);
+                        return '';
+                      });
+                  },
+                },
                 generateHeadlines: (article) => {
                   return superdesk
                     .httpRequestJsonLocal({
