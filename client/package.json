@@ -2,9 +2,9 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#release/2.8",
-        "superdesk-planning": "github:superdesk/superdesk-planning#release/2.8",
-        "superdesk-analytics": "github:superdesk/superdesk-analytics#release/2.8"
+        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
+        "superdesk-planning": "github:superdesk/superdesk-planning#feature/embedded-events-editor"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",

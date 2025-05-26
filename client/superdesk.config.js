@@ -135,23 +135,6 @@ module.exports = function (grunt) {
       ],
     },
 
-    profileLanguages: [
-      "en",
-      "el",
-      "en_GB",
-      "fr_CA",
-      "es",
-      "da",
-      "fi_FI",
-      "ar",
-      "de_DE",
-      "ru_RU",
-      "nb",
-      "uk_UA",
-      "pt_BR",
-      "pl",
-    ],
-
     /* display alternative labels for some stings */
     langOverride: {
       en: {
@@ -161,5 +144,10 @@ module.exports = function (grunt) {
       },
     },
     spellcheckers: { fi: "stt_fin" },
+    planning_default_view: 'PLANNING',
+    profileLanguages: [
+      'en',
+      'fi_FI',
+    ],
   };
-};
+}
