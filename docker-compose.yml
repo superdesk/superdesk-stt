@@ -52,6 +52,7 @@ services:
       watch:
         - action: sync+restart
           path: ./server
+          target: /opt/superdesk/server
           ignore:
             - env/
             - requirements.txt
