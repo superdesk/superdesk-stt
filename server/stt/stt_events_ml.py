@@ -314,6 +314,7 @@ class STTEventsMLParser(EventsMLParser):
 
                 if stt_id:
                     custom_guid = f"urn:stt:location:{stt_id}"
+                    location["qcode"] = custom_guid
                     existing_location = locations_service.find_one(
                         req=None, guid=custom_guid
                     )
@@ -327,13 +328,15 @@ class STTEventsMLParser(EventsMLParser):
                         saved_location = locations_service.find_one(
                             req=None, _id=location_id
                         )
+                        saved_location["qcode"] = custom_guid
                     else:
                         location["guid"] = custom_guid
                         location_ids = locations_service.post([location])
                         saved_location = locations_service.find_one(
                             req=None, _id=location_ids[0]
                         )
-
+                        if saved_location:
+                            saved_location["qcode"] = custom_guid
                     item["location"] = [saved_location]
                 else:
                     item["location"] = [location]

@@ -233,3 +233,5 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertEqual(
             location["unique_name"], "Sokos Hotel Presidentti, Helsinki, Suomi"
         )
+        self.assertIn("qcode", location)
+        self.assertEqual(location["qcode"], guid)
