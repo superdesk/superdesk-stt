@@ -216,7 +216,7 @@ class STTEventsMLParser(EventsMLParser):
         location = {"address": {"extra": {}}}
 
         if notes is not None:
-            location["details"] = [notes]
+            location["details"] = notes
 
         try:
             poi_name_el = location_xml.find(self.qname("name"))
