@@ -50,7 +50,7 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(location["address"]["extra"]["sttcountry"], "1")
         self.assertEqual(location["address"]["extra"]["iso3166"], "iso3166-1a2:FI")
         self.assertEqual(location["address"]["line"][0], "Eteläinen Rautatiekatu 4")
-        self.assertEqual(location["details"], ["Knock 3 times"])
+        self.assertEqual(location["details"], "Knock 3 times")
 
 
 class STTEventsMLParserEventTypeCVTest(TestCase):
