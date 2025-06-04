@@ -1,57 +1,30 @@
-# from superdesk import get_resource_service
-from apps.publish.content.common import ITEM_PUBLISH
-from superdesk.editor_utils import generate_fields
+from superdesk import get_resource_service, config
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from .helpers.auto_translate_item import AutoTranslateItem
+from .helpers.getters import get_headline_for_item, get_body_html_for_item
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-FIELDS = ("headline", "body_html")
 
-
-def get_headline_for_item(translated_item):
-    # headline should be english version like
+def auto_publish(item, **kwargs):
     """
-    Sebastian Aho scored half of the Ottawa Senators' goals against the Carolina Hurricanes*** TRANSLATED ***
+    Publish the passed item. The macro must be called as an on stage macro as publishing an item that is in transit
+    i.e. an incoming or outgoing macro will fail.
+    :param item:
+    :param kwargs:
+    :return:
     """
-    headline = translated_item.get("translated_headline_en", "")
-    # add "*** TRANSLATED ***" to the end of the headline
-    if headline and not headline.endswith("*** TRANSLATED ***"):
-        headline += " *** TRANSLATED ***"
-    return headline
-
-
-def get_body_html_for_item(translated_item, item):
-    # body html needs to start like this:
-    """
-    <h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2>
-
-    *** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***
-    """
-    body_html = "<h2>AUTOMATED TRANSLATION FROM FINNISH NEWS FEED</h2>"
-    body_html += "<p><b>*** DISCLAIMER: THIS IS AN AUTOMATED TRANSLATION FROM FINNISH ***</b></p>"
-    # then add english version of the text
-    body_html += f"{translated_item.get('translated_text_en', '')}"
-    # then add this text:
-    """
-    *** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***
-    """
-    body_html += "<p><b>*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***</b></p>"
-    # and then add swedish version of the text
-    body_html += f"{translated_item.get('translated_text_sv', '')}"
-    # then add:
-    """
-    *** ORIGINAL TEXT ***
-    """
-    body_html += "<p><b>*** ORIGINAL TEXT ***</b></p>"
-    # and then add the original text
-    body_html += f"{item.get('body_html', '')}"
-    # and return the body html
-    return body_html
+    get_resource_service("archive_publish").patch(
+        id=item[config.ID_FIELD],
+        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED, "auto_publish": True},
+    )
+    return item
 
 
 def auto_translate_and_publish(item, **kwargs):
-    """This macro runs two macros auto_translate_item and desk_routing."""
+    """This macro runs two steps: auto_translate_item and archive_publish."""
 
     try:
         translate = AutoTranslateItem()
@@ -68,13 +41,11 @@ def auto_translate_and_publish(item, **kwargs):
             # translation was not successful
             logger.error("Translation error: %s", translated_item.get("message"))
             return item
-        item["operation"] = ITEM_PUBLISH
         item["language"] = "en"
         item["headline"] = get_headline_for_item(translated_item)
         html = get_body_html_for_item(translated_item, item)
         item["body_html"] = html
-        generate_fields(item, FIELDS, force=True, reload=True)
-        return item
+        return auto_publish(item, **kwargs)
     except Exception as e:
         logger.error("Error during Auto Translate and Publish macro: %s", str(e))
         return item
@@ -83,6 +54,5 @@ def auto_translate_and_publish(item, **kwargs):
 name = "auto_translate_and_publish_macro"
 label = "Auto Translate and Publish"
 callback = auto_translate_and_publish
-access_type = "frontend"
+access_type = "backend"
 action_type = "direct"
-replace_type = "editor_state"
