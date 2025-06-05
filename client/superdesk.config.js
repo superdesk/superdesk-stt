@@ -143,11 +143,18 @@ module.exports = function (grunt) {
         SLUGLINE: "TOPIC",
       },
     },
-    spellcheckers: { fi: "stt_fin" },
     planning_default_view: 'PLANNING',
     profileLanguages: [
       'en',
       'fi_FI',
     ],
+    spellchecking: {
+      spellcheckersByLanguage: {
+        fi: {
+          spellcheckerId: 'stt_fin',
+          runningMode: 'initially-disabled',
+        },
+      },
+    },
   };
 }
