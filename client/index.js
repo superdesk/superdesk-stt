@@ -1,5 +1,6 @@
 import { startApp } from 'superdesk-core/scripts/index';
 import newshub from './stt/newshub';
+import {comparePlanningItem} from './compare-planning-items';
 import './stt.css';
 
 setTimeout(() => {
@@ -8,6 +9,9 @@ setTimeout(() => {
       {
         id: 'planning-extension',
         load: () => import('superdesk-planning/client/planning-extension'),
+        configuration: {
+          comparePlanningItems: comparePlanningItem,
+        },
       },
       {
         id: 'ai-widget',
