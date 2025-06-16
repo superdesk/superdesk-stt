@@ -1,6 +1,6 @@
 gunicorn
 honcho
-google-cloud-translate==3.20.2
+google-cloud-translate==3.20.3
 
 git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@feature/embedded-events-editor#egg=superdesk-planning
