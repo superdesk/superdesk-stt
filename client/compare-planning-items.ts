@@ -54,8 +54,8 @@ export const comparePlanningItem = (a, b) => {
         return bCoverageScore - aCoverageScore;
     }
 
-    const aImportance = a.urgency ?? 3; // 3 is lowest
-    const bImportance = b.urgency ?? 3;
+    const aImportance = a.urgency ?? 5; // 5 is lowest
+    const bImportance = b.urgency ?? 5;
 
     if (aImportance !== bImportance) {
         return aImportance - bImportance;
