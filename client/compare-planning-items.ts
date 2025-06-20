@@ -13,7 +13,7 @@ const getCoverageScore = (item) => {
         return 4;
     }
 
-    const hasCompleted = (coverages['ncostat:completed'] ?? []).length > 0;
+    const hasCompleted = (item.coverages ?? []).some((x) => x.workflow_status === 'completed');
 
     if (hasCompleted) {
         return 3;
