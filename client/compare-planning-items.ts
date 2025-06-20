@@ -7,7 +7,7 @@ const getCoverageScore = (item) => {
 
     const coverages = groupBy(item.coverages, (c) => c.news_coverage_status.qcode);
 
-    const hasPlanned = (coverages['ncostat:planned'] ?? []).length > 0
+    const hasPlanned = (coverages['ncostat:int'] ?? []).length > 0
 
     if (hasPlanned) {
         return 4;
@@ -19,13 +19,13 @@ const getCoverageScore = (item) => {
         return 3;
     }
 
-    const hasMaybe = (coverages['ncostat:maybe'] ?? []).length > 0;
+    const hasMaybe = (coverages['ncostat:notdec'] ?? []).length > 0;
 
     if (hasMaybe) {
         return 2;
     }
 
-    const hasNotPlanned = (coverages['ncostat:notplanned'] ?? []).length > 0;
+    const hasNotPlanned = (coverages['ncostat:notint'] ?? []).length > 0;
 
     if (hasNotPlanned) {
         return 1;
