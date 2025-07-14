@@ -20,13 +20,13 @@ module.exports = function (grunt) {
             {
                 id: 'company',
                 icon: 'business',
-                name: 'Yritys',
+                label: 'Yritys',
                 borderColor: 'orange',
             },
             {
                 id: 'person',
                 icon: 'user',
-                name: 'Henkilö',
+                label: 'Henkilö',
                 borderColor: 'blue',
             },
         ],
