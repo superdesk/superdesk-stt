@@ -15,6 +15,23 @@ module.exports = function (grunt) {
       analytics: true,
     },
 
+    authoring: {
+        customEditorTags: [
+            {
+                id: 'company',
+                icon: 'business',
+                label: 'Yritys',
+                borderColor: 'orange',
+            },
+            {
+                id: 'person',
+                icon: 'user',
+                label: 'Henkilö',
+                borderColor: 'blue',
+            },
+        ],
+    },
+
     /* landing page after login */
     defaultRoute: "/workspace/monitoring",
 
