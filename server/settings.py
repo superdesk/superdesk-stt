@@ -12,7 +12,7 @@
 import os
 from pathlib import Path
 
-from superdesk.default_settings import strtobool, env, MODULES
+from superdesk.default_settings import env, MODULES
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
