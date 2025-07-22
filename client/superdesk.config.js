@@ -15,6 +15,8 @@ module.exports = function (grunt) {
       analytics: true,
     },
 
+    vocabulariesToExcludeAsFields: ['sttsubj'],
+
     authoring: {
         customEditorTags: [
             {
