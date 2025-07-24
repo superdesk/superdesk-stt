@@ -2,5 +2,5 @@ honcho
 google-cloud-translate==3.21.1
 
 git+https://github.com/superdesk/superdesk-core.git@async#egg=superdesk-core
-git+https://github.com/petrjasek/superdesk-planning.git@feature-embedded-events-editor-async#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-planning.git@feature/embedded-events-editor-async#egg=superdesk-planning
 git+https://github.com/superdesk/superdesk-analytics.git@async#egg=superdesk-analytics
