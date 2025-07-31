@@ -8,5 +8,6 @@ httmock==1.4.0
 wooper==0.4.4
 pytest==8.4.1
 responses==0.25.7
+aioresponses==0.7.8
 types-requests
 types-pytz
