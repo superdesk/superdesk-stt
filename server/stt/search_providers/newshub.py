@@ -73,10 +73,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             if dates.get("end"):
                 api_params["end_date"] = self._get_date(dates["end"])
 
-            period = params.get("period")
-            if period and self.PERIODS.get(period):
+            if params.get("period"):
                 # override value of search by date
-                api_params.update(self._get_period(period))
+                api_params.update(self._get_period(params["period"]))
             if params.get("sort"):
                 api_params["sort"] = params["sort"]
             if params.get("urgency"):
@@ -158,8 +157,13 @@ class NewshubSearchProvider(superdesk.SearchProvider):
 
     def _get_period(self, period: str) -> dict[str, str]:
         today = arrow.now(superdesk.app.config["DEFAULT_TIMEZONE"])
+        datetime_delta = self.PERIODS.get(period)
+        if not datetime_delta:
+            logger.warning(f"Invalid period: {period}")
+            return {}
+
         return {
-            "start_date": today.shift(**self.PERIODS.get(period)).format("YYYY-MM-DD")
+            "start_date": today.shift(**datetime_delta).format("YYYY-MM-DD")
             + "T00:00:00",
             "end_date": today.format("YYYY-MM-DD") + "T23:59:59",
         }

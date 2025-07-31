@@ -107,7 +107,7 @@ class SttFin(SpellcheckerBase):
                 ]
             }
             """
-            err_list = []
+            err_list: list[dict] = []
             check_data = {"errors": err_list}
             for err in data.get("errors", []):
                 ercorr_data = {
