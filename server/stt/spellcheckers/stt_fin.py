@@ -45,7 +45,9 @@ class SttFin(SpellcheckerBase):
         async with aiohttp.ClientSession() as session:
             return await self.perform_check(session, text, language)
 
-    async def perform_check(self, session: aiohttp.ClientSession, text: str, language: str | None = None) -> dict:
+    async def perform_check(
+        self, session: aiohttp.ClientSession, text: str, language: str | None = None
+    ) -> dict:
         try:
             check_url = self.api_url.format(method="proof")
             data = {
@@ -58,7 +60,9 @@ class SttFin(SpellcheckerBase):
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            async with session.post(check_url, json=data, headers=headers, timeout=CHECK_TIMEOUT) as r:
+            async with session.post(
+                check_url, json=data, headers=headers, timeout=CHECK_TIMEOUT
+            ) as r:
                 data = await r.json()
                 if r.status != 200:
                     logger.error("STT check failed status code: {}".format(r.status))
@@ -126,7 +130,9 @@ class SttFin(SpellcheckerBase):
         async with aiohttp.ClientSession() as session:
             return await self.perform_suggest(session, text, language)
 
-    async def perform_suggest(self, session: aiohttp.ClientSession, text: str, language: str | None = None) -> dict:
+    async def perform_suggest(
+        self, session: aiohttp.ClientSession, text: str, language: str | None = None
+    ) -> dict:
         try:
             check_url = self.api_url.format(method="proof")
             data = {
@@ -139,7 +145,9 @@ class SttFin(SpellcheckerBase):
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            async with session.post(check_url, json=data, headers=headers, timeout=SUGGEST_TIMEOUT) as r:
+            async with session.post(
+                check_url, json=data, headers=headers, timeout=SUGGEST_TIMEOUT
+            ) as r:
                 if r.status != 200:
                     raise SuperdeskApiError.internalError(
                         "Unexpected return code from {}".format(self.name)

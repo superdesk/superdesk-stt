@@ -93,7 +93,9 @@ class STTEventsMLParserContactInfoTest(TestCase):
 
     async def test_create_new_contact(self):
         # Make sure the contacts don't already exist
-        self.assertIsNone(await search_existing_contacts({"contact_email": ["foo@bar.com"]}))
+        self.assertIsNone(
+            await search_existing_contacts({"contact_email": ["foo@bar.com"]})
+        )
         self.assertIsNone(
             await search_existing_contacts({"contact_email": ["steven@infosec.test"]})
         )
@@ -103,7 +105,9 @@ class STTEventsMLParserContactInfoTest(TestCase):
         self.assertIsNotNone(self.item["event_contact_info"][0])
 
         # Make sure the created contacts have the correct details
-        created_contact = await search_existing_contacts({"contact_email": ["foo@bar.com"]})
+        created_contact = await search_existing_contacts(
+            {"contact_email": ["foo@bar.com"]}
+        )
         self.assertIsNotNone(created_contact)
         self.assertEqual(created_contact["first_name"], self.contact["first_name"])
         self.assertEqual(created_contact["last_name"], self.contact["last_name"])

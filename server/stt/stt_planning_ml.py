@@ -94,7 +94,9 @@ class STTPlanningMLParser(PlanningMLParser):
 
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
-            await self._create_temp_assignment_deliveries(news_coverage_set, item, original)
+            await self._create_temp_assignment_deliveries(
+                news_coverage_set, item, original
+            )
         content_meta = tree.find(self.qname("contentMeta"))
         if content_meta is not None:
             self.set_urgency(content_meta, item)

@@ -258,7 +258,9 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
                 # An Assignment already exists for this coverage,
                 # Add another Assignment for this coverage, and link it to the content
                 try:
-                    assignment_id = await get_resource_service("assignments").post_async(
+                    assignment_id = await get_resource_service(
+                        "assignments"
+                    ).post_async(
                         [
                             {
                                 "assigned_to": {
@@ -278,7 +280,9 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
                                 "description_text": planning.get("description_text"),
                             }
                         ]
-                    )[0]
+                    )[
+                        0
+                    ]
                 except Exception:
                     logger.exception(
                         "Failed to create the new Assignment",
@@ -313,7 +317,9 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
 
     if update_planning_item:
         try:
-            updated_planning = await planning_service.patch_async(planning_id, planning_updates)
+            updated_planning = await planning_service.patch_async(
+                planning_id, planning_updates
+            )
         except Exception as err:
             logger.exception(err)
             logger.error("Failed to update planning with newly linked coverages")

@@ -47,7 +47,9 @@ def planning_xml_contains_remove_signal(xml: Element) -> bool:
 
 async def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
     item_resource = "events" if item.get(ITEM_TYPE) == "event" else "planning"
-    original: dict | None = await get_resource_service(item_resource).find_one_async(req=None, _id=item["guid"])
+    original: dict | None = await get_resource_service(item_resource).find_one_async(
+        req=None, _id=item["guid"]
+    )
 
     if not original:
         logger.error(
@@ -97,7 +99,9 @@ async def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
     item_id = item["_id"]
     planning_service = get_resource_service("planning")
     if item.get(ITEM_TYPE) == "event":
-        async for planning_item in await planning_service.find_async(where={"event_item": item_id}):
+        async for planning_item in await planning_service.find_async(
+            where={"event_item": item_id}
+        ):
             await unlink_item_from_all_content(planning_item)
     else:
         delivery_service = get_resource_service("delivery")
@@ -121,7 +125,9 @@ async def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
                     # Content ID not on this delivery, no need to unlink
                     continue
 
-                content_item = await archive_service.find_one_async(req=None, _id=content_id)
+                content_item = await archive_service.find_one_async(
+                    req=None, _id=content_id
+                )
                 if not content_item or not content_item.get("assignment_id"):
                     # Either content not found, or does not contain the ``assignment_id``
                     # Nothing to do for this one
@@ -135,10 +141,14 @@ async def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
 
         # Delete all assignments for this Planning item directly
         # Note: skips ``on_delete`` and ``on_deleted`` hooks, due to validation issues
-        await get_resource_service("assignments").delete_async(lookup={"planning_item": item_id})
+        await get_resource_service("assignments").delete_async(
+            lookup={"planning_item": item_id}
+        )
 
         # Update the Planning item, to update its coverage assignee and workflow_status
-        await planning_service.system_update_async(item_id, {"coverages": coverages}, item)
+        await planning_service.system_update_async(
+            item_id, {"coverages": coverages}, item
+        )
 
 
 def remove_date_portion_from_id(item_id: str) -> str:
@@ -161,7 +171,9 @@ def remove_date_portion_from_id(item_id: str) -> str:
 
 
 async def original_item_exists(resource: str, item_id: str) -> bool:
-    return (await get_resource_service(resource).find_one_async(req=None, _id=item_id)) is not None
+    return (
+        await get_resource_service(resource).find_one_async(req=None, _id=item_id)
+    ) is not None
 
 
 def is_online_version(item: Item) -> bool:

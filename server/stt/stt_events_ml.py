@@ -383,7 +383,9 @@ class STTEventsMLParser(EventsMLParser):
                 if existing_contact is not None:
                     item["event_contact_info"].append(ObjectId(existing_contact["_id"]))
                 else:
-                    new_contact_id = (await get_resource_service("contacts").post_async([contact]))[0]
+                    new_contact_id = (
+                        await get_resource_service("contacts").post_async([contact])
+                    )[0]
                     item["event_contact_info"].append(new_contact_id)
             except SuperdeskApiError:
                 logger.exception("Skip linking contact to ingested Event, as it failed")

@@ -52,11 +52,15 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         item["_fetchable"] = True
         return item
 
-    async def find_async(self, query: dict, params: dict | None = None) -> NewshubListCursor:
+    async def find_async(
+        self, query: dict, params: dict | None = None
+    ) -> NewshubListCursor:
         async with aiohttp.ClientSession() as session:
             return await self.perform_find(session, query, params)
 
-    async def perform_find(self, session: aiohttp.ClientSession, query: dict, params: dict | None = None) -> NewshubListCursor:
+    async def perform_find(
+        self, session: aiohttp.ClientSession, query: dict, params: dict | None = None
+    ) -> NewshubListCursor:
         logger.info(f"Query: {query}")
         logger.info(f"Params: {params}")
         api_params: dict = {
@@ -107,7 +111,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         async with aiohttp.ClientSession() as session:
             return await self.perform_fetch(session, item_id)
 
-    async def perform_fetch(self, session: aiohttp.ClientSession, item_id: str) -> dict | None:
+    async def perform_fetch(
+        self, session: aiohttp.ClientSession, item_id: str
+    ) -> dict | None:
         logger.info(f"Fetch item: {item_id}")
         api_params = {
             # this should be like _id:"urn:newsml:stt.fi::106858998"
@@ -123,10 +129,14 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             return None
         return self.extend_data_item(data)
 
-    async def api_get(self, session: aiohttp.ClientSession, endpoint: str, params: dict) -> dict:
+    async def api_get(
+        self, session: aiohttp.ClientSession, endpoint: str, params: dict
+    ) -> dict:
         # Add self.api_token as Bearer token
         session.headers.update({"Authorization": f"Bearer {self.api_token}"})
-        async with session.get(self.url(endpoint), params=params, timeout=TIMEOUT) as resp:
+        async with session.get(
+            self.url(endpoint), params=params, timeout=TIMEOUT
+        ) as resp:
             resp.raise_for_status()
             return await resp.json()
 
