@@ -16,8 +16,8 @@ class STTParser(STTNewsMLFeedParser):
     NAME = "sttnewsmlnewsroom"
     label = "STT NewsML for Newsroom"
 
-    def parse(self, xml, provider=None):
-        items = super().parse(xml, provider)
+    async def parse(self, xml, provider=None):
+        items = await super().parse(xml, provider)
         for item in items:
             item.setdefault("subject", [])
             if item.get("place"):

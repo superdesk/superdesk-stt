@@ -40,23 +40,23 @@ class STTPlanningMLParser(PlanningMLParser):
         "sttsubj": "sttsubj",
     }
 
-    def get_item_id(self, tree: Element) -> str:
-        item_id = super(STTPlanningMLParser, self).get_item_id(tree)
+    async def get_item_id(self, tree: Element) -> str:
+        item_id = await super(STTPlanningMLParser, self).get_item_id(tree)
         return (
             item_id
-            if original_item_exists("planning", item_id)
+            if await original_item_exists("planning", item_id)
             else remove_date_portion_from_id(item_id)
         )
 
-    def parse_item(
+    async def parse_item(
         self, tree: Element, original: Optional[Planning]
     ) -> Optional[Planning]:
         if original is not None and planning_xml_contains_remove_signal(tree):
-            unpost_or_spike_event_or_planning(original)
+            await unpost_or_spike_event_or_planning(original)
             # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
             return None
 
-        item = super(STTPlanningMLParser, self).parse_item(tree, original)
+        item = await super(STTPlanningMLParser, self).parse_item(tree, original)
         if item is None:
             return None
 
@@ -65,7 +65,7 @@ class STTPlanningMLParser(PlanningMLParser):
             if original
             else self.set_placeholder_coverage(item, tree)
         )
-        self.set_extra_fields(tree, item, original)
+        await self.set_extra_fields(tree, item, original)
         return item
 
     def datetime(self, value: str):
@@ -85,7 +85,7 @@ class STTPlanningMLParser(PlanningMLParser):
             return local_to_utc(TIMEZONE, parsed)
         return parsed
 
-    def set_extra_fields(
+    async def set_extra_fields(
         self, tree: Element, item: Dict[str, Any], original: Optional[Planning]
     ):
         """Adds extra fields"""
@@ -94,16 +94,16 @@ class STTPlanningMLParser(PlanningMLParser):
 
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
-            self._create_temp_assignment_deliveries(news_coverage_set, item, original)
+            await self._create_temp_assignment_deliveries(news_coverage_set, item, original)
         content_meta = tree.find(self.qname("contentMeta"))
         if content_meta is not None:
             self.set_urgency(content_meta, item)
 
-    def get_coverage_details(
+    async def get_coverage_details(
         self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]
     ):
         try:
-            event_id = self._get_linked_event_id(news_coverage_elt)
+            event_id = await self._get_linked_event_id(news_coverage_elt)
         except EventNotFound:
             return None
         if event_id is not None:
@@ -116,25 +116,25 @@ class STTPlanningMLParser(PlanningMLParser):
             # Return ``None`` so this coverage isn't added to the Planning item
             return None
 
-        return super().get_coverage_details(news_coverage_elt, item, original)
+        return await super().get_coverage_details(news_coverage_elt, item, original)
 
-    def _get_linked_event_id(self, news_coverage_item: Element) -> Optional[str]:
+    async def _get_linked_event_id(self, news_coverage_item: Element) -> Optional[str]:
         planning = news_coverage_item.find(self.qname("planning"))
         if planning is None:
             return None
         for subject_item in planning.findall(self.qname("subject")):
             qcode = subject_item.get("qcode")
             if qcode and subject_item.get("type") == "cpnat:event":
-                if original_item_exists("events", qcode):
+                if await original_item_exists("events", qcode):
                     return qcode
                 short_qcode = remove_date_portion_from_id(qcode)
-                if original_item_exists("events", short_qcode):
+                if await original_item_exists("events", short_qcode):
                     return short_qcode
                 logger.warning("Linked event not found", extra={"event": qcode})
                 raise EventNotFound()
         return None
 
-    def _create_temp_assignment_deliveries(
+    async def _create_temp_assignment_deliveries(
         self, news_coverage_set: Element, item: Planning, original: Optional[Planning]
     ):
         """Create temporary delivery records for later mapping content to coverages"""
@@ -146,7 +146,7 @@ class STTPlanningMLParser(PlanningMLParser):
 
         existing_deliveries: Dict[str, Set[str]] = {}
         if original is not None:
-            for entry in delivery_service.get_from_mongo(
+            async for entry in await delivery_service.get_from_mongo_async(
                 req=None, lookup={"planning_id": planning_id}
             ):
                 try:
@@ -215,7 +215,7 @@ class STTPlanningMLParser(PlanningMLParser):
                 )
 
         if len(deliveries):
-            delivery_service.post(deliveries)
+            await delivery_service.post_async(deliveries)
 
     def set_urgency(self, content_meta, item):
         """set importance cv data in the subjects based on <urgency> tag [STTNHUB-200]"""

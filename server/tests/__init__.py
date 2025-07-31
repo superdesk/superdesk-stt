@@ -8,33 +8,13 @@ from stt.parser import STTParser
 
 
 class TestCase(CoreTestCase):
-
     fixture = None
     parser_class = STTParser
     add_stt_cvs = False
     parse_source = True
 
-    def setUp(self):
-        if self.add_stt_cvs:
-            self.addSttCVs()
-
-        if self.parse_source:
-            self.parse_source_content()
-
-    def parse_source_content(self):
-        dirname = os.path.dirname(os.path.realpath(__file__))
-        fixture = os.path.join(dirname, "fixtures", self.fixture)
-        provider = {"name": "Test"}
-        with self.ctx:
-            with open(fixture, "rb") as f:
-                parser = self.parser_class()
-                self.xml_root = etree.parse(f).getroot()
-                self.item = parser.parse(self.xml_root, provider)[0]
-
-    def setUpForChildren(self):
-        super().setUpForChildren()
-        # stt related configs
-        self.app.config["HTML_TAGS_WHITELIST"] = (
+    app_config = {
+        "HTML_TAGS_WHITELIST": (
             "h1",
             "h2",
             "h3",
@@ -54,11 +34,30 @@ class TestCase(CoreTestCase):
             "a",
             "pre",
         )
+    }
 
-    def addSttCVs(self):
-        with self.app.app_context():
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
+        if self.add_stt_cvs:
+            await self.addSttCVs()
+
+        if self.parse_source:
+            await self.parse_source_content()
+
+    async def parse_source_content(self):
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture = os.path.join(dirname, "fixtures", self.fixture)
+        provider = {"name": "Test"}
+        async with self.ctx:
+            with open(fixture, "rb") as f:
+                parser = self.parser_class()
+                self.xml_root = etree.parse(f).getroot()
+                self.item = (await parser.parse(self.xml_root, provider))[0]
+
+    async def addSttCVs(self):
+        async with self.app.app_context():
             cmd = AppPopulateCommand()
             filename = os.path.join(
                 os.path.abspath(os.path.dirname("data/")), "vocabularies.json"
             )
-            cmd.run(filename)
+            await cmd.run(filename)

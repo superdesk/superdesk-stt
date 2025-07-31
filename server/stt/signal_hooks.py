@@ -28,12 +28,10 @@ logger = logging.getLogger(__name__)
 
 def init_app(_app: SuperdeskEve):
     planning_ingested.connect(link_coverages_to_content)
-    signals.item_publish.connect(before_content_published)
+    signals.item_publish_async.connect(before_content_published)
 
 
-def link_coverages_to_content(
-    _sender: Any, item: Item, original: Optional[Item] = None
-):
+async def link_coverages_to_content(item: Item, original: Item | None = None):
     """Link coverage(s) to content upon ingest (if content exists)"""
 
     try:
@@ -56,7 +54,7 @@ def link_coverages_to_content(
     except (KeyError, IndexError, TypeError):
         pass
 
-    if not _is_ingested_by_stt_planning_ml(item):
+    if not await _is_ingested_by_stt_planning_ml(item):
         return
 
     updates = {"coverages": deepcopy(item["coverages"])}
@@ -82,7 +80,7 @@ def link_coverages_to_content(
 
         # Get the deliveries that aren't linked to an Assignment
         # These deliveries are added in ``STTPlanningMLParser._create_temp_assignment_deliveries``
-        deliveries = delivery_service.get_from_mongo(
+        deliveries = await delivery_service.get_from_mongo_async(
             req=None,
             lookup={
                 "planning_id": planning_id,
@@ -91,12 +89,12 @@ def link_coverages_to_content(
                 "item_id": {"$ne": None},
             },
         )
-        if not deliveries.count():
+        if not await deliveries.count():
             # No unlinked deliveries found for this Coverage
             continue
 
-        content = _get_content_item_by_uris(
-            [delivery["item_id"] for delivery in deliveries]
+        content = await _get_content_item_by_uris(
+            [delivery["item_id"] async for delivery in deliveries]
         )
         if content is None:
             # No content has been found
@@ -114,7 +112,7 @@ def link_coverages_to_content(
 
     # Update the planning item with the latest Assignment information, and link the coverages to the content
     try:
-        updated_item = planning_service.patch(planning_id, updates)
+        updated_item = await planning_service.patch_async(planning_id, updates)
     except Exception:
         logger.exception("Failed to update planning with newly linked coverages")
         return
@@ -132,7 +130,7 @@ def link_coverages_to_content(
             continue
 
         try:
-            _link_assignment_and_content(
+            await _link_assignment_and_content(
                 assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id]
             )
         except Exception as err:
@@ -140,7 +138,7 @@ def link_coverages_to_content(
             logger.error("Failed to link coverage assignment to content")
 
 
-def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
+async def before_content_published(item: Item, updates: Dict[str, Any]):
     """Link content to coverage before publishing"""
 
     if item.get("assignment_id") is not None:
@@ -157,15 +155,19 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
     delivery_service = get_resource_service("delivery")
     planning_service = get_resource_service("planning")
 
-    deliveries = delivery_service.get(
+    deliveries = await delivery_service.get_async(
         req=None, lookup={"item_id": item.get("uri"), "assignment_id": None}
     )
+    try:
+        delivery = await deliveries.next()
+    except StopAsyncIteration:
+        delivery = None
 
     assignment_id = None
 
-    if deliveries.count():
-        planning_id = deliveries[0].get("planning_id")
-        coverage_id = deliveries[0].get("coverage_id")
+    if delivery:
+        planning_id = delivery.get("planning_id")
+        coverage_id = delivery.get("coverage_id")
     else:
         try:
             topic_id = item["extra"]["stt_topics"]
@@ -179,7 +181,7 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
         planning_id = f"urn:newsml:stt.fi:{topic_id}"
         coverage_id = None
 
-    planning = planning_service.find_one(req=None, _id=planning_id)
+    planning = await planning_service.find_one_async(req=None, _id=planning_id)
     if not planning:
         logger.warning(
             "Failed to link content to coverage: Planning item not found",
@@ -256,7 +258,7 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
                 # An Assignment already exists for this coverage,
                 # Add another Assignment for this coverage, and link it to the content
                 try:
-                    assignment_id = get_resource_service("assignments").post(
+                    assignment_id = await get_resource_service("assignments").post_async(
                         [
                             {
                                 "assigned_to": {
@@ -311,7 +313,7 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
 
     if update_planning_item:
         try:
-            updated_planning = planning_service.patch(planning_id, planning_updates)
+            updated_planning = await planning_service.patch_async(planning_id, planning_updates)
         except Exception as err:
             logger.exception(err)
             logger.error("Failed to update planning with newly linked coverages")
@@ -321,7 +323,7 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
         if post_required(planning, planning):
             # Re-publish the Planning item (if required)
             # This way the updated coverage deliveries will be re-published to subscribers
-            update_post_item(planning, planning)
+            await update_post_item(planning, planning)
 
     if assignment_id is None:
         # Assignment ID is not currently known, grab it from the latest Coverage information
@@ -349,7 +351,7 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
             return
 
     try:
-        _link_assignment_and_content(
+        await _link_assignment_and_content(
             assignment_id, coverage_id, str(item.get("guid")), True
         )
     except Exception:
@@ -367,14 +369,14 @@ def before_content_published(_sender: Any, item: Item, updates: Dict[str, Any]):
     updates["assignment_id"] = assignment_id
 
 
-def _is_ingested_by_stt_planning_ml(item: Item) -> bool:
+async def _is_ingested_by_stt_planning_ml(item: Item) -> bool:
     """Determine if the item was ingested by the ``STTPlanningMLParser`` parser"""
 
     try:
         if item["ingest_provider"] is None:
             return False
         ingest_provider_id = ObjectId(item["ingest_provider"])
-        ingest_provider = get_resource_service("ingest_providers").find_one(
+        ingest_provider = await get_resource_service("ingest_providers").find_one_async(
             req=None, _id=ingest_provider_id
         )
         return ingest_provider["feed_parser"] == STTPlanningMLParser.NAME
@@ -382,7 +384,7 @@ def _is_ingested_by_stt_planning_ml(item: Item) -> bool:
         return False
 
 
-def _get_content_item_by_uris(uris: List[str]) -> Optional[Item]:
+async def _get_content_item_by_uris(uris: List[str]) -> Optional[Item]:
     """Get latest content item by uri"""
 
     if not len(uris):
@@ -401,11 +403,9 @@ def _get_content_item_by_uris(uris: List[str]) -> Optional[Item]:
             ),
             "repo": "archive,published,archived",
         }
-        cursor = get_resource_service("search").get(req=req, lookup=None)
-
-        if cursor.count():
-            return cursor[0]
-    except Exception:
+        cursor = await get_resource_service("search").get_async(req=req, lookup=None)
+        return await cursor.next()
+    except (Exception, StopAsyncIteration):
         logger.exception(
             "Failed to retrieve list of content based on URIs", extra=dict(uris=uris)
         )
@@ -455,7 +455,7 @@ def _copy_metadata_from_article_to_coverage(coverage: Dict[str, Any], content: I
         coverage["planning"]["slugline"] = content["headline"].strip()
 
 
-def _link_assignment_and_content(
+async def _link_assignment_and_content(
     assignment_id: ObjectId,
     coverage_id: str,
     content_id: str,
@@ -463,10 +463,10 @@ def _link_assignment_and_content(
 ):
     """Remove all temporary delivery entries for this coverage and link assignment and content"""
 
-    get_resource_service("delivery").delete_action(
+    await get_resource_service("delivery").delete_action_async(
         lookup={"coverage_id": coverage_id, "assignment_id": None}
     )
-    get_resource_service("assignments_link").post(
+    await get_resource_service("assignments_link").post_async(
         [
             {
                 "assignment_id": assignment_id,
