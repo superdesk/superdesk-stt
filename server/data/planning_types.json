@@ -150,7 +150,7 @@
   {
     "_id": "advanced_search",
     "name": "advanced_search",
-    "init_version": 1,
+    "init_version": 2,
     "editor": {
         "event": {
             "full_text": {
@@ -191,13 +191,6 @@
             "sttsubj": {
                 "enabled": true,
                 "index": 1,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttgenre": {
-                "enabled": true,
-                "index": 2,
                 "group": "vocabularies",
                 "search_enabled": true,
                 "filter_enabled": true
@@ -299,6 +292,48 @@
                 "group": "events",
                 "search_enabled": true,
                 "filter_enabled": true
+            },
+            "event_type": {
+              "enabled": true,
+              "index": 5,
+              "group": "events",
+              "search_enabled": true,
+              "filter_enabled": true
+            },
+            "invitation_details": {
+              "enabled": true,
+              "index": 6,
+              "group": "events",
+              "search_enabled": true,
+              "filter_enabled": true
+            },
+            "registration_details": {
+              "enabled": true,
+              "index": 7,
+              "group": "events",
+              "search_enabled": true,
+              "filter_enabled": true
+            },
+            "accreditation_info": {
+              "enabled": true,
+              "index": 8,
+              "group": "events",
+              "search_enabled": true,
+              "filter_enabled": true
+            },
+            "definition_short": {
+                "enabled": true,
+                "index": 9,
+                "group": "events",
+                "search_enabled": true,
+                "filter_enabled": true
+            },
+            "definition_long": {
+                "enabled": true,
+                "index": 10,
+                "group": "events",
+                "search_enabled": true,
+                "filter_enabled": true
             }
         },
         "planning": {
@@ -340,13 +375,6 @@
             "sttsubj": {
                 "enabled": true,
                 "index": 1,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttgenre": {
-                "enabled": true,
-                "index": 2,
                 "group": "vocabularies",
                 "search_enabled": true,
                 "filter_enabled": true
@@ -490,6 +518,13 @@
                 "group": "planning",
                 "search_enabled": true,
                 "filter_enabled": true
+            },
+            "description_text": {
+                "enabled": true,
+                "index": 9,
+                "group": "planning",
+                "search_enabled": true,
+                "filter_enabled": true
             }
         },
         "combined": {
@@ -521,16 +556,16 @@
                 "search_enabled": true,
                 "filter_enabled": true
             },
-            "sttsubj": {
+            "internal_note": {
                 "enabled": true,
-                "index": 1,
-                "group": "vocabularies",
+                "index": 5,
+                "group": "common",
                 "search_enabled": true,
                 "filter_enabled": true
             },
-            "sttgenre": {
+            "sttsubj": {
                 "enabled": true,
-                "index": 2,
+                "index": 1,
                 "group": "vocabularies",
                 "search_enabled": true,
                 "filter_enabled": true

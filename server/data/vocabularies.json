@@ -257,8 +257,9 @@
         "display_name": "Importance",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 2,
+        "init_version": 3,
         "selection_type": "single selection",
+        "service": {"all": 1},
         "items": [
             {
                 "is_active": true, "name": "Pääaihe", "qcode": "stturgency-1",
