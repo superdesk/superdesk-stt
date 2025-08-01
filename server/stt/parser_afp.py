@@ -29,7 +29,7 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
     def can_parse(self, xml):
         return xml.tag.endswith("NewsML")
 
-    def parse(self, xml, provider=None):
+    async def parse(self, xml, provider=None):
 
         subjectmatter_mappings = [
             {"pattern": "^01[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
@@ -59,7 +59,7 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
             {"pattern": "^17[0-9]+$", "mappingid": "14", "mappingstr": "Ulkomaat"},
         ]
 
-        item = super().parse(xml, provider)
+        item = await super().parse(xml, provider)
         item["firstcreated"] = (
             utc.localize(item["firstcreated"]) if item.get("firstcreated") else utcnow()
         )

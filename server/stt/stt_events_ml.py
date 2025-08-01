@@ -43,12 +43,12 @@ class ContactDetails(TypedDict, total=False):
     website: str
 
 
-def search_existing_contacts(contact: ContactDetails) -> Optional[Dict[str, Any]]:
+async def search_existing_contacts(contact: ContactDetails) -> Optional[Dict[str, Any]]:
     """Attempt to find existing media contact using email, falling back to first_name/last_name combo"""
 
     contacts_service = get_resource_service("contacts")
     if len(contact.get("contact_email") or []):
-        cursor = contacts_service.search(
+        cursor = await contacts_service.search_async(
             {
                 "query": {
                     "bool": {
@@ -63,14 +63,13 @@ def search_existing_contacts(contact: ContactDetails) -> Optional[Dict[str, Any]
                 }
             }
         )
-        if cursor.count():
-            return list(cursor)[0]
+        return await cursor.next()
 
     if contact.get("first_name") and contact.get("last_name"):
         first_name = contact["first_name"].lower()
         last_name = contact["last_name"].lower()
 
-        cursor = contacts_service.search(
+        cursor = await contacts_service.search_async(
             {
                 "query": {
                     "bool": {
@@ -97,8 +96,7 @@ def search_existing_contacts(contact: ContactDetails) -> Optional[Dict[str, Any]
                 "sort": ["_score"],
             }
         )
-        if cursor.count():
-            return list(cursor)[0]
+        return await cursor.next()
 
     return None
 
@@ -113,23 +111,23 @@ class STTEventsMLParser(EventsMLParser):
         "sttsubj": "sttsubj",
     }
 
-    def get_item_id(self, tree: Element) -> str:
-        item_id = super(STTEventsMLParser, self).get_item_id(tree)
+    async def get_item_id(self, tree: Element) -> str:
+        item_id = await super(STTEventsMLParser, self).get_item_id(tree)
         return (
             item_id
-            if original_item_exists("events", item_id)
+            if await original_item_exists("events", item_id)
             else remove_date_portion_from_id(item_id)
         )
 
-    def parse(self, tree: Element, provider=None):
-        items = super(STTEventsMLParser, self).parse(tree, provider)
+    async def parse(self, tree: Element, provider=None):
+        items = await super(STTEventsMLParser, self).parse(tree, provider)
         items_to_ingest = []
         for item in items:
             if planning_xml_contains_remove_signal(tree):
-                unpost_or_spike_event_or_planning(item)
+                await unpost_or_spike_event_or_planning(item)
                 # If the item contains the ``sttinstruct:remove`` signal, no need to ingest this one
                 continue
-            self.set_extra_fields(item, tree)
+            await self.set_extra_fields(item, tree)
             items_to_ingest.append(item)
 
         return items_to_ingest
@@ -141,7 +139,7 @@ class STTEventsMLParser(EventsMLParser):
             return local_to_utc(TIMEZONE, parsed)
         return parsed
 
-    def set_extra_fields(self, item, xml):
+    async def set_extra_fields(self, item, xml):
         """Adds extra fields"""
 
         concept = xml.find(self.qname("concept"))
@@ -199,21 +197,21 @@ class STTEventsMLParser(EventsMLParser):
         except AttributeError:
             pass
 
-        self.set_location_details(
+        await self.set_location_details(
             item, event_details.find(self.qname("location")), location_notes
         )
-        self.set_contact_details(item, event_details)
+        await self.set_contact_details(item, event_details)
 
-    def _construct_unique_name(self, parts):
+    def _construct_unique_name(self, parts: list[str]) -> str:
         """Helper to construct a unique name from non-empty parts."""
         return ", ".join(part for part in parts if part)
 
-    def set_location_details(self, item, location_xml, notes):
+    async def set_location_details(self, item, location_xml, notes):
         """Set location details from XML, including name, address title, and a unique_name combining name, city, and country."""
         if location_xml is None:
             return
 
-        location = {"address": {"extra": {}}}
+        location: dict = {"address": {"extra": {}}}
 
         if notes is not None:
             location["details"] = notes
@@ -315,24 +313,24 @@ class STTEventsMLParser(EventsMLParser):
                 if stt_id:
                     custom_guid = f"urn:stt:location:{stt_id}"
                     location["qcode"] = custom_guid
-                    existing_location = locations_service.find_one(
+                    existing_location = await locations_service.find_one_async(
                         req=None, guid=custom_guid
                     )
 
                     if existing_location:
                         updated_location = {**existing_location, **location}
                         location_id = existing_location["_id"]
-                        locations_service.update(
+                        await locations_service.update_async(
                             location_id, updated_location, existing_location
                         )
-                        saved_location = locations_service.find_one(
+                        saved_location = await locations_service.find_one_async(
                             req=None, _id=location_id
                         )
                         saved_location["qcode"] = custom_guid
                     else:
                         location["guid"] = custom_guid
-                        location_ids = locations_service.post([location])
-                        saved_location = locations_service.find_one(
+                        location_ids = await locations_service.post_async([location])
+                        saved_location = await locations_service.find_one_async(
                             req=None, _id=location_ids[0]
                         )
                         if saved_location:
@@ -344,7 +342,7 @@ class STTEventsMLParser(EventsMLParser):
             except AttributeError:
                 pass
 
-    def set_contact_details(self, item: Dict[str, Any], event_details: Element):
+    async def set_contact_details(self, item: Dict[str, Any], event_details: Element):
         for contact_info in event_details.findall(self.qname("contactInfo")):
             first_name = contact_info.find(self.qname("firstname", ns=NS["stt"]))
             last_name = contact_info.find(self.qname("lastname", ns=NS["stt"]))
@@ -380,12 +378,14 @@ class STTEventsMLParser(EventsMLParser):
                 contact["website"] = web.text
 
             try:
-                existing_contact = search_existing_contacts(contact)
+                existing_contact = await search_existing_contacts(contact)
                 item.setdefault("event_contact_info", [])
                 if existing_contact is not None:
                     item["event_contact_info"].append(ObjectId(existing_contact["_id"]))
                 else:
-                    new_contact_id = get_resource_service("contacts").post([contact])[0]
+                    new_contact_id = (
+                        await get_resource_service("contacts").post_async([contact])
+                    )[0]
                     item["event_contact_info"].append(new_contact_id)
             except SuperdeskApiError:
                 logger.exception("Skip linking contact to ingested Event, as it failed")

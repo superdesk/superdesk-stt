@@ -1,30 +1,25 @@
-import superdesk
-import arrow
-import logging
 from urllib.parse import urljoin
-import requests
+import logging
 
+import arrow
+import aiohttp
+from aiohttp.client_exceptions import ClientResponseError
+
+import superdesk
+from superdesk.core.utils import get_nested_value
 from superdesk.utils import ListCursor
 
+
 logger = logging.getLogger(__name__)
-session = requests.Session()
-TIMEOUT = 10
-
-
-def get_nested_value(data, key):
-    for part in key.split("."):
-        data = data.get(part)
-        if data is None:
-            return None
-    return data
+TIMEOUT = aiohttp.ClientTimeout(total=10, connect=5)
 
 
 class NewshubListCursor(ListCursor):
-    def __init__(self, docs, count):
+    def __init__(self, docs: list[dict], count: int):
         super().__init__(docs)
         self._count = count
 
-    def count(self, **kwargs):
+    def count(self, **kwargs) -> int:
         return self._count
 
 
@@ -52,15 +47,23 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     def url(self, resource):
         return urljoin(self.base_url, resource.lstrip("/"))
 
-    def extend_data_item(self, item):
+    def extend_data_item(self, item: dict) -> dict:
         # add "_fetchable": True, to the item
         item["_fetchable"] = True
         return item
 
-    def find(self, query, params=None):
+    async def find_async(
+        self, query: dict, params: dict | None = None
+    ) -> NewshubListCursor:
+        async with aiohttp.ClientSession() as session:
+            return await self.perform_find(session, query, params)
+
+    async def perform_find(
+        self, session: aiohttp.ClientSession, query: dict, params: dict | None = None
+    ) -> NewshubListCursor:
         logger.info(f"Query: {query}")
         logger.info(f"Params: {params}")
-        api_params = {
+        api_params: dict = {
             "page_size": query.get("size", 25),
         }
         if params:
@@ -70,10 +73,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             if dates.get("end"):
                 api_params["end_date"] = self._get_date(dates["end"])
 
-            period = params.get("period")
-            if period and self.PERIODS.get(period):
+            if params.get("period"):
                 # override value of search by date
-                api_params.update(self._get_period(period))
+                api_params.update(self._get_period(params["period"]))
             if params.get("sort"):
                 api_params["sort"] = params["sort"]
             if params.get("urgency"):
@@ -88,15 +90,15 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         logger.info(f"API params: {api_params}")
 
         try:
-            data = self.api_get(self.search_endpoint, api_params)
+            data = await self.api_get(session, self.search_endpoint, api_params)
             if not data or not data.get(self.items_field):
                 logger.warning("No items found.")
                 return NewshubListCursor([], 0)
-        except requests.exceptions.RequestException as e:
+        except ClientResponseError as e:
             logger.error(f"Request failed: {e}")
             return NewshubListCursor([], 0)
         docs = [self.extend_data_item(item) for item in data.get(self.items_field, [])]
-        total = get_nested_value(data, self.count_field)
+        total = get_nested_value(int, data, self.count_field, None)
 
         if total is None:
             logger.warning("Total count is None.")
@@ -104,54 +106,69 @@ class NewshubSearchProvider(superdesk.SearchProvider):
 
         return NewshubListCursor(docs, total)
 
-    def fetch(self, item_id):
+    async def fetch_async(self, item_id: str) -> dict | None:
+        async with aiohttp.ClientSession() as session:
+            return await self.perform_fetch(session, item_id)
+
+    async def perform_fetch(
+        self, session: aiohttp.ClientSession, item_id: str
+    ) -> dict | None:
         logger.info(f"Fetch item: {item_id}")
         api_params = {
             # this should be like _id:"urn:newsml:stt.fi::106858998"
             "q": f'_id:"urn:newsml:stt.fi::{item_id}"',
         }
         try:
-            data = self.api_get(self.search_endpoint, api_params)
+            data = await self.api_get(session, self.search_endpoint, api_params)
             if not data:
                 logger.warning("No item found.")
                 return None
-        except requests.exceptions.RequestException as e:
+        except ClientResponseError as e:
             logger.error(f"Request failed: {e}")
             return None
         return self.extend_data_item(data)
 
-    def api_get(self, endpoint, params):
+    async def api_get(
+        self, session: aiohttp.ClientSession, endpoint: str, params: dict
+    ) -> dict:
         # Add self.api_token as Bearer token
         session.headers.update({"Authorization": f"Bearer {self.api_token}"})
-        resp = session.get(self.url(endpoint), params=params, timeout=TIMEOUT)
-        resp.raise_for_status()
-        return resp.json()
+        async with session.get(
+            self.url(endpoint), params=params, timeout=TIMEOUT
+        ) as resp:
+            resp.raise_for_status()
+            return await resp.json()
 
-    def get_search_text(self, query):
+    def get_search_text(self, query: dict) -> str | None:
         try:
-            searchText = query["query"]["filtered"]["query"]["query_string"]["query"]
+            search_text = query["query"]["filtered"]["query"]["query_string"]["query"]
         except KeyError:
-            searchText = ""
+            search_text = ""
         try:
             # check also for '_id' from query
             if query["query"]["filtered"]["filter"]["or"]:
                 for condition in query["query"]["filtered"]["filter"]["or"]:
                     if "term" in condition:
-                        searchText = f'_id:"{condition["term"]["_id"]}"'
+                        search_text = f'_id:"{condition["term"]["_id"]}"'
                         break
         except KeyError:
             pass
-        return searchText or None
+        return search_text or None
 
-    def _get_period(self, period):
+    def _get_period(self, period: str) -> dict[str, str]:
         today = arrow.now(superdesk.app.config["DEFAULT_TIMEZONE"])
+        datetime_delta = self.PERIODS.get(period)
+        if not datetime_delta:
+            logger.warning(f"Invalid period: {period}")
+            return {}
+
         return {
-            "start_date": today.shift(**self.PERIODS.get(period)).format("YYYY-MM-DD")
+            "start_date": today.shift(**datetime_delta).format("YYYY-MM-DD")
             + "T00:00:00",
             "end_date": today.format("YYYY-MM-DD") + "T23:59:59",
         }
 
-    def _get_date(self, date, start=False):
+    def _get_date(self, date: str, start: bool = False) -> str:
         try:
             # if start, add hours to the date like 00:00:00
             if start:
