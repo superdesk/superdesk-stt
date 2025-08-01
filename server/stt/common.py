@@ -3,7 +3,6 @@ import logging
 from copy import deepcopy
 
 from lxml.etree import Element
-from eve.utils import config
 
 from superdesk import get_resource_service
 from superdesk.metadata.item import ITEM_TYPE, ITEM_STATE
@@ -13,6 +12,8 @@ from planning.common import (
     update_post_item,
     update_assignment_on_link_unlink,
 )
+from planning.events.events_spike import process_spike_event
+from planning.planning.planning_spike import process_spike_planning_item
 
 
 logger = logging.getLogger(__name__)
@@ -72,9 +73,10 @@ async def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
         WORKFLOW_STATE.POSTPONED,
         WORKFLOW_STATE.CANCELLED,
     ]:
-        await get_resource_service(item_resource + "_spike").patch_async(
-            original[config.ID_FIELD], original
-        )
+        if item_resource == "events":
+            await process_spike_event({}, original)
+        else:
+            await process_spike_planning_item({}, original)
     elif original.get("pubstatus") != POST_STATE.CANCELLED:
         await update_post_item(
             {"pubstatus": POST_STATE.CANCELLED, "_etag": original["_etag"]}, original

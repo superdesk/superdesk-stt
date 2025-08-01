@@ -258,31 +258,33 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
                 # An Assignment already exists for this coverage,
                 # Add another Assignment for this coverage, and link it to the content
                 try:
-                    assignment_id = await get_resource_service(
-                        "assignments"
-                    ).post_async(
-                        [
-                            {
-                                "assigned_to": {
-                                    "desk": (item.get("task") or {}).get("desk"),
-                                    "state": ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
-                                },
-                                "planning_item": planning_id,
-                                "coverage_item": coverage_id,
-                                "planning": deepcopy(existing_coverage.get("planning")),
-                                "priority": (
-                                    item.get("priority")
-                                    or (existing_coverage.get("assigned_to") or {}).get(
-                                        "priority"
-                                    )
-                                    or 2
-                                ),
-                                "description_text": planning.get("description_text"),
-                            }
-                        ]
-                    )[
-                        0
-                    ]
+                    assignment_id = (
+                        await get_resource_service("assignments").post_async(
+                            [
+                                {
+                                    "assigned_to": {
+                                        "desk": (item.get("task") or {}).get("desk"),
+                                        "state": ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+                                    },
+                                    "planning_item": planning_id,
+                                    "coverage_item": coverage_id,
+                                    "planning": deepcopy(
+                                        existing_coverage.get("planning")
+                                    ),
+                                    "priority": (
+                                        item.get("priority")
+                                        or (
+                                            existing_coverage.get("assigned_to") or {}
+                                        ).get("priority")
+                                        or 2
+                                    ),
+                                    "description_text": planning.get(
+                                        "description_text"
+                                    ),
+                                }
+                            ]
+                        )
+                    )[0]
                 except Exception:
                     logger.exception(
                         "Failed to create the new Assignment",
