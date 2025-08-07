@@ -16,7 +16,7 @@ class BusinessWireParserTestCase(TestCase):
         self.assertIn("Long-Term Data from Mirum", self.item["name"])
         self.assertIn("LIVMARLI Studies", self.item["name"])
         self.assertIn("EASL Congress", self.item["name"])
-        self.assertEqual(self.item["external_id"], "20240606079628")
+        self.assertEqual(self.item["guid"], "20240606079628")
 
     def test_body_html_contains_keywords(self):
         html = self.item.get("body_html", "")

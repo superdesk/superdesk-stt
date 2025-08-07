@@ -22,10 +22,10 @@ class BusinessWireParser(NewsMLOneFeedParser):
     }
 
     def parse_content(self, item, xml):
-        # Extract External ID
+        # Extract GUID
         news_item_id = xml.findtext("NewsItem/Identification/NewsIdentifier/NewsItemId")
         if news_item_id:
-            item["external_id"] = news_item_id.strip()
+            item["guid"] = news_item_id.strip()
 
         # Extract Headline (Name)
         headline = xml.findtext(
@@ -106,12 +106,17 @@ class BusinessWireParser(NewsMLOneFeedParser):
         if flat_keywords:
             item["keywords"] = flat_keywords
 
-        # Extract Subject tags
+        # Extract Subject tags as dicts with name and qcode
         subjects = []
         for subj in xml.findall(".//Subject"):
             formal = subj.get("FormalName")
             if formal:
-                subjects.append(formal)
+                subject_dict = {
+                    "name": formal,
+                    "qcode": formal,  # Using FormalName as qcode
+                    "scheme": "businesswire",  # Add scheme to distinguish from other subjects
+                }
+                subjects.append(subject_dict)
         if subjects:
             item["subject"] = subjects
 
