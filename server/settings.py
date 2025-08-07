@@ -139,6 +139,7 @@ INSTALLED_APPS = [
     "stt.macros",
     "stt.search_providers.newshub",
     "stt.ai_proxy",
+    "stt.paivalista_filters",
 ]
 
 # enable legal archive is enabled
