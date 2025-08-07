@@ -28,7 +28,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
             item["external_id"] = news_item_id.strip()
 
         # Extract Headline (Name)
-        headline = xml.findtext("NewsItem/NewsComponent/NewsComponent/NewsLines/HeadLine")
+        headline = xml.findtext(
+            "NewsItem/NewsComponent/NewsComponent/NewsLines/HeadLine"
+        )
         if headline:
             item["name"] = headline.strip()
 
@@ -36,7 +38,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
         self.parse_bw_metadata(item, xml)
 
         # Extract SlugLine
-        slugline = xml.findtext("NewsItem/NewsComponent/NewsComponent/NewsLines/SlugLine")
+        slugline = xml.findtext(
+            "NewsItem/NewsComponent/NewsComponent/NewsLines/SlugLine"
+        )
         if slugline:
             item["slugline"] = slugline.strip()
 
@@ -46,7 +50,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
             item["byline"] = byline.strip()
 
         # Extract Dateline
-        dateline = xml.findtext("NewsItem/NewsComponent/NewsComponent/NewsLines/DateLine")
+        dateline = xml.findtext(
+            "NewsItem/NewsComponent/NewsComponent/NewsLines/DateLine"
+        )
         if dateline:
             item["dateline"] = dateline.strip()
 
@@ -69,9 +75,12 @@ class BusinessWireParser(NewsMLOneFeedParser):
             if dest == "headline":
                 # Headline as plain text - store as both headline and name
                 if body is not None:
-                    headline_text = etree.tostring(body, encoding="unicode", method="text").strip()
+                    headline_text = etree.tostring(
+                        body, encoding="unicode", method="text"
+                    ).strip()
                     item[dest] = headline_text
-                    item["name"] = headline_text  # Also store as name for compatibility
+                    # Also store as name for compatibility
+                    item["name"] = headline_text
 
             elif dest == "abstract":
                 # Abstract as plain string (no XHTML expected)
@@ -84,9 +93,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
                 if body is not None:
                     item[dest] = "\n".join(
                         [
-                            etree.tostring(elem, encoding="unicode", method="html").replace(
-                                ' xmlns="http://www.w3.org/1999/xhtml"', ""
-                            )
+                            etree.tostring(
+                                elem, encoding="unicode", method="html"
+                            ).replace(' xmlns="http://www.w3.org/1999/xhtml"', "")
                             for elem in body
                         ]
                     )
@@ -111,36 +120,42 @@ class BusinessWireParser(NewsMLOneFeedParser):
         # Initialize extra if not present
         if "extra" not in item:
             item["extra"] = {}
-        
+
         # Find BWKeywords metadata - iterate through all Metadata elements
         for metadata in xml.findall(".//Metadata"):
             metadata_type = metadata.find("MetadataType")
-            if metadata_type is not None and metadata_type.get("FormalName") == "BWKeywords":
+            if (
+                metadata_type is not None
+                and metadata_type.get("FormalName") == "BWKeywords"
+            ):
                 bw_keywords = {}
-                
+
                 # Extract all BW keyword properties
                 for prop in metadata.findall("Property"):
                     formal_name = prop.get("FormalName")
                     value = prop.get("Value")
-                    
+
                     if formal_name and value:
                         if formal_name not in bw_keywords:
                             bw_keywords[formal_name] = []
                         bw_keywords[formal_name].append(value)
-                
+
                 if bw_keywords:
                     item["extra"]["bw_keywords"] = bw_keywords
-                    
-            elif metadata_type is not None and metadata_type.get("FormalName") == "Securities Identifier":
+
+            elif (
+                metadata_type is not None
+                and metadata_type.get("FormalName") == "Securities Identifier"
+            ):
                 securities = {}
-                
+
                 for prop in metadata.findall("Property"):
                     formal_name = prop.get("FormalName")
                     value = prop.get("Value")
-                    
+
                     if formal_name and value:
                         securities[formal_name] = value
-                
+
                 if securities:
                     item["extra"]["securities"] = securities
 
@@ -153,6 +168,7 @@ class BusinessWireParser(NewsMLOneFeedParser):
         """Override parse to return a list of items instead of a single item"""
         item = super().parse(xml, provider)
         return [item] if item else []
+
 
 parser_instance = BusinessWireParser()
 register_feed_parser(BusinessWireParser.NAME, parser_instance)

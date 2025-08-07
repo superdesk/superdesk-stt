@@ -1,10 +1,10 @@
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 from tests import TestCase
 from stt.stt_parse_businesswire import BusinessWireParser
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class BusinessWireParserTestCase(TestCase):
@@ -14,7 +14,7 @@ class BusinessWireParserTestCase(TestCase):
     def test_headline_and_ids(self):
         # Test that the headline contains the expected key terms
         self.assertIn("Long-Term Data from Mirum", self.item["name"])
-        self.assertIn("LIVMARLI Studies", self.item["name"])  
+        self.assertIn("LIVMARLI Studies", self.item["name"])
         self.assertIn("EASL Congress", self.item["name"])
         self.assertEqual(self.item["external_id"], "20240606079628")
 
@@ -25,8 +25,14 @@ class BusinessWireParserTestCase(TestCase):
 
     def test_metadata_keywords(self):
         extra = self.item.get("extra", {})
-        assert extra["bw_keywords"]["BWRegionKeywords"] == ["Europe", "North America"]
-        assert extra["bw_keywords"]["BWCountryKeywords"] == ["United States", "Italy"]
+        assert extra["bw_keywords"]["BWRegionKeywords"] == [
+            "Europe",
+            "North America",
+        ]
+        assert extra["bw_keywords"]["BWCountryKeywords"] == [
+            "United States",
+            "Italy",
+        ]
         assert extra["bw_keywords"]["BWStateKeywords"] == ["California"]
         assert "Pharmaceutical" in extra["bw_keywords"]["BWIndustryKeywords"]
 
@@ -46,7 +52,8 @@ class BusinessWireParserTestCase(TestCase):
         assert "subject" not in self.item or len(self.item.get("subject", [])) == 0
 
     def test_keywords_flattened(self):
-        # Confirm flattened keywords field includes merged values from bw_keywords
+        # Confirm flattened keywords field includes merged values from
+        # bw_keywords
         keywords = self.item.get("keywords", [])
         assert "United States" in keywords
         assert "Pharmaceutical" in keywords
