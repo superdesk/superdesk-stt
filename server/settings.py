@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     "stt.stt_tt_ninjs",
     "stt.stt_events_ml",
     "stt.stt_planning_ml",
+    "stt.stt_info_porssi",
     "stt.signal_hooks",
     "planning",
     "analytics",
