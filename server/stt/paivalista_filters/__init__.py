@@ -6,9 +6,6 @@ available in every template rendered by Superdesk.
 from dateutil import parser
 from datetime import datetime
 import pytz  # type: ignore
-import logging
-
-logger = logging.getLogger(__name__)
 
 _HELSINKI = pytz.timezone("Europe/Helsinki")
 _WEEKDAY_FI = [
