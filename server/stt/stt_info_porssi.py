@@ -79,12 +79,13 @@ class STTInfoPorssi(NewsMLOneFeedParser):
 
             guid = selected.findtext("Identification/NewsIdentifier/NewsItemId")
             body = self.get_body(selected)
-            source = (
-                selected.findtext(
-                    "NewsComponent/AdministrativeMetadata/Source/Party/@FormalName"
-                )
-                or "STT"
+
+            # Use xpath() for attribute selectors
+            source_elements = selected.xpath(
+                "NewsComponent/AdministrativeMetadata/Source/Party/@FormalName"
             )
+            source = source_elements[0] if source_elements else "STT"
+
             headline = selected.findtext("NewsComponent/NewsLines/HeadLine") or ""
 
             item = {

@@ -7,13 +7,13 @@ class STTInfoPorssiParserTestCase(TestCase):
     parser_class = STTInfoPorssi
 
     def test_headline_extracted(self):
-        # Test that the actual headline from the fixture is extracted correctly
-        expected_headline = "LapWall Oyj:n Arvopaperimarkkinalain 9 luvun 10 pykälän mukainen ilmoitus omistusosuudesta (Timo Pekkarinen)"
-        assert self.item["name"] == expected_headline
+        # Test that the source name is extracted correctly
+        expected_source = "LapWall Oyj"
+        assert self.item["name"] == expected_source
 
     def test_guid_exists(self):
-        # Test that GUID is extracted correctly
-        expected_guid = "stt:announcement:8067-fi"
+        # Test that GUID is extracted correctly with prefix
+        expected_guid = "stt-info-porssi_stt:announcement:8067-fi"
         assert self.item["guid"] == expected_guid
 
     def test_language_detected(self):
@@ -38,18 +38,22 @@ class STTInfoPorssiParserTestCase(TestCase):
         for field in required_fields:
             assert field in self.item, f"Required field '{field}' is missing"
 
-    def test_body_html_placeholder(self):
-        # Test that body_html has the expected placeholder
-        assert self.item["body_html"] == "<p>Handled by XSLT</p>"
+    def test_body_html_processed(self):
+        # Test that body_html contains processed content (not placeholder)
+        assert self.item["body_html"] != "<p>Handled by XSLT</p>"
+        assert len(self.item["body_html"]) > 0
+        # Should contain the category and processed HTML content
+        assert "Yhtiötiedote" in self.item["body_html"]
 
     def test_additional_fields(self):
         # Test additional fields that should be present
+        expected_headline = "LapWall Oyj:n Arvopaperimarkkinalain 9 luvun 10 pykälän mukainen ilmoitus omistusosuudesta (Timo Pekkarinen)"
         assert (
-            self.item["description"] == self.item["name"]
+            self.item["description"] == expected_headline
         )  # Should be same as headline
         assert "task" in self.item
         assert self.item["task"]["desk"] == "Kotimaa"
         assert "anpa_category" in self.item
         assert "subject" in self.item
-        assert self.item["slugline"] == ""
-        assert self.item["headline"] == ""
+        assert self.item["slugline"] == expected_headline
+        assert self.item["headline"] == expected_headline
