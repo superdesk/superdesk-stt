@@ -175,5 +175,52 @@ module.exports = function (grunt) {
         },
       },
     },
+    planning: {
+      planning_list_item: {
+        firstLine: [
+          {fieldId: 'urgency'},
+          {fieldId: 'name'},
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'anpa_category'},
+          {fieldId: 'related_events'},
+          {fieldId: 'coverages', position: 'end'}
+        ],
+        compact_view: {
+          firstLine: [
+            {fieldId: 'urgency'},
+            {fieldId: 'name'},
+            {fieldId: 'state'},
+            {fieldId: 'anpa_category'},
+          ],
+        },
+      },
+      event_list_item: {
+        firstLine: [
+          {fieldId: 'name'},
+          {fieldId: 'anpa_category'},
+          {fieldId: 'event_datetime', position: 'end'},
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'related_plannings'},
+          {
+            fieldId: 'vocabulary',
+            fieldOptions: {
+              vocabularyId: 'event_type'
+            },
+          },
+        ],
+        compact_view: {
+          firstLine: [
+            {fieldId: 'name'},
+            {fieldId: 'anpa_category'},
+            {fieldId: 'state', position: 'end'},
+            {fieldId: 'event_datetime', position: 'end'},
+          ],
+        },
+      },
+    },
   };
 }
