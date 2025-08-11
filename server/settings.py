@@ -133,6 +133,7 @@ INSTALLED_APPS = [
     "stt.stt_planning_ml",
     "stt.stt_info_porssi",
     "stt.signal_hooks",
+    "stt.stt_parse_businesswire",
     "planning",
     "analytics",
     "apps.languages",
