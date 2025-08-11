@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     "stt.stt_tt_ninjs",
     "stt.stt_events_ml",
     "stt.stt_planning_ml",
+    "stt.stt_parse_lottery_veikkaus",
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
     "planning",
