@@ -128,6 +128,19 @@ module.exports = function (grunt) {
         "fetchedDesk",
         "associatedItems",
       ],
+      compactView: {
+        firstLine: [
+          "slugline",
+          "highlights",
+          "markedDesks",
+          "headline",
+          "wordcount",
+          "associations",
+          "publish_queue_errors",
+          "versioncreated",
+        ],
+        secondLine: [],
+      }
     },
 
     /* configuration of monitoring features */
