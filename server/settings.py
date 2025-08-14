@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     "stt.parser",
     "stt.parser_bns",
     "stt.parser_afp",
+    "stt.parser_hippos",
     "stt.stt_tt_ninjs",
     "stt.stt_events_ml",
     "stt.stt_planning_ml",
