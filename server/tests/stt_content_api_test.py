@@ -76,37 +76,6 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
                 self.assertIn("guid", parsed)
                 self.assertIn("versioncreated", parsed)
 
-    def test_field_mapping_with_fixture_data(self):
-        """Test field mapping functionality with real fixture data."""
-        self.parse_source_content()
-
-        parser = self.parser_class()
-        first_item = self.items[0]
-
-        # Test with field mapping configuration
-        provider = {
-            "config": {
-                "field_mapping": {
-                    "custom_headline": "headline",
-                    "custom_body": "body_html",
-                    "extra.original_source": "source",
-                }
-            }
-        }
-
-        parsed = parser.parse(first_item, provider=provider)
-        if isinstance(parsed, list):
-            parsed = parsed[0]
-
-        # Check that field mapping worked
-        if "headline" in first_item:
-            self.assertEqual(parsed.get("custom_headline"), first_item["headline"])
-        if "body_html" in first_item:
-            self.assertEqual(parsed.get("custom_body"), first_item["body_html"])
-        if "source" in first_item:
-            self.assertIn("extra", parsed)
-            self.assertEqual(parsed["extra"]["original_source"], first_item["source"])
-
     def test_guid_generation_consistency(self):
         """Test that GUID generation is consistent for the same input."""
         self.parse_source_content()
@@ -235,35 +204,23 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
         if isinstance(parsed1, list):
             parsed1 = parsed1[0]
 
-        # Test with field mapping config
-        parsed2 = parser.parse(
-            first_item,
-            provider={"config": {"field_mapping": {"custom_field": "headline"}}},
-        )
+        # Test with expiry config
+        parsed2 = parser.parse(first_item, provider={"config": {"content_expiry": 24}})
         if isinstance(parsed2, list):
             parsed2 = parsed2[0]
 
-        # Test with expiry config
-        parsed3 = parser.parse(first_item, provider={"config": {"content_expiry": 24}})
-        if isinstance(parsed3, list):
-            parsed3 = parsed3[0]
-
         # All should be valid but potentially different
-        for parsed in [parsed1, parsed2, parsed3]:
+        for parsed in [parsed1, parsed2]:
             self.assertIsInstance(parsed, dict)
             self.assertIn("guid", parsed)
             self.assertIn("type", parsed)
 
-        # Check specific differences
-        if "headline" in first_item:
-            self.assertEqual(parsed2.get("custom_field"), first_item["headline"])
-
-        # Expiry should only be set in parsed3
+        # Expiry should only be set in parsed2
         self.assertIsNone(parsed1.get("expiry"))
-        if parsed3.get("expiry"):
+        if parsed2.get("expiry"):
             from datetime import datetime
 
-            self.assertIsInstance(parsed3["expiry"], datetime)
+            self.assertIsInstance(parsed2["expiry"], datetime)
 
     def test_fixture_data_structure_validation(self):
         """Validate the structure and content of the fixture data itself."""

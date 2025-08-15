@@ -1,361 +1,377 @@
 # -*- coding: utf-8 -*-
-import pytest
+import os
+import unittest
+import requests
+from unittest.mock import patch
+from flask import json
 
 from stt.io.feeding_services.stt_content_api import STTContentAPIService
+from stt.io.feed_parsers.stt_parse_content_api import ContentAPIItemParser
 
 
-class FakeResponse:
-    def __init__(self, payload, status_code=200):
-        self._payload = payload
+def fixture(filename):
+    return os.path.join(os.path.dirname(__file__), "fixtures", filename)
+
+
+class MockResponse:
+    def __init__(self, json_data, status_code=200):
+        self.json_data = json_data
         self.status_code = status_code
+        self.headers = {"content-type": "application/json"}
+        self.text = json.dumps(json_data) if json_data else ""
+
+    def json(self):
+        return self.json_data
 
     def raise_for_status(self):
         if self.status_code >= 400:
-            raise AssertionError(f"HTTP {self.status_code}")
-
-    def json(self):
-        return self._payload
+            raise requests.exceptions.HTTPError(f"HTTP {self.status_code}")
 
 
-class MockRequests:
-    """Mock requests module for testing."""
+class STTContentAPITestCase(unittest.TestCase):
+    def setUp(self):
+        self.service = STTContentAPIService()
+        self.parser = ContentAPIItemParser()
 
-    def __init__(self, responses):
-        self.responses = responses  # list of responses to return in order
-        self.calls = []
-        self.call_index = 0
+        # Load test fixture
+        with open(fixture("api/stt_content_api.json")) as _file:
+            self.fixture_data = json.load(_file)
 
-    def get(self, url, params=None, headers=None, timeout=None):
-        self.calls.append(
-            {"url": url, "params": params, "headers": headers, "timeout": timeout}
+    def test_instance(self):
+        """Test service instance creation and basic properties."""
+        self.assertEqual("stt_content_api", self.service.NAME)
+        self.assertEqual("STT Content API", self.service.label)
+        self.assertFalse(self.service.HTTP_AUTH)
+
+        # Check required fields
+        fields = {field["id"]: field for field in self.service.fields}
+        self.assertIn("url", fields)
+        self.assertIn("api_key", fields)
+        self.assertTrue(fields["url"]["required"])
+        self.assertTrue(fields["api_key"]["required"])
+
+    def test_bearer_token_helper(self):
+        """Test the _bearer helper method."""
+        # Test with raw token
+        self.assertEqual("Bearer raw_token", self.service._bearer("raw_token"))
+
+        # Test with Bearer prefix already
+        self.assertEqual(
+            "Bearer existing_token", self.service._bearer("Bearer existing_token")
         )
 
-        if self.call_index < len(self.responses):
-            response = self.responses[self.call_index]
-            self.call_index += 1
-            return FakeResponse(response)
-        else:
-            # Return empty response for additional calls
-            return FakeResponse({"_items": [], "_links": {}})
+    def test_headers_helper(self):
+        """Test the _headers helper method."""
+        headers = self.service._headers("test_api_key")
 
+        self.assertEqual("application/json", headers["Accept"])
+        self.assertEqual("Bearer test_api_key", headers["Authorization"])
 
-@pytest.fixture
-def service():
-    return STTContentAPIService()
+    def test_build_params_helper(self):
+        """Test the _build_params helper method."""
+        params = self.service._build_params("2024-01-01T00:00:00Z", 5)
 
+        self.assertEqual({"page": 5}, params)
 
-def test_fetch_data_basic_functionality(monkeypatch, service):
-    """Test basic _fetch_data functionality with simple pagination."""
+    def test_config_validation(self):
+        """Test configuration validation in _test method."""
+        # Test missing URL
+        provider = {"config": {"api_key": "test"}}
 
-    # Mock responses for two pages
-    responses = [
-        # Page 1 - has next link
-        {
-            "_items": [
-                {
-                    "_id": "A",
-                    "versioncreated": "2024-01-02T10:00:00Z",
-                    "headline": "First item",
-                },
-                {
-                    "_id": "B",
-                    "versioncreated": "2024-01-03T09:00:00Z",
-                    "headline": "Second item",
-                },
-            ],
-            "_links": {"next": {"href": "/contentapi/items?page=2"}},
-        },
-        # Page 2 - no next link
-        {
-            "_items": [
-                {
-                    "_id": "C",
-                    "versioncreated": "2024-01-04T08:00:00Z",
-                    "headline": "Third item",
-                }
-            ],
-            "_links": {},
-        },
-    ]
+        with self.assertRaises(Exception):
+            self.service._test(provider)
 
-    mock_requests = MockRequests(responses)
+        # Test missing API key
+        provider = {"config": {"url": "https://example.com"}}
 
-    # Patch requests module
-    import stt.io.feeding_services.stt_content_api as content_api_module
+        with self.assertRaises(Exception):
+            self.service._test(provider)
 
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
-
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer ABC123",
-        }
-    }
-
-    items = service._fetch_data(provider, "2024-01-01T00:00:00Z")
-
-    # Should get all items from both pages
-    assert len(items) == 3
-    assert [item["_id"] for item in items] == ["A", "B", "C"]
-
-    # Check that two requests were made
-    assert len(mock_requests.calls) == 2
-
-    # Check first request
-    first_call = mock_requests.calls[0]
-    assert first_call["url"] == "https://api.example.com/contentapi/items"
-    assert first_call["params"]["page"] == 1
-    assert first_call["headers"]["Authorization"] == "Bearer ABC123"
-    assert first_call["headers"]["Accept"] == "application/json"
-    assert first_call["timeout"] == 30
-
-    # Check second request
-    second_call = mock_requests.calls[1]
-    assert second_call["params"]["page"] == 2
-
-
-def test_fetch_data_single_page(monkeypatch, service):
-    """Test _fetch_data with single page response (no next link)."""
-
-    responses = [
-        {
-            "_items": [
-                {
-                    "_id": "SINGLE",
-                    "versioncreated": "2024-01-01T12:00:00Z",
-                    "headline": "Single item",
-                }
-            ],
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_fetch_data_single_page(self, mock_get):
+        """Test _fetch_data with single page response using fixture data."""
+        # Use first 2 items from fixture for testing
+        test_items = self.fixture_data["_items"][:2]
+        mock_response_data = {
+            "_items": test_items,
             "_links": {},  # No next link
+            "_meta": {"total": 2},
         }
-    ]
 
-    mock_requests = MockRequests(responses)
+        mock_get.return_value = MockResponse(mock_response_data)
 
-    import stt.io.feeding_services.stt_content_api as content_api_module
-
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
-
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "test_token",  # Test without Bearer prefix
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "Bearer TEST_TOKEN",
+            }
         }
-    }
 
-    items = service._fetch_data(provider, "")
+        items = self.service._fetch_data(provider, "2024-01-01T00:00:00Z")
 
-    assert len(items) == 1
-    assert items[0]["_id"] == "SINGLE"
+        # Verify request was made correctly
+        mock_get.assert_called_once()
+        call_args = mock_get.call_args
+        self.assertEqual("https://api.example.com/contentapi/items", call_args[0][0])
+        self.assertEqual(1, call_args[1]["params"]["page"])
+        self.assertEqual("Bearer TEST_TOKEN", call_args[1]["headers"]["Authorization"])
+        self.assertEqual("application/json", call_args[1]["headers"]["Accept"])
+        self.assertEqual(30, call_args[1]["timeout"])
 
-    # Should only make one request
-    assert len(mock_requests.calls) == 1
+        # Verify items returned
+        self.assertEqual(2, len(items))
+        self.assertEqual(test_items[0]["uri"], items[0]["uri"])
+        self.assertEqual(test_items[1]["uri"], items[1]["uri"])
 
-    # Check that Bearer prefix was added
-    assert mock_requests.calls[0]["headers"]["Authorization"] == "Bearer test_token"
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_fetch_data_pagination(self, mock_get):
+        """Test _fetch_data with multiple pages using fixture data."""
+        # Split fixture items across two pages
+        all_items = self.fixture_data["_items"][:4]
+        page1_items = all_items[:2]
+        page2_items = all_items[2:4]
 
+        def mock_response(url, params=None, headers=None, timeout=None):
+            page = params.get("page", 1)
+            if page == 1:
+                return MockResponse(
+                    {
+                        "_items": page1_items,
+                        "_links": {"next": {"href": "/contentapi/items?page=2"}},
+                        "_meta": {"total": 4},
+                    }
+                )
+            elif page == 2:
+                return MockResponse(
+                    {
+                        "_items": page2_items,
+                        "_links": {},  # No next link
+                        "_meta": {"total": 4},
+                    }
+                )
+            else:
+                return MockResponse({"_items": [], "_links": {}})
 
-def test_fetch_data_empty_response(monkeypatch, service):
-    """Test _fetch_data when API returns empty items."""
+        mock_get.side_effect = mock_response
 
-    responses = [
-        {
-            "_items": [],
-            "_links": {},
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "test_token",  # Test without Bearer prefix
+            }
         }
-    ]
 
-    mock_requests = MockRequests(responses)
+        items = self.service._fetch_data(provider, "")
 
-    import stt.io.feeding_services.stt_content_api as content_api_module
+        # Should have made two requests
+        self.assertEqual(2, mock_get.call_count)
 
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+        # Check first request
+        first_call = mock_get.call_args_list[0]
+        self.assertEqual(1, first_call[1]["params"]["page"])
+        self.assertEqual("Bearer test_token", first_call[1]["headers"]["Authorization"])
 
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer TOKEN123",
+        # Check second request
+        second_call = mock_get.call_args_list[1]
+        self.assertEqual(2, second_call[1]["params"]["page"])
+
+        # Should return all items
+        self.assertEqual(4, len(items))
+        self.assertEqual(
+            [item["uri"] for item in all_items], [item["uri"] for item in items]
+        )
+
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_fetch_data_different_response_formats(self, mock_get):
+        """Test _fetch_data with different API response formats."""
+        test_items = self.fixture_data["_items"][:2]
+
+        # Test with 'items' field instead of '_items'
+        mock_response_data = {"items": test_items, "_links": {}}
+
+        mock_get.return_value = MockResponse(mock_response_data)
+
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "Bearer TOKEN123",
+            }
         }
-    }
 
-    items = service._fetch_data(provider, "")
+        items = self.service._fetch_data(provider, "")
 
-    assert len(items) == 0
-    assert len(mock_requests.calls) == 1
+        self.assertEqual(2, len(items))
+        self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_fetch_data_list_response(self, mock_get):
+        """Test _fetch_data with direct list response."""
+        test_items = self.fixture_data["_items"][:2]
 
-def test_fetch_data_api_response_formats(monkeypatch, service):
-    """Test different API response formats (list vs dict with _items)."""
+        mock_get.return_value = MockResponse(test_items)
 
-    responses = [
-        # Test list format
-        [
-            {"_id": "LIST1", "headline": "From list"},
-            {"_id": "LIST2", "headline": "From list 2"},
-        ]
-    ]
-
-    mock_requests = MockRequests(responses)
-
-    import stt.io.feeding_services.stt_content_api as content_api_module
-
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
-
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer TOKEN123",
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "Bearer TOKEN123",
+            }
         }
-    }
 
-    items = service._fetch_data(provider, "")
+        items = self.service._fetch_data(provider, "")
 
-    assert len(items) == 2
-    assert [item["_id"] for item in items] == ["LIST1", "LIST2"]
+        self.assertEqual(2, len(items))
+        self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_fetch_data_error_handling(self, mock_get):
+        """Test error handling in _fetch_data."""
+        mock_get.return_value = MockResponse({}, status_code=404)
 
-def test_fetch_data_items_field_response(monkeypatch, service):
-    """Test API response with 'items' field instead of '_items'."""
-
-    responses = [
-        {
-            "items": [
-                {"_id": "ITEMS1", "headline": "From items field"},
-                {"_id": "ITEMS2", "headline": "From items field 2"},
-            ],
-            "_links": {},
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "Bearer TOKEN123",
+            }
         }
-    ]
 
-    mock_requests = MockRequests(responses)
+        with self.assertRaises(Exception):
+            self.service._fetch_data(provider, "")
 
-    import stt.io.feeding_services.stt_content_api as content_api_module
+    def test_parser_with_fixture_data(self):
+        """Test parser with real fixture data."""
+        test_item = self.fixture_data["_items"][0]
 
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+        result = self.parser.parse(test_item, provider={"config": {}})
 
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer TOKEN123",
-        }
-    }
+        # Parser should return a list
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
 
-    items = service._fetch_data(provider, "")
+        parsed_item = result[0]
 
-    assert len(items) == 2
-    assert [item["_id"] for item in items] == ["ITEMS1", "ITEMS2"]
+        # Check required fields
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
+
+        # Check original data is preserved
+        self.assertEqual(test_item["uri"], parsed_item["uri"])
+        self.assertEqual(test_item["headline"], parsed_item["headline"])
+
+        # Check GUID generation
+        self.assertTrue(parsed_item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
+
+    def test_parser_content_expiry(self):
+        """Test parser content expiry calculation."""
+        test_item = {"_id": "expiry_test", "source": "STT"}
+
+        provider = {"config": {"content_expiry": 24}}  # 24 hours
+
+        result = self.parser.parse(test_item, provider=provider)
+        parsed_item = result[0]
+
+        self.assertIsNotNone(parsed_item.get("expiry"))
+
+        # Verify expiry is set to approximately 24 hours from versioncreated
+        from datetime import timedelta
+
+        expected_expiry = parsed_item["versioncreated"] + timedelta(hours=24)
+        time_diff = abs((parsed_item["expiry"] - expected_expiry).total_seconds())
+        self.assertLess(time_diff, 60)  # Within 1 minute tolerance
+
+    def test_parser_minimal_item(self):
+        """Test parser with minimal required data."""
+        minimal_item = {"source": "STT"}
+
+        result = self.parser.parse(minimal_item, provider={"config": {}})
+        parsed_item = result[0]
+
+        # Should have all required defaults
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
+        self.assertEqual("", parsed_item["headline"])
+        self.assertEqual("", parsed_item["body_html"])
+
+    def test_parser_guid_consistency(self):
+        """Test that GUID generation is consistent for the same input."""
+        test_item = self.fixture_data["_items"][0]
+
+        result1 = self.parser.parse(test_item, provider={"config": {}})
+        result2 = self.parser.parse(test_item, provider={"config": {}})
+
+        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
+
+    def test_parser_list_input(self):
+        """Test parser with list input."""
+        test_items = self.fixture_data["_items"][:3]
+
+        result = self.parser.parse(test_items, provider={"config": {}})
+
+        self.assertEqual(3, len(result))
+        for i, parsed_item in enumerate(result):
+            self.assertEqual("text", parsed_item["type"])
+            self.assertEqual("usable", parsed_item["pubstatus"])
+            self.assertEqual(test_items[i]["uri"], parsed_item["uri"])
+
+    @patch("stt.io.feeding_services.stt_content_api.requests.get")
+    def test_update_with_parser_integration(self, mock_get):
+        """Test _update method with parser integration using fixture data."""
+        test_items = self.fixture_data["_items"][:2]
+        mock_response_data = {"_items": test_items, "_links": {}}
+
+        mock_get.return_value = MockResponse(mock_response_data)
+
+        # Mock the parser to avoid full Superdesk infrastructure requirements
+        def mock_get_feed_parser(provider, item=None):
+            return self.parser
+
+        # Patch the get_feed_parser method
+        with patch.object(
+            self.service, "get_feed_parser", side_effect=mock_get_feed_parser
+        ):
+            provider = {
+                "config": {
+                    "url": "https://api.example.com/contentapi/items",
+                    "api_key": "Bearer TOKEN123",
+                },
+                "feed_parser": "content_api_json",
+            }
+            update = {}
+
+            items = list(self.service._update(provider, update))
+
+            # Should have processed all items
+            self.assertEqual(2, len(items))
+
+            # Check that items were parsed correctly
+            for i, item in enumerate(items):
+                self.assertEqual("text", item["type"])
+                self.assertEqual("usable", item["pubstatus"])
+                self.assertEqual(test_items[i]["uri"], item["uri"])
+
+    def test_fixture_data_structure(self):
+        """Validate the structure of the fixture data."""
+        # Should have _items
+        self.assertIn("_items", self.fixture_data)
+        self.assertGreater(len(self.fixture_data["_items"]), 0)
+
+        # Check first item structure
+        first_item = self.fixture_data["_items"][0]
+        self.assertIsInstance(first_item, dict)
+
+        # Should have STT-specific fields
+        expected_fields = ["uri", "source"]
+        for field in expected_fields:
+            if field in first_item:
+                self.assertIsInstance(first_item[field], str)
+
+        # Source should be STT-related
+        if "source" in first_item:
+            self.assertTrue(first_item["source"].startswith("STT"))
 
 
-def test_bearer_token_helper():
-    """Test the _bearer helper method."""
-    service = STTContentAPIService()
-
-    # Test with raw token
-    assert service._bearer("raw_token") == "Bearer raw_token"
-
-    # Test with Bearer prefix already
-    assert service._bearer("Bearer existing_token") == "Bearer existing_token"
-
-
-def test_headers_helper():
-    """Test the _headers helper method."""
-    service = STTContentAPIService()
-
-    headers = service._headers("test_api_key")
-
-    assert headers["Accept"] == "application/json"
-    assert headers["Authorization"] == "Bearer test_api_key"
-
-
-def test_build_params_helper():
-    """Test the _build_params helper method."""
-    service = STTContentAPIService()
-
-    params = service._build_params("2024-01-01T00:00:00Z", 5)
-
-    assert params == {"page": 5}
-    # Verify since_iso parameter is accepted but not used in current implementation
-
-
-def test_config_validation(service):
-    """Test configuration validation in _test method."""
-
-    # Test missing URL
-    provider = {"config": {"api_key": "test"}}
-
-    with pytest.raises(Exception):  # Should raise ParserError.parseMessageError
-        service._test(provider)
-
-    # Test missing API key
-    provider = {"config": {"url": "https://example.com"}}
-
-    with pytest.raises(Exception):  # Should raise ParserError.parseMessageError
-        service._test(provider)
-
-
-def test_fetch_data_error_handling(monkeypatch, service):
-    """Test error handling in _fetch_data."""
-
-    class MockErrorRequests:
-        def get(self, url, params=None, headers=None, timeout=None):
-            # Simulate HTTP error
-            return FakeResponse({}, status_code=404)
-
-    mock_requests = MockErrorRequests()
-
-    import stt.io.feeding_services.stt_content_api as content_api_module
-
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
-
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer TOKEN123",
-        }
-    }
-
-    with pytest.raises(Exception):  # Should raise IngestApiError
-        service._fetch_data(provider, "")
-
-
-def test_update_with_parser_config(monkeypatch, service):
-    """Test _update method with proper feed_parser configuration."""
-
-    responses = [
-        {
-            "_items": [{"_id": "TEST", "headline": "Test item"}],
-            "_links": {},
-        }
-    ]
-
-    mock_requests = MockRequests(responses)
-
-    import stt.io.feeding_services.stt_content_api as content_api_module
-
-    monkeypatch.setattr(content_api_module, "requests", mock_requests)
-
-    # Mock the parser to avoid full Superdesk infrastructure
-    class MockParser:
-        def parse(self, item, provider):
-            return [{"parsed": True, "original_id": item.get("_id")}]
-
-    def mock_get_feed_parser(provider, item=None):
-        return MockParser()
-
-    # Patch the get_feed_parser method
-    monkeypatch.setattr(service, "get_feed_parser", mock_get_feed_parser)
-
-    provider = {
-        "config": {
-            "url": "https://api.example.com/contentapi/items",
-            "api_key": "Bearer TOKEN123",
-        },
-        "feed_parser": "content_api_json",
-    }
-    update = {}
-
-    items = list(service._update(provider, update))
-
-    assert len(items) == 1
-    assert items[0]["parsed"] is True
-    assert items[0]["original_id"] == "TEST"
+if __name__ == "__main__":
+    unittest.main()

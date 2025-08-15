@@ -53,16 +53,7 @@ class ContentAPIItemParser(FeedParser):
         """
         processed: Dict[str, Any] = dict(src)
 
-        # 1) Optional field mapping from provider.config.field_mapping
-        field_mapping = (provider.get("config") or {}).get("field_mapping") or {}
-        if isinstance(field_mapping, dict) and field_mapping:
-            try:
-                mapped = self._apply_field_mapping(src, field_mapping)
-                processed.update(mapped)
-            except Exception as ex:
-                logger.warning("Field mapping failed: %s", ex)
-
-        # 2) Required defaults
+        # 1) Required defaults
         processed.setdefault("type", "text")
         processed.setdefault("pubstatus", "usable")
         processed.setdefault(
@@ -70,12 +61,12 @@ class ContentAPIItemParser(FeedParser):
         )
         processed.setdefault("body_html", processed.get("body_html") or "")
 
-        # 3) GUID (stable when URI/_id present, else random UUID)
+        # 2) GUID (stable when URI/_id present, else random UUID)
         if not processed.get("guid"):
             guid = self._ensure_guid(processed)
             processed["guid"] = guid
 
-        # 4) Normalize timestamps to timezone-aware datetimes
+        # 3) Normalize timestamps to timezone-aware datetimes
         for tf in ("versioncreated", "firstcreated", "_updated", "_created"):
             if processed.get(tf):
                 processed[tf] = self._normalize_timestamp(processed[tf])
@@ -87,7 +78,7 @@ class ContentAPIItemParser(FeedParser):
         elif vc.tzinfo is None:
             processed["versioncreated"] = vc.replace(tzinfo=timezone.utc)
 
-        # 5) Expiry based on provider config (hours)
+        # 4) Expiry based on provider config (hours)
         content_expiry_hours = (provider.get("config") or {}).get("content_expiry", 0)
         if content_expiry_hours:
             try:
@@ -119,36 +110,6 @@ class ContentAPIItemParser(FeedParser):
             return f"urn:newsml:stt.fi:contentapi:{h}"
         except Exception:
             return f"urn:newsml:stt.fi:contentapi:{uuid.uuid4()}"
-
-    def _apply_field_mapping(
-        self, src: Dict[str, Any], mapping: Dict[str, str]
-    ) -> Dict[str, Any]:
-        """Apply field mapping from source to target format (dot-path aware)."""
-
-        def _get_by_path(obj: Any, path: str) -> Any:
-            cur: Any = obj
-            for part in path.split("."):
-                if isinstance(cur, dict):
-                    cur = cur.get(part)
-                else:
-                    return None
-            return cur
-
-        def _set_by_path(dst: Dict[str, Any], path: str, value: Any) -> None:
-            parts = path.split(".")
-            node = dst
-            for p in parts[:-1]:
-                node = node.setdefault(p, {})
-            node[parts[-1]] = value
-
-        out: Dict[str, Any] = {}
-        for target, source in (mapping or {}).items():
-            if not isinstance(target, str) or not isinstance(source, str):
-                continue
-            val = _get_by_path(src, source)
-            if val is not None:
-                _set_by_path(out, target, val)
-        return out
 
     def _normalize_timestamp(self, value: Any) -> Optional[datetime]:
         """Normalize timestamps to tz-aware datetime (UTC when naive)."""
