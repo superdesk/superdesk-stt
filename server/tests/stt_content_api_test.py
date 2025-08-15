@@ -4,14 +4,6 @@ from stt.io.feed_parsers.stt_parse_content_api import ContentAPIItemParser  # no
 
 
 class ContentAPIItemParserFixtureTestCase(TestCase):
-    """Lightweight fixture-based test to ensure the parser handles the
-    real Content API fixture end-to-end. This follows the same pattern used
-    by other parser tests in this repo that rely on `fixture` and
-    `parser_class` attributes.
-
-    We intentionally point to the absolute fixture path requested by the
-    user to avoid any ambiguity in resolution.
-    """
 
     fixture = "api/stt_content_api.json"
     parser_class = ContentAPIItemParser

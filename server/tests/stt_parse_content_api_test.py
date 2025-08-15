@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import json
 import pytest
 
-from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
-from stt.io.feeding_services.stt_parse_content_api import STTContentAPIService
+from stt.io.feeding_services.stt_content_api import STTContentAPIService
 
 
 class FakeResponse:
@@ -19,23 +17,26 @@ class FakeResponse:
         return self._payload
 
 
-class FakeSession:
-    """
-    Minimal stand‑in for requests.Session.
-    - Provide .headers (dict), .auth, .get(...) returning page payloads
-    - Record each call for assertions
-    """
-    def __init__(self, pages_by_num):
-        self._pages = pages_by_num  # {page_number: payload}
-        self.headers = {}
-        self.auth = None
-        self.calls = []
+class MockRequests:
+    """Mock requests module for testing."""
 
-    def get(self, url, params=None, timeout=None):
-        self.calls.append({"url": url, "params": params, "timeout": timeout})
-        page = int(params.get("page", 1))
-        payload = self._pages.get(page, {"_items": [], "_meta": {"total": 0}, "_links": {}})
-        return FakeResponse(payload)
+    def __init__(self, responses):
+        self.responses = responses  # list of responses to return in order
+        self.calls = []
+        self.call_index = 0
+
+    def get(self, url, params=None, headers=None, timeout=None):
+        self.calls.append(
+            {"url": url, "params": params, "headers": headers, "timeout": timeout}
+        )
+
+        if self.call_index < len(self.responses):
+            response = self.responses[self.call_index]
+            self.call_index += 1
+            return FakeResponse(response)
+        else:
+            # Return empty response for additional calls
+            return FakeResponse({"_items": [], "_links": {}})
 
 
 @pytest.fixture
@@ -43,142 +44,318 @@ def service():
     return STTContentAPIService()
 
 
-def _two_pages():
-    # Page 1 (2 items, has next)
-    p1 = {
-        "_items": [
-            {"_id": "A", "versioncreated": "2024-01-02T10:00:00Z"},
-            {"_id": "B", "versioncreated": "2024-01-03T09:00:00Z"},
-        ],
-        "_meta": {"total": 3},
-        "_links": {"next": {"href": "/contentapi/items?page=2"}},
-    }
-    # Page 2 (1 item, no next)
-    p2 = {
-        "_items": [{"_id": "C", "versioncreated": "2024-01-04T08:00:00Z"}],
-        "_meta": {"total": 3},
-        "_links": {},
-    }
-    return {1: p1, 2: p2}
+def test_fetch_data_basic_functionality(monkeypatch, service):
+    """Test basic _fetch_data functionality with simple pagination."""
 
+    # Mock responses for two pages
+    responses = [
+        # Page 1 - has next link
+        {
+            "_items": [
+                {
+                    "_id": "A",
+                    "versioncreated": "2024-01-02T10:00:00Z",
+                    "headline": "First item",
+                },
+                {
+                    "_id": "B",
+                    "versioncreated": "2024-01-03T09:00:00Z",
+                    "headline": "Second item",
+                },
+            ],
+            "_links": {"next": {"href": "/contentapi/items?page=2"}},
+        },
+        # Page 2 - no next link
+        {
+            "_items": [
+                {
+                    "_id": "C",
+                    "versioncreated": "2024-01-04T08:00:00Z",
+                    "headline": "Third item",
+                }
+            ],
+            "_links": {},
+        },
+    ]
 
-def test_update_yields_items_updates_bookmark_token_auth_and_url(monkeypatch, service):
-    fake = FakeSession(_two_pages())
+    mock_requests = MockRequests(responses)
 
-    # Patch requests.Session
-    import requests
-    monkeypatch.setattr(requests, "Session", lambda: fake)
+    # Patch requests module
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
 
     provider = {
         "config": {
-            "base_url": "https://api.example/contentapi/",  # note trailing slash handling in code
-            "endpoint": "items",
-            "page_size": 2,
-            "since_field": "versioncreated",
-            "initial_since": "2024-01-01T00:00:00Z",
-            "auth": {"type": "token", "token": "Bearer ABC123"},
-            "timeout": 7,
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer ABC123",
         }
+    }
+
+    items = service._fetch_data(provider, "2024-01-01T00:00:00Z")
+
+    # Should get all items from both pages
+    assert len(items) == 3
+    assert [item["_id"] for item in items] == ["A", "B", "C"]
+
+    # Check that two requests were made
+    assert len(mock_requests.calls) == 2
+
+    # Check first request
+    first_call = mock_requests.calls[0]
+    assert first_call["url"] == "https://api.example.com/contentapi/items"
+    assert first_call["params"]["page"] == 1
+    assert first_call["headers"]["Authorization"] == "Bearer ABC123"
+    assert first_call["headers"]["Accept"] == "application/json"
+    assert first_call["timeout"] == 30
+
+    # Check second request
+    second_call = mock_requests.calls[1]
+    assert second_call["params"]["page"] == 2
+
+
+def test_fetch_data_single_page(monkeypatch, service):
+    """Test _fetch_data with single page response (no next link)."""
+
+    responses = [
+        {
+            "_items": [
+                {
+                    "_id": "SINGLE",
+                    "versioncreated": "2024-01-01T12:00:00Z",
+                    "headline": "Single item",
+                }
+            ],
+            "_links": {},  # No next link
+        }
+    ]
+
+    mock_requests = MockRequests(responses)
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "test_token",  # Test without Bearer prefix
+        }
+    }
+
+    items = service._fetch_data(provider, "")
+
+    assert len(items) == 1
+    assert items[0]["_id"] == "SINGLE"
+
+    # Should only make one request
+    assert len(mock_requests.calls) == 1
+
+    # Check that Bearer prefix was added
+    assert mock_requests.calls[0]["headers"]["Authorization"] == "Bearer test_token"
+
+
+def test_fetch_data_empty_response(monkeypatch, service):
+    """Test _fetch_data when API returns empty items."""
+
+    responses = [
+        {
+            "_items": [],
+            "_links": {},
+        }
+    ]
+
+    mock_requests = MockRequests(responses)
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer TOKEN123",
+        }
+    }
+
+    items = service._fetch_data(provider, "")
+
+    assert len(items) == 0
+    assert len(mock_requests.calls) == 1
+
+
+def test_fetch_data_api_response_formats(monkeypatch, service):
+    """Test different API response formats (list vs dict with _items)."""
+
+    responses = [
+        # Test list format
+        [
+            {"_id": "LIST1", "headline": "From list"},
+            {"_id": "LIST2", "headline": "From list 2"},
+        ]
+    ]
+
+    mock_requests = MockRequests(responses)
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer TOKEN123",
+        }
+    }
+
+    items = service._fetch_data(provider, "")
+
+    assert len(items) == 2
+    assert [item["_id"] for item in items] == ["LIST1", "LIST2"]
+
+
+def test_fetch_data_items_field_response(monkeypatch, service):
+    """Test API response with 'items' field instead of '_items'."""
+
+    responses = [
+        {
+            "items": [
+                {"_id": "ITEMS1", "headline": "From items field"},
+                {"_id": "ITEMS2", "headline": "From items field 2"},
+            ],
+            "_links": {},
+        }
+    ]
+
+    mock_requests = MockRequests(responses)
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer TOKEN123",
+        }
+    }
+
+    items = service._fetch_data(provider, "")
+
+    assert len(items) == 2
+    assert [item["_id"] for item in items] == ["ITEMS1", "ITEMS2"]
+
+
+def test_bearer_token_helper():
+    """Test the _bearer helper method."""
+    service = STTContentAPIService()
+
+    # Test with raw token
+    assert service._bearer("raw_token") == "Bearer raw_token"
+
+    # Test with Bearer prefix already
+    assert service._bearer("Bearer existing_token") == "Bearer existing_token"
+
+
+def test_headers_helper():
+    """Test the _headers helper method."""
+    service = STTContentAPIService()
+
+    headers = service._headers("test_api_key")
+
+    assert headers["Accept"] == "application/json"
+    assert headers["Authorization"] == "Bearer test_api_key"
+
+
+def test_build_params_helper():
+    """Test the _build_params helper method."""
+    service = STTContentAPIService()
+
+    params = service._build_params("2024-01-01T00:00:00Z", 5)
+
+    assert params == {"page": 5}
+    # Verify since_iso parameter is accepted but not used in current implementation
+
+
+def test_config_validation(service):
+    """Test configuration validation in _test method."""
+
+    # Test missing URL
+    provider = {"config": {"api_key": "test"}}
+
+    with pytest.raises(Exception):  # Should raise ParserError.parseMessageError
+        service._test(provider)
+
+    # Test missing API key
+    provider = {"config": {"url": "https://example.com"}}
+
+    with pytest.raises(Exception):  # Should raise ParserError.parseMessageError
+        service._test(provider)
+
+
+def test_fetch_data_error_handling(monkeypatch, service):
+    """Test error handling in _fetch_data."""
+
+    class MockErrorRequests:
+        def get(self, url, params=None, headers=None, timeout=None):
+            # Simulate HTTP error
+            return FakeResponse({}, status_code=404)
+
+    mock_requests = MockErrorRequests()
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer TOKEN123",
+        }
+    }
+
+    with pytest.raises(Exception):  # Should raise IngestApiError
+        service._fetch_data(provider, "")
+
+
+def test_update_with_parser_config(monkeypatch, service):
+    """Test _update method with proper feed_parser configuration."""
+
+    responses = [
+        {
+            "_items": [{"_id": "TEST", "headline": "Test item"}],
+            "_links": {},
+        }
+    ]
+
+    mock_requests = MockRequests(responses)
+
+    import stt.io.feeding_services.stt_content_api as content_api_module
+
+    monkeypatch.setattr(content_api_module, "requests", mock_requests)
+
+    # Mock the parser to avoid full Superdesk infrastructure
+    class MockParser:
+        def parse(self, item, provider):
+            return [{"parsed": True, "original_id": item.get("_id")}]
+
+    def mock_get_feed_parser(provider, item=None):
+        return MockParser()
+
+    # Patch the get_feed_parser method
+    monkeypatch.setattr(service, "get_feed_parser", mock_get_feed_parser)
+
+    provider = {
+        "config": {
+            "url": "https://api.example.com/contentapi/items",
+            "api_key": "Bearer TOKEN123",
+        },
+        "feed_parser": "content_api_json",
     }
     update = {}
 
     items = list(service._update(provider, update))
 
-    # yielded all items in order across pages
-    assert [it["_id"] for it in items] == ["A", "B", "C"]
-
-    # normalized _type
-    assert all(it["_type"] == "content_api" for it in items)
-
-    # bookmark moved to newest versioncreated
-    assert update[LAST_ITEM_UPDATE] == "2024-01-04T08:00:00Z"
-
-    # headers & auth
-    assert fake.headers["Accept"] == "application/json"
-    assert fake.headers["Authorization"] == "Bearer ABC123"
-
-    # first call: check where JSON, sort, page, max_results, timeout, and URL built correctly
-    first = fake.calls[0]
-    assert first["url"] == "https://api.example/contentapi/items"
-    assert first["params"]["sort"] == "versioncreated"
-    assert first["params"]["page"] == 1
-    assert first["params"]["max_results"] == 2
-    where = json.loads(first["params"]["where"])
-    assert where["versioncreated"]["$gt"] == "2024-01-01T00:00:00Z"
-
-
-def test_basic_auth_applied(monkeypatch, service):
-    # no items so it exits quickly
-    fake = FakeSession({1: {"_items": [], "_meta": {"total": 0}, "_links": {}}})
-
-    import requests
-    monkeypatch.setattr(requests, "Session", lambda: fake)
-
-    provider = {
-        "config": {
-            "base_url": "https://api.example/contentapi/",
-            "endpoint": "items",
-            "auth": {"type": "basic", "username": "u", "password": "p"},
-        }
-    }
-    update = {LAST_ITEM_UPDATE: "2024-01-01T00:00:00Z"}
-
-    list(service._update(provider, update))
-
-    assert fake.auth == ("u", "p")
-
-
-def test_extra_where_and_custom_since_field(monkeypatch, service):
-    fake = FakeSession({
-        1: {
-            "_items": [{"_id": "X", "firstcreated": "2024-02-01T00:00:00Z"}],
-            "_meta": {"total": 1},
-            "_links": {},
-        }
-    })
-
-    import requests
-    monkeypatch.setattr(requests, "Session", lambda: fake)
-
-    provider = {
-        "config": {
-            "base_url": "https://api.example/contentapi/",
-            "endpoint": "items",
-            "since_field": "firstcreated",
-            "extra_where": {"state": "published", "_type": "text"},
-        }
-    }
-    update = {LAST_ITEM_UPDATE: "2024-01-15T00:00:00Z"}
-
-    items = list(service._update(provider, update))
     assert len(items) == 1
-    assert update[LAST_ITEM_UPDATE] == "2024-02-01T00:00:00Z"
-
-    call = fake.calls[0]
-    where = json.loads(call["params"]["where"])
-    assert where["state"] == "published"
-    assert where["_type"] == "text"
-    assert where["firstcreated"]["$gt"] == "2024-01-15T00:00:00Z"
-
-
-def test_no_new_items_keeps_bookmark_and_logs(monkeypatch, service, caplog):
-    fake = FakeSession({1: {"_items": [], "_meta": {"total": 0}, "_links": {}}})
-
-    import requests
-    monkeypatch.setattr(requests, "Session", lambda: fake)
-
-    provider = {
-        "config": {
-            "base_url": "https://api.example/contentapi/",
-            "endpoint": "items",
-        }
-    }
-    prev = "2024-01-10T00:00:00Z"
-    update = {LAST_ITEM_UPDATE: prev}
-
-    with caplog.at_level("INFO"):
-        out = list(service._update(provider, update))
-
-    assert out == []
-    assert update[LAST_ITEM_UPDATE] == prev
-    assert any("nothing new since=" in r.message for r in caplog.records)
+    assert items[0]["parsed"] is True
+    assert items[0]["original_id"] == "TEST"

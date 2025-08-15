@@ -8,8 +8,6 @@ from dateutil import parser as dtparse
 from superdesk.io.feed_parsers import FeedParser
 from superdesk.io.registry import register_feed_parser
 
-# Removed unused imports: ITEM_TYPE, CONTENT_TYPE, GUID_TAG
-
 from datetime import datetime, timezone, timedelta
 import hashlib
 import json
@@ -31,7 +29,6 @@ class ContentAPIItemParser(FeedParser):
             isinstance(payload, list) and all(isinstance(i, dict) for i in payload)
         )
 
-    # IMPORTANT: return a **list of items**, like BusinessWireParser.parse(...)
     def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
         provider = provider or {}
 
@@ -47,8 +44,6 @@ class ContentAPIItemParser(FeedParser):
         if isinstance(item, dict):
             parsed_one = self._parse_one(item, provider)
             return [parsed_one] if parsed_one else []
-
-        # Unsupported input shape -> nothing to return
         return []
 
     # ------------------------ internal helpers -------------------------
@@ -118,7 +113,6 @@ class ContentAPIItemParser(FeedParser):
         if isinstance(uri, (str, int)):
             s = str(uri)
             return f"urn:newsml:stt.fi:contentapi:{hashlib.sha1(s.encode('utf-8')).hexdigest()}"
-        # Fallback to content-based hash or UUID
         try:
             blob = json.dumps(item, ensure_ascii=False, sort_keys=True)
             h = hashlib.sha1(blob.encode("utf-8")).hexdigest()

@@ -1,13 +1,3 @@
-# -*- coding: utf-8; -*-
-#
-# This file is part of Superdesk.
-#
-# Copyright 2013-2018 Sourcefabric z.u. and contributors.
-#
-# For the full copyright and license information, please see the
-# AUTHORS and LICENSE files distributed with this source code, or
-# at https://www.sourcefabric.org/superdesk/license
-
 from __future__ import annotations
 
 
@@ -20,7 +10,6 @@ from superdesk.errors import IngestApiError, ParserError
 from superdesk.io.registry import register_feeding_service
 from superdesk.io.feeding_services.http_base_service import HTTPFeedingServiceBase
 
-# Processing items directly in feeding service to avoid parser discovery issues
 
 logger = logging.getLogger(__name__)
 
@@ -54,25 +43,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
             "placeholder": "Bearer <token> OR raw <token>",
             "required": True,
         },
-        {
-            "id": "max_results",
-            "type": "number",
-            "label": "Page size",
-            "placeholder": "25",
-        },
-        {
-            "id": "timeout",
-            "type": "number",
-            "label": "HTTP timeout (sec)",
-            "placeholder": "20",
-        },
-        {
-            "id": "field_mapping",
-            "type": "json",
-            "label": "Field Mapping (JSON)",
-            "placeholder": '{"headline": "headline", "body_html": "body_html"}',
-            "required": False,
-        },
     ]
 
     def __init__(self):
@@ -91,9 +61,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
             "Authorization": self._bearer(api_key),
         }
 
-    def _build_params(
-        self, since_iso: str, page: int, max_results: int
-    ) -> Dict[str, Any]:
+    def _build_params(self, since_iso: str, page: int) -> Dict[str, Any]:
         params: Dict[str, Any] = {
             "page": page,
         }
@@ -114,11 +82,8 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 provider,
                 data={"url": url, "has_api_key": bool(api_key)},
             )
-        # Avoid logging sensitive details; only log target URL
-        logger.warning("Testing Content API connectivity to %s", url)
         headers = self._headers(api_key)
-        params = {"page": 1, "max_results": 1}
-        self.get_url(url, params=params, headers=headers)
+        self.get_url(url, headers=headers)
 
     def _update(self, provider, update) -> Iterable[Dict]:
         """
@@ -161,15 +126,11 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         config = provider.get("config", {})
         url: str = config["url"]
         api_key: str = config["api_key"]
-        max_results: int = int(config.get("max_results", 25))
-        timeout: int = int(config.get("timeout", 20))
 
         logger.info(
-            "Starting Content API fetch from %s (since: %s, page_size: %d, timeout: %ds)",
+            "Starting Content API fetch from %s (since: %s)",
             url,
             since_iso or "beginning",
-            max_results,
-            timeout,
         )
 
         headers = self._headers(api_key)
@@ -178,17 +139,9 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         page = 1
 
         while True:
-            params = self._build_params(since_iso, page, max_results)
-            logger.debug(
-                "Requesting page %d with params: %s",
-                page,
-                {k: v for k, v in params.items() if k != "where"},
-            )
-
+            params = self._build_params(since_iso, page)
             try:
-                response = requests.get(
-                    url, params=params, headers=headers, timeout=timeout
-                )
+                response = requests.get(url, params=params, headers=headers, timeout=30)
                 status = response.status_code
                 if status >= 400:
                     logger.warning(
@@ -200,12 +153,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                     raise IngestApiError.apiGeneralError(
                         Exception(f"HTTP {status} from Content API"), provider
                     )
-                logger.info(
-                    "Successfully fetched page %d with %d max_results from Content API (status: %d)",
-                    page,
-                    max_results,
-                    status,
-                )
             except IngestApiError:
                 # Already wrapped with provider context
                 raise
@@ -224,7 +171,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                     response.status_code,
                     response.headers.get("content-type", "unknown"),
                 )
-                logger.debug("Response text (first 500 chars): %s", response.text[:500])
                 raise IngestApiError.apiGeneralError(
                     Exception(f"JSON parse error: {str(json_ex)}"), provider
                 )
@@ -257,21 +203,9 @@ class STTContentAPIService(HTTPFeedingServiceBase):
             if isinstance(links, dict):
                 has_next = "next" in links
 
-            meta = data.get("_meta") if isinstance(data, dict) else None
-            total = meta.get("total") if isinstance(meta, dict) else None
-
-            if (not has_next) and (total is None or page * max_results >= int(total)):
+            if not has_next:
                 break
-
             page += 1
-            if page == 2:
-                break
-
-        logger.info(
-            "Content API fetch completed: %d items retrieved from %d pages",
-            len(items),
-            page - 1,
-        )
         return items
 
 
