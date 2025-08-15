@@ -141,6 +141,8 @@ INSTALLED_APPS = [
     "stt.search_providers.newshub",
     "stt.ai_proxy",
     "stt.paivalista_filters",
+    "stt.io.feeding_services.stt_content_api",
+    "stt.io.feed_parsers.stt_parse_content_api",
 ]
 
 # enable legal archive is enabled
