@@ -227,7 +227,9 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
 
         try:
             sanitized_root = lxml_html.fromstring(sanitized_html)
-            inner_parts = [etree.tostring(c, encoding="unicode") for c in sanitized_root]
+            inner_parts = [
+                etree.tostring(c, encoding="unicode") for c in sanitized_root
+            ]
             return "".join(inner_parts).strip()
         except Exception:
             return sanitized_html.strip()

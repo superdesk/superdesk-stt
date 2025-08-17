@@ -2,8 +2,8 @@ import json
 import os
 import unittest
 
-import stt.stt_tt_new_ninjs as stt_module
-from stt.stt_tt_new_ninjs import STTTTNEWNINJSFeedParser
+import stt.stt_tt_new_parse_ninjs as stt_module
+from stt.stt_tt_new_parse_ninjs import STTTTNEWNINJSFeedParser
 
 
 class STTTTNEWNINJSFeedParserTest(unittest.TestCase):
