@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from dateutil import parser as dtparse
 from superdesk.io.feed_parsers import FeedParser
