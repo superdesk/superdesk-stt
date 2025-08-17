@@ -28,8 +28,8 @@ class ContentAPITTItemParser(FeedParser):
             isinstance(payload, list) and all(isinstance(i, dict) for i in payload)
         )
 
-    def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
-        """Parse a single dict or a list of dicts and always return a flat List[Dict]."""
+    def parse(self, item: Any, provider: Optional[dict] = None) -> Dict[str, Any]:
+        """Parse a single dict and return a dict."""
         provider = provider or {}
         logger.warning("type of item: %s", type(item))
         parsed = self._parse_one(item, provider)

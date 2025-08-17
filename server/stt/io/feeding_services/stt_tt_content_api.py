@@ -91,17 +91,16 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                     parsed_items.append(parsed_result)
                 else:
                     logger.error(
-                        "Parser returned unexpected type (should be list): %s",
+                        "Parser returned unexpected type (should be dict): %s",
                         type(parsed_result),
                     )
             except Exception as ex:
                 logger.error("Error processing item: %s", str(ex))
                 raise ParserError.parseMessageError(ex, provider, data=item)
 
-        if isinstance(parsed_items, list):
-            yield parsed_items
-        else:
-            yield [parsed_items]
+        # Yield individual items one by one
+        for item in parsed_items:
+            yield item
 
     def _fetch_data(self, provider) -> List[Dict]:
         """Fetch items from the TT Content API endpoint."""
