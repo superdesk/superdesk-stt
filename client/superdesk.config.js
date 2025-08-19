@@ -203,6 +203,7 @@ module.exports = function (grunt) {
         ],
         secondLine: [
           {fieldId: 'state'},
+          {fieldId: 'files'},
           {fieldId: 'internalnote'},
           {fieldId: 'related_events', position: 'end'},
         ],
@@ -230,6 +231,7 @@ module.exports = function (grunt) {
         ],
         secondLine: [
           {fieldId: 'state'},
+          {fieldId: 'files'},
           {fieldId: 'location', position: 'end'},
           {fieldId: 'related_plannings', position: 'end'},
         ],
