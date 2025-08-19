@@ -191,12 +191,13 @@ module.exports = function (grunt) {
     planning: {
       planning_list_item: {
         firstLine: [
-          {fieldId: 'slugline'},
+          {fieldId: 'slugline', position: 'end'},
           {fieldId: 'anpa_category'},
           {
             fieldId: 'vocabulary',
             fieldOptions: {
-              vocabularyId: 'priority'
+              vocabularyId: 'priority',
+              hideVocabularyName: true,
             }
           },
           {fieldId: 'coverages', position: 'end'}
@@ -209,9 +210,15 @@ module.exports = function (grunt) {
         ],
         compact_view: {
           firstLine: [
-            {fieldId: 'slugline'},
+            {fieldId: 'slugline', position: 'end'},
             {fieldId: 'anpa_category'},
-            {fieldId: 'priority'},
+            {
+              fieldId: 'vocabulary',
+              fieldOptions: {
+                vocabularyId: 'priority',
+                hideVocabularyName: true,
+              }
+            },
             {fieldId: 'state'},
           ],
         },
@@ -224,7 +231,8 @@ module.exports = function (grunt) {
           {
             fieldId: 'vocabulary',
             fieldOptions: {
-              vocabularyId: 'event_type'
+              vocabularyId: 'event_type',
+              hideVocabularyName: true,
             },
             position: 'end'
           },
