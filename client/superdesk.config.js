@@ -191,46 +191,54 @@ module.exports = function (grunt) {
     planning: {
       planning_list_item: {
         firstLine: [
-          {fieldId: 'urgency'},
-          {fieldId: 'name'},
+          {fieldId: 'slugline'},
+          {fieldId: 'anpa_category'},
+          {
+            fieldId: 'vocabulary',
+            fieldOptions: {
+              vocabularyId: 'priority'
+            }
+          },
+          {fieldId: 'coverages', position: 'end'}
         ],
         secondLine: [
           {fieldId: 'state'},
-          {fieldId: 'anpa_category'},
-          {fieldId: 'related_events'},
-          {fieldId: 'coverages', position: 'end'}
+          {fieldId: 'internalnote'},
+          {fieldId: 'related_events', position: 'end'},
         ],
         compact_view: {
           firstLine: [
-            {fieldId: 'urgency'},
-            {fieldId: 'name'},
-            {fieldId: 'state'},
+            {fieldId: 'slugline'},
             {fieldId: 'anpa_category'},
+            {fieldId: 'priority'},
+            {fieldId: 'state'},
           ],
         },
       },
       event_list_item: {
         firstLine: [
           {fieldId: 'name'},
+          {fieldId: 'event_datetime'},
           {fieldId: 'anpa_category'},
-          {fieldId: 'event_datetime', position: 'end'},
-        ],
-        secondLine: [
-          {fieldId: 'state'},
-          {fieldId: 'related_plannings'},
           {
             fieldId: 'vocabulary',
             fieldOptions: {
               vocabularyId: 'event_type'
             },
+            position: 'end'
           },
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'location', position: 'end'},
+          {fieldId: 'related_plannings', position: 'end'},
         ],
         compact_view: {
           firstLine: [
             {fieldId: 'name'},
+            {fieldId: 'event_datetime'},
             {fieldId: 'anpa_category'},
             {fieldId: 'state', position: 'end'},
-            {fieldId: 'event_datetime', position: 'end'},
           ],
         },
       },
