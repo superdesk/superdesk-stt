@@ -225,7 +225,7 @@ module.exports = function (grunt) {
       },
       event_list_item: {
         firstLine: [
-          {fieldId: 'name'},
+          {fieldId: 'name', position: 'end'},
           {fieldId: 'event_datetime'},
           {fieldId: 'anpa_category'},
           {
@@ -245,7 +245,7 @@ module.exports = function (grunt) {
         ],
         compact_view: {
           firstLine: [
-            {fieldId: 'name'},
+            {fieldId: 'name', position: 'end'},
             {fieldId: 'event_datetime'},
             {fieldId: 'anpa_category'},
             {fieldId: 'state', position: 'end'},
