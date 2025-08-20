@@ -211,7 +211,12 @@ module.exports = function (grunt) {
         compact_view: {
           firstLine: [
             {fieldId: 'slugline', position: 'end'},
-            {fieldId: 'anpa_category'},
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+            },
             {
               fieldId: 'vocabulary',
               fieldOptions: {
@@ -227,7 +232,12 @@ module.exports = function (grunt) {
         firstLine: [
           {fieldId: 'name', position: 'end'},
           {fieldId: 'event_datetime'},
-          {fieldId: 'anpa_category'},
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+          },
           {
             fieldId: 'vocabulary',
             fieldOptions: {
@@ -247,7 +257,12 @@ module.exports = function (grunt) {
           firstLine: [
             {fieldId: 'name', position: 'end'},
             {fieldId: 'event_datetime'},
-            {fieldId: 'anpa_category'},
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+            },
             {fieldId: 'state', position: 'end'},
           ],
         },
