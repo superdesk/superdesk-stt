@@ -191,8 +191,13 @@ module.exports = function (grunt) {
     planning: {
       planning_list_item: {
         firstLine: [
-          {fieldId: 'slugline', position: 'end'},
-          {fieldId: 'anpa_category'},
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+            position: 'start',
+          },
           {
             fieldId: 'vocabulary',
             fieldOptions: {
@@ -200,6 +205,7 @@ module.exports = function (grunt) {
               hideVocabularyName: true,
             }
           },
+          {fieldId: 'slugline', position: 'start'},
           {fieldId: 'coverages', position: 'end'}
         ],
         secondLine: [
@@ -210,34 +216,37 @@ module.exports = function (grunt) {
         ],
         compact_view: {
           firstLine: [
-            {fieldId: 'slugline', position: 'end'},
             {
               fieldId: 'anpa_category',
               fieldOptions: {
                 hideLabel: true,
               },
+              position: 'start',
             },
             {
               fieldId: 'vocabulary',
               fieldOptions: {
                 vocabularyId: 'priority',
                 hideVocabularyName: true,
-              }
+              },
+              position: 'start'
             },
+            {fieldId: 'slugline', position: 'start'},
             {fieldId: 'state'},
           ],
         },
       },
       event_list_item: {
         firstLine: [
-          {fieldId: 'name', position: 'end'},
-          {fieldId: 'event_datetime'},
           {
             fieldId: 'anpa_category',
             fieldOptions: {
               hideLabel: true,
             },
+            position: 'start',
           },
+          {fieldId: 'event_datetime', position: 'start'},
+          {fieldId: 'name', position: 'start'},
           {
             fieldId: 'vocabulary',
             fieldOptions: {
@@ -255,14 +264,15 @@ module.exports = function (grunt) {
         ],
         compact_view: {
           firstLine: [
-            {fieldId: 'name', position: 'end'},
-            {fieldId: 'event_datetime'},
             {
               fieldId: 'anpa_category',
               fieldOptions: {
                 hideLabel: true,
               },
+              position: 'start',
             },
+            {fieldId: 'event_datetime', position: 'start'},
+            {fieldId: 'name', position: 'start'},
             {fieldId: 'state', position: 'end'},
           ],
         },
