@@ -203,7 +203,8 @@ module.exports = function (grunt) {
             fieldOptions: {
               vocabularyId: 'priority',
               hideVocabularyName: true,
-            }
+            },
+            position: 'start'
           },
           {fieldId: 'slugline', position: 'start'},
           {fieldId: 'coverages', position: 'end'}
