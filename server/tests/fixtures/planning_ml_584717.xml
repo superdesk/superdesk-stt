@@ -21,6 +21,9 @@
 <subject type="cpnat:department" qcode="sttdepartment:9">
 <name>Politiikka</name>
 </subject>
+<subject type="cpnat:abstract" qcode="sttsubj:11000000">
+<name>Politiikka</name>
+</subject>
 </contentMeta>
 <newsCoverageSet>
 <newsCoverage id="ID_EVENT_259431" modified="2022-03-30T09:25:05+02:00">

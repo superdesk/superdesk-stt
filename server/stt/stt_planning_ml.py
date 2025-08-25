@@ -15,6 +15,7 @@ from planning.feed_parsers.superdesk_planning_xml import PlanningMLParser
 from planning.common import get_coverage_from_planning
 
 from .common import (
+    STTParserMixin,
     planning_xml_contains_remove_signal,
     unpost_or_spike_event_or_planning,
     remove_date_portion_from_id,
@@ -30,7 +31,7 @@ class EventNotFound(Exception):
     pass
 
 
-class STTPlanningMLParser(PlanningMLParser):
+class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
     NAME = "sttplanningml"
     label = "STT Planning ML"
 
@@ -100,6 +101,11 @@ class STTPlanningMLParser(PlanningMLParser):
         content_meta = tree.find(self.qname("contentMeta"))
         if content_meta is not None:
             self.set_urgency(content_meta, item)
+
+        meta = tree.find(self.qname("contentMeta"))
+        if meta is not None:
+            subjects = meta.findall(self.qname("subject"))
+            self.parse_subjects(item, subjects)
 
     async def get_coverage_details(
         self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]
@@ -220,31 +226,12 @@ class STTPlanningMLParser(PlanningMLParser):
             await delivery_service.post_async(deliveries)
 
     def set_urgency(self, content_meta, item):
-        """set importance cv data in the subjects based on <urgency> tag [STTNHUB-200]"""
-
         urgency_elt = content_meta.find(self.qname("urgency"))
         if urgency_elt is not None and urgency_elt.text:
-            importance_list_items = (
-                get_resource_service("vocabularies")
-                .find_one(req=None, _id="stturgency")
-                .get("items", [])
-            )
-            matching_items = [
-                importance_item
-                for importance_item in importance_list_items
-                if f"stturgency-{'2' if urgency_elt.text == '3' else urgency_elt.text}"
-                == importance_item["qcode"]
-            ]
-            if matching_items:
-                item.get("subject").append(
-                    {
-                        "name": matching_items[0].get("name"),
-                        "qcode": f"stturgency-{urgency_elt.text}",
-                        "scheme": matching_items[0].get("scheme"),
-                    }
-                )
-
-        return item
+            try:
+                item["priority"] = int(urgency_elt.text)
+            except ValueError:
+                pass
 
     def set_placeholder_coverage(self, item, tree):
         """

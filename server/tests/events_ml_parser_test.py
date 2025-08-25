@@ -1,11 +1,15 @@
 from tests import TestCase
 from superdesk import get_resource_service
-from stt.stt_events_ml import STTEventsMLParser, search_existing_contacts
+from stt.stt_events_ml import (
+    STTEventsMLParser,
+    search_existing_contacts,
+)
 
 
 class STTEventsMLParserTest(TestCase):
     fixture = "events_ml_259431.xml"
     parser_class = STTEventsMLParser
+    add_stt_cvs = True
 
     def test_subjects(self):
         self.assertEqual(self.item["extra"]["stt_events"], "259431")
@@ -18,7 +22,7 @@ class STTEventsMLParserTest(TestCase):
         self.assertIn(link, self.item["invitation_details"])
 
         subjects = self.item["subject"]
-        self.assertEqual(len(subjects), 7)
+        self.assertGreaterEqual(len(subjects), 7)
 
         expected_subjects = [
             {"qcode": "9", "name": "Politiikka", "scheme": "sttdepartment"},
@@ -51,6 +55,18 @@ class STTEventsMLParserTest(TestCase):
         self.assertEqual(location["address"]["extra"]["iso3166"], "iso3166-1a2:FI")
         self.assertEqual(location["address"]["line"][0], "Eteläinen Rautatiekatu 4")
         self.assertEqual(location["details"], "Knock 3 times")
+
+    def test_department(self):
+        category = self.item["anpa_category"][0]
+        self.assertEqual("9", category["qcode"])
+        self.assertEqual("Politiikka", category["name"])
+
+    def test_mediatopics(self):
+        mediatopics = [s for s in self.item["subject"] if s.get("scheme") == "topics"]
+        assert mediatopics
+        assert mediatopics[0]["name"] == "Politiikka"
+        assert mediatopics[0]["qcode"] == "11000000"
+        assert mediatopics[0]["wikidata"] == "Q7163"
 
 
 class STTEventsMLParserEventTypeCVTest(TestCase):

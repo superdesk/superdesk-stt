@@ -190,3 +190,43 @@ def is_online_version(item: Item) -> bool:
         )
         is not None
     )
+
+
+class STTParserMixin:
+
+    async def parse(self, xml, provider=None):
+        items = await super().parse(xml, provider)
+        for item in items:
+            department = [
+                s for s in item.get("subject", []) if s.get("scheme") == "sttdepartment"
+            ]
+            if department:
+                item["anpa_category"] = [
+                    {"name": d["name"], "qcode": d["qcode"]} for d in department
+                ]
+            if item.get("headline") and "TRANSLATED" in item["headline"]:
+                item["language"] = "en"
+            else:
+                item["language"] = "fi"
+        return items
+
+    def get_topics_lookup(self):
+        topics = self.get_cv_items("topics")
+        return {t["iptc_subject"]: t for t in topics if t.get("iptc_subject")}
+
+    def get_cv_items(self, _id):
+        return get_resource_service("vocabularies").get_items(_id)
+
+    def parse_subjects(self, item, subjects):
+        topics_lookup = self.get_topics_lookup()
+        for subject in subjects:
+            qcode = subject.attrib.get("qcode", "")
+            if qcode.startswith("sttsubj:"):
+                code = qcode.split(":")[1]
+                topic = topics_lookup.get(code)
+                if topic:
+                    item.setdefault("subject", []).append(topic)
+            if qcode.startswith("stt-topics:"):
+                item.setdefault("extra", {})["stt_topics"] = qcode.split(":")[1]
+            if qcode.startswith("stt-events:"):
+                item.setdefault("extra", {})["stt_events"] = qcode.split(":")[1]

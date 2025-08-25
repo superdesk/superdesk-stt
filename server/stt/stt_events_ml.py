@@ -12,6 +12,7 @@ from superdesk.errors import SuperdeskApiError
 from planning.feed_parsers.events_ml import EventsMLParser
 
 from .common import (
+    STTParserMixin,
     planning_xml_contains_remove_signal,
     unpost_or_spike_event_or_planning,
     remove_date_portion_from_id,
@@ -101,7 +102,7 @@ async def search_existing_contacts(contact: ContactDetails) -> Optional[Dict[str
     return None
 
 
-class STTEventsMLParser(EventsMLParser):
+class STTEventsMLParser(STTParserMixin, EventsMLParser):
     NAME = "stteventsml"
     label = "STT Events ML"
 
@@ -165,14 +166,7 @@ class STTEventsMLParser(EventsMLParser):
 
         event_details = concept.find(self.qname("eventDetails"))
 
-        # Add ``stt-topics``, if one found
-        try:
-            for subject in event_details.findall(self.qname("subject")):
-                values = subject.get("qcode", "").split(":")
-                if values and values[0] == "stt-topics":
-                    item.setdefault("extra", {})["stt_topics"] = values[1]
-        except AttributeError:
-            pass
+        self.parse_subjects(item, event_details.findall(self.qname("subject")))
 
         # Add `sttEventType` if found to subject[scheme=event_type]
         try:
