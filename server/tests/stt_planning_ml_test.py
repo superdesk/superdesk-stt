@@ -33,15 +33,20 @@ class STTPlanningMLParserTest(TestCase):
             self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799"
         )
 
-        # Urgency [STTNHUB-200]
-        self.assertIn(
-            {
-                "name": "Keskipitkä juttu",
-                "qcode": "stturgency-3",
-                "scheme": "stturgency",
-            },
-            self.item["subject"],
-        )
+    def test_department(self):
+        category = self.item["anpa_category"][0]
+        self.assertEqual("9", category["qcode"])
+        self.assertEqual("Politiikka", category["name"])
+
+    def test_priority(self):
+        self.assertEqual(3, self.item["priority"])
+
+    def test_mediatopics(self):
+        mediatopics = [s for s in self.item["subject"] if s.get("scheme") == "topics"]
+        assert mediatopics
+        assert mediatopics[0]["name"] == "Politiikka"
+        assert mediatopics[0]["qcode"] == "11000000"
+        assert mediatopics[0]["wikidata"] == "Q7163"
 
     async def test_event_link(self):
         self.app.data.insert("events", [{"_id": "urn:newsml:stt.fi:259431"}])

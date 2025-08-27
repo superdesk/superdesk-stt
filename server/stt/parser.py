@@ -1,8 +1,8 @@
 from superdesk import etree as sd_etree
 from superdesk.io.registry import register_feed_parser
-from superdesk.io.feed_parsers.stt_newsml import STTNewsMLFeedParser, STT_LOCATION_MAP
+from superdesk.io.feed_parsers.stt_newsml import STTNewsMLFeedParser
 
-from .common import remove_date_portion_from_id
+from .common import STTParserMixin, remove_date_portion_from_id
 
 
 NA = "N/A"
@@ -12,7 +12,7 @@ def get_subject_names(item):
     return [subj.get("name") for subj in item.get("subject", [])]
 
 
-class STTParser(STTNewsMLFeedParser):
+class STTParser(STTParserMixin, STTNewsMLFeedParser):
     NAME = "sttnewsmlnewsroom"
     label = "STT NewsML for Newsroom"
 
@@ -21,34 +21,8 @@ class STTParser(STTNewsMLFeedParser):
         for item in items:
             item.setdefault("subject", [])
             if item.get("place"):
-                for place in item["place"]:
-                    if (
-                        place.get("name")
-                        and place.get("qcode")
-                        and place.get("scheme") == "sttlocmeta"
-                    ):
-                        item["subject"].append(
-                            {
-                                "name": place["name"],
-                                "qcode": place["qcode"],
-                                "scheme": place["scheme"],
-                            }
-                        )
-                    for field in STT_LOCATION_MAP.values():
-                        if (
-                            place.get(field["name"])
-                            and place[field["name"]] != NA
-                            and place[field["name"]] not in get_subject_names(item)
-                        ):
-                            item["subject"].append(
-                                {
-                                    "name": place[field["name"]],
-                                    "qcode": place[field["qcode"]],
-                                    "scheme": field["name"],
-                                }
-                            )
-
-            self.set_extra_fields(item, xml)
+                self.parse_place(item)
+            await self.set_extra_fields(item, xml)
         return items
 
     def parse_inline_content(self, tree, item):
@@ -82,7 +56,7 @@ class STTParser(STTNewsMLFeedParser):
 
         return content
 
-    def set_extra_fields(self, item, xml):
+    async def set_extra_fields(self, item, xml):
         """Adds extra fields"""
 
         # newsItem guid
@@ -130,19 +104,8 @@ class STTParser(STTNewsMLFeedParser):
         except AttributeError:
             pass
 
-        # stt-topics, stt-events
-        try:
-            for subject in xml.find(self.qname("contentMeta")).findall(
-                self.qname("subject")
-            ):
-                values = subject.get("qcode", "").split(":")
-                if values:
-                    if values[0] == "stt-topics":
-                        item.setdefault("extra", {})["stt_topics"] = values[1]
-                    elif values[0] == "stt-events":
-                        item.setdefault("extra", {})["stt_events"] = values[1]
-        except AttributeError:
-            pass
+        subjects = xml.find(self.qname("contentMeta")).findall(self.qname("subject"))
+        self.parse_subjects(item, subjects)
 
         # webprio
         try:
@@ -175,6 +138,27 @@ class STTParser(STTNewsMLFeedParser):
                     )
         except AttributeError:
             pass
+
+    def parse_content_meta(self, tree, item):
+        super().parse_content_meta(tree, item)
+        if item.get("source"):
+            file_sources = item["source"].split("-")
+            cv_sources = self.get_cv_items("sttsource")
+            for cv_source in cv_sources:
+                if cv_source.get("qcode") in file_sources:
+                    item.setdefault("subject", []).append(cv_source)
+
+    def parse_place(self, item):
+        places_lookup = {p["qcode"]: p for p in self.get_cv_items("sttplace")}
+        for place in item["place"]:
+            if place.get("country_code"):
+                country_code = "sttcountry:" + place["country_code"]
+                if places_lookup.get(country_code):
+                    item.setdefault("subject", []).append(places_lookup[country_code])
+            if place.get("locality_code"):
+                city_code = "sttcity:" + place["locality_code"]
+                if places_lookup.get(city_code):
+                    item.setdefault("subject", []).append(places_lookup[city_code])
 
 
 register_feed_parser(STTParser.NAME, STTParser())
