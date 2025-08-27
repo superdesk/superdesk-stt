@@ -18,12 +18,31 @@ from dateutil import tz
 from dateutil.parser import isoparse
 from lxml import etree
 from lxml import html as lxml_html
+from superdesk import get_resource_service
 from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import sanitize_html
 from superdesk.utc import local_to_utc
 
 TIMEZONE = "Europe/Helsinki"
+
+# Controlled Vocabulary id used in Superdesk for STT departments
+STT_DEPT_VOCAB_ID = "stt_department_categories"
+
+# TT department code -> STT CV qcode
+_DEPARTMENT_QCODE_MAP: Dict[str, str] = {
+    "INR": "kotimaa",
+    "UTR": "ulkomaat",
+    "SPO": "urheilu",
+    "HBT": "muuta",
+    "RED": "toimituksille_tiedoksi",
+    "TTL": "urheilu",
+    "PRM": "tiedotepalvelu",
+    "DOM": "talous",
+    "FOR": "talous",
+    "SPR": "urheilu",
+    "TBL": "urheilu",
+}
 
 # TT department code -> (STT integer value, STT string value)
 _DEPARTMENT_MAP: Dict[str, Tuple[int, str]] = {
@@ -99,21 +118,33 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         # If your schema uses another field name (e.g. "task.desk"), adjust here.
         item["desk"] = "Ulkomaat"
 
-        # Department mapping:
-        # Try to discover TT department string from typical ninjs keys
+        # Department mapping -> store as extra.stt_meta and as anpa_category using CV lookup
         tt_dept_code = (
             ninjs_local.get("department")
             or ninjs_local.get("dept")
-            or ninjs_local.get("sector")  # sometimes codes come here
-            or ninjs_local.get("profile")  # last-resort guess
+            or ninjs_local.get("sector")
+            or ninjs_local.get("profile")
         )
+        # Maintain original extra.stt_meta fields for backward compatibility/tests
         dept_id, dept_name = self._map_department(tt_dept_code)
-        # Store both machine and human-friendly values. Adapt field names to your schema.
         item.setdefault("extra", {})
         item["extra"].setdefault("stt_meta", {})
         item["extra"]["stt_meta"]["department_id"] = dept_id
         item["extra"]["stt_meta"]["department_name"] = dept_name
         item["extra"]["stt_meta"]["tt_department_code"] = tt_dept_code
+        key_for_map = str(tt_dept_code).strip().upper() if tt_dept_code else ""
+        mapped_qcode = _DEPARTMENT_QCODE_MAP.get(key_for_map)
+        if not mapped_qcode:
+            # default to Kotimaa when unknown
+            mapped_qcode = "kotimaa"
+
+        cv_item = self._get_cv_item_by_qcode(STT_DEPT_VOCAB_ID, mapped_qcode)
+        anpa_name = (cv_item or {}).get("name") or _DEPARTMENT_MAP.get(
+            str(tt_dept_code).strip().upper() if tt_dept_code else "", _DEFAULT_DEPT
+        )[1]
+
+        # Superdesk expects anpa_category as a list of {qcode, name}
+        item["anpa_category"] = [{"qcode": mapped_qcode, "name": anpa_name}]
 
         # Priority <- TT urgency (pass-through as int if present)
         urgency = ninjs_local.get("urgency")
@@ -156,6 +187,28 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         return item
 
     # --------- Helpers ---------
+
+    def _get_cv_item_by_qcode(
+        self, vocab_id: str, qcode: Optional[str]
+    ) -> Optional[Dict[str, Any]]:
+        """Fetch a vocabulary item by qcode from Superdesk CV. Safe on failure.
+
+        Returns the full CV item dict or None if not found.
+        """
+        if not qcode:
+            return None
+        try:
+            svc = get_resource_service("vocabularies")
+            vocab = svc.find_one(req=None, _id=vocab_id)
+            if not vocab:
+                return None
+            for it in vocab.get("items", []):
+                if it.get("qcode") == qcode:
+                    return it
+        except Exception:
+            # Service may be unavailable during certain unit tests
+            return None
+        return None
 
     def _map_department(self, tt_code: Optional[str]) -> Tuple[int, str]:
         """Map TT department string → (STT integer id, STT string)."""

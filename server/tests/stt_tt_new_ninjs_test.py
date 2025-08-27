@@ -53,6 +53,11 @@ class STTTTNEWNINJSFeedParserTest(unittest.TestCase):
             self.assertEqual(item["extra"]["stt_meta"]["department_id"], 14)
             self.assertEqual(item["extra"]["stt_meta"]["department_name"], "Ulkomaat")
             self.assertEqual(item["extra"]["stt_meta"]["tt_department_code"], "UTR")
+            # anpa_category should be populated from CV mapping (fallback name to map)
+            self.assertIn("anpa_category", item)
+            self.assertEqual(
+                item["anpa_category"], [{"qcode": "ulkomaat", "name": "Ulkomaat"}]
+            )
             self.assertEqual(item["priority"], 5)
             self.assertEqual(item["name"], "My Headline")
             self.assertEqual(item["external_id"], "ext-123")
