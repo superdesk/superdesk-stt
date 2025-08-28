@@ -22,6 +22,7 @@ import csv
 import io
 import os
 import re
+import unicodedata
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
@@ -43,6 +44,14 @@ TRUEY = {"1", "y", "yes", "true", "t", "x"}
 EXTERNAL_LINK_COL_RE = re.compile(r"^external\s*links?", re.I)
 
 # ---- Small utilities -------------------------------------------------------
+
+
+
+def _slugify(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value)
+    value = value.encode("ascii", "ignore").decode("ascii")
+    value = re.sub(r"[^a-zA-Z0-9_]+", "_", value)
+    return value.strip("_").lower()
 
 
 def _str2bool(value: Optional[str]) -> Optional[bool]:
@@ -370,9 +379,7 @@ class EventsCSVFeedParser(FeedParser):
                         if location.get("address", {}).get("locality"):
                             location_parts.append(location["address"]["locality"])
                         if location_parts:
-                            location_id = (
-                                "_".join(location_parts).replace(" ", "_").lower()
-                            )
+                            location_id = _slugify("_".join(location_parts))
                             custom_guid = f"urn:stt:location:csv:{location_id}"
                             location["qcode"] = custom_guid
 
@@ -419,16 +426,8 @@ class EventsCSVFeedParser(FeedParser):
                         cursor = contacts_service.search(
                             {
                                 "query": {
-                                    "bool": {
-                                        "must": [
-                                            {
-                                                "term": {
-                                                    "contact_email.keyword": contact[
-                                                        "contact_email"
-                                                    ][0]
-                                                }
-                                            }
-                                        ]
+                                    "term": {
+                                        "contact_email.keyword": contact["contact_email"][0]
                                     }
                                 }
                             }
