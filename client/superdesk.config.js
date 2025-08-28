@@ -128,6 +128,19 @@ module.exports = function (grunt) {
         "fetchedDesk",
         "associatedItems",
       ],
+      compactView: {
+        firstLine: [
+          "slugline",
+          "highlights",
+          "markedDesks",
+          "headline",
+          "wordcount",
+          "associations",
+          "publish_queue_errors",
+          "versioncreated",
+        ],
+        secondLine: [],
+      }
     },
 
     /* configuration of monitoring features */
@@ -172,6 +185,97 @@ module.exports = function (grunt) {
         fi: {
           spellcheckerId: 'stt_fin',
           runningMode: 'initially-disabled',
+        },
+      },
+    },
+    planning: {
+      planning_list_item: {
+        firstLine: [
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+            position: 'start',
+          },
+          {
+            fieldId: 'vocabulary',
+            fieldOptions: {
+              vocabularyId: 'priority',
+              hideVocabularyName: true,
+            },
+            position: 'start'
+          },
+          {fieldId: 'slugline', position: 'start'},
+          {fieldId: 'coverages', position: 'end'}
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'files'},
+          {fieldId: 'internalnote'},
+          {fieldId: 'related_events', position: 'end'},
+        ],
+        compact_view: {
+          firstLine: [
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+              position: 'start',
+            },
+            {
+              fieldId: 'vocabulary',
+              fieldOptions: {
+                vocabularyId: 'priority',
+                hideVocabularyName: true,
+              },
+              position: 'start'
+            },
+            {fieldId: 'slugline', position: 'start'},
+            {fieldId: 'state'},
+          ],
+        },
+      },
+      event_list_item: {
+        firstLine: [
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+            position: 'start',
+          },
+          {fieldId: 'event_datetime', position: 'start'},
+          {fieldId: 'name', position: 'start'},
+          {
+            fieldId: 'vocabulary',
+            fieldOptions: {
+              vocabularyId: 'event_type',
+              hideVocabularyName: true,
+            },
+            position: 'end'
+          },
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'files'},
+          {fieldId: 'location', position: 'end'},
+          {fieldId: 'related_plannings', position: 'end'},
+        ],
+        compact_view: {
+          firstLine: [
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+              position: 'start',
+            },
+            {fieldId: 'event_datetime', position: 'start'},
+            {fieldId: 'name', position: 'start'},
+            {fieldId: 'state', position: 'end'},
+          ],
         },
       },
     },
