@@ -12,8 +12,8 @@ from superdesk.utc import local_to_utc
 TIMEZONE = "Europe/Helsinki"
 
 # CV paths (override via provider if desired)
-MEDIA_TOPICS_CV = "data/stt_media_topics.json"
-DEPT_CATEGORIES_CV = "data/stt-department-categories.json"
+MEDIA_TOPICS_CV = "vocab:stt_media_topics"
+DEPT_CATEGORIES_CV = "vocab:stt-department-categories"
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +22,27 @@ logger = logging.getLogger(__name__)
 
 
 def _load_cv(path: str) -> List[Dict[str, Any]]:
-    """Load a CV json file once (list or {items:[...]}) and cache it."""
+    """Load a CV either from Superdesk vocabularies (when using the prefix
+    "vocab:<_id>") or from a JSON file path. Supports both list payloads and
+    dict payloads with an `items` key. Returns an empty list on failure.
+    """
     try:
+        if path.startswith("vocab:"):
+            vocab_id = path.split(":", 1)[1]
+            try:
+                from superdesk import get_resource_service  # type: ignore
+
+                svc = get_resource_service("vocabularies")
+                vocab = svc.find_one(req=None, _id=vocab_id) if svc else None
+                if vocab and isinstance(vocab, dict):
+                    items = vocab.get("items") or []
+                    if isinstance(items, list):
+                        return list(items)
+            except Exception as exc:  # pragma: no cover
+                logger.warning(
+                    "Failed to load vocabulary '%s' from service: %s", vocab_id, exc
+                )
+        # Fallback to file on disk
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
         if isinstance(data, dict) and "items" in data:
