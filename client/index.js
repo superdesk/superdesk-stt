@@ -7,10 +7,6 @@ setTimeout(() => {
   startApp(
     [
       {
-        id: 'custom-config-extension',
-        load: () => import('./stt/custom-config'),
-      },
-      {
         id: 'planning-extension',
         load: () => import('superdesk-planning/client/planning-extension'),
         configuration: {
