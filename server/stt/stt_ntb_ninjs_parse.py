@@ -22,35 +22,22 @@ logger = logging.getLogger(__name__)
 
 
 def _load_cv(path: str) -> List[Dict[str, Any]]:
-    """Load a CV either from Superdesk vocabularies (when using the prefix
-    "vocab:<_id>") or from a JSON file path. Supports both list payloads and
-    dict payloads with an `items` key. Returns an empty list on failure.
-    """
-    try:
-        if path.startswith("vocab:"):
-            vocab_id = path.split(":", 1)[1]
-            try:
-                from superdesk import get_resource_service  # type: ignore
+    """Load a CV from Superdesk vocabularies."""
+    if not path.startswith("vocab:"):
+        raise ValueError("Only Superdesk vocabularies are supported in parser runtime")
 
-                svc = get_resource_service("vocabularies")
-                vocab = svc.find_one(req=None, _id=vocab_id) if svc else None
-                if vocab and isinstance(vocab, dict):
-                    items = vocab.get("items") or []
-                    if isinstance(items, list):
-                        return list(items)
-            except Exception as exc:  # pragma: no cover
-                logger.warning(
-                    "Failed to load vocabulary '%s' from service: %s", vocab_id, exc
-                )
-        # Fallback to file on disk
-        with open(path, "r", encoding="utf-8") as fh:
-            data = json.load(fh)
-        if isinstance(data, dict) and "items" in data:
-            return list(data["items"])  # type: ignore[return-value]
-        return data if isinstance(data, list) else []
+    vocab_id = path.split(":", 1)[1]
+    try:
+        from superdesk import get_resource_service  # type: ignore
+
+        svc = get_resource_service("vocabularies")
+        if svc and hasattr(svc, "get_items"):
+            items = svc.get_items(vocab_id)
+            return items if isinstance(items, list) else []
     except Exception as exc:  # pragma: no cover
-        logger.warning("Failed to load CV %s: %s", path, exc)
-        return []
+        logger.warning("Failed to load vocabulary '%s' from service: %s", vocab_id, exc)
+
+    return []
 
 
 def _norm(s: Optional[str]) -> str:

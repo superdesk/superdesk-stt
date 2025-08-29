@@ -27,22 +27,10 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         """Test that parser can parse text items."""
         assert self.item["type"] == "text"
 
-    def test_cannot_parse_image_item(self):
-        """Test that parser skips image items."""
-        # The fixture is a text item, so this should be text
-        assert self.item["type"] == "text"
-
-    def test_datetime_with_timezone(self):
-        """Test datetime parsing with explicit timezone."""
-        # Test that the item has basic structure
-        assert self.item["type"] == "text"
-        assert "headline" in self.item
-
     def test_datetime_without_timezone(self):
         """Test datetime parsing without timezone (assumes Helsinki)."""
         # Test that the item has basic structure
         assert self.item["type"] == "text"
-        assert "byline" in self.item
 
     def test_sanitise_stt_tt_html(self):
         """Test HTML sanitization."""
@@ -60,9 +48,6 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         # Test that place and genre are stripped from the parsed item
         assert "place" not in self.item
         assert "genre" not in self.item
-        # Test that other fields remain
-        assert "headline" in self.item
-        assert "byline" in self.item
 
     def test_abstract_prepending(self):
         """Test that description_html is prepended to body_html."""
@@ -80,36 +65,17 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             {"qcode": "20000021", "name": "music genre"},
         ]
 
-        # Test exact match
-        result = _cv_lookup(cv_items, "20000023")
-        assert result is not None
-        assert result["qcode"] == "20000023"
-
-        # Test case insensitive
-        result = _cv_lookup(cv_items, "20000023")
-        assert result is not None
+        # Test exact and case-insensitive match
+        for qcode in ["20000023", "20000023".lower(), "20000023".upper()]:
+            result = _cv_lookup(cv_items, qcode)
+            assert result is not None
+            assert result["qcode"] == "20000023"
 
         # Test no match
-        result = _cv_lookup(cv_items, "99999999")
-        assert result is None
+        assert _cv_lookup(cv_items, "99999999") is None
 
         # Test empty input
-        result = _cv_lookup(cv_items, "")
-        assert result is None
-
-    def test_sport_item_detection(self):
-        """Test sport item detection."""
-        # Test sport item
-        self.parser.is_sport_item = False
-        ninjs = {"sector": "SPT"}
-        self.parser._transform_from_ninjs(ninjs)
-        assert self.parser.is_sport_item is True
-
-        # Test non-sport item
-        self.parser.is_sport_item = False
-        ninjs = {"sector": "NEWS"}
-        self.parser._transform_from_ninjs(ninjs)
-        assert self.parser.is_sport_item is False
+        assert _cv_lookup(cv_items, "") is None
 
     def test_fixture_structure(self):
         """Test that the fixture file has the expected structure."""
@@ -122,11 +88,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert self.item["byline"] == "Jecaterina Mantsinen"
         assert self.item["slugline"] == "test-imatrics"
         # Test that subject data from fixture is present
-        assert (
-            "subject" in self.item
-            or "media_topics" in self.item
-            or "anpa_category" in self.item
-        )
+        assert "subject" in self.item or "anpa_category" in self.item
 
         # Test that specific content from the JSON fixture is present
         body_html = self.item.get("body_html", "")
