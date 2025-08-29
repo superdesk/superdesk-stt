@@ -1,7 +1,0 @@
-[run]
-source =
-    server/stt
-
-[report]
-omit =
-    */tests/*

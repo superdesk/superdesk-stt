@@ -8,17 +8,15 @@ Refactored to be Black/Flake8 compliant.
 
 from __future__ import annotations
 
-import logging
 import os
 import re
 from typing import Any, Dict, List, Optional
+from datetime import datetime
 
 import chardet
 from superdesk.io.feed_parsers import FeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.metadata.utils import generate_tag_from_url
-
-logger = logging.getLogger(__name__)
 
 # Regex for legacy XML wrapper: <root><p> ... </p></root>
 XML_WRAP_RE = re.compile(r"^\s*<root>\s*<p>(.*)</p>\s*</root>\s*$", re.S)
@@ -60,28 +58,21 @@ def detect_and_read_file(file_path: str) -> str:
         encoding = detected.get("encoding") or "utf-8"
         confidence = float(detected.get("confidence") or 0.0)
 
-        logger.debug("Detected encoding %s (confidence=%s)", encoding, confidence)
-
         if confidence > 0.7:
             try:
                 return fix_encoding_issues(raw.decode(encoding))
             except UnicodeDecodeError:
-                logger.warning("Failed to decode with detected encoding %s", encoding)
+                pass
 
         for enc in FALLBACK_ENCODINGS:
             try:
                 text = raw.decode(enc)
-                logger.debug("Successfully decoded with %s", enc)
                 return fix_encoding_issues(text)
             except UnicodeDecodeError:
                 continue
 
-        logger.warning(
-            "All encoding attempts failed; decoding as utf-8 with replacement"
-        )
         return fix_encoding_issues(raw.decode("utf-8", errors="replace"))
-    except Exception:  # pragma: no cover - defensive fallback
-        logger.exception("Error reading file: %s", file_path)
+    except Exception:
         with open(file_path, "r", encoding="utf-8", errors="replace") as fh:
             return fix_encoding_issues(fh.read())
 
@@ -123,7 +114,6 @@ class VeikkausTextFeedParser(FeedParser):
                 sample = fh.read(4096)
             return bool(XML_WRAP_RE.match(sample))
         except Exception:
-            logger.exception("Veikkaus can_parse failed for: %s", file_path)
             return False
 
     def parse(
@@ -157,6 +147,7 @@ class VeikkausTextFeedParser(FeedParser):
             "original_source": "STT",
             "urgency": 4,
             "pubstatus": "usable",
+            "versioncreated": datetime.utcnow().isoformat() + "Z",
             "extra": {
                 "veikkaus": {
                     "department": "Peliuutiset",
