@@ -34,11 +34,12 @@ class STTParserTestCase(TestCase):
         self.assertEqual("fi", self.item["language"])
 
     def test_mediatopics(self):
-        mediatopics = [s for s in self.item["subject"] if s.get("scheme") == "topics"]
+        mediatopics = [
+            s["qcode"] for s in self.item["subject"] if s.get("scheme") == "topics"
+        ]
         assert mediatopics
-        assert mediatopics[0]["name"] == "Politiikka"
-        assert mediatopics[0]["qcode"] == "11000000"
-        assert mediatopics[0]["wikidata"] == "Q7163"
+        assert "11000000" in mediatopics
+        assert "06000000" in mediatopics
 
     def test_source(self):
         sources = [s for s in self.item["subject"] if s.get("scheme") == "sttsource"]

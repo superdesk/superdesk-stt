@@ -212,7 +212,7 @@ class STTParserMixin:
 
     def get_topics_lookup(self):
         topics = self.get_cv_items("topics")
-        return {t["iptc_subject"]: t for t in topics if t.get("iptc_subject")}
+        return {int(t["iptc_subject"], 10): t for t in topics if t.get("iptc_subject")}
 
     def get_cv_items(self, _id):
         return get_resource_service("vocabularies").get_items(_id)
@@ -223,7 +223,7 @@ class STTParserMixin:
             qcode = subject.attrib.get("qcode", "")
             if qcode.startswith("sttsubj:"):
                 code = qcode.split(":")[1]
-                topic = topics_lookup.get(code)
+                topic = topics_lookup.get(int(code, 10))
                 if topic:
                     item.setdefault("subject", []).append(topic)
             if qcode.startswith("stt-topics:"):

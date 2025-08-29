@@ -57,6 +57,9 @@
     <subject type="cpnat:abstract" qcode="sttsubj:11006006">
       <name>Valtionpäämiehet</name>
     </subject>
+    <subject type="cpnat:abstract" qcode="sttsubj:06000000">
+      <name>Ympäristö</name>
+    </subject>
     <slugline/>
     <dateline/>
     <by/>
