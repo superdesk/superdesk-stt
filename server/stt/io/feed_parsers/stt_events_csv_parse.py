@@ -1,20 +1,3 @@
-###############################################################################
-# Copyright (C) 2023-2024 Id Solution / Superdesk / contributors
-#
-# Licensed under the terms of the GNU Affero General Public License version 3.
-# See LICENSE or <https://www.gnu.org/licenses/agpl-3.0.html> for details.
-#
-# Generic, maintainable CSV → Superdesk Events parser (STT flavor).
-# - Order-independent headers (case/space-insensitive), with aliases.
-# - Required columns: Start date, Event name. Rows missing either are skipped.
-# - Separate date/time columns merged; end defaults to start if missing.
-# - Timezone applied if present; otherwise timestamps remain naive.
-# - Supports multi-value fields via comma/semicolon lists.
-# - Builds minimal, schema-friendly event dict without over-coupling.
-# This module is intentionally small & readable. Helpers are pure functions
-# and unit-test friendly. Lines and branching are kept shallow for flake8.
-###############################################################################
-
 from __future__ import annotations
 
 
@@ -44,7 +27,6 @@ TRUEY = {"1", "y", "yes", "true", "t", "x"}
 EXTERNAL_LINK_COL_RE = re.compile(r"^external\s*links?", re.I)
 
 # ---- Small utilities -------------------------------------------------------
-
 
 
 def _slugify(value: str) -> str:
@@ -262,6 +244,12 @@ def _gen_guid(file_path: str, row_index: int) -> str:
 
 
 class EventsCSVFeedParser(FeedParser):
+    """CSV Events Parser with STT-compatible configuration.
+
+    Config options in provider["config"]:
+    - no_end_time (bool): If True, ignores 'end_time' column. Uses only 'end_date' or defaults to 'start_date'.
+    """
+
     NAME = "stt_events_csv"
     label = "STT Events CSV Parser"
 
@@ -285,8 +273,9 @@ class EventsCSVFeedParser(FeedParser):
     def parse(
         self, file_path: str, provider: Optional[dict] = None
     ) -> List[Dict[str, Any]]:  # noqa: D401
-        """Parse CSV and return a list of event items."""
-        del provider
+        """Parse CSV and return a list of Superdesk event items."""
+        config = provider.get("config") if provider else {}
+        no_end_time = config.get("no_end_time", False) is True if config else False
         reader = self._open_reader(file_path)
 
         items: List[Dict[str, Any]] = []
@@ -309,15 +298,17 @@ class EventsCSVFeedParser(FeedParser):
             # Datetimes
             tz_name = r.get("timezone") or None
             start_dt = _parse_dt(r.get("start_date"), r.get("start_time"), tz_name)
-            # Only compute explicit end if any end-* columns exist, else default to start
-            end_dt = None
-            if r.get("end_date") or r.get("end_time"):
-                end_dt = _parse_dt(
-                    r.get("end_date") or r.get("start_date"), r.get("end_time"), tz_name
-                )
             if not start_dt:
                 # Guard: parsing failed despite required columns
                 continue
+
+            # Determine end date/time logic
+            end_date = r.get("end_date") or r.get("start_date")
+            end_time = None if no_end_time else r.get("end_time")
+            if r.get("end_date") or r.get("end_time"):
+                end_dt = _parse_dt(end_date, end_time, tz_name)
+            else:
+                end_dt = None
 
             all_day = bool(_str2bool(r.get("all_day")))
 
@@ -427,7 +418,9 @@ class EventsCSVFeedParser(FeedParser):
                             {
                                 "query": {
                                     "term": {
-                                        "contact_email.keyword": contact["contact_email"][0]
+                                        "contact_email.keyword": contact[
+                                            "contact_email"
+                                        ][0]
                                     }
                                 }
                             }

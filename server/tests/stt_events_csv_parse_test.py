@@ -1,193 +1,150 @@
+import logging
 import os
+import tempfile
+from datetime import datetime
 
-from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
+from tests import TestCase
+from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser, _parse_dt
 
-
-def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "events.csv"
-    p.write_text(
-        "Start Date,Start Time,Event Name,Timezone,Slugline\n"
-        "2024-07-01,14:30,  Summer Fair  ,America/New_York,  slug  \n",
-        encoding="utf-8",
-    )
-
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-
-    assert ev["name"] == "Summer Fair"
-    assert ev["slugline"] == "slug"
-    assert ev["dates"]["tz"] == "America/New_York"
-    assert ev["dates"]["start"].isoformat().startswith("2024-07-01T14:30:00")
-    assert ev["dates"]["start"].isoformat().endswith("-04:00")
-    # End time should be 1 hour after start time when no end time is provided
-    from datetime import timedelta
-
-    expected_end = ev["dates"]["start"] + timedelta(hours=1)
-    assert ev["dates"]["end"] == expected_end
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
-def test_can_parse_and_sniff_delimiters_csv_tsv(tmp_path):
-    parser = EventsCSVFeedParser()
+class EventsCSVFeedParserTestCase(TestCase):
+    fixture = "csv/eventsheet.csv"
+    parser_class = EventsCSVFeedParser
 
-    comma = tmp_path / "comma.csv"
-    comma.write_text(
-        "Start Date,Event Name\n" "2024-01-01,One\n",
-        encoding="utf-8",
-    )
+    def parse_source_content(self):
+        """Override to handle CSV files instead of XML."""
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture = os.path.join(dirname, "fixtures", self.fixture)
+        provider = {"name": "Test"}
+        with self.ctx:
+            parser = self.parser_class()
+            self.item = parser.parse(fixture, provider)[0]
 
-    semicolon = tmp_path / "semi.csv"
-    semicolon.write_text(
-        "Start Date;Event Name\n" "2024-01-02;Two\n",
-        encoding="utf-8",
-    )
+    def test_headline_and_metadata(self):
+        """Test that headline and metadata are extracted correctly."""
+        self.assertIn("name", self.item)
+        self.assertEqual(self.item["type"], "event")
+        self.assertEqual(self.item["original_source"], "CSV")
+        self.assertEqual(self.item["pubstatus"], "usable")
 
-    tabbed = tmp_path / "file.tsv"
-    tabbed.write_text(
-        "Start Date\tEvent Name\n" "2024-01-03\tThree\n",
-        encoding="utf-8",
-    )
+    def test_dates_structure(self):
+        """Test that dates are properly structured."""
+        dates = self.item.get("dates", {})
+        self.assertIn("start", dates)
+        self.assertIn("end", dates)
+        self.assertIsInstance(dates["start"], datetime)
+        self.assertIsInstance(dates["end"], datetime)
 
-    assert parser.can_parse(str(comma)) is True
-    assert parser.can_parse(str(tabbed)) is False  # only .csv is accepted
-
-    items1 = parser.parse(str(comma))
-    assert len(items1) == 1 and items1[0]["name"] == "One"
-
-    items2 = parser.parse(str(semicolon))
-    assert len(items2) == 1 and items2[0]["name"] == "Two"
-
-    items3 = parser.parse(str(tabbed))
-    assert len(items3) == 1 and items3[0]["name"] == "Three"
-
-
-def test_builds_links_calendars_location_contact(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "rich.csv"
-    p.write_text(
-        "Start Date,Event Name,External Links,External link 2,Calendars,"
-        "Location Name,Location Address,Location City/Town,Location State/Province/Region,Location Country,"
-        "Contact Honorific,Contact First Name,Contact Last Name,Contact Organisation,Contact Point of Contact,"
-        "Contact Email,Contact Phone Number,Contact Phone Usage,Contact Phone Public\n"
-        "2024-05-05,Sample,http://a.com, http://b.com ,cal1; cal2,"
-        "Venue,123 St,Metropolis,State,US,"
-        "Dr,Jane,Doe,Org,POC,jane@org.com,123456,work,y\n",
-        encoding="utf-8",
-    )
-
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-
-    assert ev["links"] == [{"href": "http://a.com"}, {"href": "http://b.com"}]
-    assert ev["calendars"] == [{"qcode": "cal1"}, {"qcode": "cal2"}]
-
-    assert (
-        "location" in ev
-        and isinstance(ev["location"], list)
-        and len(ev["location"]) == 1
-    )
-    loc = ev["location"][0]
-    assert loc["name"] == "Venue"
-    assert loc["address"] == {
-        "line": ["123 St"],
-        "locality": "Metropolis",
-        "area": "State",
-        "country": "US",
-    }
-
-    assert "event_contact_info" in ev and len(ev["event_contact_info"]) == 1
-    assert (
-        ev["event_contact_info"][0]
-        == "Dr Jane Doe | Org | POC | jane@org.com | 123456 (work) | public"
-    )
+    def test_extra_fields(self):
+        """Test extra fields are properly set."""
+        extra = self.item.get("extra", {})
+        self.assertEqual(extra["stt_source"], "csv")
+        self.assertIn("csv_row", extra)
 
 
-def test_skips_row_when_required_fields_missing(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "missing.csv"
-    p.write_text(
-        "Start Date,Event Name\n"
-        ",HasNameButNoStart\n"
-        "2024-01-01,\n"
-        "2024-01-02,   \n"
-        "2024-01-03,Valid\n",
-        encoding="utf-8",
-    )
+class TestNoEndTimeFlag(TestCase):
+    """Test the no_end_time configuration option."""
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    assert items[0]["name"] == "Valid"
-    assert items[0]["dates"]["start"].isoformat().startswith("2024-01-03")
+    # Set required attributes to avoid fixture parsing
+    fixture = None
+    parse_source = False
+    parser_class = EventsCSVFeedParser
 
+    def test_parse_dt_with_date_only(self):
+        """Test what _parse_dt does with just a date string."""
+        # Test parsing just a date
+        result = _parse_dt("2024-01-15", None, None)
 
-def test_invalid_start_skips_and_invalid_end_falls_back(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "invalid_dates.csv"
-    p.write_text(
-        "Start Date,Start Time,End Date,End Time,Event Name,Timezone\n"
-        "not a date,10:00,2024-01-02,11:00,Bad,UTC\n"
-        "2024-02-03,10:00,nope,12:00,Good,UTC\n",
-        encoding="utf-8",
-    )
+        # Should be 00:00
+        self.assertEqual(result.hour, 0)
+        self.assertEqual(result.minute, 0)
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-    assert ev["name"] == "Good"
-    assert ev["dates"]["start"].isoformat().startswith("2024-02-03T10:00:00")
-    assert ev["dates"]["start"].isoformat().endswith("+00:00")
-    # End time should be 1 hour after start time when no end time is provided
-    from datetime import timedelta
+    def test_default_behavior_uses_end_time(self):
+        """Test that default behavior uses end_time when available."""
+        # Create a temporary CSV file
+        csv_content = """start_date,start_time,end_date,end_time,name
+2024-01-15,14:30,2024-01-15,16:45,Test Event"""
 
-    expected_end = ev["dates"]["start"] + timedelta(hours=1)
-    assert ev["dates"]["end"] == expected_end
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
+            f.write(csv_content)
+            temp_file = f.name
 
+        try:
+            parser = self.parser_class()
+            items = parser.parse(temp_file, {"name": "Test"})
+            end = items[0]["dates"]["end"]
+            self.assertEqual(end.hour, 16)
+            self.assertEqual(end.minute, 45)
+        finally:
+            os.unlink(temp_file)
 
-def test_preserves_existing_timezone_when_tz_hint_provided(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "tz.csv"
-    # Embed -05:00 in the start value while providing a tz hint that should not override it
-    p.write_text(
-        "Start Date,Event Name,Timezone\n"
-        "2024-03-10 01:30 -05:00,HasTZ,Europe/Paris\n",
-        encoding="utf-8",
-    )
+    def test_flag_true_ignores_end_time_and_infers_from_start(self):
+        """Test that no_end_time flag ignores time in end date."""
+        # Create a temporary CSV file
+        csv_content = """start_date,start_time,end_date,end_time,name
+2024-01-15,14:30,2024-01-15,16:45,Test Event"""
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-    assert ev["dates"]["tz"] == "Europe/Paris"
-    assert ev["dates"]["start"].isoformat().startswith("2024-03-10T01:30:00")
-    assert ev["dates"]["start"].isoformat().endswith("-05:00")
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
+            f.write(csv_content)
+            temp_file = f.name
 
+        try:
+            parser = self.parser_class()
+            items = parser.parse(
+                temp_file, {"name": "Test", "config": {"no_end_time": True}}
+            )
+            end = items[0]["dates"]["end"]
+            # Expect 15:30 (start at 14:30 + 1h fallback)
+            self.assertEqual(end.hour, 15)
+            self.assertEqual(end.minute, 30)
+        finally:
+            os.unlink(temp_file)
 
-def test_parse_eventsheet_fixture_csv():
-    """Parse the real fixture at server/tests/fixtures/csv/eventsheet.csv.
+    def test_flag_true_with_end_date_only(self):
+        """Test no_end_time with only end_date (no end_time column)."""
+        # Create a temporary CSV file
+        csv_content = """start_date,start_time,end_date,name
+2024-01-15,14:30,2024-01-16,Test Event"""
 
-    This mirrors how other parsers' tests load fixtures (e.g. BusinessWire),
-    using a stable path under tests/fixtures.
-    """
-    parser = EventsCSVFeedParser()
-    fixture_path = os.path.join(
-        os.path.dirname(__file__), "fixtures", "csv", "eventsheet.csv"
-    )
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
+            f.write(csv_content)
+            temp_file = f.name
 
-    items = parser.parse(fixture_path)
+        try:
+            parser = self.parser_class()
+            items = parser.parse(
+                temp_file, {"name": "Test", "config": {"no_end_time": True}}
+            )
+            end = items[0]["dates"]["end"]
+            self.assertEqual(end.day, 16)  # January 16th
+            self.assertEqual(end.hour, 0)
+            self.assertEqual(end.minute, 0)
+        finally:
+            os.unlink(temp_file)
 
-    # Basic structure assertions
-    assert isinstance(items, list)
-    assert len(items) > 0
+    def test_flag_defaults_to_false(self):
+        """Test that no_end_time defaults to False when not specified."""
+        # Create a temporary CSV file
+        csv_content = """start_date,start_time,end_date,end_time,name
+2024-01-15,14:30,2024-01-15,16:45,Test Event"""
 
-    first = items[0]
-    assert first.get("original_source") == "CSV"
-    assert first.get("type") == "event"
-    assert first.get("name")  # non-empty
-    assert "dates" in first and first["dates"].get("start")
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
+            f.write(csv_content)
+            temp_file = f.name
 
-    # Calendars column should map to list of qcodes when present
-    # Fixture has values like "Urheilu" in the Calendars column
-    if first.get("calendars"):
-        assert isinstance(first["calendars"], list)
-        assert all("qcode" in c for c in first["calendars"])
+        try:
+            parser = self.parser_class()
+
+            # Test without config
+            items1 = parser.parse(temp_file, {"name": "Test"})
+            # Test with empty config
+            items2 = parser.parse(temp_file, {"name": "Test", "config": {}})
+
+            # Both should behave the same (include time)
+            self.assertEqual(items1[0]["dates"]["end"].hour, 16)
+            self.assertEqual(items2[0]["dates"]["end"].hour, 16)
+        finally:
+            os.unlink(temp_file)

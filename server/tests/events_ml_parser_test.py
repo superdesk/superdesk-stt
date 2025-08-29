@@ -64,7 +64,7 @@ class STTEventsMLParserEventTypeCVTest(TestCase):
         event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
         self.assertIsNotNone(event_types)
         self.assertEqual(len(event_types["items"]), 0)
-        
+
         self.parse_source_content()
         event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
         self.assertIsNotNone(event_types)
