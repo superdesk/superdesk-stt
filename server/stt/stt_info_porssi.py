@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from superdesk.io.registry import register_feed_parser
 from superdesk.etree import etree
 from superdesk.io.feed_parsers.newsml_1_2 import NewsMLOneFeedParser
@@ -90,18 +91,16 @@ class STTInfoPorssi(NewsMLOneFeedParser):
 
             item = {
                 "guid": f"stt-info-porssi_{guid}",
-                "name": source,
-                "description": headline,
-                "source": "STT",
+                "headline": headline,
+                "slugline": headline,
+                "body_html": body,
+                "source": source,
                 "priority": 3,
                 "language": lang,
-                "original_xml": xml,
-                "body_html": body,
-                "task": {"desk": "Kotimaa"},
                 "anpa_category": [],
                 "subject": [],
-                "slugline": headline,
-                "headline": headline,
+                "type": "text",
+                "versioncreated": datetime.utcnow().isoformat() + "Z",
             }
             return [item]
 
