@@ -132,19 +132,10 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         item["extra"]["stt_meta"]["department_id"] = dept_id
         item["extra"]["stt_meta"]["department_name"] = dept_name
         item["extra"]["stt_meta"]["tt_department_code"] = tt_dept_code
-        key_for_map = str(tt_dept_code).strip().upper() if tt_dept_code else ""
-        mapped_qcode = _DEPARTMENT_QCODE_MAP.get(key_for_map)
-        if not mapped_qcode:
-            # default to Kotimaa when unknown
-            mapped_qcode = "kotimaa"
-
-        cv_item = self._get_cv_item_by_qcode(STT_DEPT_VOCAB_ID, mapped_qcode)
-        anpa_name = (cv_item or {}).get("name") or _DEPARTMENT_MAP.get(
-            str(tt_dept_code).strip().upper() if tt_dept_code else "", _DEFAULT_DEPT
-        )[1]
 
         # Superdesk expects anpa_category as a list of {qcode, name}
-        item["anpa_category"] = [{"qcode": mapped_qcode, "name": anpa_name}]
+        # Use department ID as qcode instead of string qcode
+        item["anpa_category"] = [{"qcode": str(dept_id), "name": dept_name}]
 
         # Priority <- TT urgency (pass-through as int if present)
         urgency = ninjs_local.get("urgency")
@@ -164,6 +155,12 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         )
         if headline:
             item["name"] = headline
+            item["headline"] = headline
+        else:
+            # Fallback: use description_text if no headline found
+            description = ninjs_local.get("description_text")
+            if description:
+                item["headline"] = description
 
         # ExternalID: choose a stable id in order of likelihood for TT
         external_id = (
