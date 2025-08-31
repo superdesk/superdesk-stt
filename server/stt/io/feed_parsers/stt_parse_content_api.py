@@ -8,7 +8,7 @@ from dateutil import parser as dtparse
 from superdesk.io.feed_parsers import FeedParser
 from superdesk.io.registry import register_feed_parser
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import hashlib
 import json
 import uuid
@@ -48,51 +48,35 @@ class ContentAPIItemParser(FeedParser):
 
     # ------------------------ internal helpers -------------------------
     def _parse_one(self, src: Dict[str, Any], provider: dict) -> Dict[str, Any]:
-        """Map a single JSON item from Content API to Superdesk item.
-        Returns a dict suitable for ingest (type/pubstatus/guid/timestamps set).
-        """
+        """Map a single JSON item from Content API to Superdesk item."""
         processed: Dict[str, Any] = dict(src)
 
-        # 1) Required defaults
-        processed.setdefault("type", "text")
-        processed.setdefault("pubstatus", "usable")
-        processed.setdefault(
-            "headline", processed.get("headline") or processed.get("name") or ""
-        )
-        processed.setdefault("body_html", processed.get("body_html") or "")
+        # Apply default fields and normalize headline/body
+        self._apply_defaults(processed)
 
-        # 2) GUID (stable when URI/_id present, else random UUID)
+        # Generate GUID if missing
         if not processed.get("guid"):
-            guid = self._ensure_guid(processed)
-            processed["guid"] = guid
+            processed["guid"] = self._ensure_guid(processed)
 
-        # 3) Normalize timestamps to timezone-aware datetimes
+        # Normalize all known timestamp fields
         for tf in ("versioncreated", "firstcreated", "_updated", "_created"):
             if processed.get(tf):
                 processed[tf] = self._normalize_timestamp(processed[tf])
 
-        # Ensure versioncreated exists and is aware
+        # Ensure versioncreated is tz-aware and set
         vc = processed.get("versioncreated")
         if not isinstance(vc, datetime):
             processed["versioncreated"] = datetime.now(timezone.utc)
         elif vc.tzinfo is None:
             processed["versioncreated"] = vc.replace(tzinfo=timezone.utc)
 
-        # 4) Expiry based on provider config (hours)
-        content_expiry_hours = (provider.get("config") or {}).get("content_expiry", 0)
-        if content_expiry_hours:
-            try:
-                processed["expiry"] = processed["versioncreated"] + timedelta(
-                    hours=int(content_expiry_hours)
-                )
-            except Exception:
-                processed["expiry"] = datetime.now(timezone.utc) + timedelta(
-                    hours=int(content_expiry_hours)
-                )
-        else:
-            processed["expiry"] = None
-
         return processed
+
+    def _apply_defaults(self, item: Dict[str, Any]) -> None:
+        item.setdefault("type", "text")
+        item.setdefault("pubstatus", "usable")
+        item.setdefault("headline", item.get("headline") or item.get("name") or "")
+        item.setdefault("body_html", item.get("body_html") or "")
 
     def _ensure_guid(self, item: Dict[str, Any]) -> str:
         uri = (
@@ -103,10 +87,14 @@ class ContentAPIItemParser(FeedParser):
         )
         if isinstance(uri, (str, int)):
             s = str(uri)
-            return f"urn:newsml:stt.fi:contentapi:{hashlib.sha1(s.encode('utf-8')).hexdigest()}"
+            # If it's already a URN, preserve it
+            if s.startswith("urn:"):
+                return s
+            # Otherwise generate a new URN with our namespace
+            return f"urn:newsml:stt.fi:contentapi:{hashlib.sha256(s.encode('utf-8')).hexdigest()}"
         try:
             blob = json.dumps(item, ensure_ascii=False, sort_keys=True)
-            h = hashlib.sha1(blob.encode("utf-8")).hexdigest()
+            h = hashlib.sha256(blob.encode("utf-8")).hexdigest()
             return f"urn:newsml:stt.fi:contentapi:{h}"
         except Exception:
             return f"urn:newsml:stt.fi:contentapi:{uuid.uuid4()}"

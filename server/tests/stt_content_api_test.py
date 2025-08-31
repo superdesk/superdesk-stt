@@ -125,7 +125,7 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
                 self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
     def test_content_expiry_calculation(self):
-        """Test content expiry calculation with provider configuration."""
+        """Test content expiry configuration is ignored (functionality removed)."""
         self.parse_source_content()
 
         parser = self.parser_class()
@@ -138,17 +138,8 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
         if isinstance(parsed, list):
             parsed = parsed[0]
 
-        # Should have expiry set
-        if parsed.get("expiry"):
-            from datetime import datetime, timedelta
-
-            self.assertIsInstance(parsed["expiry"], datetime)
-
-            # Should be approximately 48 hours after versioncreated
-            if parsed.get("versioncreated"):
-                expected_expiry = parsed["versioncreated"] + timedelta(hours=48)
-                time_diff = abs((parsed["expiry"] - expected_expiry).total_seconds())
-                self.assertLess(time_diff, 60)  # Within 1 minute tolerance
+        # Should not have expiry set (functionality removed)
+        self.assertIsNone(parsed.get("expiry"))
 
     def test_parser_handles_minimal_items(self):
         """Test parser handles items with minimal required fields."""
@@ -204,7 +195,7 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
         if isinstance(parsed1, list):
             parsed1 = parsed1[0]
 
-        # Test with expiry config
+        # Test with expiry config (should be ignored)
         parsed2 = parser.parse(first_item, provider={"config": {"content_expiry": 24}})
         if isinstance(parsed2, list):
             parsed2 = parsed2[0]
@@ -215,12 +206,9 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
             self.assertIn("guid", parsed)
             self.assertIn("type", parsed)
 
-        # Expiry should only be set in parsed2
+        # Expiry should not be set in either (functionality removed)
         self.assertIsNone(parsed1.get("expiry"))
-        if parsed2.get("expiry"):
-            from datetime import datetime
-
-            self.assertIsInstance(parsed2["expiry"], datetime)
+        self.assertIsNone(parsed2.get("expiry"))
 
     def test_fixture_data_structure_validation(self):
         """Validate the structure and content of the fixture data itself."""

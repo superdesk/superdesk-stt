@@ -263,7 +263,7 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertTrue(parsed_item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
 
     def test_parser_content_expiry(self):
-        """Test parser content expiry calculation."""
+        """Test parser ignores content expiry configuration."""
         test_item = {"_id": "expiry_test", "source": "STT"}
 
         provider = {"config": {"content_expiry": 24}}  # 24 hours
@@ -271,14 +271,8 @@ class STTContentAPITestCase(unittest.TestCase):
         result = self.parser.parse(test_item, provider=provider)
         parsed_item = result[0]
 
-        self.assertIsNotNone(parsed_item.get("expiry"))
-
-        # Verify expiry is set to approximately 24 hours from versioncreated
-        from datetime import timedelta
-
-        expected_expiry = parsed_item["versioncreated"] + timedelta(hours=24)
-        time_diff = abs((parsed_item["expiry"] - expected_expiry).total_seconds())
-        self.assertLess(time_diff, 60)  # Within 1 minute tolerance
+        # Should not have expiry set (functionality removed)
+        self.assertIsNone(parsed_item.get("expiry"))
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""

@@ -118,14 +118,11 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         return parsed_items
 
     def _fetch_data(self, provider, since_iso: str) -> List[Dict]:
-        """
-        Reads pages of items using ?where[versioncreated]>last_update ordering by versioncreated.
-        Accepts both array and {_items:[...]} response shapes.
-        """
         logger.warning("fetching data ...")
         config = provider.get("config", {})
-        url: str = config["url"]
-        api_key: str = config["api_key"]
+        url = config["url"]
+        api_key = config["api_key"]
+        headers = self._headers(api_key)
 
         logger.info(
             "Starting Content API fetch from %s (since: %s)",
@@ -133,80 +130,61 @@ class STTContentAPIService(HTTPFeedingServiceBase):
             since_iso or "beginning",
         )
 
-        headers = self._headers(api_key)
-
-        items: List[Dict] = []
+        all_items = []
         page = 1
-
         while True:
-            params = self._build_params(since_iso, page)
             try:
-                response = requests.get(url, params=params, headers=headers, timeout=30)
-                status = response.status_code
-                if status >= 400:
-                    logger.warning(
-                        "Content API HTTP %s on page %d. Body: %s",
-                        status,
-                        page,
-                        response.text[:1000],
-                    )
-                    raise IngestApiError.apiGeneralError(
-                        Exception(f"HTTP {status} from Content API"), provider
-                    )
+                response = requests.get(
+                    url,
+                    params=self._build_params(since_iso, page),
+                    headers=headers,
+                    timeout=30,
+                )
+                response.raise_for_status()
+                data = self._safe_json(response, provider)
+                batch = self._extract_batch(data)
+                if not batch:
+                    break
+                all_items.extend(batch)
+                if not self._has_next_page(data):
+                    break
+                page += 1
             except IngestApiError:
-                # Already wrapped with provider context
                 raise
             except Exception as ex:
                 logger.error(
                     "Failed to fetch page %d from Content API: %s", page, str(ex)
                 )
                 raise IngestApiError.apiGeneralError(ex, provider)
+        return all_items
 
-            try:
-                data = response.json() or {}
-            except Exception as json_ex:
-                # Surface raw text on JSON parse failure with better error context
-                logger.error(
-                    "Failed to parse JSON response from Content API (status: %d, content-type: %s)",
-                    response.status_code,
-                    response.headers.get("content-type", "unknown"),
-                )
-                raise IngestApiError.apiGeneralError(
-                    Exception(f"JSON parse error: {str(json_ex)}"), provider
-                )
-
-            batch = (
-                data
-                if isinstance(data, list)
-                else data.get("_items") or data.get("items") or []
+    def _safe_json(self, response, provider) -> Any:
+        try:
+            return response.json() or {}
+        except Exception as ex:
+            logger.error(
+                "Failed to parse JSON from Content API (status: %d, content-type: %s)",
+                response.status_code,
+                response.headers.get("content-type", "unknown"),
+            )
+            raise IngestApiError.apiGeneralError(
+                Exception(f"JSON parse error: {ex}"), provider
             )
 
-            if isinstance(batch, dict):
-                # dict-of-id -> item
-                batch_list = [v for v in batch.values() if isinstance(v, dict)]
-            elif isinstance(batch, list):
-                batch_list = [v for v in batch if isinstance(v, dict)]
-            else:
-                batch_list = []
+    def _extract_batch(self, data: Any) -> List[Dict]:
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, dict)]
+        if isinstance(data, dict):
+            raw = data.get("_items") or data.get("items") or data
+            if isinstance(raw, dict):
+                return [v for v in raw.values() if isinstance(v, dict)]
+            if isinstance(raw, list):
+                return [v for v in raw if isinstance(v, dict)]
+        return []
 
-            # Ensure batch_list contains only dicts (already filtered above)
-            batch_list = [item for item in batch_list if isinstance(item, dict)]
-
-            if not batch_list:
-                break
-
-            items.extend(batch_list)
-
-            # Stop if there is no next link and we've filled a single page
-            has_next = False
-            links = data.get("_links") if isinstance(data, dict) else None
-            if isinstance(links, dict):
-                has_next = "next" in links
-
-            if not has_next:
-                break
-            page += 1
-        return items
+    def _has_next_page(self, data: Any) -> bool:
+        links = data.get("_links") if isinstance(data, dict) else None
+        return isinstance(links, dict) and "next" in links
 
 
 register_feeding_service(STTContentAPIService)
