@@ -68,6 +68,11 @@ module.exports = function (grunt) {
         publish: false /* publish */,
         publishAndContinue: false /* publish and create update */,
         closeAndContinue: false /* save, close, and update */,
+
+        sendAndDuplicate: {
+          deskName: 'test',
+          stageName: 'Working',
+        },
       },
       confirmDueDate: true /* confirm due date */,
     },
