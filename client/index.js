@@ -1,20 +1,16 @@
 import { startApp } from 'superdesk-core/scripts/index';
 import newshub from './stt/newshub';
-import {comparePlanningItem} from './compare-planning-items';
+import {comparePlanningItems} from './compare-planning-items';
 import './stt.css';
 
 setTimeout(() => {
   startApp(
     [
       {
-        id: 'custom-config-extension',
-        load: () => import('./stt/custom-config'),
-      },
-      {
         id: 'planning-extension',
         load: () => import('superdesk-planning/client/planning-extension'),
         configuration: {
-          comparePlanningItems: comparePlanningItem,
+          comparePlanningItems: comparePlanningItems,
         },
       },
       {
