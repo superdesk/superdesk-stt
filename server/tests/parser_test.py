@@ -37,6 +37,7 @@ class STTParserTestCase(TestCase):
         mediatopics = [
             s["qcode"] for s in self.item["subject"] if s.get("scheme") == "topics"
         ]
+        assert len(mediatopics) == len(set(mediatopics))
         assert mediatopics
         assert "11000000" in mediatopics
         assert "06000000" in mediatopics
@@ -52,8 +53,10 @@ class STTParserTestCase(TestCase):
         assert len(places) == 2
         assert places[0]["name"] == "Viro"
         assert places[0]["qcode"] == "sttcountry:238"
+        assert not places[0]["scheme"]
         assert places[1]["name"] == "Suomi"
         assert places[1]["qcode"] == "sttcountry:1"
+        assert not places[1]["scheme"]
 
 
 class STTParserPRETestCase(TestCase):

@@ -219,12 +219,14 @@ class STTParserMixin:
 
     def parse_subjects(self, item, subjects):
         topics_lookup = self.get_topics_lookup()
+        topics_list = []
         for subject in subjects:
             qcode = subject.attrib.get("qcode", "")
             if qcode.startswith("sttsubj:"):
                 code = qcode.split(":")[1]
                 topic = topics_lookup.get(int(code, 10))
-                if topic:
+                if topic and topic not in topics_list:
+                    topics_list.append(topic)
                     item.setdefault("subject", []).append(topic)
             if qcode.startswith("stt-topics:"):
                 item.setdefault("extra", {})["stt_topics"] = qcode.split(":")[1]

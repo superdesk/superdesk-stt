@@ -161,6 +161,8 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
                 if places_lookup.get(city_code):
                     place_list.append(places_lookup[city_code])
         item["place"] = place_list
+        for place in place_list:
+            place["scheme"] = None
 
 
 register_feed_parser(STTParser.NAME, STTParser())
