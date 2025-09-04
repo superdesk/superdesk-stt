@@ -149,16 +149,18 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
                     item.setdefault("subject", []).append(cv_source)
 
     def parse_place(self, item):
-        places_lookup = {p["qcode"]: p for p in self.get_cv_items("sttplace")}
+        place_list = []
+        places_lookup = {p["qcode"]: p for p in self.get_cv_items("locators")}
         for place in item["place"]:
             if place.get("country_code"):
                 country_code = "sttcountry:" + place["country_code"]
                 if places_lookup.get(country_code):
-                    item.setdefault("subject", []).append(places_lookup[country_code])
+                    place_list.append(places_lookup[country_code])
             if place.get("locality_code"):
                 city_code = "sttcity:" + place["locality_code"]
                 if places_lookup.get(city_code):
-                    item.setdefault("subject", []).append(places_lookup[city_code])
+                    place_list.append(places_lookup[city_code])
+        item["place"] = place_list
 
 
 register_feed_parser(STTParser.NAME, STTParser())

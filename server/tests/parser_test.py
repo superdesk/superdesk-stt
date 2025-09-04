@@ -48,7 +48,7 @@ class STTParserTestCase(TestCase):
         assert sources[0]["qcode"] == "STT"
 
     def test_place(self):
-        places = [s for s in self.item["subject"] if s.get("scheme") == "sttplace"]
+        places = [s for s in self.item["place"]]
         assert len(places) == 2
         assert places[0]["name"] == "Viro"
         assert places[0]["qcode"] == "sttcountry:238"
