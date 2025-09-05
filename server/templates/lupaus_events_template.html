@@ -1,0 +1,33 @@
+{# ---------------------------------------- #}
+{#   lupaus_events_template.html            #}
+{# ---------------------------------------- #}
+
+{# Enrich agendas with related events (adds item.related_events_expanded) #}
+{% set agendas = enrich_planning_agendas(agendas) %}
+
+{% macro lupaus_location(location) -%}
+    {%- set loc = location[0] if location and location[0] and location[0].address else None -%}
+    {%- if loc -%}
+        {{- (loc.address.name or loc.name) -}}
+    {%- endif -%}
+{%- endmacro %}
+
+{# One paragraph per agenda item #}
+{%- for agenda in agendas or [] -%}
+    {%- for item in agenda['items'] | default([]) -%}
+        {%- set bits = [] -%}
+        {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
+        {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
+        {%- for ev in item.related_events_expanded or [] -%}
+        {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
+        {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+        {%- if ev.location is iterable -%}
+            {%- set ev_loc = lupaus_location(ev.location) -%}
+            {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- if bits %}<p>{{- bits | join(', ') -}}</p>{% endif -%}
+        {# add empty line between items #}
+        <p></p>
+    {%- endfor -%}
+{%- endfor -%}
