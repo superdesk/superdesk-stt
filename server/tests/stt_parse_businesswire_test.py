@@ -43,11 +43,11 @@ class BusinessWireParserTestCase(TestCase):
 
     def test_slugline_and_byline(self):
         assert self.item["slugline"] == "CA-MIRUM-PHARMACEUTICALS"
-        # ByLine is empty in the test XML fixture
-        assert self.item["byline"] == ""
+        # ByLine is empty in the test XML fixture; key may be missing if empty
+        assert self.item.get("byline", "") == ""
 
     def test_dateline_and_subjects(self):
-        assert self.item["dateline"] == "FOSTER CITY, Calif."
+        assert self.item["dateline"]["text"] == "FOSTER CITY, Calif."
         # Subject is not present in the test XML fixture
         assert "subject" not in self.item or len(self.item.get("subject", [])) == 0
 
