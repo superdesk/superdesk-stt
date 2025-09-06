@@ -8,6 +8,7 @@ from stt.stt_parse_lottery_veikkaus import (
     to_body_html,
     fix_encoding_issues,
 )
+from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -71,3 +72,6 @@ class VeikkausTextFeedParserTestCase(TestCase):
         parser = self.parser_class()
         self.assertEqual(parser.NAME, "veikkaus_text")
         self.assertEqual(parser.label, "STT Veikkaus Text Parser")
+
+    def test_versioncreated_is_datetime(self):
+        assert isinstance(self.item["versioncreated"], datetime)

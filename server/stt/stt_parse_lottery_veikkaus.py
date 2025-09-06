@@ -11,7 +11,7 @@ from __future__ import annotations
 import os
 import re
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 import chardet
 from superdesk.io.feed_parsers import FeedParser
@@ -147,7 +147,7 @@ class VeikkausTextFeedParser(FeedParser):
             "original_source": "STT",
             "urgency": 4,
             "pubstatus": "usable",
-            "versioncreated": datetime.utcnow().isoformat() + "Z",
+            "versioncreated": datetime.now(timezone.utc),
             "extra": {
                 "veikkaus": {
                     "department": "Peliuutiset",
