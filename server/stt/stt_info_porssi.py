@@ -1,5 +1,7 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
+import hashlib
+from dateutil.parser import parse as dtparse
 from superdesk.io.registry import register_feed_parser
 from superdesk.etree import etree
 from superdesk.io.feed_parsers.newsml_1_2 import NewsMLOneFeedParser
@@ -61,11 +63,16 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                         "NewsComponent/DescriptiveMetadata/Language/@FormalName"
                     )[0]
                 except IndexError:
-                    logger.warning(
-                        "missing language in item, ignoring it.\nxml: {xml}".format(
-                            xml=etree.tostring(news_item, encoding="unicode")
+                    public_id = (
+                        news_item.findtext(
+                            "Identification/NewsIdentifier/PublicIdentifier"
                         )
+                        or news_item.findtext(
+                            "Identification/NewsIdentifier/NewsItemId"
+                        )
+                        or ""
                     )
+                    logger.warning("Missing language in item; public_id=%s", public_id)
                     continue
 
                 if selected is None or lang in ("fi", "sv", "en"):
@@ -78,7 +85,39 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                     source=etree.tostring(xml, encoding="unicode")
                 )
 
-            guid = selected.findtext("Identification/NewsIdentifier/NewsItemId")
+            # Determine language from the selected item (fallback to fi)
+            language_elements = selected.xpath(
+                "NewsComponent/DescriptiveMetadata/Language/@FormalName"
+            )
+            sel_lang = language_elements[0] if language_elements else "fi"
+
+            # Compute versioncreated; prefer ThisRevisionCreated; ensure tz-aware
+            rev_created = selected.findtext("NewsManagement/ThisRevisionCreated")
+            if rev_created:
+                dt = dtparse(rev_created)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                versioncreated = dt
+            else:
+                versioncreated = datetime.utcnow().replace(tzinfo=timezone.utc)
+
+            # Compute GUID as a URN based on PublicIdentifier or NewsItemId (consistent format)
+            public_id = selected.findtext(
+                "Identification/NewsIdentifier/PublicIdentifier"
+            )
+            news_item_id = selected.findtext("Identification/NewsIdentifier/NewsItemId")
+            if public_id:
+                guid_value = f"urn:stt:info-porssi:{public_id}"
+            elif news_item_id:
+                guid_value = f"urn:stt:info-porssi:{news_item_id}"
+            else:
+                guid_value = (
+                    "urn:stt:info-porssi:"
+                    + hashlib.sha1(
+                        etree.tostring(selected, encoding="utf-8")
+                    ).hexdigest()
+                )
+
             body = self.get_body(selected)
 
             # Use xpath() for attribute selectors
@@ -87,21 +126,39 @@ class STTInfoPorssi(NewsMLOneFeedParser):
             )
             source = source_elements[0] if source_elements else "STT"
 
+            # Dateline as object (Superdesk expects an object with a text field)
+            dateline_txt = selected.findtext("NewsComponent/NewsLines/DateLine")
+            dateline_obj = None
+            if dateline_txt:
+                dtxt = dateline_txt.strip()
+                if dtxt:
+                    dateline_obj = {"text": dtxt}
+
             headline = selected.findtext("NewsComponent/NewsLines/HeadLine") or ""
 
             item = {
-                "guid": f"stt-info-porssi_{guid}",
+                "guid": guid_value,
                 "headline": headline,
+                # Slugline intentionally mirrors headline for desk workflow (STT-84)
                 "slugline": headline,
                 "body_html": body,
-                "source": source,
-                "priority": 3,
-                "language": lang,
-                "anpa_category": [],
+                "source": source,  # Source = "STT"
+                "priority": 3,  # Priority fixed to 3
+                "language": sel_lang,
+                # anpa_category intentionally omitted for STT Info stock releases
                 "subject": [],
                 "type": "text",
-                "versioncreated": datetime.utcnow().isoformat() + "Z",
+                "versioncreated": versioncreated,
+                "name": headline,  # Name = headline (XSLT equivalent)
+                "abstract": headline,  # Description = title/headline
+                "extra": {
+                    "ntb_pub_name": source,
+                    "department": "Tiedotepalvelu",  # Department
+                    "desk": "Kotimaa",  # Desk
+                },
             }
+            if dateline_obj is not None:
+                item["dateline"] = dateline_obj
             return [item]
 
         except Exception as ex:
@@ -113,11 +170,12 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                 'NewsComponent/ContentItem[@Euid="announcement_html"]/DataContent/text()'
             )[0]
         except IndexError:
-            logger.warning(
-                "No content found in element: {xml}".format(
-                    xml=etree.tostring(news_item, encoding="unicode")
-                )
+            public_id = (
+                news_item.findtext("Identification/NewsIdentifier/PublicIdentifier")
+                or news_item.findtext("Identification/NewsIdentifier/NewsItemId")
+                or ""
             )
+            logger.warning("No content found in element; public_id=%s", public_id)
             return ""
 
         content_elt = sd_etree.parse_html(raw_content)
