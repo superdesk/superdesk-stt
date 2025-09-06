@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 import os
-import unittest
 import requests
 from unittest.mock import patch
 from flask import json
 
+from tests import TestCase
 from stt.io.feeding_services.stt_content_api import STTContentAPIService
 from stt.io.feed_parsers.stt_parse_content_api import ContentAPIItemParser
 
@@ -28,14 +27,28 @@ class MockResponse:
             raise requests.exceptions.HTTPError(f"HTTP {self.status_code}")
 
 
-class STTContentAPITestCase(unittest.TestCase):
+class STTContentAPITestCase(TestCase):
+    fixture = "api/stt_content_api.json"
+    parser_class = ContentAPIItemParser
+
+    def parse_source_content(self):
+        """Override to handle JSON files instead of XML."""
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture_path = os.path.join(dirname, "fixtures", self.fixture)
+        with open(fixture_path, "r", encoding="utf-8") as _file:
+            self.fixture_data = json.load(_file)
+        # Parse the first item from the fixture for testing
+        if self.fixture_data.get("_items"):
+            test_item = self.fixture_data["_items"][0]
+            self.parser = self.parser_class()
+            self.item = self.parser.parse(test_item, provider={"config": {}})[0]
+        else:
+            self.item = {}
+
     def setUp(self):
+        super().setUp()
         self.service = STTContentAPIService()
         self.parser = ContentAPIItemParser()
-
-        # Load test fixture
-        with open(fixture("api/stt_content_api.json")) as _file:
-            self.fixture_data = json.load(_file)
 
     def test_instance(self):
         """Test service instance creation and basic properties."""
@@ -366,6 +379,47 @@ class STTContentAPITestCase(unittest.TestCase):
         if "source" in first_item:
             self.assertTrue(first_item["source"].startswith("STT"))
 
+    def test_headline_and_content(self):
+        """Test that the parsed item has correct headline and content."""
+        # Test headline contains expected content
+        self.assertIn("Pirkkalan koulupuukotuksesta", self.item["headline"])
+        self.assertIn("16-vuotias", self.item["headline"])
+        self.assertIn("mielentilatutkimukseen", self.item["headline"])
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_body_html_contains_keywords(self):
+        """Test that body HTML contains expected keywords."""
+        html = self.item.get("body_html", "")
+        assert "Pirkkalan koulupuukotuksesta" in html
+        assert "16-vuotias poika" in html
+        assert "mielentilatutkimukseen" in html
+
+    def test_metadata_subjects(self):
+        """Test that subject metadata is properly parsed."""
+        # Check that subject data is preserved
+        if "subject" in self.fixture_data["_items"][0]:
+            self.assertIn("subject", self.item)
+            self.assertEqual(
+                len(self.fixture_data["_items"][0]["subject"]),
+                len(self.item["subject"]),
+            )
+
+    def test_guid_and_uri(self):
+        """Test GUID generation and URI preservation."""
+        test_item = self.fixture_data["_items"][0]
+
+        # Test URI is preserved
+        self.assertEqual(test_item["uri"], self.item["uri"])
+
+        # Test GUID is generated correctly (hash-based, not coverage_id)
+        self.assertTrue(self.item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
+        # GUID should be a consistent hash based on the item data
+        self.assertIsInstance(self.item["guid"], str)
+        self.assertGreater(len(self.item["guid"]), 50)  # Should be a long hash
+
+    def test_basic_fields(self):
+        """Test that basic required fields are set."""
+        # Test required fields
+        self.assertEqual("text", self.item["type"])
+        self.assertEqual("usable", self.item["pubstatus"])
+        self.assertIn("versioncreated", self.item)
+        self.assertIn("guid", self.item)
