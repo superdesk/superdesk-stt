@@ -1,13 +1,16 @@
 import json
 import logging
+from functools import lru_cache
+from datetime import timezone
 from typing import Any, Dict, Iterable, List, Optional
 
 from lxml import etree
 from lxml import html as lxml_html
+from dateutil import tz
+from dateutil.parser import isoparse
 from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import sanitize_html
-from superdesk.utc import local_to_utc
 
 TIMEZONE = "Europe/Helsinki"
 
@@ -21,8 +24,14 @@ logger = logging.getLogger(__name__)
 # ----------------------------- Helpers -------------------------------------
 
 
+@lru_cache(maxsize=16)
 def _load_cv(path: str) -> List[Dict[str, Any]]:
-    """Load a CV from Superdesk vocabularies."""
+    """Load **active** items from a Superdesk vocabulary.
+
+    Prefer `vocabularies.get_items(vocab_id)` (active-only). Fallback to
+    `find_one` and filter `items` by `is_active` when present. Results are cached
+    to reduce service calls during batch ingest.
+    """
     if not path.startswith("vocab:"):
         raise ValueError("Only Superdesk vocabularies are supported in parser runtime")
 
@@ -31,37 +40,55 @@ def _load_cv(path: str) -> List[Dict[str, Any]]:
         from superdesk import get_resource_service  # type: ignore
 
         svc = get_resource_service("vocabularies")
-        if svc and hasattr(svc, "get_items"):
-            items = svc.get_items(vocab_id)
+        if not svc:
+            return []
+
+        get_items = getattr(svc, "get_items", None)
+        if callable(get_items):
+            items = get_items(vocab_id)
             return items if isinstance(items, list) else []
+
+        find_one = getattr(svc, "find_one", None)
+        if callable(find_one):
+            vocab = find_one(req=None, _id=vocab_id)
+            if isinstance(vocab, dict):
+                items = vocab.get("items") or []
+                if (
+                    items
+                    and isinstance(items, list)
+                    and isinstance(items[0], dict)
+                    and "is_active" in items[0]
+                ):
+                    return [it for it in items if it.get("is_active", True)]
+                return items if isinstance(items, list) else []
     except Exception as exc:  # pragma: no cover
-        logger.warning("Failed to load vocabulary '%s' from service: %s", vocab_id, exc)
+        logger.warning("Failed to load vocabulary '%s' items: %s", vocab_id, exc)
 
     return []
 
 
-def _norm(s: Optional[str]) -> str:
+def strip_text(s: Optional[str]) -> str:
     return (s or "").strip()
 
 
 def _cv_lookup(
     cv_items: Iterable[Dict[str, Any]], qcode: str
 ) -> Optional[Dict[str, Any]]:
-    q = _norm(qcode).lower()
+    q = strip_text(qcode).lower()
     if not q:
         return None
     for it in cv_items:
-        if _norm(it.get("qcode", "")).lower() == q:
+        if strip_text(it.get("qcode", "")).lower() == q:
             return it
     return None
 
 
 def _prepend_abstract(item: Dict[str, Any]) -> None:
     """Prepend description_html as the first <p> of body_html."""
-    abstract = _norm(item.get("description_html"))
+    abstract = strip_text(item.get("description_html"))
     if not abstract:
         return
-    body = _norm(item.get("body_html"))
+    body = strip_text(item.get("body_html"))
     prefix = f"<p>{abstract}</p>"
     if body.startswith(prefix) or body.startswith(abstract):
         return
@@ -87,23 +114,27 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
 
     def __init__(self) -> None:
         super().__init__()
-        self.is_sport_item = False
 
     # Keep your original behavior: read JSON and skip image items
     def can_parse(self, file_path):
-        with open(file_path, "r", encoding="utf-8") as f:
-            ninjs = json.load(f)
-            return ninjs.get("type") != "image"
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                ninjs = json.load(f)
+                return ninjs.get("type") != "image"
+        except Exception:
+            return False
 
     def datetime(self, value):
-        """When there is no timezone info, assume it's Helsinki timezone.
-
-        Mirrors the behavior used in other STT parsers to ensure consistency.
-        """
-        parsed = super().datetime(value)
-        if "+" not in value:
-            return local_to_utc(TIMEZONE, parsed)
-        return parsed
+        """Parse to tz-aware UTC datetime. If naive, assume Europe/Helsinki."""
+        if not value:
+            return None
+        try:
+            dt = isoparse(value)
+        except Exception:
+            return super().datetime(value)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=tz.gettz(TIMEZONE))
+        return dt.astimezone(timezone.utc)
 
     def sanitise_stt_tt_html(self, html):
         if not html:
@@ -135,19 +166,20 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             kill_tags=kill_tags,
         )
         # trim the outer <p> wrapper if present (keeps parity with your sample)
-        return sanitized_html[5:-6]
+        out = sanitized_html.strip()
+        if out.startswith("<p>") and out.endswith("</p>"):
+            return out[3:-4]
+        return out
 
     # --- NINJS -> Item (+ STT mappings) -------------------------------------
 
     def _transform_from_ninjs(self, ninjs):
-        # drop heavy associations
-        ninjs.pop("associations", None)
+        # drop heavy associations without mutating the original
+        work = dict(ninjs)
+        work.pop("associations", None)
 
         # use core transform first
-        item = super()._transform_from_ninjs(ninjs)
-
-        # sport flag stays (if downstream needs it)
-        self.is_sport_item = ninjs.get("sector") == "SPT"
+        item = super()._transform_from_ninjs(work)
 
         # body_html from body_html5 (sanitized)
         item["body_html"] = self.sanitise_stt_tt_html(ninjs.get("body_html5"))
@@ -170,9 +202,9 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             for s in subjects:
                 if not isinstance(s, dict):
                     continue
-                if _norm(s.get("scheme")).lower() not in {"topics", "topic"}:
+                if strip_text(s.get("scheme")).lower() not in {"topics", "topic"}:
                     continue
-                hit = _cv_lookup(cv_topics, _norm(s.get("code")))
+                hit = _cv_lookup(cv_topics, strip_text(s.get("code")))
                 if hit:
                     mapped_topics.append(hit)
             if mapped_topics:
@@ -184,9 +216,9 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             for s in subjects:
                 if not isinstance(s, dict):
                     continue
-                if _norm(s.get("scheme")).lower() != "category":
+                if strip_text(s.get("scheme")).lower() != "category":
                     continue
-                hit = _cv_lookup(cv_depts, _norm(s.get("code")))
+                hit = _cv_lookup(cv_depts, strip_text(s.get("code")))
                 if hit:
                     # keep common structure {qcode, name}
                     mapped_cats.append(
