@@ -25,7 +25,7 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
             self.item = parser.parse(fixture, provider)[0]
 
     def test_headline_and_metadata(self):
-        # The parser sets headline from the main JSON headline field
+        # The parser extracts picture associations from text items
         # For picture items, it uses description_text from associations
         self.assertEqual(
             self.item["headline"],
@@ -38,6 +38,7 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
         self.assertEqual(self.item["source"], "TT")
         self.assertEqual(self.item["desk"], "Ulkomaat")
 
+        # Picture items without sector fall back to default department (Kotimaa)
         self.assertEqual(self.item["extra"]["stt_meta"]["department_id"], 3)
         self.assertEqual(self.item["extra"]["stt_meta"]["department_name"], "Kotimaa")
         self.assertIsNone(self.item["extra"]["stt_meta"]["tt_department_code"])
@@ -47,6 +48,7 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
 
     def test_body_html_and_byline(self):
         html = self.item.get("body_html", "")
+        # Picture items don't have body_html content
         self.assertEqual(html, "")
         self.assertIn("byline", self.item)
         self.assertEqual(self.item["byline"], "Fredrik Sandberg/TT")
@@ -60,6 +62,7 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
         self.assertIn("mimetype", self.item)
 
     def test_external_id_and_description(self):
+        # This should be the picture association's URI
         self.assertEqual(
             self.item["uri"],
             "http://tt.se/media/image/sdlr1tDM7WXjoU-crop_w2264_h1273_x522_y789",
@@ -67,3 +70,8 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
 
     def test_associations_removed(self):
         self.assertNotIn("associations", self.item)
+
+    def test_versioncreated_absent_for_picture_items(self):
+        """Picture items should not set versioncreated; timestamp comes from parent text item."""
+        self.assertEqual(self.item.get("type"), "picture")
+        self.assertNotIn("versioncreated", self.item)

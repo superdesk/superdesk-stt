@@ -1,18 +1,8 @@
-# -*- coding: utf-8; -*-
-#
-# This file is part of Superdesk.
-#
-# Copyright 2013,
-# 2014 Sourcefabric z.u. and contributors.
-#
-# For the full copyright and license information, please see the
-# AUTHORS and LICENSE files distributed with this source code, or
-# at https://www.sourcefabric.org/superdesk/license
-
 from __future__ import annotations
 
 import json
 from typing import Any, Dict, Optional, Tuple
+import requests
 
 from dateutil import tz
 from dateutil.parser import isoparse
@@ -22,9 +12,11 @@ from superdesk import get_resource_service
 from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import sanitize_html
-from superdesk.utc import local_to_utc
 
 TIMEZONE = "Europe/Helsinki"
+
+IGNORE_REMOTE_IMAGES = False  # Only ignore when public URL is not accessible
+IMAGE_CHECK_TIMEOUT = 2  # seconds
 
 # Controlled Vocabulary id used in Superdesk for STT departments
 STT_DEPT_VOCAB_ID = "stt_department_categories"
@@ -71,6 +63,145 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         super().__init__()
         self.is_sport_item = False
 
+    def _transform_from_stt_tt_ninjs(self, ninjs: Dict[str, Any]) -> Dict[str, Any]:
+        """Backward-compat alias used by older code paths."""
+        return self._transform_from_ninjs(ninjs)
+
+    def _parse_dt_safe(self, value: Optional[str]):
+        """Parse ISO datetime safely; return aware datetime in UTC when possible."""
+        if not value:
+            return None
+        try:
+            dt = isoparse(value)
+            if dt.tzinfo is None:
+                return dt.replace(tzinfo=tz.gettz(TIMEZONE)).astimezone(tz.UTC)
+            return dt.astimezone(tz.UTC)
+        except Exception:
+            return None
+
+    def _cap_versioncreated_to_parent(
+        self, item: Dict[str, Any], ninjs: Dict[str, Any]
+    ) -> None:
+        """Ensure versioncreated is not later than the related text item's timestamp.
+        Looks at ninjs.associations for text/article items and clamps versioncreated.
+        """
+        associations = ninjs.get("associations") or {}
+
+        # Collect candidate parent text timestamps
+        candidates = []
+
+        def collect(obj: Any):
+            if isinstance(obj, dict):
+                t = obj.get("type") or obj.get("profile")
+                if t in {"text", "article"}:
+                    for key in ("versioncreated", "firstcreated", "pubdate", "created"):
+                        cand = self._parse_dt_safe(obj.get(key))
+                        if cand:
+                            candidates.append(cand)
+            elif isinstance(obj, list):
+                for it in obj:
+                    collect(it)
+
+        for v in associations.values():
+            collect(v)
+
+        if not candidates:
+            return
+
+        parent_dt = min(candidates)
+
+        # Parse current item's versioncreated
+        current_vc = item.get("versioncreated")
+        if isinstance(current_vc, str):
+            current_dt = self._parse_dt_safe(current_vc)
+        else:
+            current_dt = current_vc
+
+        if current_dt and parent_dt and current_dt > parent_dt:
+            item["versioncreated"] = parent_dt
+
+    def _url_ok(self, url: str) -> bool:
+        """Return True if URL is publicly accessible (HTTP 200). Uses HEAD then GET fallback."""
+        if not url or not isinstance(url, str) or not url.startswith("http"):
+            return False
+        try:
+            resp = requests.head(
+                url,
+                allow_redirects=True,
+                timeout=IMAGE_CHECK_TIMEOUT,
+                headers={"User-Agent": "Superdesk-STT/1.0", "Accept": "image/*"},
+            )
+            if resp.status_code == 405:  # some hosts disallow HEAD
+                resp = requests.get(
+                    url,
+                    stream=True,
+                    allow_redirects=True,
+                    timeout=IMAGE_CHECK_TIMEOUT,
+                    headers={"User-Agent": "Superdesk-STT/1.0", "Accept": "image/*"},
+                )
+            return resp.status_code == 200
+        except Exception:
+            return False
+
+    def _filter_remote_images(self, ninjs: Dict[str, Any]) -> Dict[str, Any]:
+        """Filter associations/links/renditions to only those with publicly accessible URLs."""
+        out = dict(ninjs)
+
+        # Associations (keep only images with at least one 200 URL)
+        assocs = ninjs.get("associations") or {}
+        if assocs:
+            kept = {}
+            for key, obj in assocs.items():
+                t = (obj or {}).get("type") or (obj or {}).get("profile")
+                if t in {"image", "picture", "graphic"}:
+                    # collect candidate URLs
+                    urls = []
+                    for ro in (obj.get("renditions") or {}).values():
+                        href = (ro or {}).get("href")
+                        if href:
+                            urls.append(href)
+                    for lk in obj.get("links") or []:
+                        href = (lk or {}).get("href")
+                        if href:
+                            urls.append(href)
+                    ok = any(self._url_ok(u) for u in urls)
+                    if ok:
+                        kept[key] = obj
+                else:
+                    kept[key] = obj
+            if kept:
+                out["associations"] = kept
+            else:
+                out.pop("associations", None)
+
+        # Top-level links
+        links = ninjs.get("links") or []
+        if links:
+            new_links = []
+            for lk in links:
+                href = (lk or {}).get("href")
+                if not href or self._url_ok(href):
+                    new_links.append(lk)
+            if new_links:
+                out["links"] = new_links
+            else:
+                out.pop("links", None)
+
+        # Top-level renditions
+        rends = ninjs.get("renditions") or {}
+        if rends:
+            new_rends = {}
+            for name, ro in rends.items():
+                href = (ro or {}).get("href")
+                if not href or self._url_ok(href):
+                    new_rends[name] = ro
+            if new_rends:
+                out["renditions"] = new_rends
+            else:
+                out.pop("renditions", None)
+
+        return out
+
     # --------- Core overrides ---------
 
     def can_parse(self, file_path: str) -> bool:
@@ -103,8 +234,19 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
             or ninjs_local.get("body")
         )
 
+        if IGNORE_REMOTE_IMAGES:
+            ninjs_for_parent = dict(ninjs_local)
+            ninjs_for_parent.pop("associations", None)
+            ninjs_for_parent.pop("links", None)
+            ninjs_for_parent.pop("renditions", None)
+        else:
+            ninjs_for_parent = self._filter_remote_images(ninjs_local)
+
         # First, let parent build a standard Superdesk item (ids, qcodes, dates...)
-        item = super()._transform_from_ninjs(ninjs_local)
+        item = super()._transform_from_ninjs(ninjs_for_parent)
+
+        # Clamp versioncreated so it never exceeds the parent text item's timestamp
+        self._cap_versioncreated_to_parent(item, ninjs_local)
 
         # --- HTML sanitize/normalize
         item["body_html"] = self.sanitise_stt_tt_html(raw_html)
@@ -178,8 +320,8 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         if description:
             item["description_text"] = description
 
-        # After mapping, you can remove associations to reduce payload size
-        item.pop("associations", None)
+        if IGNORE_REMOTE_IMAGES:
+            item.pop("associations", None)
 
         return item
 
@@ -214,29 +356,24 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         code = str(tt_code).strip().upper()
         return _DEPARTMENT_MAP.get(code, _DEFAULT_DEPT)
 
-    def datetime(self, value: Optional[str]) -> Optional[str]:
+    def datetime(self, value: Optional[str]) -> Optional[Any]:
         """
-        Convert incoming datetime to UTC ISO:
-        - If value has tz -> keep then convert
-        - If naive -> treat as Europe/Helsinki, then convert
-        Return ISO string in UTC or None.
+        Parse incoming datetime to a tz-aware UTC datetime object.
+        - If value has tz -> normalize to UTC
+        - If naive -> treat as Europe/Helsinki, then convert to UTC
+        Return a datetime or None.
         """
         if not value:
             return None
+        try:
+            dt = isoparse(value)
+        except Exception:
+            return None
 
-        dt = isoparse(value)
         local_tz = tz.gettz(TIMEZONE)
         if dt.tzinfo is None:
-            if not local_tz:
-                return value  # fallback, parent might handle
-            dt = dt.replace(tzinfo=local_tz)
-        else:
-            # normalize through TIMEZONE for local_to_utc helper
-            if local_tz and dt.tzinfo != local_tz:
-                dt = dt.astimezone(local_tz)
-
-        dt_utc = local_to_utc(TIMEZONE, dt)
-        return dt_utc.isoformat()
+            dt = dt.replace(tzinfo=local_tz or tz.UTC)
+        return dt.astimezone(tz.UTC)
 
     def sanitise_stt_tt_html(self, html: Optional[str]) -> str:
         """
@@ -259,6 +396,9 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
             "div",
             "h4",
         ]
+        if IGNORE_REMOTE_IMAGES:
+            remove_tags.extend(["img", "figure", "picture", "source"])
+
         kill_tags = ["head"]
 
         root_elem = lxml_html.fromstring(html)
