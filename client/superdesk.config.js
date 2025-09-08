@@ -283,6 +283,28 @@ module.exports = function (grunt) {
           ],
         },
       },
+
+      assignment_list_item: {
+        firstLine: [
+          {fieldId: 'slugline'},
+          {fieldId: 'description_text'},
+        ],
+        secondLine: [
+          {fieldId: 'priority'},
+          {fieldId: 'state'},
+          {fieldId: 'accepted'},
+          {fieldId: 'content'},
+          {fieldId: 'internal'},
+          {fieldId: 'headline'},
+          {fieldId: 'name'},
+          {fieldId: 'due_date'},
+          {fieldId: 'desk'},
+          {fieldId: 'genre'},
+          {fieldId: 'language'},
+          {fieldId: 'vocabulary', vocabularyId: 'sttsource'},
+          {fieldId: 'anpa_category'},
+        ],
+      },
     },
   };
 }
