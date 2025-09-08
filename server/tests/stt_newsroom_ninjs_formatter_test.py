@@ -1,6 +1,7 @@
 from tests import TestCase
 from stt.stt_newsroom_ninjs_formatter import STTNewsroomNinjsFormatter
 
+
 class STTNewsroomNinjsFormatterTest(TestCase):
     fixture = "stt_newsml_creditline_test.xml"
     add_stt_cvs = True
@@ -10,7 +11,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         subscriber = {
             "_id": "test_subscriber",
             "name": "Test Subscriber",
-            "destinations": [{"format": "stt newsroom ninjs"}]
+            "destinations": [{"format": "stt newsroom ninjs"}],
         }
         formatter = STTNewsroomNinjsFormatter()
         ninjs = await formatter._transform_to_ninjs(self.item, subscriber)
@@ -18,11 +19,11 @@ class STTNewsroomNinjsFormatterTest(TestCase):
 
     async def test_source_formatting_no_sources_fallback(self):
         await self.parse_source_content()
-        self.item["subject"] = []  
+        self.item["subject"] = []
         subscriber = {
             "_id": "test_subscriber",
             "name": "Test Subscriber",
-            "destinations": [{"format": "stt newsroom ninjs"}]
+            "destinations": [{"format": "stt newsroom ninjs"}],
         }
         formatter = STTNewsroomNinjsFormatter()
         ninjs = await formatter._transform_to_ninjs(self.item, subscriber)
@@ -38,9 +39,8 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         subscriber = {
             "_id": "test_subscriber",
             "name": "Test Subscriber",
-            "destinations": [{"format": "stt newsroom ninjs"}]
+            "destinations": [{"format": "stt newsroom ninjs"}],
         }
         formatter = STTNewsroomNinjsFormatter()
         ninjs = await formatter._transform_to_ninjs(self.item, subscriber)
         self.assertEqual(ninjs["source"], "STT, AFP")
-
