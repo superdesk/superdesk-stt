@@ -157,20 +157,6 @@ module.exports = function (grunt) {
         },
       },
     },
-    /* configuration of assignments view */
-    assignmentsList: {
-      firstLine: ["slugline", "name"],
-      secondLine: [
-        "priority",
-        "state",
-        "accepted",
-        "content",
-        "internal",
-        "due_date",
-        "desk",
-        "genre",
-      ],
-    },
 
     /* display alternative labels for some stings */
     langOverride: {
@@ -301,7 +287,7 @@ module.exports = function (grunt) {
           {fieldId: 'desk'},
           {fieldId: 'genre'},
           {fieldId: 'language'},
-          {fieldId: 'vocabulary', vocabularyId: 'sttsource'},
+          //{fieldId: 'vocabulary', vocabularyId: 'sttsource'},
           {fieldId: 'anpa_category'},
         ],
       },
