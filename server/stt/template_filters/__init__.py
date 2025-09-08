@@ -1,5 +1,5 @@
 """
-Register two custom Jinja filters – fi_date and fi_time – so they are
+Register custom Jinja filters – fi_date, fi_time and fi_ddmm – so they are
 available in every template rendered by Superdesk.
 """
 
@@ -46,6 +46,14 @@ def fi_time(value: str) -> str:
     return dt.strftime("%H:%M")
 
 
+def fi_ddmm(value: str) -> str:
+    dt = _to_helsinki(value)
+    if not dt:
+        return ""
+    return f"{dt.day:02d}.{dt.month:02d}."
+
+
 def init_app(app):
     app.jinja_env.filters["fi_date"] = fi_date
     app.jinja_env.filters["fi_time"] = fi_time
+    app.jinja_env.filters["fi_ddmm"] = fi_ddmm
