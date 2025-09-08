@@ -28,3 +28,9 @@ updates:
     target-branch: "next"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/client"
+    target-branch: "next-async"
+    schedule:
+      interval: "daily"
