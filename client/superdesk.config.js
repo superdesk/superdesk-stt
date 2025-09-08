@@ -287,7 +287,7 @@ module.exports = function (grunt) {
           {fieldId: 'desk'},
           {fieldId: 'genre'},
           {fieldId: 'language'},
-          //{fieldId: 'vocabulary', vocabularyId: 'sttsource'},
+          {fieldId: 'vocabulary', fieldOptions: {vocabularyId: 'sttsource'}},
           {fieldId: 'anpa_category'},
         ],
       },
