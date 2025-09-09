@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timezone
-import hashlib
 from dateutil.parser import parse as dtparse
 from superdesk.io.registry import register_feed_parser
 from superdesk.etree import etree
@@ -106,17 +105,14 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                 "Identification/NewsIdentifier/PublicIdentifier"
             )
             news_item_id = selected.findtext("Identification/NewsIdentifier/NewsItemId")
-            if public_id:
-                guid_value = f"urn:stt:info-porssi:{public_id}"
-            elif news_item_id:
-                guid_value = f"urn:stt:info-porssi:{news_item_id}"
-            else:
-                guid_value = (
-                    "urn:stt:info-porssi:"
-                    + hashlib.sha1(
-                        etree.tostring(selected, encoding="utf-8")
-                    ).hexdigest()
+            identifier = public_id or news_item_id
+            if not identifier:
+                raise ParserError.parseMessageError(
+                    Exception("Missing PublicIdentifier and NewsItemId in NewsML data"),
+                    provider,
+                    data=etree.tostring(selected, encoding="unicode"),
                 )
+            guid_value = f"urn:stt:info-porssi:{identifier}"
 
             body = self.get_body(selected)
 
