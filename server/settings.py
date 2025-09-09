@@ -133,6 +133,7 @@ INSTALLED_APPS = [
     "stt.stt_events_ml",
     "stt.stt_planning_ml",
     "stt.stt_info_porssi",
+    "stt.stt_parse_lottery_veikkaus",
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
     "planning",
@@ -143,6 +144,9 @@ INSTALLED_APPS = [
     "stt.search_providers.newshub",
     "stt.ai_proxy",
     "stt.paivalista_filters",
+    "stt.template_filters",
+    "stt.paivalista_export",
+    "stt.lupaus_export",
     "stt.io.feed_parsers.stt_events_csv_parse",
 ]
 
