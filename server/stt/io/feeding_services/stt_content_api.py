@@ -2,10 +2,11 @@ from __future__ import annotations
 
 
 import logging
-import time
 from datetime import datetime
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from superdesk.errors import IngestApiError, ParserError
 from superdesk.io.registry import register_feeding_service
@@ -21,6 +22,8 @@ DEFAULT_TIMEOUT = 30
 # Maximum number of retries for transient errors (429/5xx)
 MAX_RETRIES = 3
 # Base seconds for exponential backoff (1, 2, 4, ...)
+
+
 BACKOFF_BASE = 1.0
 
 
@@ -57,8 +60,28 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
     def __init__(self):
         super().__init__()
-        # Lazily create a requests.Session when enabled via provider config
         self._session: Optional[requests.Session] = None
+        try:
+            self._session = requests.Session()
+            # Configure automatic retries on the session (built-in urllib3 retries)
+            # urllib3 Retry.total counts *retries* (attempts = retries + 1), so we subtract 1
+            _retry_total = MAX_RETRIES - 1 if MAX_RETRIES > 0 else 0
+            _retry = Retry(
+                total=_retry_total,
+                connect=_retry_total,
+                read=_retry_total,
+                status=_retry_total,
+                backoff_factor=BACKOFF_BASE,
+                status_forcelist={429, *range(500, 600)},
+                allowed_methods=frozenset({"HEAD", "GET", "OPTIONS"}),
+                respect_retry_after_header=True,
+                raise_on_status=False,
+            )
+            _adapter = HTTPAdapter(max_retries=_retry)
+            self._session.mount("http://", _adapter)
+            self._session.mount("https://", _adapter)
+        except Exception:
+            self._session = None  # fallback to plain requests in _get_with_retry
 
     # ------------------------------ helpers ------------------------------
 
@@ -89,21 +112,13 @@ class STTContentAPIService(HTTPFeedingServiceBase):
             )
         return url, api_key
 
-    def _ensure_session_if_enabled(self, provider) -> None:
-        """Create a session if provider config sets use_session=True."""
-        cfg = (provider or {}).get("config") or {}
-        if cfg.get("use_session") and self._session is None:
-            try:
-                self._session = requests.Session()
-            except Exception:
-                # Fallback silently to plain requests if session cannot be created
-                self._session = None
-
     def _build_params(self, since_iso: str, page: int) -> Dict[str, Any]:
         params: Dict[str, Any] = {
             "page": page,
         }
         return params
+
+    # Always use a shared requests.Session for connection reuse; no provider toggle needed.
 
     # ------------------------------ HTTP helpers ------------------------------
 
@@ -114,71 +129,13 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         headers: Dict[str, str],
         params: Optional[Dict[str, Any]] = None,
         timeout: int = DEFAULT_TIMEOUT,
-    ):
-        """Perform GET with simple retry/backoff for 429/5xx responses.
+    ) -> requests.Response:
+        """Perform GET using a Session configured with urllib3 automatic retries.
 
-        Keeps using requests.get to preserve existing test mocks.
+        Retries/backoff/status handling are managed by HTTPAdapter/Retry.
         """
-        last_exc: Optional[Exception] = None
-        for attempt in range(1, MAX_RETRIES + 1):
-            try:
-                client = self._session if self._session is not None else requests
-                resp = client.get(url, headers=headers, params=params, timeout=timeout)
-                status = getattr(resp, "status_code", None)
-                # Successful or non-retryable status
-                if status is None or status < 400:
-                    return resp
-                # Retry on 429 and 5xx
-                if status == 429 or 500 <= status < 600:
-                    # Compute delay
-                    retry_after = (
-                        resp.headers.get("Retry-After")
-                        if hasattr(resp, "headers")
-                        else None
-                    )
-                    delay: float
-                    if retry_after:
-                        try:
-                            delay = float(retry_after)
-                        except Exception:
-                            delay = BACKOFF_BASE * (2 ** (attempt - 1))
-                    else:
-                        delay = BACKOFF_BASE * (2 ** (attempt - 1))
-                    logger.warning(
-                        "GET %s failed with %s, retrying in %.1fs (attempt %d/%d)",
-                        url,
-                        status,
-                        delay,
-                        attempt,
-                        MAX_RETRIES,
-                    )
-                    time.sleep(delay)
-                    last_exc = None
-                    continue
-                # Other 4xx: no retry
-                return resp
-            except Exception as ex:  # network error
-                last_exc = ex
-                if attempt < MAX_RETRIES:
-                    delay = BACKOFF_BASE * (2 ** (attempt - 1))
-                    logger.warning(
-                        "GET %s raised %s, retrying in %.1fs (attempt %d/%d)",
-                        url,
-                        type(ex).__name__,
-                        delay,
-                        attempt,
-                        MAX_RETRIES,
-                    )
-                    time.sleep(delay)
-                else:
-                    break
-        # Give up after retries
-        if last_exc:
-            raise last_exc
-        # If we ended here without an exception, it means the last response
-        # had a retryable status but retries exhausted; raise for status now.
-        resp.raise_for_status()
-        return resp
+        client = self._session if self._session is not None else requests
+        return client.get(url, headers=headers, params=params, timeout=timeout)
 
     # ------------------------------ lifecycle ------------------------------
 
@@ -190,7 +147,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         # because self.provider may not be set yet by the framework
         url, api_key = self._get_config(provider)
         headers = self._headers(api_key)
-        self._ensure_session_if_enabled(provider)
         # Small request to validate; reuses retry helper for robustness
         response = self._get_with_retry(url, headers=headers, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
@@ -249,7 +205,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         logger.debug("Fetching data from Content API ...")
         url, api_key = self._get_config(provider)
         headers = self._headers(api_key)
-        self._ensure_session_if_enabled(provider)
 
         logger.info(
             "Starting Content API fetch from %s (since: %s)",
