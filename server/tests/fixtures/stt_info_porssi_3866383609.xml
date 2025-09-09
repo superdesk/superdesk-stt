@@ -1,0 +1,112 @@
+<NewsML Version="1.2" xmlns="http://iptc.org/std/NewsML/2003-10-10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/NewsML/2003-10-10/ https://www.iptc.org/std/NewsML/1.2/specification/NewsML_1.2-xmlschema_4.xsd"><NewsEnvelope><DateAndTime>20240603T100002+0300</DateAndTime><NewsProduct FormalName="nordicir.com"/></NewsEnvelope><NewsItem><Identification><NewsIdentifier><ProviderId>nordicir.com</ProviderId><DateId>20240603</DateId><NewsItemId>stt:announcement:8067-fi</NewsItemId><RevisionId PreviousRevision="0" Update="N">1</RevisionId><PublicIdentifier>urn:newsml:nordicir.com:20240603:stt:announcement:8067-fi:1</PublicIdentifier></NewsIdentifier></Identification><NewsManagement><NewsItemType FormalName="News"/><FirstCreated>20240603T100001+0300</FirstCreated><ThisRevisionCreated>20240603T100001+0300</ThisRevisionCreated><Status FormalName="Usable"/><Urgency FormalName="4"/></NewsManagement><NewsComponent><NewsLines><HeadLine>LapWall Oyj:n Arvopaperimarkkinalain 9 luvun 10 pykälän mukainen ilmoitus omistusosuudesta (Timo Pekkarinen)</HeadLine><DateLine>3.6.2024 10:00:01 EEST</DateLine><ByLine>LapWall Oyj</ByLine></NewsLines><AdministrativeMetadata><Source><Party FormalName="LapWall Oyj"/></Source></AdministrativeMetadata><DescriptiveMetadata><Language FormalName="fi"/><Property FormalName="Country" Value="FI"/></DescriptiveMetadata><Metadata><MetadataType FormalName="Securities Identifier"/><Property FormalName="Exchange" Value="First North Finland"/><Property FormalName="Message Category" Value="Yhtiötiedote"/><Property FormalName="Message Category ID" Value="108"/><Property FormalName="ISIN" Value="FI4000511597"/><Property FormalName="Regulatory" Value="true"/></Metadata><Metadata><MetadataType FormalName="Websites"/><Property FormalName="nordicAgencyWebsite" Value="https://www.sttinfo.fi/announcement/8067?lang=fi"/></Metadata><ContentItem Euid="announcement_html"><MimeType FormalName="text/html"/><DataContent><![CDATA[<p class="prs-announcement__byline">3.6.2024 10:00:01 EEST | LapWall Oyj |
+    Yhtiötiedote</p>
+<p>LapWall Oyj on vastaanottanut 31.5.2024 liputusilmoituksen, jonka mukaan Timo Pekkarisen omistamien osakkeiden määrä LapWall Oyj:n kaikista osakkeista ylittää 15 prosentin rajan. Timo Pekkarisen omistusosuus on ylittänyt liputusrajan ennen 19.4.2024.</p>
+<p>Liputusilmoitus tiedotetaan takautuvasti, koska Eduskunta on 12.4.2024 hyväksynyt hallituksen esityksen laiksi arvopaperimarkkinalain muuttamisesta (HE 3/2024 vp), jonka mukaan arvopaperimarkkinalain (746/2012) huomattavien omistus- ja ääniosuuksien ilmoittaminen sekä julkista ostotarjousta ja tarjousvelvollisuutta koskevien säännösten soveltamisala laajennetaan säännellyn markkinan ohella monenkeskiseen kaupankäyntijärjestelmään.</p>
+<p>Timo Pekkarisen osuudet ilmoituksen mukaan:</p>
+<table class="prs-table">
+<tr>
+<td>
+<p> </p>
+</td>
+<td>
+<p><strong>% osakkeista ja äänistä</strong></p>
+</td>
+<td>
+<p><strong>% osakkeista ja äänistä rahoitusvälineiden kautta</strong></p>
+</td>
+<td>
+<p><strong>Yhteenlaskettu %-osuus</strong></p>
+</td>
+<td>
+<p><strong>Kohdeyhtiön osakkeiden ja äänten kokonaismäärä</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Osuus liputusrajan saavuttamisen tai rikkoutumisen jälkeen</p>
+</td>
+<td>
+<p> 15,46 %</p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>  15,46 %</p>
+</td>
+<td>
+<p>14 525 518</p>
+</td>
+</tr>
+<tr>
+<td rowspan="2">
+<p><strong>Osakesarja / osakelaji</strong><strong><br /></strong>ISIN-koodi (jos mahdollista)</p>
+</td>
+<td colspan="2">
+<p><strong>Osakkeiden ja äänten lukumäärä</strong></p>
+</td>
+<td colspan="2">
+<p><strong>Osakkeiden ja äänten %-osuus</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Suora</strong></p>
+<p>(AML 9:5)</p>
+</td>
+<td>
+<p><strong>Välillinen</strong></p>
+<p>(AML 9:6 ja 9:7)</p>
+</td>
+<td>
+<p><strong>Suora</strong></p>
+<p>(AML 9:5)</p>
+</td>
+<td>
+<p><strong>Välillinen</strong></p>
+<p>(AML 9:6 ja 9:7)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>FI4000511597</p>
+</td>
+<td>
+<p>2 245 000</p>
+</td>
+<td>
+<p> </p>
+</td>
+<td>
+<p>  15,46 %</p>
+</td>
+<td>
+<p> </p>
+</td>
+</tr>
+</table>
+<h4>Yhteyshenkilöt</h4>
+<ul>
+    <li>
+        Jarmo Pekkarinen, Toimitusjohtaja, 040 532 5694, <a
+            href="mailto:jarmo.pekkarinen@lapwall.fi">jarmo.pekkarinen@lapwall.fi</a>
+    </li>
+    <li>
+        Tuomo Riihonen, Talousjohtaja, 050 371 4099, <a
+            href="mailto:tuomo.riihonen@lapwall.fi">tuomo.riihonen@lapwall.fi</a>
+    </li>
+    <li>
+        一 Hyväksytty neuvonantaja, Sisu Partners Oy, 040 555 4727
+    </li>
+</ul>
+<h4>Tietoja julkaisijasta LapWall Oyj</h4>
+<p>LapWall on suomalainen puuelementoinnin suunnannäyttäjä. LapWall on siirtänyt merkittävän osan perinteisestä rakennustyömaalla tapahtuvasta rakentamisesta tehdasolosuhteissa tapahtuvaan valmistukseen. LapWallin tehtaat sijaitsevat Pyhännällä, Pälkäneellä ja Vetelissä. LAPWALL LEKO® -tuotevalikoimassa on yli 50 vakiotuotetta, jotka asiakas saa toimitettuna ja asennettuna. LAPWALL LEKO® -elementointijärjestelmä lyhentää työmaan läpimenoaikaa, takaa aukottoman kuivaketjun prosessin kaikissa vaiheissa sekä pienentää ympäristölle aiheutuvia hiilidioksidipäästöjä radikaalisti. Yhtiön strategiana ja tavoitteena on hiilinegatiivisen liiketoiminnan kehittäminen materiaalitehokkuuden, tuotantomenetelmien ja digitaalisuuden keinoin. Yhtiö tavoittelee merkittävää orgaanista kasvua tavoitteenaan ylläpitää vahvaa kannattavuutta pitkällä aikavälillä. LapWallin liikevaihto vuodelta 2023 oli 41,9 miljoonaa euroa ja käyttökate (EBITDA) oli 5,3 miljoonaa euroa. </p>
+<p><a href="http://www.lapwall.fi/sijoittajille">www.lapwall.fi/sijoittajille</a> </p>
+<p></p>
+<h4>Liitteet</h4>
+<ul>
+    <li>
+        <a href="https://www.sttinfo.fi/ir-files/69818894/8067/9311/Lataa%20tiedote%20pdf-muodossa.pdf">Lataa tiedote pdf-muodossa.pdf</a>
+    </li>
+</ul>
+]]></DataContent></ContentItem><ContentItem Euid="announcement_pdf" Href="https://www.sttinfo.fi/announcement-api/public/v1/pdf/8067/fi"><MimeType FormalName="application/pdf"/></ContentItem><ContentItem Href="https://www.sttinfo.fi/ir-files/69818894/8067/9311/Lataa%20tiedote%20pdf-muodossa.pdf"><MimeType FormalName="application/pdf"/><Characteristics><SizeInBytes>84053</SizeInBytes><Property FormalName="Title" Value="Lataa tiedote pdf-muodossa.pdf"/></Characteristics></ContentItem></NewsComponent></NewsItem></NewsML>
