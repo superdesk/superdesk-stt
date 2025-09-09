@@ -49,12 +49,14 @@ class BusinessWireParser(NewsMLOneFeedParser):
         if byline:
             item["byline"] = byline.strip()
 
-        # Extract Dateline
+        # Extract Dateline (Superdesk expects an object with a text field)
         dateline = xml.findtext(
             "NewsItem/NewsComponent/NewsComponent/NewsLines/DateLine"
         )
         if dateline:
-            item["dateline"] = dateline.strip()
+            txt = dateline.strip()
+            if txt:
+                item["dateline"] = {"text": txt}
 
         components = xml.findall("NewsItem/NewsComponent/NewsComponent/NewsComponent")
         for component in components:

@@ -5,8 +5,19 @@
     "name": "paivalista_events_list",
     "type": "event",
     "data": {
-      "body_html_template": "paivalista_events_template.html"
+      "body_html_template": "paivalista_events_template.html",
+      "headline_template": "paivalista_events_headline.html"
     },
-    "label": "Päivälista events Template"
+    "label": "Päivälista Template"
+  },
+  {
+    "_id": "lupaus_list",
+    "init_version": 1,
+    "name": "lupaus_list",
+    "type": "planning",
+    "data": {
+      "body_html_template": "lupaus_events_template.html"
+    },
+    "label": "Lupaus Template"
   }
 ]

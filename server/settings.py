@@ -132,6 +132,7 @@ INSTALLED_APPS = [
     "stt.stt_tt_ninjs",
     "stt.stt_events_ml",
     "stt.stt_planning_ml",
+    "stt.stt_parse_lottery_veikkaus",
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
     "planning",
@@ -141,8 +142,10 @@ INSTALLED_APPS = [
     "stt.macros",
     "stt.search_providers.newshub",
     "stt.ai_proxy",
-    "stt.paivalista_filters",
     "stt.stt_ntb_ninjs_parse",
+    "stt.template_filters",
+    "stt.paivalista_export",
+    "stt.lupaus_export",
     "stt.io.feed_parsers.stt_events_csv_parse",
 ]
 

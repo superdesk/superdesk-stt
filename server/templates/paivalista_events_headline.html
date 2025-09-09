@@ -1,0 +1,5 @@
+{% set first_start = (items
+  | selectattr('dates','defined')
+  | selectattr('dates.start','defined')
+  | map(attribute='dates.start') | list | sort | first) %}
+Päivälista {{ first_start|fi_ddmm if first_start else '' }}
