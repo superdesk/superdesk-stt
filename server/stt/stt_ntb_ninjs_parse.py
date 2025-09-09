@@ -1,6 +1,5 @@
 import json
 import logging
-from functools import lru_cache
 from datetime import timezone
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -24,7 +23,6 @@ logger = logging.getLogger(__name__)
 # ----------------------------- Helpers -------------------------------------
 
 
-@lru_cache(maxsize=16)
 def _load_cv(path: str) -> List[Dict[str, Any]]:
     """Load **active** items from a Superdesk vocabulary.
 

@@ -1,4 +1,5 @@
 import os
+import json
 
 from tests import TestCase
 
@@ -77,8 +78,8 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert _cv_lookup(cv_items, "") is None
 
     def test_fixture_structure(self):
-        """Test that the fixture file has the expected structure."""
-        # Test that the parsed item has the expected structure from the JSON fixture
+        """Test that the fixture file has the expected structure and mappings."""
+        # Basic structure from parsed item
         assert self.item["type"] == "text"
         assert (
             self.item["headline"]
@@ -86,10 +87,51 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         )
         assert self.item["byline"] == "Jecaterina Mantsinen"
         assert self.item["slugline"] == "test-imatrics"
-        # Test that subject data from fixture is present
-        assert "subject" in self.item or "anpa_category" in self.item
 
-        # Test that specific content from the JSON fixture is present
+        # --- Verify qcode mapping correctness (subject & anpa_category) ---
+        # subject/anpa_category must both exist and contain qcodes
+        subjects = self.item.get("subject") or []
+        anpa = self.item.get("anpa_category") or []
+
+        def _extract_qcodes(val):
+            if isinstance(val, dict):
+                val = [val]
+            if not isinstance(val, list):
+                return set()
+            return {
+                x.get("qcode") for x in val if isinstance(x, dict) and x.get("qcode")
+            }
+
+        subject_qcodes = _extract_qcodes(subjects)
+        anpa_qcodes = _extract_qcodes(anpa)
+
+        assert subject_qcodes, "subject should contain qcodes (non-empty)"
+        assert anpa_qcodes, "anpa_category should contain qcodes (non-empty)"
+
+        # Verify that anpa_category is populated from subjects with scheme="category"
+        # The parser maps subjects with scheme="category" to anpa_category via vocabulary lookup
+        # so we expect anpa_category to be populated when such subjects exist
+        category_subjects = [
+            s for s in subjects if isinstance(s, dict) and s.get("scheme") == "category"
+        ]
+        if category_subjects:
+            assert (
+                anpa_qcodes
+            ), "anpa_category should be populated when subjects with scheme='category' exist"
+
+        # Optionally, validate against raw fixture: all fixture subject qcodes should be present in parsed subject
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture_path = os.path.join(dirname, "fixtures", self.fixture)
+        with open(fixture_path, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+        raw_subject_qcodes = _extract_qcodes(raw.get("subject"))
+        if raw_subject_qcodes:
+            assert raw_subject_qcodes.issubset(subject_qcodes), (
+                f"Parsed subject qcodes {subject_qcodes} should include "
+                f"fixture qcodes {raw_subject_qcodes}"
+            )
+
+        # --- Body content from fixture is present after sanitization ---
         body_html = self.item.get("body_html", "")
         assert "Norway" in body_html and "food prices" in body_html
         assert "NorgesGruppen" in body_html
