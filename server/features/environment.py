@@ -92,10 +92,11 @@ def setup_stt_providers(context):
             _construct_file_ingest_provider("STTEventsML", "stteventsml"),
             _construct_file_ingest_provider("STTPlanningML", "sttplanningml"),
             _construct_file_ingest_provider("BusinessWireParser", "businesswire"),
+            _construct_file_ingest_provider("STTInfoPorssi", "sttinfoporssi"),
         ]
-
         result = get_resource_service("ingest_providers").post(providers)
         context.providers["sttnewsmlnewsroom"] = result[0]
         context.providers["stteventsml"] = result[1]
         context.providers["sttplanningml"] = result[2]
-        context.providers["businesswire"] = result[3]
+        context.providers["sttinfoporssi"] = result[3]
+        context.providers["businesswire"] = result[4]
