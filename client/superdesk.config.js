@@ -70,8 +70,8 @@ module.exports = function (grunt) {
         closeAndContinue: false /* save, close, and update */,
 
         sendAndDuplicate: {
-          deskName: 'test',
-          stageName: 'Working',
+          deskName: 'Deski',
+          stageName: 'Incoming Stage',
         },
       },
       confirmDueDate: true /* confirm due date */,
