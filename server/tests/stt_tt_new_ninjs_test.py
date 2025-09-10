@@ -32,11 +32,9 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
             "I somras skedde två rasistiskt motiverade knivdåd på ett köpcentrum i Uleåborg, med bara några dagars mellanrum. Arkivbild.",
         )
         self.assertIn("source", self.item)
-        self.assertIn("desk", self.item)
         self.assertIn("extra", self.item)
         self.assertIn("stt_meta", self.item["extra"])
         self.assertEqual(self.item["source"], "TT")
-        self.assertEqual(self.item["desk"], "Ulkomaat")
 
         # Picture items without sector fall back to default department (Kotimaa)
         self.assertEqual(self.item["extra"]["stt_meta"]["department_id"], 3)
@@ -53,7 +51,6 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
         self.assertIn("byline", self.item)
         self.assertEqual(self.item["byline"], "Fredrik Sandberg/TT")
         self.assertEqual(self.item["type"], "picture")
-        # versioncreated is not set by the parser for picture items
 
     def test_item_type_and_version_fields(self):
         self.assertEqual(self.item["type"], "picture")
@@ -75,3 +72,84 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
         """Picture items should not set versioncreated; timestamp comes from parent text item."""
         self.assertEqual(self.item.get("type"), "picture")
         self.assertNotIn("versioncreated", self.item)
+
+    def test_versioncreated_capping_method_directly(self):
+        """Test the _cap_versioncreated_to_parent method directly."""
+        parser = self.parser_class()
+
+        # Test data with text association from fixture
+        ninjs_data = {
+            "associations": {
+                "text_item": {
+                    "type": "text",
+                    "versioncreated": "2024-10-03T14:32:36+02:00",  # From fixture
+                    "uri": "http://tt.se/media/text/241003-finlanduleaborgkniv-9fc4edfa",
+                }
+            }
+        }
+
+        # Item with later versioncreated
+        from dateutil.parser import isoparse
+
+        item = {"versioncreated": isoparse("2024-10-03T16:00:00+02:00")}
+
+        # Call the capping method
+        parser._cap_versioncreated_to_parent(item, ninjs_data)
+
+        # The versioncreated should be capped to the parent text item's timestamp
+        expected_time = isoparse("2024-10-03T14:32:36+02:00")
+        self.assertEqual(item["versioncreated"], expected_time)
+
+    def test_versioncreated_no_capping_when_no_parent(self):
+        """Test that versioncreated is preserved when no parent text item exists."""
+        # Create a picture item without text associations
+        test_data = {
+            "uri": "http://tt.se/media/image/test-picture",
+            "type": "picture",
+            "versioncreated": "2024-10-03T16:00:00+02:00",
+            "associations": {
+                "other_picture": {
+                    "type": "picture",  # Not a text item
+                    "versioncreated": "2024-10-03T14:32:36+02:00",
+                }
+            },
+        }
+
+        parser = self.parser_class()
+        result = parser._transform_from_ninjs(test_data)
+
+        # The versioncreated should remain unchanged since no parent text item exists
+        from dateutil.parser import isoparse
+
+        expected_time = isoparse("2024-10-03T16:00:00+02:00")
+        self.assertEqual(result["versioncreated"], expected_time)
+
+    def test_versioncreated_capping_with_multiple_parent_candidates(self):
+        """Test that versioncreated is capped to the earliest parent text item timestamp."""
+        # Use fixture data as base and add multiple text associations
+        test_data = dict(self.json_data)  # Copy fixture data
+        test_data.update(
+            {
+                "type": "picture",
+                "versioncreated": "2024-10-03T18:00:00+02:00",  # Latest
+                "uri": "http://tt.se/media/image/test-picture",
+            }
+        )
+
+        # Add another text association with earlier timestamp
+        test_data["associations"]["text_item_2"] = {
+            "type": "text",
+            "versioncreated": "2024-10-03T13:00:00+02:00",  # Earlier than fixture
+            "firstcreated": "2024-10-03T12:30:00+02:00",  # Even earlier
+        }
+
+        parser = self.parser_class()
+        result = parser._transform_from_ninjs(test_data)
+
+        # The versioncreated should be capped to the earliest parent text item's timestamp
+        from dateutil.parser import isoparse
+
+        expected_time = isoparse(
+            "2024-10-03T12:30:00+02:00"
+        )  # firstcreated is earliest
+        self.assertEqual(result["versioncreated"], expected_time)

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from typing import Any, Dict, Optional, Tuple
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from dateutil import tz
 from dateutil.parser import isoparse
@@ -61,7 +63,23 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
 
     def __init__(self) -> None:
         super().__init__()
-        self.is_sport_item = False
+        # Reusable HTTP session (connection pooling + retries) for image URL checks
+        self._session = requests.Session()
+        retry = Retry(
+            total=2,  # quick checks; keep small to avoid blocking ingest
+            connect=2,
+            read=2,
+            status=2,
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=frozenset({"HEAD", "GET"}),
+            backoff_factor=0.5,
+            respect_retry_after_header=True,
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        self._session.mount("http://", adapter)
+        self._session.mount("https://", adapter)
+        self._img_headers = {"User-Agent": "Superdesk-STT/1.0", "Accept": "image/*"}
 
     def _transform_from_stt_tt_ninjs(self, ninjs: Dict[str, Any]) -> Dict[str, Any]:
         """Backward-compat alias used by older code paths."""
@@ -125,19 +143,19 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         if not url or not isinstance(url, str) or not url.startswith("http"):
             return False
         try:
-            resp = requests.head(
+            resp = self._session.head(
                 url,
                 allow_redirects=True,
                 timeout=IMAGE_CHECK_TIMEOUT,
-                headers={"User-Agent": "Superdesk-STT/1.0", "Accept": "image/*"},
+                headers=self._img_headers,
             )
             if resp.status_code == 405:  # some hosts disallow HEAD
-                resp = requests.get(
+                resp = self._session.get(
                     url,
                     stream=True,
                     allow_redirects=True,
                     timeout=IMAGE_CHECK_TIMEOUT,
-                    headers={"User-Agent": "Superdesk-STT/1.0", "Accept": "image/*"},
+                    headers=self._img_headers,
                 )
             return resp.status_code == 200
         except Exception:
@@ -225,7 +243,6 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         - Map TT metadata -> STT metadata (Source, Department, Desk, Priority, Name, ExternalID)
         - Drop heavy associations after parent mapping
         """
-        self.is_sport_item = ninjs.get("sector") == "SPT"
 
         ninjs_local = dict(ninjs)  # avoid mutating caller
         raw_html = (
@@ -255,10 +272,6 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
 
         # Source: fixed "TT"
         item["source"] = "TT"
-
-        # Desk: fixed "Ulkomaat" (per spec)
-        # If your schema uses another field name (e.g. "task.desk"), adjust here.
-        item["desk"] = "Ulkomaat"
 
         # Department mapping -> store as extra.stt_meta and as anpa_category using CV lookup
         tt_dept_code = (
