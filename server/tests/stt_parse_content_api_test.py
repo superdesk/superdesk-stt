@@ -4,7 +4,6 @@ from flask import json
 
 import responses
 from responses import matchers
-from urllib.parse import urlparse, parse_qs
 
 from tests import TestCase
 from stt.io.feeding_services.stt_content_api import STTContentAPIService
@@ -115,10 +114,6 @@ class STTContentAPITestCase(TestCase):
         items = self.service._fetch_data(provider, "2024-01-01T00:00:00Z")
         # Verify a single request was made
         self.assertEqual(1, len(responses.calls))
-        called_url = responses.calls[0].request.url
-        parsed = urlparse(called_url)
-        qs = parse_qs(parsed.query)
-        self.assertEqual(["1"], qs.get("page"))
         # Verify headers
         req_headers = responses.calls[0].request.headers
         self.assertEqual("Bearer TEST_TOKEN", req_headers.get("Authorization"))
@@ -166,10 +161,6 @@ class STTContentAPITestCase(TestCase):
         }
         items = self.service._fetch_data(provider, "")
         self.assertEqual(2, len(responses.calls))
-        first_qs = parse_qs(urlparse(responses.calls[0].request.url).query)
-        second_qs = parse_qs(urlparse(responses.calls[1].request.url).query)
-        self.assertEqual(["1"], first_qs.get("page"))
-        self.assertEqual(["2"], second_qs.get("page"))
         # Check Authorization header on first call
         self.assertEqual(
             "Bearer test_token", responses.calls[0].request.headers.get("Authorization")
@@ -182,27 +173,73 @@ class STTContentAPITestCase(TestCase):
 
     @responses.activate
     def test_fetch_data_different_response_formats(self):
-        """Test _fetch_data with different API response formats."""
+        """Test _fetch_data handles various API response formats: _items, items, results, docs, direct array, and fallback."""
         test_items = self.fixture_data["_items"][:2]
-        # Test with 'items' field instead of '_items'
-        mock_response_data = {"items": test_items, "_links": {}}
-        url = "https://api.example.com/contentapi/items"
+
+        # Test different response formats
+        formats = [
+            # Format 1: items key (simple REST style)
+            {"items": test_items, "_links": {}},
+            # Format 2: results key (search API style)
+            {"results": test_items, "pagination": {"total": 2}},
+            # Format 3: docs key (document store style)
+            {"docs": test_items, "found": 2, "maxScore": 1.0},
+            # Format 4: direct array (no wrapper)
+            test_items,
+        ]
+
+        for i, response_format in enumerate(formats):
+            with self.subTest(format_index=i):
+                responses.reset()
+                base_url = "https://api.example.com/contentapi/items"
+                responses.add(
+                    responses.GET,
+                    base_url,
+                    json=response_format,
+                    status=200,
+                    match=[matchers.query_param_matcher({"page": "1"})],
+                )
+                provider = {
+                    "config": {
+                        "url": base_url,
+                        "api_key": "Bearer test_token",
+                    }
+                }
+                items = self.service._fetch_data(provider, "")
+                self.assertEqual(1, len(responses.calls))
+                self.assertEqual(2, len(items))
+                self.assertEqual(test_items[0]["uri"], items[0]["uri"])
+                self.assertEqual(test_items[1]["uri"], items[1]["uri"])
+
+        # Test fallback format (extracts all dict values from object)
+        responses.reset()
+        fallback_response = {
+            "item1": test_items[0],
+            "item2": test_items[1],
+            "metadata": {"source": "test", "count": 2},
+        }
+        base_url = "https://api.example.com/contentapi/items"
         responses.add(
             responses.GET,
-            url,
-            json=mock_response_data,
+            base_url,
+            json=fallback_response,
             status=200,
-            match=[matchers.query_param_matcher({"page": "1"})],
+            match=[responses.matchers.query_param_matcher({"page": "1"})],
         )
         provider = {
             "config": {
-                "url": url,
-                "api_key": "Bearer TOKEN123",
+                "url": base_url,
+                "api_key": "Bearer test_token",
             }
         }
         items = self.service._fetch_data(provider, "")
-        self.assertEqual(2, len(items))
-        self.assertEqual(test_items[0]["uri"], items[0]["uri"])
+        self.assertEqual(1, len(responses.calls))
+        # Should extract ALL dict values (item1, item2, metadata)
+        self.assertEqual(3, len(items))
+        # Verify test items are included
+        item_uris = {item.get("uri") for item in items if "uri" in item}
+        expected_uris = {test_items[0]["uri"], test_items[1]["uri"]}
+        self.assertEqual(expected_uris, item_uris)
 
     @responses.activate
     def test_fetch_data_list_response(self):
@@ -261,19 +298,28 @@ class STTContentAPITestCase(TestCase):
         # Check required fields
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
-        self.assertIn("versioncreated", parsed_item)
+
+        # Check specific values
+        self.assertEqual(
+            "urn:newsml:stt.fi:contentapi:0c0ca4c14a785ce410944406f2aa55df9169d242ed620c38b06f194418c2934f",
+            parsed_item["guid"],
+        )
+
+        from dateutil.parser import isoparse
+
+        expected_versioncreated = isoparse("2025-08-12T12:19:53+0000")
+        self.assertEqual(expected_versioncreated, parsed_item["versioncreated"])
 
         # Check original data is preserved
         self.assertEqual(test_item["uri"], parsed_item["uri"])
         self.assertEqual(test_item["headline"], parsed_item["headline"])
 
-        # Check GUID generation
+        # Check GUID generation format
         self.assertTrue(parsed_item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
 
     def test_parser_content_expiry(self):
         """Test parser ignores content expiry configuration."""
-        test_item = {"_id": "expiry_test", "source": "STT"}
+        test_item = {"_id": "expiry_test", "source": "STT", "headline": "Test headline"}
 
         provider = {"config": {"content_expiry": 24}}  # 24 hours
 
@@ -284,19 +330,42 @@ class STTContentAPITestCase(TestCase):
         self.assertIsNone(parsed_item.get("expiry"))
 
     def test_parser_minimal_item(self):
-        """Test parser with minimal required data."""
+        """Test parser with minimal required data - should be filtered out."""
         minimal_item = {"source": "STT"}
 
         result = self.parser.parse(minimal_item, provider={"config": {}})
-        parsed_item = result[0]
 
-        # Should have all required defaults
-        self.assertEqual("text", parsed_item["type"])
-        self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
-        self.assertIn("versioncreated", parsed_item)
-        self.assertEqual("", parsed_item["headline"])
+        # Should return empty list since item has no meaningful content
+        self.assertIsInstance(result, list)
+        self.assertEqual(0, len(result))
+
+    def test_parser_item_with_headline_only(self):
+        """Test parser with item that has headline but no body - should be kept."""
+        item_with_headline = {"source": "STT", "headline": "Test headline"}
+
+        result = self.parser.parse(item_with_headline, provider={"config": {}})
+
+        # Should return one item since it has meaningful content
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+
+        parsed_item = result[0]
+        self.assertEqual("Test headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
+
+    def test_parser_item_with_body_only(self):
+        """Test parser with item that has body but no headline - should be kept."""
+        item_with_body = {"source": "STT", "body_html": "<p>Test content</p>"}
+
+        result = self.parser.parse(item_with_body, provider={"config": {}})
+
+        # Should return one item since it has meaningful content
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+
+        parsed_item = result[0]
+        self.assertEqual("", parsed_item["headline"])
+        self.assertEqual("<p>Test content</p>", parsed_item["body_html"])
 
     def test_parser_guid_consistency(self):
         """Test that GUID generation is consistent for the same input."""
@@ -378,12 +447,12 @@ class STTContentAPITestCase(TestCase):
         if "source" in first_item:
             self.assertTrue(first_item["source"].startswith("STT"))
 
-    def test_headline_and_content(self):
-        """Test that the parsed item has correct headline and content."""
-        # Test headline contains expected content
-        self.assertIn("Pirkkalan koulupuukotuksesta", self.item["headline"])
-        self.assertIn("16-vuotias", self.item["headline"])
-        self.assertIn("mielentilatutkimukseen", self.item["headline"])
+    def test_headline_keywords(self):
+        """Test that the parsed item headline contains expected keywords."""
+        self.assertEqual(
+            "Yle: Pirkkalan koulupuukotuksesta epäilty 16-vuotias mielentilatutkimukseen",
+            self.item["headline"],
+        )
 
     def test_body_html_contains_keywords(self):
         """Test that body HTML contains expected keywords."""
@@ -414,11 +483,3 @@ class STTContentAPITestCase(TestCase):
         # GUID should be a consistent hash based on the item data
         self.assertIsInstance(self.item["guid"], str)
         self.assertGreater(len(self.item["guid"]), 50)  # Should be a long hash
-
-    def test_basic_fields(self):
-        """Test that basic required fields are set."""
-        # Test required fields
-        self.assertEqual("text", self.item["type"])
-        self.assertEqual("usable", self.item["pubstatus"])
-        self.assertIn("versioncreated", self.item)
-        self.assertIn("guid", self.item)

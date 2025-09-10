@@ -60,28 +60,24 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
     def __init__(self):
         super().__init__()
-        self._session: Optional[requests.Session] = None
-        try:
-            self._session = requests.Session()
-            # Configure automatic retries on the session (built-in urllib3 retries)
-            # urllib3 Retry.total counts *retries* (attempts = retries + 1), so we subtract 1
-            _retry_total = MAX_RETRIES - 1 if MAX_RETRIES > 0 else 0
-            _retry = Retry(
-                total=_retry_total,
-                connect=_retry_total,
-                read=_retry_total,
-                status=_retry_total,
-                backoff_factor=BACKOFF_BASE,
-                status_forcelist={429, *range(500, 600)},
-                allowed_methods=frozenset({"HEAD", "GET", "OPTIONS"}),
-                respect_retry_after_header=True,
-                raise_on_status=False,
-            )
-            _adapter = HTTPAdapter(max_retries=_retry)
-            self._session.mount("http://", _adapter)
-            self._session.mount("https://", _adapter)
-        except Exception:
-            self._session = None  # fallback to plain requests in _get_with_retry
+        self._session: requests.Session = requests.Session()
+        # Configure automatic retries on the session (built-in urllib3 retries)
+        # urllib3 Retry.total counts *retries* (attempts = retries + 1), so we subtract 1
+        _retry_total = MAX_RETRIES - 1 if MAX_RETRIES > 0 else 0
+        _retry = Retry(
+            total=_retry_total,
+            connect=_retry_total,
+            read=_retry_total,
+            status=_retry_total,
+            backoff_factor=BACKOFF_BASE,
+            status_forcelist={429, *range(500, 600)},
+            allowed_methods=frozenset({"HEAD", "GET", "OPTIONS"}),
+            respect_retry_after_header=True,
+            raise_on_status=False,
+        )
+        _adapter = HTTPAdapter(max_retries=_retry)
+        self._session.mount("http://", _adapter)
+        self._session.mount("https://", _adapter)
 
     # ------------------------------ helpers ------------------------------
 
@@ -106,7 +102,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         api_key = config.get("api_key")
         if not url or not api_key:
             raise ParserError.parseMessageError(
-                Exception("Missing url or api_key in provider.config"),
+                "Missing url or api_key in provider.config",
                 provider,
                 data={"url": url, "has_api_key": bool(api_key)},
             )
@@ -134,8 +130,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
         Retries/backoff/status handling are managed by HTTPAdapter/Retry.
         """
-        client = self._session if self._session is not None else requests
-        return client.get(url, headers=headers, params=params, timeout=timeout)
+        return self._session.get(url, headers=headers, params=params, timeout=timeout)
 
     # ------------------------------ lifecycle ------------------------------
 
@@ -253,9 +248,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 response.status_code,
                 response.headers.get("content-type", "unknown"),
             )
-            raise IngestApiError.apiGeneralError(
-                Exception(f"JSON parse error: {ex}"), provider
-            )
+            raise IngestApiError.apiGeneralError(f"JSON parse error: {ex}", provider)
 
     def _extract_batch(self, data: Any) -> List[Dict]:
         if isinstance(data, list):

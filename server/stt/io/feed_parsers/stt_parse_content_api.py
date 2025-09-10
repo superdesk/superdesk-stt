@@ -172,6 +172,17 @@ class ContentAPIItemParser(FeedParser):
         elif vc.tzinfo is None:
             processed["versioncreated"] = vc.replace(tzinfo=timezone.utc)
 
+        # Filter out items without meaningful content
+        headline = processed.get("headline", "").strip()
+        body_html = processed.get("body_html", "").strip()
+
+        if not headline and not body_html:
+            logger.info(
+                "Skipping item without meaningful content: %s",
+                processed.get("guid", "unknown"),
+            )
+            return None
+
         # Final safety check: ensure we always return a dict
         if not isinstance(processed, dict):
             logger.error(
