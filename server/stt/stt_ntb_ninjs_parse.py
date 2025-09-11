@@ -101,7 +101,11 @@ def _cv_lookup(
     if not q:
         return None
     for it in cv_items:
+        # First try to match by qcode
         if strip_text(it.get("qcode", "")).lower() == q:
+            return it
+        # Then try to match by name for mapping entries
+        if strip_text(it.get("name", "")).lower() == q:
             return it
     return None
 

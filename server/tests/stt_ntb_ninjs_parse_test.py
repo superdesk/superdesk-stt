@@ -1,5 +1,6 @@
 import os
 import json
+from unittest.mock import patch
 
 from tests import TestCase
 
@@ -76,6 +77,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
 
     def test_fixture_structure(self):
         """Test that the fixture file has the expected structure and mappings."""
+        # Basic structure from parsed item
         assert self.item["type"] == "text"
         assert (
             self.item["headline"]
@@ -84,7 +86,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert self.item["byline"] == "Jecaterina Mantsinen"
         assert self.item["slugline"] == "test-imatrics"
 
-        # Invariant: parsed subject must contain exactly the expected media topic qcodes
+        # Test exact qcodes produced by parser - any deviation indicates a parser bug
         subject_qcodes = {
             s.get("qcode") for s in self.item.get("subject", []) if s.get("qcode")
         }
@@ -102,7 +104,9 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             "01011000",
         }
 
-        assert anpa_qcodes == set()
+        # Category mapping: when vocabulary service is working, "Utenriks" should map to "14"
+        # Allow both environments: without vocab (empty) or with vocab mapping present (e.g., "14").
+        assert anpa_qcodes in (set(), {"14"})
 
         # Invariant: no category subjects are kept in `subject`; they are mapped to `anpa_category`
         category_subjects = [
@@ -114,6 +118,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             not category_subjects
         ), "Category subjects should be filtered out from the subject field"
 
+        # Validate that non-category subjects from fixture are preserved in parsed output
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture_path = os.path.join(dirname, "fixtures", self.fixture)
         with open(fixture_path, "r", encoding="utf-8") as f:
@@ -132,6 +137,44 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         body_html = self.item.get("body_html", "")
         assert "Norway" in body_html and "food prices" in body_html
         assert "NorgesGruppen" in body_html
+
+    @patch("stt.stt_ntb_ninjs_parse._load_cv")
+    def test_category_mapping_with_vocabulary(self, mock_load_cv):
+        """Test category mapping when vocabulary service is properly configured."""
+
+        # Mock the vocabulary lookup to return proper vocabularies
+        def mock_cv_lookup(vocab_id):
+            if vocab_id == "stt-department-categories":
+                return [{"is_active": "true", "qcode": "14", "name": "Utenriks"}]
+            elif vocab_id == "stt_media_topics":
+                # Mock some media topics to ensure media topic parsing works
+                return [
+                    {"name": "Test Topic", "qcode": "20000023"},
+                    {"name": "Another Topic", "qcode": "20000021"},
+                ]
+            return []
+
+        mock_load_cv.side_effect = mock_cv_lookup
+
+        # Parse the item with mocked vocabulary to test proper category mapping
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture = os.path.join(dirname, "fixtures", self.fixture)
+        with self.ctx:
+            parser = STTTTNINJSParseFeedParser()
+            parsed_items = parser.parse(fixture)
+            item = parsed_items[0] if parsed_items else {}
+
+        # Test category mapping works correctly
+        anpa_qcodes = {
+            a.get("qcode") for a in item.get("anpa_category", []) if a.get("qcode")
+        }
+
+        assert anpa_qcodes == {"14"}
+        # Verify the category entry structure
+        anpa_category = item.get("anpa_category", [])
+        assert len(anpa_category) == 1
+        assert anpa_category[0]["qcode"] == "14"
+        assert anpa_category[0]["name"] == "Utenriks"
 
     def test_html_sanitization_edge_cases(self):
         """Test HTML sanitization edge cases."""
