@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     "stt.search_providers.newshub",
     "stt.ai_proxy",
     "stt.stt_newsroom_ninjs_formatter",
+    "stt.stt_json_planning_formatter",
 ]
 
 MODULES.append("planning")
