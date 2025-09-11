@@ -88,31 +88,34 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert self.item["byline"] == "Jecaterina Mantsinen"
         assert self.item["slugline"] == "test-imatrics"
 
-        # --- Verify qcode mapping correctness (subject & anpa_category) ---
-        # subject/anpa_category must both exist and contain qcodes
-        subjects = self.item.get("subject") or []
-        anpa = self.item.get("anpa_category") or []
+        # Test exact qcodes produced by parser - any deviation indicates a parser bug
+        subject_qcodes = {
+            s.get("qcode") for s in self.item.get("subject", []) if s.get("qcode")
+        }
+        anpa_qcodes = {
+            a.get("qcode") for a in self.item.get("anpa_category", []) if a.get("qcode")
+        }
 
-        def _extract_qcodes(val):
-            if isinstance(val, dict):
-                val = [val]
-            if not isinstance(val, list):
-                return set()
-            return {
-                x.get("qcode") for x in val if isinstance(x, dict) and x.get("qcode")
-            }
+        assert subject_qcodes == {
+            "20000023",
+            "20000021",
+            "20000018",
+            "20000002",
+            "01000000",
+            "Utenriks",
+            "06000000",
+            "01011000",
+        }
 
-        subject_qcodes = _extract_qcodes(subjects)
-        anpa_qcodes = _extract_qcodes(anpa)
-
-        assert subject_qcodes, "subject should contain qcodes (non-empty)"
-        assert anpa_qcodes, "anpa_category should contain qcodes (non-empty)"
+        assert anpa_qcodes == {"n"}
 
         # Verify that anpa_category is populated from subjects with scheme="category"
         # The parser maps subjects with scheme="category" to anpa_category via vocabulary lookup
         # so we expect anpa_category to be populated when such subjects exist
         category_subjects = [
-            s for s in subjects if isinstance(s, dict) and s.get("scheme") == "category"
+            s
+            for s in self.item.get("subject", [])
+            if isinstance(s, dict) and s.get("scheme") == "category"
         ]
         if category_subjects:
             assert (
@@ -124,7 +127,9 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         fixture_path = os.path.join(dirname, "fixtures", self.fixture)
         with open(fixture_path, "r", encoding="utf-8") as f:
             raw = json.load(f)
-        raw_subject_qcodes = _extract_qcodes(raw.get("subject"))
+        raw_subject_qcodes = {
+            s.get("code") for s in raw.get("subject", []) if s.get("code")
+        }
         if raw_subject_qcodes:
             assert raw_subject_qcodes.issubset(subject_qcodes), (
                 f"Parsed subject qcodes {subject_qcodes} should include "
