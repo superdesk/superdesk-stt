@@ -1,9 +1,5 @@
-import logging
-
 from superdesk import get_resource_service
 from planning.output_formatters import JsonPlanningFormatter
-
-logger = logging.getLogger(__name__)
 
 
 class STTJsonPlanningFormatter(JsonPlanningFormatter):
@@ -36,13 +32,10 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
                 break
 
         if stturgency_item:
-            if "subject" not in item:
-                item["subject"] = []
-
+            item.setdefault("subject", [])
             item["subject"] = [
                 subj for subj in item["subject"] if subj.get("scheme") != "stturgency"
             ]
-
             item["subject"].append(
                 {
                     "name": stturgency_item["name"],
