@@ -14,8 +14,8 @@ from superdesk.text_utils import sanitize_html
 TIMEZONE = "Europe/Helsinki"
 
 # CV paths (override via provider if desired)
-MEDIA_TOPICS_CV = "vocab:stt_media_topics"
-DEPT_CATEGORIES_CV = "vocab:stt-department-categories"
+MEDIA_TOPICS_CV = "stt_media_topics"
+DEPT_CATEGORIES_CV = "stt-department-categories"
 
 logger = logging.getLogger(__name__)
 
@@ -23,46 +23,71 @@ logger = logging.getLogger(__name__)
 # ----------------------------- Helpers -------------------------------------
 
 
-def _load_cv(path: str) -> List[Dict[str, Any]]:
-    """Load **active** items from a Superdesk vocabulary.
+def _load_cv(vocab_id: str) -> List[Dict[str, Any]]:
+    """Load active items from a Superdesk vocabulary.
 
-    Prefer `vocabularies.get_items(vocab_id)` (active-only). Fallback to
-    `find_one` and filter `items` by `is_active` when present. Results are cached
-    to reduce service calls during batch ingest.
+    Args:
+        vocab_id: Vocabulary identifier
+
+    Returns:
+        List of active vocabulary items, or empty list if not found/error
+
+    The function prefers the `get_items` method (returns active items only),
+    falling back to `find_one` with manual filtering when necessary.
     """
-    if not path.startswith("vocab:"):
-        raise ValueError("Only Superdesk vocabularies are supported in parser runtime")
 
-    vocab_id = path.split(":", 1)[1]
     try:
         from superdesk import get_resource_service  # type: ignore
 
-        svc = get_resource_service("vocabularies")
-        if not svc:
+        service = get_resource_service("vocabularies")
+        if not service:
+            logger.warning("Vocabularies service not available")
             return []
 
-        get_items = getattr(svc, "get_items", None)
-        if callable(get_items):
-            items = get_items(vocab_id)
-            return items if isinstance(items, list) else []
+        # Preferred method: get_items returns active items only
+        if hasattr(service, "get_items") and callable(service.get_items):
+            items = service.get_items(vocab_id)
+            return _ensure_list(items)
 
-        find_one = getattr(svc, "find_one", None)
-        if callable(find_one):
-            vocab = find_one(req=None, _id=vocab_id)
-            if isinstance(vocab, dict):
-                items = vocab.get("items") or []
-                if (
-                    items
-                    and isinstance(items, list)
-                    and isinstance(items[0], dict)
-                    and "is_active" in items[0]
-                ):
-                    return [it for it in items if it.get("is_active", True)]
-                return items if isinstance(items, list) else []
+        # Fallback: use find_one and filter manually
+        if hasattr(service, "find_one") and callable(service.find_one):
+            return _load_vocab_with_filtering(service, vocab_id)
+
+        logger.warning("Vocabularies service missing required methods")
+        return []
+
     except Exception as exc:  # pragma: no cover
-        logger.warning("Failed to load vocabulary '%s' items: %s", vocab_id, exc)
+        logger.warning("Failed to load vocabulary '%s': %s", vocab_id, exc)
+        return []
 
+
+def _ensure_list(items: Any) -> List[Dict[str, Any]]:
+    """Ensure the result is a list of dictionaries."""
+    if isinstance(items, list):
+        return [item for item in items if isinstance(item, dict)]
     return []
+
+
+def _load_vocab_with_filtering(service: Any, vocab_id: str) -> List[Dict[str, Any]]:
+    """Load vocabulary using find_one and filter active items."""
+    vocab = service.find_one(req=None, _id=vocab_id)
+    if not isinstance(vocab, dict):
+        return []
+
+    items = vocab.get("items") or []
+    if not isinstance(items, list):
+        return []
+
+    # Filter by is_active if the field exists
+    if items and isinstance(items[0], dict) and "is_active" in items[0]:
+        return [
+            item
+            for item in items
+            if isinstance(item, dict) and item.get("is_active", True)
+        ]
+
+    # Return all items if no is_active field
+    return [item for item in items if isinstance(item, dict)]
 
 
 def strip_text(s: Optional[str]) -> str:
@@ -208,6 +233,7 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             if mapped_topics:
                 item["media_topics"] = mapped_topics
         # 4) Category mapping: subject(scheme: category) -> anpa_category
+        # Override any anpa_category set by parent class with our custom mapping
         if isinstance(subjects, list):
             cv_depts = _load_cv(DEPT_CATEGORIES_CV)
             mapped_cats: List[Dict[str, Any]] = []
@@ -222,8 +248,26 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
                     mapped_cats.append(
                         {"qcode": hit.get("qcode"), "name": hit.get("name")}
                     )
+            # Always set anpa_category (override parent), even if empty
             if mapped_cats:
                 item["anpa_category"] = mapped_cats
+            else:
+                # Remove anpa_category if no category subjects found
+                item.pop("anpa_category", None)
+
+        # 5) Filter subject field: remove category subjects, keep only topics and other schemes
+        if isinstance(subjects, list) and "subject" in item:
+            filtered_subjects = []
+            for s in item.get("subject", []):
+                if isinstance(s, dict):
+                    scheme = strip_text(s.get("scheme", "")).lower()
+                    # Keep everything except category subjects
+                    if scheme != "category":
+                        filtered_subjects.append(s)
+            if filtered_subjects:
+                item["subject"] = filtered_subjects
+            else:
+                item.pop("subject", None)
 
         return item
 
