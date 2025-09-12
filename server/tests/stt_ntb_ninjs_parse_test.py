@@ -5,7 +5,9 @@ from unittest.mock import patch
 from tests import TestCase
 
 from stt.stt_ntb_ninjs_parse import STTTTNINJSParseFeedParser, _cv_lookup
+import logging
 
+logger = logging.getLogger(__name__)
 # IMPORTANT TEST INVARIANTS
 # - `subject` must contain ONLY media topics (no NTB category subjects).
 # - NTB categories from the source are mapped to `anpa_category` (not kept in `subject`).
@@ -104,7 +106,6 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             "01011000",
         }
 
-        # Category mapping: when vocabulary service is working, "Utenriks" should map to "14"
         # Allow both environments: without vocab (empty) or with vocab mapping present (e.g., "14").
         assert anpa_qcodes in (set(), {"14"})
 
@@ -145,7 +146,34 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         # Mock the vocabulary lookup to return proper vocabularies
         def mock_cv_lookup(vocab_id):
             if vocab_id == "stt-department-categories":
-                return [{"is_active": "true", "qcode": "14", "name": "Utenriks"}]
+                return [
+                    {"is_active": "true", "qcode": "14", "name": "Ulkomaat"},
+                    {"is_active": "true", "name": "Business wire", "qcode": "1"},
+                    {"is_active": "true", "name": "Holvi", "qcode": "23"},
+                    {
+                        "is_active": "true",
+                        "name": "Julkishallinnon tiedotepalvelu",
+                        "qcode": "2",
+                    },
+                    {"is_active": "true", "name": "Kotimaa", "qcode": "3"},
+                    {"is_active": "true", "name": "Kulttuuri", "qcode": "4"},
+                    {"is_active": "true", "name": "Merkkipäiväpalvelu", "qcode": "5"},
+                    {"is_active": "true", "name": "Muuta", "qcode": "6"},
+                    {"is_active": "true", "name": "Peliuutiset", "qcode": "8"},
+                    {"is_active": "true", "name": "Politiikka", "qcode": "9"},
+                    {"is_active": "true", "name": "Päivälista", "qcode": "21"},
+                    {"is_active": "true", "name": "Talous", "qcode": "11"},
+                    {"is_active": "true", "name": "Tiedotepalvelu", "qcode": "12"},
+                    {
+                        "is_active": "true",
+                        "name": "Toimituksille tiedoksi",
+                        "qcode": "13",
+                    },
+                    {"is_active": "true", "name": "Urheilu", "qcode": "16"},
+                    {"is_active": "true", "name": "Uutiskooste", "qcode": "22"},
+                    {"is_active": "true", "name": "Viikon tärpit", "qcode": "19"},
+                    {"is_active": "true", "name": "Sähkeuutiset", "qcode": "10"},
+                ]
             elif vocab_id == "stt_media_topics":
                 # Mock some media topics to ensure media topic parsing works
                 return [
@@ -172,9 +200,10 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert anpa_qcodes == {"14"}
         # Verify the category entry structure
         anpa_category = item.get("anpa_category", [])
+        logging.warning(f"anpa_category: {anpa_category}")
         assert len(anpa_category) == 1
         assert anpa_category[0]["qcode"] == "14"
-        assert anpa_category[0]["name"] == "Utenriks"
+        assert anpa_category[0]["name"] == "Ulkomaat"
 
     def test_html_sanitization_edge_cases(self):
         """Test HTML sanitization edge cases."""
