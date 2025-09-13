@@ -15,44 +15,14 @@ from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import sanitize_html
 
-TIMEZONE = "Europe/Helsinki"
+from .constants import (
+    DEPARTMENT_MAP,
+    DEFAULT_DEPARTMENT,
+    STT_TIMEZONE,
+)
 
 IGNORE_REMOTE_IMAGES = False  # Only ignore when public URL is not accessible
 IMAGE_CHECK_TIMEOUT = 2  # seconds
-
-# Controlled Vocabulary id used in Superdesk for STT departments
-STT_DEPT_VOCAB_ID = "stt_department_categories"
-
-# TT department code -> STT CV qcode
-_DEPARTMENT_QCODE_MAP: Dict[str, str] = {
-    "INR": "kotimaa",
-    "UTR": "ulkomaat",
-    "SPO": "urheilu",
-    "HBT": "muuta",
-    "RED": "toimituksille_tiedoksi",
-    "TTL": "urheilu",
-    "PRM": "tiedotepalvelu",
-    "DOM": "talous",
-    "FOR": "talous",
-    "SPR": "urheilu",
-    "TBL": "urheilu",
-}
-
-# TT department code -> (STT integer value, STT string value)
-_DEPARTMENT_MAP: Dict[str, Tuple[int, str]] = {
-    "INR": (3, "Kotimaa"),
-    "UTR": (14, "Ulkomaat"),
-    "SPO": (16, "Urheilu"),
-    "HBT": (6, "Muuta"),
-    "RED": (13, "Toimituksille tiedoksi"),
-    "TTL": (16, "Urheilu"),
-    "PRM": (12, "Tiedotepalvelu"),
-    "DOM": (11, "Talous"),
-    "FOR": (11, "Talous"),
-    "SPR": (16, "Urheilu"),
-    "TBL": (16, "Urheilu"),
-}
-_DEFAULT_DEPT: Tuple[int, str] = (3, "Kotimaa")
 
 
 class STTTTNEWNINJSFeedParser(NINJSFeedParser):
@@ -92,7 +62,7 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         try:
             dt = isoparse(value)
             if dt.tzinfo is None:
-                return dt.replace(tzinfo=tz.gettz(TIMEZONE)).astimezone(tz.UTC)
+                return dt.replace(tzinfo=tz.gettz(STT_TIMEZONE)).astimezone(tz.UTC)
             return dt.astimezone(tz.UTC)
         except Exception:
             return None
@@ -365,9 +335,9 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
     def _map_department(self, tt_code: Optional[str]) -> Tuple[int, str]:
         """Map TT department string → (STT integer id, STT string)."""
         if not tt_code:
-            return _DEFAULT_DEPT
+            return DEFAULT_DEPARTMENT
         code = str(tt_code).strip().upper()
-        return _DEPARTMENT_MAP.get(code, _DEFAULT_DEPT)
+        return DEPARTMENT_MAP.get(code, DEFAULT_DEPARTMENT)
 
     def datetime(self, value: Optional[str]) -> Optional[Any]:
         """
@@ -383,7 +353,7 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         except Exception:
             return None
 
-        local_tz = tz.gettz(TIMEZONE)
+        local_tz = tz.gettz(STT_TIMEZONE)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=local_tz or tz.UTC)
         return dt.astimezone(tz.UTC)

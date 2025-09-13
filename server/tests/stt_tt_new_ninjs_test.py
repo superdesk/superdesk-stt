@@ -56,9 +56,13 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
 
     def test_item_type_and_version_fields(self):
         self.assertEqual(self.item["type"], "picture")
-        self.assertIn("guid", self.item)
-        self.assertIn("uri", self.item)
-        self.assertIn("mimetype", self.item)
+        assoc = self.json_data["associations"]["a001"]
+        self.assertEqual(
+            self.item.get("guid"),
+            "urn:tt.se:media:image:sdlr1tDM7WXjoU-crop_w2264_h1273_x522_y789",
+        )
+        self.assertEqual(self.item["uri"], assoc["uri"])  # exact value
+        self.assertEqual(self.item["mimetype"], assoc["mimetype"])  # exact value
 
     def test_external_id_and_description(self):
         # This should be the picture association's URI
