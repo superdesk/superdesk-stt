@@ -20,8 +20,10 @@ DEPT_CATEGORIES_CV = "stt-department-categories"
 logger = logging.getLogger(__name__)
 
 # Map NTB category labels to STT department qcodes
-NTB_TO_STT_DEPT = {
-    "Utenriks": "14",  # NTB foreign -> STT Ulkomaat (STT-department-categories)
+DEFAULT_NTB_TO_STT_DEPT = {
+    "Innenriks": "3",  # Kotimaa (Domestic)
+    "Utenriks": "14",  # Ulkomaat (Foreign)
+    "Sport": "16",  # Urheilu (Sports)
 }
 
 
@@ -252,7 +254,7 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
                 if strip_text(s.get("scheme")).lower() != "category":
                     continue
                 raw_code = strip_text(s.get("code"))
-                mapped_code = NTB_TO_STT_DEPT.get(raw_code, raw_code)
+                mapped_code = DEFAULT_NTB_TO_STT_DEPT.get(raw_code, raw_code)
                 hit = _cv_lookup(cv_depts, mapped_code)
                 if hit:
                     mapped_cats.append(

@@ -5,9 +5,7 @@ from unittest.mock import patch
 from tests import TestCase
 
 from stt.stt_ntb_ninjs_parse import STTTTNINJSParseFeedParser, _cv_lookup
-import logging
 
-logger = logging.getLogger(__name__)
 # IMPORTANT TEST INVARIANTS
 # - `subject` must contain ONLY media topics (no NTB category subjects).
 # - NTB categories from the source are mapped to `anpa_category` (not kept in `subject`).
@@ -200,7 +198,6 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert anpa_qcodes == {"14"}
         # Verify the category entry structure
         anpa_category = item.get("anpa_category", [])
-        logging.warning(f"anpa_category: {anpa_category}")
         assert len(anpa_category) == 1
         assert anpa_category[0]["qcode"] == "14"
         assert anpa_category[0]["name"] == "Ulkomaat"
