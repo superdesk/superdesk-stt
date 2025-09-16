@@ -254,9 +254,14 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
     if not events:
         # No matches → leave empty but return agendas intact
         for ag in agendas or []:
+            new_items: List[Dict[str, Any]] = []
             for pl in ag.get("items") or []:
                 _set_stt_urgency_fields(pl)
+                if not pl.get("stturgency"):
+                    continue  # exclude items without stturgency
                 pl["related_events_expanded"] = []
+                new_items.append(pl)
+            ag["items"] = new_items
         return agendas
 
     # Map by both _id and guid for resilience
@@ -266,9 +271,12 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
             by_key[str(e["_id"])] = e
     # Attach to each planning item
     for ag in agendas or []:
+        expanded_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
             # compute urgency once per item
             _set_stt_urgency_fields(pl)
+            if not pl.get("stturgency"):
+                continue  # exclude items without stturgency
             expanded: List[Dict[str, Any]] = []
 
             for re in pl.get("related_events") or []:
@@ -277,6 +285,8 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
                 if ev:
                     expanded.append(ev)
             pl["related_events_expanded"] = expanded
+            expanded_items.append(pl)
+        ag["items"] = expanded_items
 
     # Sort related_events_expanded by start date
     for ag in agendas or []:
