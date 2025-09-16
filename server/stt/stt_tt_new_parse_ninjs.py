@@ -21,7 +21,9 @@ from .constants import (
     STT_TIMEZONE,
 )
 
-IGNORE_REMOTE_IMAGES = False  # Only ignore when public URL is not accessible
+IGNORE_REMOTE_IMAGES = (
+    True  # Force using only root-level fields (no associations/links/renditions)
+)
 IMAGE_CHECK_TIMEOUT = 2  # seconds
 
 
@@ -200,8 +202,8 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         except (json.JSONDecodeError, OSError):
             return False
 
-        content_type = ninjs.get("type")
-        if content_type == "image":
+        content_type = (ninjs.get("type") or "").lower()
+        if content_type in {"image", "picture"}:
             return False
         return True
 
@@ -221,19 +223,16 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
             or ninjs_local.get("body")
         )
 
-        if IGNORE_REMOTE_IMAGES:
-            ninjs_for_parent = dict(ninjs_local)
-            ninjs_for_parent.pop("associations", None)
-            ninjs_for_parent.pop("links", None)
-            ninjs_for_parent.pop("renditions", None)
-        else:
-            ninjs_for_parent = self._filter_remote_images(ninjs_local)
+        ninjs_for_parent = dict(ninjs_local)
+        ninjs_for_parent.pop("associations", None)
+        ninjs_for_parent.pop("links", None)
+        ninjs_for_parent.pop("renditions", None)
 
         # First, let parent build a standard Superdesk item (ids, qcodes, dates...)
         item = super()._transform_from_ninjs(ninjs_for_parent)
 
         # Clamp versioncreated so it never exceeds the parent text item's timestamp
-        self._cap_versioncreated_to_parent(item, ninjs_local)
+        # Removed per instructions
 
         # --- HTML sanitize/normalize
         item["body_html"] = self.sanitise_stt_tt_html(raw_html)
