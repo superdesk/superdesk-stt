@@ -1,10 +1,10 @@
 import os
 import json
 from unittest.mock import patch
-
 from tests import TestCase
 
 from stt.stt_ntb_ninjs_parse import STTTTNINJSParseFeedParser, _cv_lookup
+
 
 # IMPORTANT TEST INVARIANTS
 # - `subject` must contain ONLY media topics (no NTB category subjects).
@@ -90,9 +90,6 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         subject_qcodes = {
             s.get("qcode") for s in self.item.get("subject", []) if s.get("qcode")
         }
-        anpa_qcodes = {
-            a.get("qcode") for a in self.item.get("anpa_category", []) if a.get("qcode")
-        }
 
         assert subject_qcodes == {
             "20000023",
@@ -104,12 +101,9 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             "01011000",
         }
 
-        # Allow environments:
-        #  - without vocab: empty set()
-        #  - with vocab-only mapping: {"14"}
-        #  - with fallback only: {"12"}
-        #  - with both mapped and fallback present: {"14", "12"}
-        assert anpa_qcodes in (set(), {"14"}, {"12"}, {"14", "12"})
+        anpa = self.item.get("anpa_category") or []
+        assert isinstance(anpa, list) and len(anpa) == 1
+        assert self.item["anpa_category"] == [{"name": "Ulkomaat", "qcode": "14"}]
 
         # Invariant: no category subjects are kept in `subject`; they are mapped to `anpa_category`
         category_subjects = [
@@ -147,7 +141,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
 
         # Mock the vocabulary lookup to return proper vocabularies
         def mock_cv_lookup(vocab_id):
-            if vocab_id == "stt-department-categories":
+            if vocab_id == "categories":
                 return [
                     {"is_active": "true", "qcode": "14", "name": "Ulkomaat"},
                     {"is_active": "true", "name": "Business wire", "qcode": "1"},
@@ -176,7 +170,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
                     {"is_active": "true", "name": "Viikon tärpit", "qcode": "19"},
                     {"is_active": "true", "name": "Sähkeuutiset", "qcode": "10"},
                 ]
-            elif vocab_id == "stt_media_topics":
+            elif vocab_id == "topics":
                 # Mock some media topics to ensure media topic parsing works
                 return [
                     {"name": "Test Topic", "qcode": "20000023"},
@@ -194,19 +188,8 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             parsed_items = parser.parse(fixture)
             item = parsed_items[0] if parsed_items else {}
 
-        # Test category mapping works correctly
-        anpa_qcodes = {
-            a.get("qcode") for a in item.get("anpa_category", []) if a.get("qcode")
-        }
-
-        # Ensure mapped category "14" is present (others may also be present, e.g., fallback)
-        assert "14" in anpa_qcodes
-
-        # Verify the category entry structure for qcode 14
-        anpa_category = item.get("anpa_category", [])
-        q14 = next((a for a in anpa_category if a.get("qcode") == "14"), None)
-        assert q14 is not None
-        assert q14.get("name") == "Ulkomaat"
+        # Expect exactly one mapped category entry
+        assert item["anpa_category"] == [{"name": "Ulkomaat", "qcode": "14"}]
 
     def test_html_sanitization_edge_cases(self):
         """Test HTML sanitization edge cases."""

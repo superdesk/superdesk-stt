@@ -279,7 +279,7 @@
         ]
     },
     {
-        "_id": "stt-department-categories",
+        "_id": "categories",
         "service": {
             "all": 1
         },
@@ -402,7 +402,7 @@
         }
     },
     {
-        "_id": "stt_media_topics",
+        "_id": "topics",
         "display_name": "Topics",
         "type": "manageable",
         "unique_field": "qcode",

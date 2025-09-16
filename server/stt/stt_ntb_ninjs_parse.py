@@ -14,11 +14,20 @@ from superdesk.text_utils import sanitize_html
 TIMEZONE = "Europe/Helsinki"
 
 # CV paths (override via provider if desired)
-MEDIA_TOPICS_CV = "stt_media_topics"
-DEPT_CATEGORIES_CV = "stt-department-categories"
+MEDIA_TOPICS_CV = "topics"
+DEPT_CATEGORIES_CV = "categories"
 
 # Default department qcode when NTB category has no mapping (per ticket requirement)
 DEFAULT_DEPT_FALLBACK_QCODE = "12"
+STATIC_DEPT_FALLBACK_NAME = "Tiedotepalvelu"
+
+# Static names for department qcodes (used when CV is missing)
+STATIC_DEPT_NAMES = {
+    "3": "Kotimaa",  # Domestic
+    "14": "Ulkomaat",  # Foreign
+    "16": "Urheilu",  # Sports
+    "12": "Tiedotepalvelu",  # Fallback department
+}
 
 logger = logging.getLogger(__name__)
 
@@ -34,18 +43,17 @@ DEFAULT_NTB_TO_STT_DEPT = {
 
 
 def _load_cv(vocab_id: str) -> List[Dict[str, Any]]:
-    """Load active items from a Superdesk vocabulary.
+    """Load active items from a Superdesk vocabulary using get_items only.
 
     Args:
         vocab_id: Vocabulary identifier
 
     Returns:
-        List of active vocabulary items, or empty list if not found/error
+        List of active vocabulary items, or empty list if not found/error.
 
-    The function prefers the `get_items` method (returns active items only),
-    falling back to `find_one` with manual filtering when necessary.
+    The vocabularies service `get_items` method already returns active items only,
+    so we don't need any manual filtering or a fallback path here.
     """
-
     try:
         from superdesk import get_resource_service  # type: ignore
 
@@ -54,16 +62,11 @@ def _load_cv(vocab_id: str) -> List[Dict[str, Any]]:
             logger.warning("Vocabularies service not available")
             return []
 
-        # Preferred method: get_items returns active items only
         if hasattr(service, "get_items") and callable(service.get_items):
             items = service.get_items(vocab_id)
             return _ensure_list(items)
 
-        # Fallback: use find_one and filter manually
-        if hasattr(service, "find_one") and callable(service.find_one):
-            return _load_vocab_with_filtering(service, vocab_id)
-
-        logger.warning("Vocabularies service missing required methods")
+        logger.warning("Vocabularies service does not provide get_items()")
         return []
 
     except Exception as exc:  # pragma: no cover
@@ -76,28 +79,6 @@ def _ensure_list(items: Any) -> List[Dict[str, Any]]:
     if isinstance(items, list):
         return [item for item in items if isinstance(item, dict)]
     return []
-
-
-def _load_vocab_with_filtering(service: Any, vocab_id: str) -> List[Dict[str, Any]]:
-    """Load vocabulary using find_one and filter active items."""
-    vocab = service.find_one(req=None, _id=vocab_id)
-    if not isinstance(vocab, dict):
-        return []
-
-    items = vocab.get("items") or []
-    if not isinstance(items, list):
-        return []
-
-    # Filter by is_active if the field exists
-    if items and isinstance(items[0], dict) and "is_active" in items[0]:
-        return [
-            item
-            for item in items
-            if isinstance(item, dict) and item.get("is_active", True)
-        ]
-
-    # Return all items if no is_active field
-    return [item for item in items if isinstance(item, dict)]
 
 
 def strip_text(s: Optional[str]) -> str:
@@ -247,28 +228,52 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             if mapped_topics:
                 item["media_topics"] = mapped_topics
         # 4) Category mapping: subject(scheme: category) -> anpa_category
-        # Override any anpa_category set by parent class with our custom mapping
+        # Ensure exactly one category entry (deterministic choice with fallback)
         if isinstance(subjects, list):
             cv_depts = _load_cv(DEPT_CATEGORIES_CV)
-            mapped_cats: List[Dict[str, Any]] = []
+
+            # Find the first category subject from source
+            selected_code: Optional[str] = None
             for s in subjects:
                 if not isinstance(s, dict):
                     continue
-                raw_code = strip_text(s.get("code")) or DEFAULT_DEPT_FALLBACK_QCODE
+                scheme = strip_text(s.get("scheme")).lower()
+                if scheme == "category":
+                    selected_code = strip_text(s.get("code"))
+                    break
+
+            anpa_category: List[Dict[str, Any]] = []
+            if selected_code:
+                # Map NTB -> STT department qcode, defaulting to fallback mapping if unknown
                 mapped_code = DEFAULT_NTB_TO_STT_DEPT.get(
-                    raw_code, DEFAULT_DEPT_FALLBACK_QCODE
+                    selected_code, DEFAULT_DEPT_FALLBACK_QCODE
                 )
                 hit = _cv_lookup(cv_depts, mapped_code)
                 if hit:
-                    mapped_cats.append(
-                        {"qcode": hit.get("qcode"), "name": hit.get("name")}
-                    )
-            # Always set anpa_category (override parent), even if empty
-            if mapped_cats:
-                item["anpa_category"] = mapped_cats
-            else:
-                # Remove anpa_category if no category subjects found
-                item.pop("anpa_category", None)
+                    # Use the CV hit
+                    anpa_category = [
+                        {"qcode": hit.get("qcode"), "name": hit.get("name")}  # type: ignore[dict-item]
+                    ]
+                else:
+                    # CV not available or no match -> still honor the mapped qcode with a static name
+                    anpa_category = [
+                        {
+                            "qcode": mapped_code,
+                            "name": STATIC_DEPT_NAMES.get(
+                                mapped_code, "Tiedotepalvelu"
+                            ),
+                        }
+                    ]
+            # If no category was selected at all, use static fallback
+            if not anpa_category:
+                anpa_category = [
+                    {
+                        "qcode": DEFAULT_DEPT_FALLBACK_QCODE,
+                        "name": STATIC_DEPT_FALLBACK_NAME,
+                    }
+                ]
+            # Assign exactly one entry
+            item["anpa_category"] = anpa_category
 
         # 5) Filter subject field: remove category subjects, keep only topics and other schemes
         if isinstance(subjects, list) and "subject" in item:
