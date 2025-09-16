@@ -17,6 +17,9 @@ TIMEZONE = "Europe/Helsinki"
 MEDIA_TOPICS_CV = "stt_media_topics"
 DEPT_CATEGORIES_CV = "stt-department-categories"
 
+# Default department qcode when NTB category has no mapping (per ticket requirement)
+DEFAULT_DEPT_FALLBACK_QCODE = "12"
+
 logger = logging.getLogger(__name__)
 
 # Map NTB category labels to STT department qcodes
@@ -251,10 +254,10 @@ class STTTTNINJSParseFeedParser(NINJSFeedParser):
             for s in subjects:
                 if not isinstance(s, dict):
                     continue
-                if strip_text(s.get("scheme")).lower() != "category":
-                    continue
-                raw_code = strip_text(s.get("code"))
-                mapped_code = DEFAULT_NTB_TO_STT_DEPT.get(raw_code, raw_code)
+                raw_code = strip_text(s.get("code")) or DEFAULT_DEPT_FALLBACK_QCODE
+                mapped_code = DEFAULT_NTB_TO_STT_DEPT.get(
+                    raw_code, DEFAULT_DEPT_FALLBACK_QCODE
+                )
                 hit = _cv_lookup(cv_depts, mapped_code)
                 if hit:
                     mapped_cats.append(

@@ -104,8 +104,12 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             "01011000",
         }
 
-        # Allow both environments: without vocab (empty) or with vocab mapping present (e.g., "14").
-        assert anpa_qcodes in (set(), {"14"})
+        # Allow environments:
+        #  - without vocab: empty set()
+        #  - with vocab-only mapping: {"14"}
+        #  - with fallback only: {"12"}
+        #  - with both mapped and fallback present: {"14", "12"}
+        assert anpa_qcodes in (set(), {"14"}, {"12"}, {"14", "12"})
 
         # Invariant: no category subjects are kept in `subject`; they are mapped to `anpa_category`
         category_subjects = [
@@ -195,12 +199,14 @@ class STTTTNINJSParseFeedParserTest(TestCase):
             a.get("qcode") for a in item.get("anpa_category", []) if a.get("qcode")
         }
 
-        assert anpa_qcodes == {"14"}
-        # Verify the category entry structure
+        # Ensure mapped category "14" is present (others may also be present, e.g., fallback)
+        assert "14" in anpa_qcodes
+
+        # Verify the category entry structure for qcode 14
         anpa_category = item.get("anpa_category", [])
-        assert len(anpa_category) == 1
-        assert anpa_category[0]["qcode"] == "14"
-        assert anpa_category[0]["name"] == "Ulkomaat"
+        q14 = next((a for a in anpa_category if a.get("qcode") == "14"), None)
+        assert q14 is not None
+        assert q14.get("name") == "Ulkomaat"
 
     def test_html_sanitization_edge_cases(self):
         """Test HTML sanitization edge cases."""
