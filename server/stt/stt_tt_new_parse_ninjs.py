@@ -10,7 +10,6 @@ from dateutil import tz
 from dateutil.parser import isoparse
 from lxml import etree
 from lxml import html as lxml_html
-from superdesk import get_resource_service
 from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.text_utils import sanitize_html
@@ -68,47 +67,6 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
             return dt.astimezone(tz.UTC)
         except Exception:
             return None
-
-    def _cap_versioncreated_to_parent(
-        self, item: Dict[str, Any], ninjs: Dict[str, Any]
-    ) -> None:
-        """Ensure versioncreated is not later than the related text item's timestamp.
-        Looks at ninjs.associations for text/article items and clamps versioncreated.
-        """
-        associations = ninjs.get("associations") or {}
-
-        # Collect candidate parent text timestamps
-        candidates = []
-
-        def collect(obj: Any):
-            if isinstance(obj, dict):
-                t = obj.get("type") or obj.get("profile")
-                if t in {"text", "article"}:
-                    for key in ("versioncreated", "firstcreated", "pubdate", "created"):
-                        cand = self._parse_dt_safe(obj.get(key))
-                        if cand:
-                            candidates.append(cand)
-            elif isinstance(obj, list):
-                for it in obj:
-                    collect(it)
-
-        for v in associations.values():
-            collect(v)
-
-        if not candidates:
-            return
-
-        parent_dt = min(candidates)
-
-        # Parse current item's versioncreated
-        current_vc = item.get("versioncreated")
-        if isinstance(current_vc, str):
-            current_dt = self._parse_dt_safe(current_vc)
-        else:
-            current_dt = current_vc
-
-        if current_dt and parent_dt and current_dt > parent_dt:
-            item["versioncreated"] = parent_dt
 
     def _url_ok(self, url: str) -> bool:
         """Return True if URL is publicly accessible (HTTP 200). Uses HEAD then GET fallback."""
@@ -308,29 +266,6 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         return item
 
     # --------- Helpers ---------
-
-    def _get_cv_item_by_qcode(
-        self, vocab_id: str, qcode: Optional[str]
-    ) -> Optional[Dict[str, Any]]:
-        """Fetch a vocabulary item by qcode from Superdesk CV. Safe on failure.
-
-        Returns the full CV item dict or None if not found.
-        """
-        if not qcode:
-            return None
-        try:
-            svc = get_resource_service("vocabularies")
-            vocab = svc.find_one(req=None, _id=vocab_id)
-            if not vocab:
-                return None
-            for it in vocab.get("items", []):
-                if it.get("qcode") == qcode:
-                    return it
-        except Exception:
-            # Service may be unavailable during certain unit tests
-            return None
-        return None
-
     def _map_department(self, tt_code: Optional[str]) -> Tuple[int, str]:
         """Map TT department string → (STT integer id, STT string)."""
         if not tt_code:
