@@ -12,6 +12,19 @@
     {%- endif -%}
 {%- endmacro %}
 
+{# macro to render STT urgency text #}
+{% macro stt_urgency_text(item) -%}
+  {%- set has_str = (item.stturgency is defined) and (item.stturgency | trim) -%}
+  {%- set has_num = (item.stturgency_numeric is defined) and (item.stturgency_numeric is not none) -%}
+  {%- if not has_str or not has_num -%}
+    {# empty output when not set #}
+  {%- elif item.stturgency == 'Vain tulokset' -%}
+    {{- item.stturgency -}}
+  {%- else -%}
+    Mittaversio korkeintaan {{ item.stturgency_numeric }} merkkiä.
+  {%- endif -%}
+{%- endmacro %}
+
 {# One paragraph per agenda item #}
 {%- for agenda in agendas or [] -%}
     {%- for item in agenda['items'] | default([]) -%}
@@ -19,13 +32,16 @@
         {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
         {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
         {%- for ev in item.related_events_expanded or [] -%}
-        {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
-        {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
-        {%- if ev.location is iterable -%}
-            {%- set ev_loc = lupaus_location(ev.location) -%}
-            {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
-        {%- endif -%}
+            {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
+            {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+            {%- if ev.location is iterable -%}
+                {%- set ev_loc = lupaus_location(ev.location) -%}
+                {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+            {%- endif -%}
         {%- endfor -%}
+        {# Call the urgency macro #}
+        {%- set urg = stt_urgency_text(item) -%}
+        {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
         {%- if bits %}<p>{{- bits | join(', ') -}}</p>{% endif -%}
         {# add empty line between items #}
         <p></p>
