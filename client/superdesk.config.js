@@ -189,7 +189,7 @@ module.exports = function (grunt) {
             },
             position: 'start',
           },
-          {fieldId: 'priority', position: 'start'},
+          {fieldId: 'priority', position: 'start', fieldOptions: {hideLabel: true}},
           {fieldId: 'slugline', position: 'start'},
           {fieldId: 'coverages', position: 'end'}
         ],
@@ -208,7 +208,7 @@ module.exports = function (grunt) {
               },
               position: 'start',
             },
-            {fieldId: 'priority', position: 'start'},
+            {fieldId: 'priority', position: 'start', fieldOptions: {hideLabel: true}},
             {fieldId: 'slugline', position: 'start'},
             {fieldId: 'state'},
           ],
