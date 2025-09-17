@@ -147,8 +147,9 @@ INSTALLED_APPS = [
     "stt.template_filters",
     "stt.paivalista_export",
     "stt.lupaus_export",
-    "stt.io.feed_parsers.stt_events_csv_parse",
     "stt.paivalista_filters",
+    "stt.stt_tt_new_parse_ninjs",
+    "stt.io.feed_parsers.stt_events_csv_parse",
 ]
 
 # enable legal archive is enabled
