@@ -1,0 +1,99 @@
+{
+    "guid": "f09bee9e-7749-49be-bb9f-b2eeab94b895",
+    "version": "5",
+    "type": "text",
+    "byline": "Jecaterina Mantsinen",
+    "located": "Oslo",
+    "versioncreated": "2025-08-18T18:09:23+0000",
+    "language": "nb-NO",
+    "headline": "Food prices rise again as grocery giant expands into pharmacies",
+    "urgency": 2,
+    "pubstatus": "usable",
+    "body_html": "<p><b>Prices on some items</b> at the grocery store were up by as much as 20 percent last month, with coffee, chocolate and fruit showing the biggest hikes even when locally produced fruit is in season. State statistics bureau SSB (Statistics Norway) said the more general 4.4 percent increase was from June to July, while prices were up by 5.9 percent from July of last year.</p>\n<p>SSB reported that Norway\u2019s actual consumer price index was up by 3.3 percent, much higher than the central bank\u2019s goal of just 2 percent, and some were worrying that it may lead to higher interest rates.</p>\n<p><b>\u201cThis was a surprisingly strong increase,\u201d</b> Ivar Pettersen, who follows food prices for Alo-Analyse, told newspaper <i>Dagsavisen</i>. \u201cSome of it can be explained, but I think it\u2019s difficult to clarify the overall price increase. Import prices for foodstuffs actually declined from June to July.\u201d</p>\n<p>The effects of state negotiations with Norwegian farmers often click in during July, however, and Norwegian-grown tomatoes, cucumbers and other fruit and vegetables are almost always more expensive than the imports that are kept out of the country. Cucumbers alone have jumped to NOK 26.90 (USD 2.69) at the so-called \u201clow-price\u201d grocery stores like KIWI and Rema, and cost NOK 29.90 at a Co-op store in Oslo on Wednesday. In Sweden, a cucumber can cost half that.</p>\n<p>Other analysts noted that prices often go up in July as wholesalers \u201cadjust\u201d their prices in the grocery business. It also marks a seasonal change, when grocers clear out so-called \u201cgrilling\u201d food and bring in other types of food that\u2019s seen as being in demand again.</p>\n<p><b>It didn\u2019t take long after the numbers were released</b> for fingers to point at the grocery store giants themselves, especially <i>NorgesGruppen</i> that controls chains like Meny, KIWI, Joker and Spar in Norway. Norwegian consumers have long complained about how NorgesGruppen, Coop and Rema dominate the market in Norway, and last week came news that <i>NorgesGruppen</i> was also buying <i>Norsk Medisinaldepot (NMD)</i>, which owns the national pharmacy chains <i>Vitusapotek</i> and <i>Ditt Apotek</i>.</p>\n<p>Knut Faremo, who used to work for <i>NorgesGruppen</i> and now works as an investment adviser, told news service <i>E24</i> that he has filed a protest with the state against the pending acquisition. He said it would be \u201cextremely unfortunate\u201d if <i>NorgesGruppen</i> breaks into the pharmacy- and medicinal market in addition to groceries.</p>\n<p>\u201cThat would become a scandal for consumers and an unwanted situation,\u201d he wrote in a letter to the trade ministry in late June. The ministry has since deferred complaints to the state competition authority <i>Konkurransetilsynet,</i> claiming that it\u2019s \u201cin charge of such acquisitions and evaluates them on an independent and professional &nbsp;basis.\u201d</p>\n<p><i>NorgesGruppen</i>, which is buying NMD from US-based McKesson Corp, claims the purchase is \u201cstrategically important\u201d because it will strengthen Norway\u2019s medicinal preparedness along with access to pharmacy items nationwide. The grocery giant\u2019s chief executive Runar Hollevik said Norwegian ownership of NMD and what he called its \u201cchain concepts\u201d was \u201cimportant in an uneasy international situation.\u201d There are currently 386 <i>Vitusapotek</i> and <i>Ditt Apotek</i> pharmacies nationwide with more than 3,000 employees including those working within NMD\u2019s wholesale operations.</p>\n<p><b>Over-the-counter remedies sold in pharmacies</b> like aspirins, cough syrups, ibuprofen or allergy pills are already much more expensive in Norway than in many other countries, especially the US. A box of just 20 Ibux tablets, for example, costs around NOK 79 (USD 7.90) at a Norwegian pharmacy, while that can buy 100 or more tablets of a generic ibuprofen brand in the US. There\u2019s little brand competition and few generic remedies in Norway, where Faremo said three leading players also control the pharmacy market. Nothing is sold in the high-volume quantities found in the US at much lower prices.</p>\n<p>Grocery stores already sell a limited selection of pain remedies, often at a lower price than in the pharmacies, but they also tend to be low-dose (200mg instead of 500mg) and don\u2019t include, for example, Paracet tablets that are easier to swallow. They\u2019re only available at a pharmacy, at a much higher price.</p>\n<p>The trade ministry stated that it\u2019s now up to the competition authority to review <i>NorgesGruppen\u2019s</i> acquisition of the pharmacy chains. Some players in the grocery branch think the NMD purchase is both \u201csensible and expected\u201d as the grocery business expands and diversifies, noting the overlap of products sold in both grocery stores and pharmacies.</p>",
+    "slugline": "test-imatrics",
+    "firstcreated": "2025-08-18T18:02:58+0000",
+    "firstpublished": "2025-08-18T18:09:23+0000",
+    "source": "NTB",
+    "annotations": [],
+    "place": [
+        {
+            "name": "Norge",
+            "code": "1edf0e8a-1a64-32a1-9122-74d9f088e46c"
+        },
+        {
+            "name": "Oslo",
+            "code": "6ea6e497-53dd-3086-928d-158b8c48a22a"
+        }
+    ],
+    "profile": "Standard",
+    "associations": {},
+    "priority": 5,
+    "subject": [
+        {
+            "code": "20000023",
+            "name": "countrymusikk",
+            "scheme": "topics"
+        },
+        {
+            "code": "20000021",
+            "name": "musikksjanger",
+            "scheme": "topics"
+        },
+        {
+            "code": "20000018",
+            "name": "musikk",
+            "scheme": "topics"
+        },
+        {
+            "code": "20000002",
+            "name": "kunst og underholdning",
+            "scheme": "topics"
+        },
+        {
+            "code": "01000000",
+            "name": "kultur, underholdning og medier",
+            "scheme": "topics"
+        },
+        {
+            "code": "Utenriks",
+            "name": "Utenriks",
+            "scheme": "category"
+        },
+        {
+            "code": "06000000",
+            "name": "Natur og milj\u00f8",
+            "scheme": "subject_custom"
+        },
+        {
+            "code": "01011000",
+            "name": "Musikk",
+            "scheme": "subject_custom"
+        },
+        {
+            "code": "01000000",
+            "name": "Kultur og underholdning",
+            "scheme": "subject_custom"
+        }
+    ],
+    "service": [
+        {
+            "code": "n",
+            "name": "Nyhetstjenesten"
+        }
+    ],
+    "description_html": "<p><b>Norway\u2019s already-high food prices have risen even more, by another 4.4 percent just last month. Meanwhile the consistently profitable grocery- and distribution conglomerate </b><i><b>NorgesGruppen.</b></i></p>",
+    "description_text": "Norway\u2019s already-high food prices have risen even more, by another 4.4 percent just last month. Meanwhile the consistently profitable grocery- and distribution conglomerate NorgesGruppen.",
+    "copyrightholder": "Sourcefabric",
+    "copyrightnotice": "",
+    "usageterms": "",
+    "genre": [
+        {
+            "code": "Nyheter",
+            "name": "Nyheter",
+            "scheme": "genre_custom"
+        }
+    ],
+    "charcount": 4528,
+    "wordcount": 726,
+    "readtime": 3
+}
