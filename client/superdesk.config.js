@@ -189,14 +189,7 @@ module.exports = function (grunt) {
             },
             position: 'start',
           },
-          {
-            fieldId: 'vocabulary',
-            fieldOptions: {
-              vocabularyId: 'priority',
-              hideVocabularyName: true,
-            },
-            position: 'start'
-          },
+          {fieldId: 'priority', position: 'start'},
           {fieldId: 'slugline', position: 'start'},
           {fieldId: 'coverages', position: 'end'}
         ],
@@ -215,14 +208,7 @@ module.exports = function (grunt) {
               },
               position: 'start',
             },
-            {
-              fieldId: 'vocabulary',
-              fieldOptions: {
-                vocabularyId: 'priority',
-                hideVocabularyName: true,
-              },
-              position: 'start'
-            },
+            {fieldId: 'priority', position: 'start'},
             {fieldId: 'slugline', position: 'start'},
             {fieldId: 'state'},
           ],
