@@ -182,16 +182,20 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             data = json.loads(content)
         except Exception:
             # Fallback: let parser.parse handle the raw file content by writing it to disk
-            with NamedTemporaryFile("wb", delete=False, suffix=".json") as f:
+            # Since this runs inside Docker (Linux/POSIX), we can parse while the temp file is open
+            # and rely on automatic deletion when the context exits.
+            with NamedTemporaryFile("wb", delete=True, suffix=".json") as f:
+                logger.warning(
+                    "Falling back to raw file parsing due to JSON decode error"
+                )
                 f.write(content)
-                tmp = f.name
-            try:
-                results = self._call_parser(parser, tmp, provider)
-            finally:
-                try:
-                    os.unlink(tmp)
-                except Exception:
-                    pass
+                # Make sure the parser, which opens f.name immediately, sees the full contents:
+                # - flush(): push Python's buffer to the OS so size/data are visible to a new open()
+                # - fsync(): ask the OS to flush page cache + metadata; helpful on some FS/overlay layers
+                #   (Docker/overlayfs) to avoid stale size/content. Safe but optional for POSIX; drop if perf-critical.
+                f.flush()
+                os.fsync(f.fileno())
+                results = self._call_parser(parser, f.name, provider)
             return results
 
         # Normalize to a list of item dicts
@@ -213,20 +217,16 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             obj = self._normalize_dates_in_obj(obj)
             # Ensure ninjs 'service' is present if only 'anpa_category' exists
             obj = self._adapt_category_for_ninjs(obj)
-            with NamedTemporaryFile("w", delete=False, suffix=".json") as f:
+            with NamedTemporaryFile("w", delete=True, suffix=".json") as f:
                 json.dump(obj, f)
-                tmp = f.name
-            try:
-                parsed = self._call_parser(parser, tmp, provider)
+                # See notes above: ensure data is durably visible before the parser re-opens the path.
+                f.flush()
+                os.fsync(f.fileno())
+                parsed = self._call_parser(parser, f.name, provider)
                 if isinstance(parsed, list):
                     results.extend(parsed)
                 elif parsed is not None:
                     results.append(parsed)
-            finally:
-                try:
-                    os.unlink(tmp)
-                except Exception:
-                    pass
 
         return results
 
@@ -293,16 +293,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             - Elements that do not yield a "code" are ignored.
             - The resulting list is stored in "service". The original "anpa_category" is preserved.
 
-        - If "service" exists as a list:
-            - Each element is normalized:
-                - Dict elements must provide "code" or "qcode"; "name" and "scheme" are preserved.
-                - String elements are converted to {"code": <string>}.
-                - Dict elements without a resolvable code are dropped.
-
-        - If "service" exists as a string:
-            - It is converted to [{"code": <string>}].
-
-        In all cases, a shallow copy of the input mapping is returned; the original is not modified.
+        A shallow copy of the input mapping is returned; the original is not modified.
 
         Parameters:
                 obj (dict): Input mapping potentially containing "anpa_category" and/or "service".
@@ -333,24 +324,6 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
                 elif isinstance(el, str):
                     svc.append({"code": el})
             out["service"] = svc
-        elif isinstance(out.get("service"), list):
-            # If service exists but contains strings, convert them to dicts
-            normalized = []
-            for el in out["service"]:
-                if isinstance(el, dict):
-                    if "code" in el or "qcode" in el:
-                        code = el.get("code") or el.get("qcode")
-                        entry = {"code": code}
-                        if el.get("name"):
-                            entry["name"] = el.get("name")
-                        if el.get("scheme"):
-                            entry["scheme"] = el.get("scheme")
-                        normalized.append(entry)
-                elif isinstance(el, str):
-                    normalized.append({"code": el})
-            out["service"] = normalized
-        elif isinstance(out.get("service"), str):
-            out["service"] = [{"code": out.get("service")}]
         return out
 
 
