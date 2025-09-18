@@ -150,6 +150,7 @@ INSTALLED_APPS = [
     "stt.paivalista_filters",
     "stt.stt_tt_new_parse_ninjs",
     "stt.io.feed_parsers.stt_events_csv_parse",
+    "stt.io.feeding_services.stt_http_with_since",
 ]
 
 # enable legal archive is enabled
