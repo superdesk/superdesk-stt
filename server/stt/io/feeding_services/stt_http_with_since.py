@@ -8,12 +8,20 @@ from superdesk.errors import IngestApiError
 from superdesk.io.feeding_services.http_service import HTTPFeedingService
 from superdesk.io.registry import (
     register_feeding_service,
+    register_feeding_service_parser,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class STTWithSinceHTTPFeedingService(HTTPFeedingService):
+    """
+    STT results ingest over HTTP with since-cursor semantics.
+
+    Parser: This feeding service always uses the NINJS Feed Parser (id: "ninjs")
+    regardless of the Source configuration.
+    """
+
     NAME = "stt_since_http"
     label = "STT Sport Results API"
     fields = [
@@ -43,6 +51,8 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
     session = None
     auth_token = None
+
+    # Parser is bound via registry to NinJS (see registration at bottom of file)
 
     def _update(self, provider, update):
         """Fetch and parse a provider update, yielding a single batch of NinJS items.
@@ -75,10 +85,10 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
                 "MISSING_AUTH_TOKEN",
                 "Auth token is required but not set in provider configuration.",
             )
+        parser = self.get_feed_parser(provider)
         items = []
         self.session = requests.Session()
         response = self.fetch(provider, update)
-        parser = self.get_feed_parser(provider)
 
         # Parse by feeding one item at a time to the NinJS parser
         content = response.content or b""
@@ -345,3 +355,4 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
 
 register_feeding_service(STTWithSinceHTTPFeedingService)
+register_feeding_service_parser(STTWithSinceHTTPFeedingService.NAME, "ninjs")
