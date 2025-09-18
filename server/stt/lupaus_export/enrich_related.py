@@ -216,6 +216,9 @@ def get_numeric_value_from_stturgency(stturgency: str) -> str:
         number_str = stturgency[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
+        logger.debug(
+            "Could not extract numeric value from stturgency: '%s'", stturgency
+        )
         return ""
 
 

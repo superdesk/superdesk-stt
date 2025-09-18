@@ -21,7 +21,7 @@
   {%- elif item.stturgency == 'Vain tulokset' -%}
     {{- item.stturgency -}}
   {%- else -%}
-    Mittaversio korkeintaan {{ item.stturgency_numeric }} merkkiä.
+    Mittaversio korkeintaan {{ item.stturgency_numeric }} merkkiä
   {%- endif -%}
 {%- endmacro %}
 
@@ -42,7 +42,14 @@
         {# Call the urgency macro #}
         {%- set urg = stt_urgency_text(item) -%}
         {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
-        {%- if bits %}<p>{{- bits | join(', ') -}}</p>{% endif -%}
+        {# Add coverages if available #}
+        {%- if item.coverages is defined and item.coverages -%}
+        {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
+        {%- if cov_list | length > 0 -%}
+            {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- if bits %}<p>{{- bits | join(', ') -}}.</p>{% endif -%}
         {# add empty line between items #}
         <p></p>
     {%- endfor -%}
