@@ -156,57 +156,58 @@ def _build_calendars(r: Dict[str, Any]) -> List[Dict[str, str]]:
     return [{"qcode": q} for q in codes]
 
 
-def _build_occur_status(r: Dict[str, Any]) -> Optional[Dict[str, str]]:
-    """Normalize occurrence status from CSV.
+def _build_occur_status(row: Dict[str, Any]) -> Optional[Dict[str, str]]:
+    """Resolve event occurrence status from CSV against IPTC vocabulary.
 
-    Accepts either a label (e.g. "Planned, occurs certainly") or a qcode
-    (e.g. "eocstat:eos5"). Resolves against the `eventoccurstatus` vocabulary
-    and returns a normalized dict: {"qcode", "name", "label"}.
-    If resolution fails, returns {"qcode": raw} as a minimal fallback.
+    Accepts either qcode (e.g. 'eocstat:eos5') or label (e.g. 'Planned, occurs certainly').
+    Returns a dict with {'qcode', 'name', 'label'} or None if nothing can be resolved.
+
+    This function must not fabricate raw/free-text values or apply arbitrary defaults.
     """
-    raw = _norm(r.get("occur_status")) if r.get("occur_status") else ""
+    raw = _norm(row.get("occur_status")) if row.get("occur_status") else ""
     if not raw:
         return None
 
+    items: List[Dict[str, Any]] = []
     try:
         svc = get_resource_service("vocabularies")
-        items: List[Dict[str, Any]] = []
-        if svc is not None:
-            get_items = getattr(svc, "get_items", None)
-            if callable(get_items):
-                items = get_items("eventoccurstatus") or []
-            else:
-                one = getattr(svc, "find_one", None)
-                if callable(one):
-                    vocab = one(req=None, _id="eventoccurstatus") or {}
-                    items = vocab.get("items") or []
+    except Exception:
+        svc = None
 
-        if items:
-            lower_raw = raw.lower()
-            # Prefer exact qcode match first
-            for it in items:
-                q = (it.get("qcode") or "").strip()
-                if q and q.lower() == lower_raw:
-                    name = _norm(it.get("name") or it.get("label") or q)
-                    label = _norm(it.get("label") or name)
-                    return {"qcode": q, "name": name, "label": label}
+    if svc:
+        get_items = getattr(svc, "get_items", None)
+        if callable(get_items):
+            items = get_items("eventoccurstatus") or []
+        else:
+            find_one = getattr(svc, "find_one", None)
+            if callable(find_one):
+                vocab = find_one(req=None, _id="eventoccurstatus") or {}
+                items = vocab.get("items") or []
 
-            # Fallback: match by label/name (case-insensitive)
-            for it in items:
-                name = _norm(it.get("name"))
-                label = _norm(it.get("label"))
-                if lower_raw in {name.lower(), label.lower()}:
-                    q = _norm(it.get("qcode") or "")
-                    return {
-                        "qcode": q,
-                        "name": name or label or q,
-                        "label": label or name or q,
-                    }
-    except Exception as exc:  # pragma: no cover
-        logger.warning("occur_status resolution failed: %s", exc)
+    if not items:
+        # No vocabulary available: do not fabricate anything
+        return None
 
-    # Minimal fallback if vocabulary is unavailable or unmatched
-    return {"qcode": raw}
+    lower = raw.lower()
+
+    # 1) Exact qcode match (case-insensitive)
+    for it in items:
+        q = (it.get("qcode") or "").strip()
+        if q and q.lower() == lower:
+            name = _norm(it.get("name") or it.get("label") or q)
+            label = _norm(it.get("label") or name)
+            return {"qcode": q, "name": name, "label": label}
+
+    # 2) Exact label/name match (case-insensitive)
+    for it in items:
+        name = _norm(it.get("name"))
+        label = _norm(it.get("label"))
+        if lower in {name.lower(), label.lower()}:
+            q = _norm(it.get("qcode") or "")
+            return {"qcode": q, "name": name or label or q, "label": label or name or q}
+
+    # No match found -> do not return fabricated values
+    return None
 
 
 def _collect_external_links(raw_row: Dict[str, Any]) -> List[Dict[str, str]]:

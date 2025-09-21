@@ -169,12 +169,20 @@ def test_parse_eventsheet_fixture_csv():
     This mirrors how other parsers' tests load fixtures (e.g. BusinessWire),
     using a stable path under tests/fixtures.
     """
+    from unittest.mock import patch
+
     parser = EventsCSVFeedParser()
     fixture_path = os.path.join(
         os.path.dirname(__file__), "fixtures", "csv", "eventsheet.csv"
     )
 
-    items = parser.parse(fixture_path)
+    # Mock get_resource_service to return None (simulating no app context)
+    with patch(
+        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
+    ) as mock_service:
+        mock_service.return_value = None
+
+        items = parser.parse(fixture_path)
 
     # Basic structure assertions
     assert isinstance(items, list)
@@ -254,7 +262,7 @@ def test_build_occur_status_with_label_match(tmp_path):
     p = tmp_path / "occur_status_label.csv"
     p.write_text(
         "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,Planned, occurs certainly\n",
+        '2024-01-01,Test Event,"Planned, occurs certainly"\n',
         encoding="utf-8",
     )
 
@@ -284,13 +292,10 @@ def test_build_occur_status_with_label_match(tmp_path):
         event = items[0]
         assert "occur_status" in event
         occur_status = event["occur_status"]
-
-        # DISCOVERED BEHAVIOR: The current implementation falls back to raw input
-        # even when vocabulary matching should work. This demonstrates the value
-        # of robust testing - it reveals actual vs expected behavior!
-        assert occur_status["qcode"] == "Planned"
-        # Fallback case only includes qcode
-        assert len(occur_status) == 1
+        assert occur_status["qcode"] == "eocstat:eos5"
+        assert occur_status["name"] == "Planned, occurs certainly"
+        assert occur_status["label"] == "Planned, occurs certainly"
+        assert len(occur_status) == 3
 
 
 def test_build_occur_status_with_no_exact_match_fallback(tmp_path):
@@ -325,13 +330,8 @@ def test_build_occur_status_with_no_exact_match_fallback(tmp_path):
         assert len(items) == 1
 
         event = items[0]
-        assert "occur_status" in event
-        occur_status = event["occur_status"]
-
-        # Should fallback to raw input since "Planned" doesn't exactly match "Planned, occurs certainly"
-        assert occur_status["qcode"] == "Planned"
-        # Fallback case only includes qcode
-        assert len(occur_status) == 1
+        # Should not set occur_status when there is no exact vocabulary match
+        assert "occur_status" not in event or event["occur_status"] is None
 
 
 def test_build_occur_status_fallback_when_no_vocabulary_match(tmp_path):
@@ -360,14 +360,8 @@ def test_build_occur_status_fallback_when_no_vocabulary_match(tmp_path):
         assert len(items) == 1
 
         event = items[0]
-        assert "occur_status" in event
-        occur_status = event["occur_status"]
-
-        # Should fallback to raw qcode only
-        assert occur_status["qcode"] == "unknown_status"
-        # Fallback case only includes qcode
-        assert "name" not in occur_status or not occur_status.get("name")
-        assert "label" not in occur_status or not occur_status.get("label")
+        # Should not set occur_status when there are no vocabulary items
+        assert "occur_status" not in event or event["occur_status"] is None
 
 
 def test_build_occur_status_with_empty_or_missing_status(tmp_path):
@@ -414,12 +408,8 @@ def test_build_occur_status_with_vocabulary_service_unavailable(tmp_path):
         assert len(items) == 1
 
         event = items[0]
-        assert "occur_status" in event
-        occur_status = event["occur_status"]
-
-        # Should fallback to raw value when service unavailable
-        assert occur_status["qcode"] == "custom_status"
-        assert len(occur_status) == 1  # Only qcode should be present
+        # Should not set occur_status when vocabulary service unavailable
+        assert "occur_status" not in event or event["occur_status"] is None
 
 
 def test_build_occur_status_case_insensitive_matching(tmp_path):
@@ -432,7 +422,7 @@ def test_build_occur_status_case_insensitive_matching(tmp_path):
     p.write_text(
         "Start Date,Event Name,Occurrence Status\n"
         "2024-01-01,Test Event,EOCSTAT:EOS5\n"
-        "2024-01-02,Test Event 2,PLANNED, OCCURS CERTAINLY\n",
+        '2024-01-02,Test Event 2,"PLANNED, OCCURS CERTAINLY"\n',
         encoding="utf-8",
     )
 
@@ -454,8 +444,6 @@ def test_build_occur_status_case_insensitive_matching(tmp_path):
         items = parser.parse(str(p))
         assert len(items) == 2
 
-        # DISCOVERED BEHAVIOR: Both fall back to raw input, revealing that
-        # the vocabulary lookup isn't working as expected in the test environment
         event1, event2 = items[0], items[1]
 
         # First event: EOCSTAT:EOS5 actually DOES match qcode (case-insensitive!)
@@ -467,8 +455,10 @@ def test_build_occur_status_case_insensitive_matching(tmp_path):
         )  # Full vocabulary entry
         assert len(occur_status1) == 3  # qcode, name, label
 
-        # Second event: "PLANNED, OCCURS CERTAINLY" also falls back
+        # Second event: "PLANNED, OCCURS CERTAINLY" matches vocabulary (case-insensitive)
         assert "occur_status" in event2
         occur_status2 = event2["occur_status"]
-        assert occur_status2["qcode"] == "PLANNED"  # First word only due to CSV parsing
-        assert len(occur_status2) == 1  # Only qcode in fallback
+        assert occur_status2["qcode"] == "eocstat:eos5"
+        assert occur_status2["name"] == "Planned, occurs certainly"
+        assert occur_status2["label"] == "Planned, occurs certainly"
+        assert len(occur_status2) == 3
