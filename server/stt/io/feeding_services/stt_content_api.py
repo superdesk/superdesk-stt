@@ -19,11 +19,9 @@ utcfromtimestamp = datetime.utcfromtimestamp
 
 # HTTP request timeout (seconds)
 DEFAULT_TIMEOUT = 30
-# Maximum number of retries for transient errors (429/5xx)
+# Maximum number of retries for transient errors (429/5xx). This is retries, not attempts.
 MAX_RETRIES = 3
 # Base seconds for exponential backoff (1, 2, 4, ...)
-
-
 BACKOFF_BASE = 1.0
 
 
@@ -62,13 +60,14 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         super().__init__()
         self._session: requests.Session = requests.Session()
         # Configure automatic retries on the session (built-in urllib3 retries)
-        # urllib3 Retry.total counts *retries* (attempts = retries + 1), so we subtract 1
-        _retry_total = MAX_RETRIES - 1 if MAX_RETRIES > 0 else 0
+        # NOTE: urllib3's `Retry.total` is the number of *retries* (not attempts).
+        # Since MAX_RETRIES is already defined as "maximum number of retries",
+        # we pass it directly to Retry without subtracting 1.
         _retry = Retry(
-            total=_retry_total,
-            connect=_retry_total,
-            read=_retry_total,
-            status=_retry_total,
+            total=MAX_RETRIES,
+            connect=MAX_RETRIES,
+            read=MAX_RETRIES,
+            status=MAX_RETRIES,
             backoff_factor=BACKOFF_BASE,
             status_forcelist={429, *range(500, 600)},
             allowed_methods=frozenset({"HEAD", "GET", "OPTIONS"}),

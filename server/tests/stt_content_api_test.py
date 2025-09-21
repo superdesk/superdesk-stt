@@ -45,8 +45,13 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
         self.assertIsInstance(parsed, dict)
         self.assertEqual(parsed.get("type"), "text")
         self.assertEqual(parsed.get("pubstatus"), "usable")
-        self.assertIn("guid", parsed)
-        self.assertIn("versioncreated", parsed)
+        # Check actual values, not just presence
+        from datetime import datetime
+
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
+        self.assertIsInstance(parsed.get("versioncreated"), datetime)
+        self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
         # Optional sanity checks if present in fixture
         if "headline" in parsed:
@@ -69,12 +74,15 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
                 if isinstance(parsed, list):
                     parsed = parsed[0]
 
-                # Each item should have required fields
+                from datetime import datetime
+
                 self.assertIsInstance(parsed, dict)
-                self.assertIn("type", parsed)
-                self.assertIn("pubstatus", parsed)
-                self.assertIn("guid", parsed)
-                self.assertIn("versioncreated", parsed)
+                self.assertEqual(parsed.get("type"), "text")
+                self.assertEqual(parsed.get("pubstatus"), "usable")
+                self.assertIsInstance(parsed.get("guid"), str)
+                self.assertTrue(parsed["guid"])  # non-empty
+                self.assertIsInstance(parsed.get("versioncreated"), datetime)
+                self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
     def test_guid_generation_consistency(self):
         """Test that GUID generation is consistent for the same input."""
@@ -155,8 +163,12 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
         # Should have all required defaults
         self.assertEqual(parsed["type"], "text")
         self.assertEqual(parsed["pubstatus"], "usable")
-        self.assertIn("guid", parsed)
-        self.assertIn("versioncreated", parsed)
+        from datetime import datetime
+
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
+        self.assertIsInstance(parsed.get("versioncreated"), datetime)
+        self.assertIsNotNone(parsed["versioncreated"].tzinfo)
         self.assertEqual(parsed["headline"], "Test headline")
         self.assertEqual(parsed["body_html"], "")
 
@@ -177,10 +189,15 @@ class ContentAPIItemParserFixtureTestCase(TestCase):
             parsed = parsed[0]
 
         # Should not raise errors and should have defaults
+        from datetime import datetime
+
         self.assertIsInstance(parsed, dict)
-        self.assertIn("guid", parsed)
-        self.assertIn("type", parsed)
-        self.assertIn("pubstatus", parsed)
+        self.assertEqual(parsed.get("type"), "text")
+        self.assertEqual(parsed.get("pubstatus"), "usable")
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
+        self.assertIsInstance(parsed.get("versioncreated"), datetime)
+        self.assertIsNotNone(parsed["versioncreated"].tzinfo)
         self.assertIn("headline", parsed)
         self.assertIn("body_html", parsed)
 
