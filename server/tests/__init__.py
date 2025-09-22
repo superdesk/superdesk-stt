@@ -22,6 +22,8 @@ class TestCase(CoreTestCase):
             self.parse_source_content()
 
     def parse_source_content(self):
+        if self.fixture is None:
+            return
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, "fixtures", self.fixture)
         provider = {"name": "Test"}

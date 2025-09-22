@@ -143,6 +143,8 @@ INSTALLED_APPS = [
     "stt.macros",
     "stt.search_providers.newshub",
     "stt.ai_proxy",
+    "stt.io.feeding_services.stt_content_api",
+    "stt.io.feed_parsers.stt_parse_content_api",
     "stt.stt_ntb_ninjs_parse",
     "stt.template_filters",
     "stt.paivalista_export",
