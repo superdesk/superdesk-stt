@@ -150,7 +150,7 @@
   {
     "_id": "advanced_search",
     "name": "advanced_search",
-    "init_version": 2,
+    "init_version": 3,
     "editor": {
         "event": {
             "full_text": {
@@ -660,6 +660,63 @@
                 "group": "planning",
                 "search_enabled": true,
                 "filter_enabled": true
+            }
+        },
+        "assignments": {
+            "slugline": {
+                "enabled": true,
+                "index": 1,
+                "group": "common"
+            },
+            "instructions-for-the-photographer": {
+                "enabled": true,
+                "index": 2,
+                "group": "common"
+            },
+            "registration-information": {
+                "enabled": true,
+                "index": 3,
+                "group": "common"
+            },
+            "genre": {
+                "enabled": true,
+                "index": 4,
+                "group": "vocabularies"
+            },
+            "anpa_category": {
+                "enabled": true,
+                "index": 5,
+                "group": "vocabularies"
+            },
+            "sttdepartment": {
+                "enabled": true,
+                "index": 6,
+                "group": "vocabularies"
+            },
+            "stturgency": {
+                "enabled": true,
+                "index": 7,
+                "group": "vocabularies"
+            },
+            "user": {
+                "enabled": true,
+                "index": 8,
+                "group": "planning"
+            },
+            "content_type": {
+                "enabled": true,
+                "index": 9,
+                "group": "planning"
+            },
+            "multiple_content": {
+                "enabled": true,
+                "index": 10,
+                "group": "planning"
+            },
+            "assignment_priority": {
+                "enabled": true,
+                "index": 11,
+                "group": "planning"
             }
         }
     },
