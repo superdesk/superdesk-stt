@@ -156,9 +156,58 @@ def _build_calendars(r: Dict[str, Any]) -> List[Dict[str, str]]:
     return [{"qcode": q} for q in codes]
 
 
-def _build_occur_status(r: Dict[str, Any]) -> Optional[Dict[str, str]]:
-    code = _norm(r.get("occur_status")) if r.get("occur_status") else ""
-    return {"qcode": code} if code else None
+def _build_occur_status(row: Dict[str, Any]) -> Optional[Dict[str, str]]:
+    """Resolve event occurrence status from CSV against IPTC vocabulary.
+
+    Accepts either qcode (e.g. 'eocstat:eos5') or label (e.g. 'Planned, occurs certainly').
+    Returns a dict with {'qcode', 'name', 'label'} or None if nothing can be resolved.
+
+    This function must not fabricate raw/free-text values or apply arbitrary defaults.
+    """
+    raw = _norm(row.get("occur_status")) if row.get("occur_status") else ""
+    if not raw:
+        return None
+
+    items: List[Dict[str, Any]] = []
+    try:
+        svc = get_resource_service("vocabularies")
+    except Exception:
+        svc = None
+
+    if svc:
+        get_items = getattr(svc, "get_items", None)
+        if callable(get_items):
+            items = get_items("eventoccurstatus") or []
+        else:
+            find_one = getattr(svc, "find_one", None)
+            if callable(find_one):
+                vocab = find_one(req=None, _id="eventoccurstatus") or {}
+                items = vocab.get("items") or []
+
+    if not items:
+        # No vocabulary available: do not fabricate anything
+        return None
+
+    lower = raw.lower()
+
+    # 1) Exact qcode match (case-insensitive)
+    for it in items:
+        q = (it.get("qcode") or "").strip()
+        if q and q.lower() == lower:
+            name = _norm(it.get("name") or it.get("label") or q)
+            label = _norm(it.get("label") or name)
+            return {"qcode": q, "name": name, "label": label}
+
+    # 2) Exact label/name match (case-insensitive)
+    for it in items:
+        name = _norm(it.get("name"))
+        label = _norm(it.get("label"))
+        if lower in {name.lower(), label.lower()}:
+            q = _norm(it.get("qcode") or "")
+            return {"qcode": q, "name": name or label or q, "label": label or name or q}
+
+    # No match found -> do not return fabricated values
+    return None
 
 
 def _collect_external_links(raw_row: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -331,9 +380,6 @@ class EventsCSVFeedParser(FeedParser):
                 dates["all_day"] = True
             if tz_name:
                 dates["tz"] = tz_name
-            occur_status = _build_occur_status(r)
-            if occur_status:
-                dates["occur_status"] = occur_status
 
             event: Dict[str, Any] = {
                 "guid": _gen_guid(file_path, row_index),
@@ -352,6 +398,9 @@ class EventsCSVFeedParser(FeedParser):
                     "csv_row": row_index,
                 },
             }
+            occur_status = _build_occur_status(r)
+            if occur_status:
+                event["occur_status"] = occur_status
 
             calendars = _build_calendars(r)
             if calendars:
