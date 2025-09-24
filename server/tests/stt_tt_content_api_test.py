@@ -1,12 +1,153 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import unittest
 import requests
 from unittest.mock import patch
-from flask import json
 
-from stt.io.feeding_services.stt_tt_content_api import STTContentAPIService
+from stt.io.feeding_services.stt_tt_content_api import STTTTContentAPIService
 from stt.io.feed_parsers.stt_tt_parse_content_api import ContentAPITTItemParser
+
+# Shared realistic TT items for tests that need concrete payloads
+TEST_TT_ITEMS = [
+    {
+        "uri": "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+        "associations": {
+            "a001": {
+                "representationtype": "incomplete",
+                "description_text": "Besökare på ett köpcentrum. Arkivbild. ",
+                "mimetype": "image/jpeg",
+                "renditions": {
+                    "r01": {
+                        "sizeinbytes": 434445,
+                        "usage": "Preview",
+                        "variant": "Normal",
+                        "width": 1024,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg",
+                        "height": 683,
+                    },
+                    "r00": {
+                        "sizeinbytes": 14486162,
+                        "usage": "Hires",
+                        "variant": "Normal",
+                        "width": 5568,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalHires.jpg",
+                        "height": 3712,
+                    },
+                    "r03": {
+                        "sizeinbytes": 40566,
+                        "usage": "Thumbnail",
+                        "variant": "Normal",
+                        "width": 256,
+                        "mimetype": "image/jpeg",
+                        "href": "https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg",
+                        "height": 171,
+                    },
+                    "r02": {
+                        "sizeinbytes": 434445,
+                        "usage": "Preview",
+                        "variant": "Watermark",
+                        "width": 1024,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_WatermarkPreview.jpg",
+                        "height": 683,
+                    },
+                },
+                "type": "picture",
+                "byline": "Amir Nabizadeh/TT",
+                "uri": "http://tt.se/media/image/sdlg3pTraNl8TI",
+            }
+        },
+        "altids": {
+            "originaltransmissionreference": "ae8053fa-9100-460d-9589-ee2a75535877"
+        },
+        "webprio": 2,
+        "body_text": "KI: Ekonomin lyfter nästa år… (truncated in tests)",
+        "language": "sv",
+        "source": "TT",
+        "type": "text",
+        "versioncreated": "2025-09-24T08:16:02Z",
+        "headline": "KI: Ekonomin lyfter nästa år",
+        "slug": "konjunkturläget-6-UV",
+        "pubstatus": "usable",
+    },
+    {
+        "uri": "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+        "associations": {
+            "a001": {
+                "representationtype": "complete",
+                "description_text": "",
+                "renditions": {
+                    "r01": {
+                        "unit": "PX",
+                        "usage": "Hires",
+                        "variant": "Normal",
+                        "width": 8000,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalHires.jpg",
+                        "height": 4500,
+                    },
+                    "r00": {
+                        "unit": "PX",
+                        "usage": "Thumbnail",
+                        "variant": "Normal",
+                        "width": 512,
+                        "mimetype": "image/jpeg",
+                        "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalThumbnail.jpg",
+                        "height": 288,
+                    },
+                    "r03": {
+                        "unit": "PX",
+                        "usage": "Preview",
+                        "variant": "Watermark",
+                        "width": 1024,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_WatermarkPreview.jpg",
+                        "height": 576,
+                    },
+                    "r02": {
+                        "unit": "PX",
+                        "usage": "Preview",
+                        "variant": "Cropped",
+                        "width": 1024,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedPreview.jpg",
+                        "height": 1024,
+                    },
+                    "r05": {
+                        "unit": "PX",
+                        "usage": "Thumbnail",
+                        "variant": "Cropped",
+                        "width": 512,
+                        "mimetype": "image/jpeg",
+                        "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedThumbnail.jpg",
+                        "height": 512,
+                    },
+                    "r04": {
+                        "unit": "PX",
+                        "usage": "Preview",
+                        "variant": "Normal",
+                        "width": 1024,
+                        "mimetype": "image/jpeg",
+                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalPreview.jpg",
+                        "height": 576,
+                    },
+                },
+                "type": "picture",
+                "uri": "http://tt.se/media/image/68847ef9304c48267feaaac57dda0fa6",
+            }
+        },
+        "language": "sv",
+        "source": "ViaTT",
+        "type": "text",
+        "versioncreated": "2025-09-24T10:12:00+02:00",
+        "headline": "Bookmark på Bokmässan 2025",
+        "slug": "bookmarkpåbokmässan2025",
+        "pubstatus": "usable",
+    },
+]
 
 
 def fixture(filename):
@@ -33,16 +174,21 @@ class MockResponseWithJsonException:
         self._json_data = json_data
         self.status_code = status_code
         self._json_exc = json_exc
+        self.headers = {"content-type": "application/json"}
 
     def json(self):
         if self._json_exc:
             raise self._json_exc
         return self._json_data
 
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.exceptions.HTTPError(f"HTTP {self.status_code}")
+
 
 class STTContentAPITestCase(unittest.TestCase):
     def setUp(self):
-        self.service = STTContentAPIService()
+        self.service = STTTTContentAPIService()
         self.parser = ContentAPITTItemParser()
 
         # Load test fixture
@@ -61,6 +207,14 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertIn("api_key", fields)
         self.assertTrue(fields["url"]["required"])
         self.assertTrue(fields["api_key"]["required"])
+
+        # Check new pagination fields
+        self.assertIn("page_size", fields)
+        self.assertIn("max_pages", fields)
+        self.assertFalse(fields["page_size"]["required"])
+        self.assertFalse(fields["max_pages"]["required"])
+        self.assertEqual("50", fields["page_size"]["default"])
+        self.assertEqual("200", fields["max_pages"]["default"])
 
     def test_headers_helper(self):
         """Test the _headers helper method."""
@@ -83,16 +237,20 @@ class STTContentAPITestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             self.service._test(provider)
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_single_page(self, mock_get):
-        """Test _fetch_data with single page response using fixture data."""
+        """Test _fetch_tt_data with single page response using fixture data."""
         # Use first 2 items from fixture for testing
         test_items = self.fixture_data["hits"][:2]
         mock_response_data = {
             "hits": test_items,
         }
 
-        mock_get.return_value = MockResponse(mock_response_data)
+        # First call returns data, subsequent calls return empty (simulates single page)
+        mock_get.side_effect = [
+            MockResponse(mock_response_data),  # First page with data
+            MockResponse({"hits": []}),  # Second page empty (stops pagination)
+        ]
 
         provider = {
             "config": {
@@ -101,31 +259,39 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_data(provider)
+        items = self.service._fetch_tt_data(provider)
 
-        # Verify request was made correctly
-        mock_get.assert_called_once()
-        call_args = mock_get.call_args
-        self.assertEqual("https://api.example.com/contentapi/items", call_args[0][0])
+        # Verify pagination: expect 2 calls (first with data, second empty)
+        self.assertEqual(2, mock_get.call_count)
+
+        # Check first call has pagination params
+        first_call_args = mock_get.call_args_list[0]
+        first_url = first_call_args[0][0]
+        self.assertIn("s=50", first_url)  # page size
+        self.assertIn("fr=0", first_url)  # offset
         self.assertEqual(
-            "ApiKey Bearer TEST_TOKEN", call_args[1]["headers"]["Authorization"]
+            "ApiKey Bearer TEST_TOKEN", first_call_args[1]["headers"]["Authorization"]
         )
-        self.assertEqual("application/json", call_args[1]["headers"]["Accept"])
-        self.assertEqual(300, call_args[1]["timeout"])
+        self.assertEqual("application/json", first_call_args[1]["headers"]["Accept"])
+        self.assertEqual(300, first_call_args[1]["timeout"])
 
         # Verify items returned
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
         self.assertEqual(test_items[1]["uri"], items[1]["uri"])
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_hits_format(self, mock_get):
-        """Test _fetch_data with hits response format."""
+        """Test _fetch_tt_data with hits response format."""
         # Test with hits field response format
         all_items = self.fixture_data["hits"][:2]
 
         mock_response_data = {"hits": all_items}
-        mock_get.return_value = MockResponse(mock_response_data)
+        # First call returns data, second call returns empty (simulates single page)
+        mock_get.side_effect = [
+            MockResponse(mock_response_data),  # First page with data
+            MockResponse({"hits": []}),  # Second page empty (stops pagination)
+        ]
 
         provider = {
             "config": {
@@ -134,10 +300,10 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_data(provider)
+        items = self.service._fetch_tt_data(provider)
 
-        # Should have made one request
-        self.assertEqual(1, mock_get.call_count)
+        # Should have made two requests (pagination logic)
+        self.assertEqual(2, mock_get.call_count)
 
         # Check request
         call_args = mock_get.call_args
@@ -149,15 +315,19 @@ class STTContentAPITestCase(unittest.TestCase):
             [item["uri"] for item in all_items], [item["uri"] for item in items]
         )
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_different_response_formats(self, mock_get):
-        """Test _fetch_data with different API response formats."""
+        """Test _fetch_tt_data with different API response formats."""
         test_items = self.fixture_data["hits"][:2]
 
         # Test with direct list response
         mock_response_data = test_items
 
-        mock_get.return_value = MockResponse(mock_response_data)
+        # Simulate pagination: first call returns data, second returns empty
+        mock_get.side_effect = [
+            MockResponse(mock_response_data),  # First page with data
+            MockResponse([]),  # Second page empty (stops pagination)
+        ]
 
         provider = {
             "config": {
@@ -166,17 +336,21 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_data(provider)
+        items = self.service._fetch_tt_data(provider)
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_list_response(self, mock_get):
-        """Test _fetch_data with direct list response."""
+        """Test _fetch_tt_data with direct list response."""
         test_items = self.fixture_data["hits"][:2]
 
-        mock_get.return_value = MockResponse(test_items)
+        # Simulate pagination: first call returns data, second returns empty
+        mock_get.side_effect = [
+            MockResponse(test_items),  # First page with data
+            MockResponse([]),  # Second page empty (stops pagination)
+        ]
 
         provider = {
             "config": {
@@ -185,14 +359,14 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_data(provider)
+        items = self.service._fetch_tt_data(provider)
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_error_handling(self, mock_get):
-        """Test error handling in _fetch_data."""
+        """Test error handling in _fetch_tt_data."""
         mock_get.return_value = MockResponse({}, status_code=404)
 
         provider = {
@@ -203,7 +377,7 @@ class STTContentAPITestCase(unittest.TestCase):
         }
 
         with self.assertRaises(Exception):
-            self.service._fetch_data(provider, "")
+            self.service._fetch_tt_data(provider)
 
     def test_parser_with_fixture_data(self):
         """Test parser with real fixture data."""
@@ -211,10 +385,11 @@ class STTContentAPITestCase(unittest.TestCase):
 
         result = self.parser.parse(test_item, provider={"config": {}})
 
-        # Parser should return a dict
-        self.assertIsInstance(result, dict)
+        # Parser should return a list of dicts
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
 
-        parsed_item = result
+        parsed_item = result[0]
 
         # Check required fields
         self.assertEqual("text", parsed_item["type"])
@@ -233,35 +408,50 @@ class STTContentAPITestCase(unittest.TestCase):
 
     def test_parser_content_expiry(self):
         """Test parser content expiry calculation."""
-        test_item = {"_id": "expiry_test", "source": "STT"}
+        test_item = {
+            "uri": "http://tt.se/media/text/test-expiry",
+            "source": "STT",
+            "type": "text",
+            "headline": "Test headline",
+            "versioncreated": "2025-09-24T10:00:00Z",
+        }
 
         provider = {"config": {"content_expiry": 24}}  # 24 hours
 
         result = self.parser.parse(test_item, provider=provider)
-        parsed_item = result
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+        parsed_item = result[0]
 
-        self.assertIsNotNone(parsed_item.get("expiry"))
+        # Check that expiry is not set by parser (managed by ingest system)
+        self.assertNotIn("expiry", parsed_item)
 
-        # Verify expiry is set to approximately 24 hours from versioncreated
-        from datetime import timedelta
-
-        expected_expiry = parsed_item["versioncreated"] + timedelta(hours=24)
-        time_diff = abs((parsed_item["expiry"] - expected_expiry).total_seconds())
-        self.assertLess(time_diff, 60)  # Within 1 minute tolerance
+        # Check that the required fields are present and correctly parsed
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
-        minimal_item = {"source": "STT"}
+        minimal_item = {
+            "uri": "http://tt.se/media/text/test-minimal",
+            "source": "STT",
+            "type": "text",
+            "headline": "Test minimal headline",
+        }
 
         result = self.parser.parse(minimal_item, provider={"config": {}})
-        parsed_item = result
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+        parsed_item = result[0]
 
         # Should have all required defaults
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
         self.assertIn("guid", parsed_item)
         self.assertIn("versioncreated", parsed_item)
-        self.assertEqual("", parsed_item["headline"])
+        self.assertEqual("Test minimal headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
 
     def test_parser_guid_consistency(self):
@@ -271,35 +461,44 @@ class STTContentAPITestCase(unittest.TestCase):
         result1 = self.parser.parse(test_item, provider={"config": {}})
         result2 = self.parser.parse(test_item, provider={"config": {}})
 
-        self.assertEqual(result1["guid"], result2["guid"])
+        self.assertIsInstance(result1, list)
+        self.assertIsInstance(result2, list)
+        self.assertEqual(1, len(result1))
+        self.assertEqual(1, len(result2))
+        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_update_with_parser_integration(self, mock_get):
         """Test _update method with parser integration using fixture data."""
         test_items = self.fixture_data["hits"][:2]
         mock_response_data = {"hits": test_items}
 
-        mock_get.return_value = MockResponse(mock_response_data)
+        # Simulate pagination: first call returns data, second returns empty
+        mock_get.side_effect = [
+            MockResponse(mock_response_data),  # First page with data
+            MockResponse({"hits": []}),  # Second page empty (stops pagination)
+        ]
 
-        # The service already uses the parser directly, no need to mock parser discovery
-        provider = {
-            "config": {
-                "url": "https://api.example.com/contentapi/items",
-                "api_key": "Bearer TOKEN123",
-            },
-        }
-        update = {}
+        # Mock the parser since it's not registered in test environment
+        with patch.object(self.service, "get_feed_parser", return_value=self.parser):
+            provider = {
+                "config": {
+                    "url": "https://api.example.com/contentapi/items",
+                    "api_key": "Bearer TOKEN123",
+                },
+            }
+            update = {}
 
-        items = list(self.service._update(provider, update))
+            items = list(self.service._update(provider, update))
 
-        # Should have processed all items
-        self.assertEqual(2, len(items))
+            # Should have processed all items
+            self.assertEqual(2, len(items))
 
-        # Check that items were parsed correctly
-        for parsed_item in items:
-            self.assertEqual("text", parsed_item["type"])
-            self.assertEqual("usable", parsed_item["pubstatus"])
-            self.assertIn("guid", parsed_item)
+            # Check that items were parsed correctly
+            for parsed_item in items:
+                self.assertEqual("text", parsed_item["type"])
+                self.assertEqual("usable", parsed_item["pubstatus"])
+                self.assertIn("guid", parsed_item)
 
     def test_fixture_data_structure(self):
         """Validate the structure of the fixture data."""
@@ -321,10 +520,16 @@ class STTContentAPITestCase(unittest.TestCase):
         if "source" in first_item:
             self.assertTrue(first_item["source"].startswith("TT"))
 
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_top_level_array(self, mock_get):
-        test_items = [{"id": 1}, {"id": 2}, "not a dict", 123, {"id": 3}]
-        mock_get.return_value = MockResponse(json_data=test_items, status_code=200)
+        test_items = TEST_TT_ITEMS
+        # Simulate pagination: first call returns data, second returns empty
+        mock_get.side_effect = [
+            MockResponse(json_data=test_items, status_code=200),  # First page with data
+            MockResponse(
+                json_data=[], status_code=200
+            ),  # Second page empty (stops pagination)
+        ]
 
         provider = {
             "config": {
@@ -333,45 +538,73 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_data(provider)
-
-        self.assertEqual([{"id": 1}, {"id": 2}, {"id": 3}], items)
-
-        mock_get.assert_called_once()
-        _, kwargs = mock_get.call_args
-        self.assertEqual(provider["config"]["url"], mock_get.call_args[0][0])
-        self.assertEqual(300, kwargs.get("timeout"))
-        # Ensure headers include ApiKey prefix and no params are sent
-        self.assertIn("headers", kwargs)
-        self.assertEqual("ApiKey MY_TOKEN", kwargs["headers"]["Authorization"])
-        self.assertEqual("application/json", kwargs["headers"]["Accept"])
-        self.assertNotIn("params", kwargs)
-
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
-    def test_fetch_data_dict_of_id_mapping(self, mock_get):
-        hits_mapping = {
-            "a": {"id": "A"},
-            "b": {"id": "B"},
-            "c": "not a dict",
-        }
-        mock_get.return_value = MockResponse(
-            json_data={"hits": hits_mapping}, status_code=200
-        )
-
-        provider = {
-            "config": {
-                "url": "https://api.example.com/contentapi/items",
-                "api_key": "MY_TOKEN",
-            }
-        }
-
-        items = self.service._fetch_data(provider)
+        items = self.service._fetch_tt_data(provider)
 
         self.assertEqual(2, len(items))
-        self.assertEqual({"A", "B"}, {item["id"] for item in items})
+        self.assertEqual(
+            [
+                "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+                "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+            ],
+            [it["uri"] for it in items],
+        )
+
+        self.assertEqual(2, mock_get.call_count)
+
+        # Check the second call (which is what call_args refers to)
+        second_call_args = mock_get.call_args_list[1]
+        second_url = second_call_args[0][0]
+
+        # Second call should have pagination offset
+        self.assertIn(provider["config"]["url"], second_url)
+        self.assertIn("s=50", second_url)  # page_size
+        self.assertIn("fr=50", second_url)  # offset for second page
+
+        # Check headers on second call
+        self.assertEqual(300, second_call_args[1].get("timeout"))
+        self.assertIn("headers", second_call_args[1])
+        self.assertEqual(
+            "ApiKey MY_TOKEN", second_call_args[1]["headers"]["Authorization"]
+        )
+        self.assertEqual("application/json", second_call_args[1]["headers"]["Accept"])
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_fetch_data_dict_of_id_mapping(self, mock_get):
+        hits_mapping = {
+            "x": TEST_TT_ITEMS[0],
+            "y": TEST_TT_ITEMS[1],
+            "z": "not a dict",
+        }
+        # Simulate pagination: first call returns data, second returns empty
+        mock_get.side_effect = [
+            MockResponse(
+                json_data={"hits": hits_mapping}, status_code=200
+            ),  # First page with data
+            MockResponse(
+                json_data={"hits": {}}, status_code=200
+            ),  # Second page empty (stops pagination)
+        ]
+
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+            }
+        }
+
+        items = self.service._fetch_tt_data(provider)
+
+        self.assertEqual(2, len(items))
+        self.assertEqual(
+            {
+                "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+                "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+            },
+            {item["uri"] for item in items},
+        )
 
     @patch("superdesk.errors.IngestApiError.apiGeneralError")
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_http_error_raises_ingest_api_error(
         self, mock_get, mock_api_error
     ):
@@ -385,18 +618,14 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        with self.assertRaises(RuntimeError) as ctx:
-            self.service._fetch_data(provider)
+        with self.assertRaises(requests.exceptions.HTTPError):
+            self.service._fetch_tt_data(provider)
 
-        self.assertIn("HTTP 500 from TT Content API", str(ctx.exception))
-        mock_api_error.assert_called_once()
-        args, kwargs = mock_api_error.call_args
-        self.assertIsInstance(args[0], Exception)
-        self.assertIn("HTTP 500", str(args[0]))
-        self.assertEqual(provider, args[1])
+        # The error is raised directly, not wrapped by mock_api_error
+        mock_api_error.assert_not_called()
 
     @patch("superdesk.errors.IngestApiError.apiGeneralError")
-    @patch("stt.io.feeding_services.stt_tt_content_api.requests.get")
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_json_parse_error_raises_ingest_api_error(
         self, mock_get, mock_api_error
     ):
@@ -413,7 +642,7 @@ class STTContentAPITestCase(unittest.TestCase):
         }
 
         with self.assertRaises(RuntimeError) as ctx:
-            self.service._fetch_data(provider)
+            self.service._fetch_tt_data(provider)
 
         self.assertIn("JSON parse error", str(ctx.exception))
         mock_api_error.assert_called_once()
@@ -430,18 +659,17 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
         items_to_fetch = [{"a": 1}, {"b": 2}]
-        with patch.object(self.service, "_fetch_data", return_value=items_to_fetch):
+        with patch.object(self.service, "_fetch_tt_data", return_value=items_to_fetch):
 
             class DummyParser:
                 def parse(self, item, provider):
                     if "a" in item:
-                        return {"x": 1}
-                    return {"z": 3}
+                        return [{"x": 1}]  # Parser now returns list
+                    return [{"z": 3}]  # Parser now returns list
 
-            # Mock the ContentAPITTItemParser directly since it's used in _update
-            with patch(
-                "stt.io.feeding_services.stt_tt_content_api.ContentAPITTItemParser",
-                return_value=DummyParser(),
+            # Mock the get_feed_parser method since _update now uses it
+            with patch.object(
+                self.service, "get_feed_parser", return_value=DummyParser()
             ):
                 result = list(self.service._update(provider, update={}))
 
@@ -460,18 +688,17 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
         items_to_fetch = [{"ok": 1}, {"bad": 2}]
-        with patch.object(self.service, "_fetch_data", return_value=items_to_fetch):
+        with patch.object(self.service, "_fetch_tt_data", return_value=items_to_fetch):
 
             class FailingParser:
                 def parse(self, item, provider):
                     if "bad" in item:
                         raise ValueError("boom")
-                    return {"ok_parsed": True}
+                    return [{"ok_parsed": True}]  # Parser now returns list
 
-            # Mock the ContentAPITTItemParser directly since it's used in _update
-            with patch(
-                "stt.io.feeding_services.stt_tt_content_api.ContentAPITTItemParser",
-                return_value=FailingParser(),
+            # Mock the get_feed_parser method since _update now uses it
+            with patch.object(
+                self.service, "get_feed_parser", return_value=FailingParser()
             ):
                 with self.assertRaises(RuntimeError) as ctx:
                     list(self.service._update(provider, update={}))

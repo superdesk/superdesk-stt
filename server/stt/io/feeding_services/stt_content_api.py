@@ -247,7 +247,8 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 response.status_code,
                 response.headers.get("content-type", "unknown"),
             )
-            raise IngestApiError.apiGeneralError(f"JSON parse error: {ex}", provider)
+            parse_error = Exception(f"JSON parse error: {ex}")
+            raise IngestApiError.apiGeneralError(parse_error, provider)
 
     def _extract_batch(self, data: Any) -> List[Dict]:
         if isinstance(data, list):

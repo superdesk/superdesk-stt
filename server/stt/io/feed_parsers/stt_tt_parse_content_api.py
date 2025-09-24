@@ -2,139 +2,130 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
-from dateutil import parser as dtparse
-from superdesk.io.feed_parsers import FeedParser
 from superdesk.io.registry import register_feed_parser
-
-from datetime import datetime, timezone, timedelta
-import hashlib
-import json
-import uuid
+from .stt_parse_content_api import ContentAPIItemParser
 
 logger = logging.getLogger(__name__)
 
 
-class ContentAPITTItemParser(FeedParser):
+class ContentAPITTItemParser(ContentAPIItemParser):
     NAME = "stt_tt_parse_content_api"
     label = "STT TT Content API"
-
-    def __init__(self):
-        super().__init__()
 
     def can_parse(self, payload: Any) -> bool:
         return isinstance(payload, dict) or (
             isinstance(payload, list) and all(isinstance(i, dict) for i in payload)
         )
 
-    def parse(self, item: Any, provider: Optional[dict] = None) -> Dict[str, Any]:
-        """Parse a single dict and return a dict."""
-        provider = provider or {}
-        logger.warning("type of item: %s", type(item))
-        parsed = self._parse_one(item, provider)
-        if parsed:
-            return parsed
-        return {}
+    def _ensure_guid(self, item: Dict[str, Any]) -> str:
+        """Generate GUIDs with a TT-specific namespace while respecting existing URNs."""
+        base_guid = super()._ensure_guid(item)
+        tt_prefix = "urn:newsml:stt.fi:stt_tt_content_api:"
+        if base_guid.startswith(tt_prefix):
+            return base_guid
 
-    # ------------------------ internal helpers -------------------------
+        content_api_prefix = "urn:newsml:stt.fi:contentapi:"
+        if base_guid.startswith(content_api_prefix):
+            return f"{tt_prefix}{base_guid[len(content_api_prefix):]}"
+
+        return base_guid
+
+    def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
+        """
+        TT-specific parse method for single item or list processing by the feeding service.
+        This MUST return a List[Dict] to comply with Superdesk ingest expectations.
+        """
+        provider = provider or {}
+        logger.debug("TT parser processing payload type: %s", type(item))
+
+        # Case 1: payload is a dict - parse one and return a single-item list (or empty if invalid)
+        if isinstance(item, dict):
+            parsed = self._parse_one(item, provider)
+            if isinstance(parsed, dict) and parsed:
+                if "versioncreated" in parsed:
+                    logger.debug(
+                        "TT parser: final versioncreated type=%s, value=%s",
+                        type(parsed.get("versioncreated")),
+                        parsed.get("versioncreated"),
+                    )
+                return [parsed]
+            logger.warning(
+                "TT parser: dict payload parsed to empty/non-dict, returning empty list"
+            )
+            return []
+
+        # Case 2: payload is a list - parse each dict item, ignore non-dicts
+        if isinstance(item, list):
+            results: List[Dict[str, Any]] = []
+            for idx, elem in enumerate(item):
+                if not isinstance(elem, dict):
+                    logger.warning(
+                        "TT parser: skipping non-dict element at index %s: type=%s",
+                        idx,
+                        type(elem),
+                    )
+                    continue
+                parsed = self._parse_one(elem, provider)
+                if isinstance(parsed, dict) and parsed:
+                    results.append(parsed)
+                else:
+                    logger.debug(
+                        "TT parser: element at index %s parsed to empty/non-dict", idx
+                    )
+            logger.debug("TT parser: returning %d items", len(results))
+            return results
+
+        # Any other payload type is unsupported
+        logger.error("TT parser received unsupported payload type: %s", type(item))
+        return []
+
+    # ------------------------ TT-specific overrides -------------------------
     def _parse_one(self, src: Dict[str, Any], provider: dict) -> Dict[str, Any]:
-        """Map a single JSON item from Content API to Superdesk item.
-        Returns a dict suitable for ingest (type/pubstatus/guid/timestamps set).
+        """
+        TT-specific parsing that extends base class functionality.
+        Adds TT-specific preprocessing and uses custom GUID generation.
         """
         if not isinstance(src, dict):
-            logger.error("Parser received non-dict source: %s", type(src))
+            logger.error("TT Parser received non-dict source: %s", type(src))
             return {}
 
-        processed: Dict[str, Any] = dict(src)
+        # TT-specific: Remove MongoDB incompatible keys first
+        cleaned_src = {k: v for k, v in src.items() if not k.startswith("$")}
 
-        # Remove any keys that start with '$' as MongoDB doesn't allow them
-        processed = {k: v for k, v in processed.items() if not k.startswith("$")}
+        # Use base class parsing for most functionality
+        processed = super()._parse_one(cleaned_src, provider)
 
-        # 1) Required defaults
-        processed.setdefault("type", "text")
-        processed.setdefault("pubstatus", "usable")
-        processed.setdefault(
-            "headline", processed.get("headline") or processed.get("name") or ""
-        )
-        processed.setdefault(
-            "body_html",
-            processed.get("body_html")
-            or processed.get("body_html5")
-            or processed.get("body_richhtml5")
-            or "",
-        )
+        # Validate base class returned proper dict
+        if not processed:
+            logger.debug("Base class _parse_one returned empty/None")
+            return {}
 
-        # 2) GUID (stable when URI/_id present, else random UUID)
-        if not processed.get("guid"):
-            guid = self._ensure_guid(processed)
-            processed["guid"] = guid
-
-        # 3) Normalize timestamps to timezone-aware datetimes
-        for tf in ("versioncreated", "firstcreated", "_updated", "_created"):
-            if processed.get(tf):
-                processed[tf] = self._normalize_timestamp(processed[tf])
-
-        # Ensure versioncreated exists and is aware
-        vc = processed.get("versioncreated")
-        if not isinstance(vc, datetime):
-            processed["versioncreated"] = datetime.now(timezone.utc)
-        elif vc.tzinfo is None:
-            processed["versioncreated"] = vc.replace(tzinfo=timezone.utc)
-
-        # 4) Expiry based on provider config (hours)
-        content_expiry_hours = (provider.get("config") or {}).get("content_expiry", 0)
-        if content_expiry_hours:
-            try:
-                processed["expiry"] = processed["versioncreated"] + timedelta(
-                    hours=int(content_expiry_hours)
-                )
-            except Exception:
-                processed["expiry"] = datetime.now(timezone.utc) + timedelta(
-                    hours=int(content_expiry_hours)
-                )
-        else:
-            processed["expiry"] = None
-
-        # Final validation: ensure we return a valid dict
         if not isinstance(processed, dict):
-            logger.error("Parser produced non-dict result: %s", type(processed))
+            logger.error(
+                "Base class _parse_one returned non-dict: type=%s, value=%s",
+                type(processed),
+                processed,
+            )
             return {}
+
+        # TT-specific: Additional body_html fallbacks
+        if not processed.get("body_html"):
+            processed["body_html"] = (
+                processed.get("body_html5") or processed.get("body_richhtml5") or ""
+            )
+
+        body_html = processed.get("body_html")
+        if not isinstance(body_html, str):
+            processed["body_html"] = ""
+        else:
+            processed["body_html"] = body_html or ""
+
+        # TT-specific: Ensure versioncreated is a datetime object, not string
 
         return processed
 
-    def _ensure_guid(self, item: Dict[str, Any]) -> str:
-        uri = (
-            item.get("uri")
-            or item.get("guid")
-            or item.get("original_id")
-            or item.get("_id")
-        )
-        if isinstance(uri, (str, int)):
-            s = str(uri)
-            return f"urn:newsml:stt.fi:stt_tt_content_api:{hashlib.sha1(s.encode('utf-8')).hexdigest()}"
-        try:
-            blob = json.dumps(item, ensure_ascii=False, sort_keys=True)
-            h = hashlib.sha1(blob.encode("utf-8")).hexdigest()
-            return f"urn:newsml:stt.fi:stt_tt_content_api:{h}"
-        except Exception:
-            return f"urn:newsml:stt.fi:stt_tt_content_api:{uuid.uuid4()}"
 
-    def _normalize_timestamp(self, value: Any) -> Optional[datetime]:
-        """Normalize timestamps to tz-aware datetime (UTC when naive)."""
-        if not value:
-            return None
-        if isinstance(value, datetime):
-            return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
-        try:
-            dt = dtparse.parse(str(value))
-            if not dt.tzinfo:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt
-        except Exception as ex:
-            logger.warning("Failed to parse timestamp %r: %s", value, ex)
-            return datetime.now(timezone.utc)
-
-
-# Register like BusinessWire example: parse() returns List[Dict]
+# Register like BusinessWire example: parse() returns List[Dict[str, Any]]
 register_feed_parser(ContentAPITTItemParser.NAME, ContentAPITTItemParser())

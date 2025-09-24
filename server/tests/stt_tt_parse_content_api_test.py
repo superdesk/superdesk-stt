@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import unittest
-from datetime import timedelta
-from flask import json
 
 from stt.io.feed_parsers.stt_tt_parse_content_api import ContentAPITTItemParser
 
@@ -25,52 +24,79 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
 
         result = self.parser.parse(test_item, provider={"config": {}})
 
-        # Parser should return a dict
-        self.assertIsInstance(result, dict)
+        # Parser should return a list of dicts
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+        parsed_item = result[0]
 
         # Check required fields
-        self.assertEqual("text", result["type"])
-        self.assertEqual("usable", result["pubstatus"])
-        self.assertIn("guid", result)
-        self.assertIn("versioncreated", result)
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
 
         # Check original data is preserved
-        self.assertEqual(test_item["uri"], result["uri"])
-        self.assertEqual(test_item["headline"], result["headline"])
+        self.assertEqual(test_item["uri"], parsed_item["uri"])
+        self.assertEqual(test_item["headline"], parsed_item["headline"])
 
         # Check GUID generation
         self.assertTrue(
-            result["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
+            parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
         )
 
     def test_parser_content_expiry(self):
-        """Test parser content expiry calculation."""
-        test_item = {"_id": "expiry_test", "source": "STT"}
+        """Test parser with content expiry config (expiry handled by ingest system)."""
+        test_item = {
+            "uri": "http://tt.se/media/text/test-expiry",
+            "source": "STT",
+            "type": "text",
+            "headline": "Test headline",
+            "body_text": "Test content",
+            "versioncreated": "2025-09-24T10:00:00Z",
+        }
 
         provider = {"config": {"content_expiry": 24}}  # 24 hours
 
         result = self.parser.parse(test_item, provider=provider)
 
-        self.assertIsNotNone(result.get("expiry"))
+        # Parser should return a list
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+        parsed_item = result[0]
 
-        # Verify expiry is set to approximately 24 hours from versioncreated
-        expected_expiry = result["versioncreated"] + timedelta(hours=24)
-        time_diff = abs((result["expiry"] - expected_expiry).total_seconds())
-        self.assertLess(time_diff, 60)  # Within 1 minute tolerance
+        # Check that expiry is not set by parser (managed by ingest system)
+        self.assertNotIn("expiry", parsed_item)
+
+        # Check that the required fields are present
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
-        minimal_item = {"source": "STT"}
+        minimal_item = {
+            "uri": "http://tt.se/media/text/test-minimal",
+            "source": "STT",
+            "type": "text",
+            "headline": "Test minimal headline",
+            "body_text": "Test content",
+        }
 
         result = self.parser.parse(minimal_item, provider={"config": {}})
 
+        # Parser should return a list
+        self.assertIsInstance(result, list)
+        self.assertEqual(1, len(result))
+        parsed_item = result[0]
+
         # Should have all required defaults
-        self.assertEqual("text", result["type"])
-        self.assertEqual("usable", result["pubstatus"])
-        self.assertIn("guid", result)
-        self.assertIn("versioncreated", result)
-        self.assertEqual("", result["headline"])
-        self.assertEqual("", result["body_html"])
+        self.assertEqual("text", parsed_item["type"])
+        self.assertEqual("usable", parsed_item["pubstatus"])
+        self.assertIn("guid", parsed_item)
+        self.assertIn("versioncreated", parsed_item)
+        self.assertEqual("Test minimal headline", parsed_item["headline"])
+        self.assertEqual("", parsed_item["body_html"])
 
     def test_parser_guid_consistency(self):
         """Test that GUID generation is consistent for the same input."""
@@ -79,7 +105,13 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         result1 = self.parser.parse(test_item, provider={"config": {}})
         result2 = self.parser.parse(test_item, provider={"config": {}})
 
-        self.assertEqual(result1["guid"], result2["guid"])
+        # Parser should return lists
+        self.assertIsInstance(result1, list)
+        self.assertIsInstance(result2, list)
+        self.assertEqual(1, len(result1))
+        self.assertEqual(1, len(result2))
+
+        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
 
     def test_fixture_data_structure(self):
         """Validate the structure of the fixture data."""

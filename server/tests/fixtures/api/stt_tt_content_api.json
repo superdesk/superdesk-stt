@@ -1,329 +1,215 @@
 {
     "hits": [
         {
-            "uri": "http://tt.se/media/text/250815-usaryssmote6uv-06eb0f86",
+            "uri": "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
             "associations": {
                 "a001": {
                     "representationtype": "incomplete",
-                    "description_text": "USA:s president Donald Trump går ombord Air Force One i Maryland inför avresa mot Alaska.",
+                    "description_text": "Besökare på ett köpcentrum. Arkivbild. ",
                     "mimetype": "image/jpeg",
                     "renditions": {
                         "r01": {
-                            "sizeinbytes": 266444,
+                            "sizeinbytes": 434445,
                             "usage": "Preview",
                             "variant": "Normal",
                             "width": 1024,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalPreview.jpg",
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg",
                             "height": 683
                         },
                         "r00": {
-                            "sizeinbytes": 8146271,
+                            "sizeinbytes": 14486162,
                             "usage": "Hires",
                             "variant": "Normal",
-                            "width": 9500,
+                            "width": 5568,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalHires.jpg",
-                            "height": 6333
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalHires.jpg",
+                            "height": 3712
                         },
                         "r03": {
-                            "sizeinbytes": 19428,
+                            "sizeinbytes": 40566,
                             "usage": "Thumbnail",
                             "variant": "Normal",
                             "width": 256,
                             "mimetype": "image/jpeg",
-                            "href": "https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalThumbnail.jpg",
+                            "href": "https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg",
                             "height": 171
                         },
                         "r02": {
-                            "sizeinbytes": 266444,
+                            "sizeinbytes": 434445,
                             "usage": "Preview",
                             "variant": "Watermark",
                             "width": 1024,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_WatermarkPreview.jpg",
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_WatermarkPreview.jpg",
                             "height": 683
                         }
                     },
                     "type": "picture",
-                    "byline": "Luis M. Alvarez/AP/TT",
-                    "uri": "http://tt.se/media/image/sdl5429za_yKoY"
-                },
-                "a002": {
-                    "representationtype": "incomplete",
-                    "description_text": "Alaskabon Dug Loshbaugh protesterar inför mötet i Anchorage, Alaska.",
-                    "mimetype": "image/jpeg",
-                    "renditions": {
-                        "r01": {
-                            "sizeinbytes": 187506,
-                            "usage": "Preview",
-                            "variant": "Normal",
-                            "width": 1024,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalPreview.jpg",
-                            "height": 683
-                        },
-                        "r00": {
-                            "sizeinbytes": 5780623,
-                            "usage": "Hires",
-                            "variant": "Normal",
-                            "width": 5826,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalHires.jpg",
-                            "height": 3884
-                        },
-                        "r03": {
-                            "sizeinbytes": 23444,
-                            "usage": "Thumbnail",
-                            "variant": "Normal",
-                            "width": 256,
-                            "mimetype": "image/jpeg",
-                            "href": "https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalThumbnail.jpg",
-                            "height": 171
-                        },
-                        "r02": {
-                            "sizeinbytes": 187506,
-                            "usage": "Preview",
-                            "variant": "Watermark",
-                            "width": 1024,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_WatermarkPreview.jpg",
-                            "height": 683
-                        }
-                    },
-                    "type": "picture",
-                    "byline": "Jae C. Hong/AP/TT",
-                    "uri": "http://tt.se/media/image/sdlABACSZwTvBo"
+                    "byline": "Amir Nabizadeh/TT",
+                    "uri": "http://tt.se/media/image/sdlg3pTraNl8TI"
                 }
             },
             "altids": {
-                "originaltransmissionreference": "06eb0f86-4f8f-454b-9610-f524bc54129f"
+                "originaltransmissionreference": "ae8053fa-9100-460d-9589-ee2a75535877"
             },
-            "webprio": 1,
-            "body_text": "Trump: Höga insatser i mötet med Putin\nUSA TT\nPresident Donald Trump tar emot den ryske ledaren Vladimir Putin redan när det ryska planet landar i Anchorage på fredagskvällen.\nFörväntningarna inför toppmötet i Alaska om kriget i Ukraina är blandade – men Volodymyr Zelenskyj konstaterar att rysk militär har intensifierat striderna i östra Ukraina.\n\"Höga insatser\", skrev Trump i versaler på den egna plattformen Truth Social när han steg ombord på presidentplanet Air Force One med Alaska som destination.\nTrump sade att samtalen med Putin bland annat ska behandla utbyte av territorier.\n– Det kommer att diskuteras, men jag måste låta Ukraina ta det beslutet, och jag tror att de kommer att ta ett bra beslut, sade han enligt BBC.\nDå var den ryske presidenten redan på väg mot den amerikanska delstaten, med en mellanlandning i den östliga hamnstaden Magadan. \nDen ryske utrikesministern Sergej Lavrov anlände redan på torsdagskvällen till Anchorage, och väckte uppmärksamhet då han bar en tröja med texten CCCP, den kyrilliska förkortningen för Sovjetunionen.\nInte förutspå\nDen erfarne ryske toppdiplomaten var vag i sin kommentar om mötet:\n– Det finns ingen anledning att försöka förutspå saker. Vi har argument, en tydlig och begriplig ståndpunkt. Vi kommer att presentera den, sade Lavrov enligt nyhetsbyråer.\nKremls talesperson Dmitrij Peskov sade på fredagseftermiddagen att Putin beräknas landa först vid 21-tiden på fredagskvällen och att president Trump tar emot vid planet.\nDet fortsatta upplägget på mötet var fortsatt delvis höljt i dunkel; de två ledarna väntas hålla privata samtal med var sin tolk under kvällen. Senare vidgas mötet till att omfatta även presidenternas delegationer.\nMötet på militärbasen Elmendorf-Richardson är det första på tu man hand mellan de två presidenterna sedan Rysslands invasion av Ukraina 2022.\nRysk offensiv\nPresident Volodymyr Zelenskyj, som inte är inbjuden att delta, har säkrat europeiskt stöd för att Ukrainas ståndpunkt i konflikten är avgörande.\nZelenskyj sade samtidigt att Ukraina ”räknar med\" att Trump ska övertyga Putin att avsluta det ryska invasionskriget. Men – skrev han på sociala plattformar – ryska angrepp har intensifierats i östra Ukraina inför mötet och ryska soldater offras för att nå förhandlingsgfördelar. Ukrainsk förstärkning har därför beordrats till Donetsk, enligt Zelenskyj.\nDet franska presidentkansliet Élyséepalatset meddelade inför mötet att Zelenskyj ska träffa Emmanuel Macron efter mötet mellan Putin och Trump.\n",
+            "webprio": 2,
+            "body_text": "KI: Ekonomin lyfter nästa år\nEkonomi TT\nLågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  \nDet slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  \n– Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.\nEn försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. \n– Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.\nKI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. \n– Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  \nSänkt elskatt bidrar\nInflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.\n– Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. \nKI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).\n– Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.\nInga fler sänkningar\nEfter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. \nRättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. \nTobias Österberg/TT",
             "subject": [
                 {
-                    "code": "11000000",
+                    "code": "04000000",
                     "scheme": "http://tt.se/spec/subref/1.0/",
-                    "name": "Politik",
+                    "name": "Ekonomi, affärer och finans",
                     "rel": "classifies"
-                },
+                }
+            ],
+            "bylines": [
                 {
-                    "code": "16000000",
-                    "scheme": "http://tt.se/spec/subref/1.0/",
-                    "name": "Krig, konflikter och oroligheter",
-                    "rel": "classifies"
+                    "affiliation": "TT",
+                    "byline": "Tobias Österberg/TT"
                 }
             ],
             "organisation": [
                 {
-                    "code": "25d4e28b-18f8-40bc-8df8-39b8bb6a5cb4",
+                    "code": "8a88a345-cce6-4e10-92fc-86d070228b98",
                     "scheme": "http://tt.se/spec/organisation/1.0/",
-                    "name": "BBC",
+                    "name": "Konjunkturinstitutet",
+                    "rel": "mentions"
+                },
+                {
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "KI",
+                    "rel": "mentions"
+                },
+                {
+                    "code": "1d92fe72-b564-479f-b159-3e6c539310b8",
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "Sveriges Riksbank",
+                    "rel": "mentions"
+                },
+                {
+                    "code": "58f2acd9-1c2e-48b8-a23d-6b703d9888bd",
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "Socialdemokraterna",
                     "rel": "mentions"
                 }
             ],
             "language": "sv",
-            "body_richhtml5": "<html><head><title>Trump: Höga insatser i mötet med Putin</title></head><body><article><section data-charcount=\"2475\"><h1>Trump: Höga insatser i mötet med Putin</h1><div class=\"dat\"><span class=\"vignette\">USA</span><span class=\"source\">TT</span></div><div class=\"ingress\"><p>President Donald Trump tar emot den ryske ledaren Vladimir Putin redan när det ryska planet landar i Anchorage på fredagskvällen.</p><p>Förväntningarna inför toppmötet i Alaska om kriget i Ukraina är blandade – men Volodymyr Zelenskyj konstaterar att rysk militär har intensifierat striderna i östra Ukraina.</p></div><div class=\"bodytext\"><figure><img uri=\"sdl5429za_yKoY\" src=\"https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalThumbnail.jpg\" alt=\"USA:s president Donald Trump går ombord Air Force One i Maryland inför avresa mot Alaska.\" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdl5429za_yKoY\" data-preview-src=\"https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalPreview.jpg\"/><div class=\"byline\">Luis M. Alvarez/AP/TT</div><figcaption>USA:s president Donald Trump går ombord Air Force One i Maryland inför avresa mot Alaska.</figcaption></figure><p>\"Höga insatser\", skrev Trump i versaler på den egna plattformen Truth Social när han steg ombord på presidentplanet Air Force One med Alaska som destination.</p><p>Trump sade att samtalen med Putin bland annat ska behandla utbyte av territorier.</p><blockquote>Det kommer att diskuteras, men jag måste låta Ukraina ta det beslutet, och jag tror att de kommer att ta ett bra beslut, sade han enligt BBC.</blockquote><p>Då var den ryske presidenten redan på väg mot den amerikanska delstaten, med en mellanlandning i den östliga hamnstaden Magadan. </p><p>Den ryske utrikesministern Sergej Lavrov anlände redan på torsdagskvällen till Anchorage, och väckte uppmärksamhet då han bar en tröja med texten CCCP, den kyrilliska förkortningen för Sovjetunionen.</p><h2>Inte förutspå</h2><p>Den erfarne ryske toppdiplomaten var vag i sin kommentar om mötet:</p><blockquote>Det finns ingen anledning att försöka förutspå saker. Vi har argument, en tydlig och begriplig ståndpunkt. Vi kommer att presentera den, sade Lavrov enligt nyhetsbyråer.</blockquote><p>Kremls talesperson Dmitrij Peskov sade på fredagseftermiddagen att Putin beräknas landa först vid 21-tiden på fredagskvällen och att president Trump tar emot vid planet.</p><p>Det fortsatta upplägget på mötet var fortsatt delvis höljt i dunkel; de två ledarna väntas hålla privata samtal med var sin tolk under kvällen. Senare vidgas mötet till att omfatta även presidenternas delegationer.</p><p>Mötet på militärbasen Elmendorf-Richardson är det första på tu man hand mellan de två presidenterna sedan Rysslands invasion av Ukraina 2022.</p><h2>Rysk offensiv</h2><p>President Volodymyr Zelenskyj, som inte är inbjuden att delta, har säkrat europeiskt stöd för att Ukrainas ståndpunkt i konflikten är avgörande.</p><p>Zelenskyj sade samtidigt att Ukraina ”räknar med\" att Trump ska övertyga Putin att avsluta det ryska invasionskriget. Men – skrev han på sociala plattformar – ryska angrepp har intensifierats i östra Ukraina inför mötet och ryska soldater offras för att nå förhandlingsgfördelar. Ukrainsk förstärkning har därför beordrats till Donetsk, enligt Zelenskyj.</p><p>Det franska presidentkansliet Élyséepalatset meddelade inför mötet att Zelenskyj ska träffa Emmanuel Macron efter mötet mellan Putin och Trump.</p><figure><img uri=\"sdlABACSZwTvBo\" src=\"https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalThumbnail.jpg\" alt=\"Alaskabon Dug Loshbaugh protesterar inför mötet i Anchorage, Alaska.\" data-assoc-ref=\"a002\" data-uri=\"http://tt.se/media/image/sdlABACSZwTvBo\" data-preview-src=\"https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalPreview.jpg\"/><div class=\"byline\">Jae C. Hong/AP/TT</div><figcaption>Alaskabon Dug Loshbaugh protesterar inför mötet i Anchorage, Alaska.</figcaption></figure></div></section></article></body></html>",
+            "body_richhtml5": "<html><head><title>KI: Ekonomin lyfter nästa år</title></head><body><article><section data-charcount=\"2065\"><h1>KI: Ekonomin lyfter nästa år</h1><div class=\"dat\"><span class=\"vignette\">Ekonomi</span><span class=\"source\">TT</span></div><div class=\"ingress\"><p>Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  </p><p>Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  </p><blockquote>Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.</blockquote></div><div class=\"bodytext\"><figure><img uri=\"sdlg3pTraNl8TI\" src=\"https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg\" alt=\"Besökare på ett köpcentrum. Arkivbild. \" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdlg3pTraNl8TI\" data-preview-src=\"https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg\"/><div class=\"byline\">Amir Nabizadeh/TT</div><figcaption>Besökare på ett köpcentrum. Arkivbild. </figcaption></figure><p>En försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. </p><blockquote>Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.</blockquote><p>KI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. </p><blockquote>Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  </blockquote><h2>Sänkt elskatt bidrar</h2><p>Inflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.</p><blockquote>Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. </blockquote><p>KI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).</p><blockquote>Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.</blockquote><h2>Inga fler sänkningar</h2><p>Efter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. </p><p>Rättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. </p></div><div class=\"byline\">Tobias Österberg/TT</div></section></article></body></html>",
             "source": "TT",
             "type": "text",
-            "versioncreated": "2025-08-15T15:09:37Z",
-            "body_html5": "<html><head><title>Trump: Höga insatser i mötet med Putin</title></head><body><article><section data-charcount=\"2475\"><h1>Trump: Höga insatser i mötet med Putin</h1><div class=\"dat\"><span class=\"vignette\">USA</span><span class=\"source\">TT</span></div><h4><p>President Donald Trump tar emot den ryske ledaren Vladimir Putin redan när det ryska planet landar i Anchorage på fredagskvällen.</p><p>Förväntningarna inför toppmötet i Alaska om kriget i Ukraina är blandade – men Volodymyr Zelenskyj konstaterar att rysk militär har intensifierat striderna i östra Ukraina.</p></h4><div class=\"bodytext\"><p>\"Höga insatser\", skrev Trump i versaler på den egna plattformen Truth Social när han steg ombord på presidentplanet Air Force One med Alaska som destination.</p><p>Trump sade att samtalen med Putin bland annat ska behandla utbyte av territorier.</p><blockquote>Det kommer att diskuteras, men jag måste låta Ukraina ta det beslutet, och jag tror att de kommer att ta ett bra beslut, sade han enligt BBC.</blockquote><p>Då var den ryske presidenten redan på väg mot den amerikanska delstaten, med en mellanlandning i den östliga hamnstaden Magadan. </p><p>Den ryske utrikesministern Sergej Lavrov anlände redan på torsdagskvällen till Anchorage, och väckte uppmärksamhet då han bar en tröja med texten CCCP, den kyrilliska förkortningen för Sovjetunionen.</p><h2>Inte förutspå</h2><p>Den erfarne ryske toppdiplomaten var vag i sin kommentar om mötet:</p><blockquote>Det finns ingen anledning att försöka förutspå saker. Vi har argument, en tydlig och begriplig ståndpunkt. Vi kommer att presentera den, sade Lavrov enligt nyhetsbyråer.</blockquote><p>Kremls talesperson Dmitrij Peskov sade på fredagseftermiddagen att Putin beräknas landa först vid 21-tiden på fredagskvällen och att president Trump tar emot vid planet.</p><p>Det fortsatta upplägget på mötet var fortsatt delvis höljt i dunkel; de två ledarna väntas hålla privata samtal med var sin tolk under kvällen. Senare vidgas mötet till att omfatta även presidenternas delegationer.</p><p>Mötet på militärbasen Elmendorf-Richardson är det första på tu man hand mellan de två presidenterna sedan Rysslands invasion av Ukraina 2022.</p><h2>Rysk offensiv</h2><p>President Volodymyr Zelenskyj, som inte är inbjuden att delta, har säkrat europeiskt stöd för att Ukrainas ståndpunkt i konflikten är avgörande.</p><p>Zelenskyj sade samtidigt att Ukraina ”räknar med\" att Trump ska övertyga Putin att avsluta det ryska invasionskriget. Men – skrev han på sociala plattformar – ryska angrepp har intensifierats i östra Ukraina inför mötet och ryska soldater offras för att nå förhandlingsgfördelar. Ukrainsk förstärkning har därför beordrats till Donetsk, enligt Zelenskyj.</p><p>Det franska presidentkansliet Élyséepalatset meddelade inför mötet att Zelenskyj ska träffa Emmanuel Macron efter mötet mellan Putin och Trump.</p></div><figure><img uri=\"sdl5429za_yKoY\" src=\"https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalThumbnail.jpg\" alt=\"USA:s president Donald Trump går ombord Air Force One i Maryland inför avresa mot Alaska.\" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdl5429za_yKoY\" data-preview-src=\"https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a001_NormalPreview.jpg\"/><div class=\"byline\">Luis M. Alvarez/AP/TT</div><figcaption>USA:s president Donald Trump går ombord Air Force One i Maryland inför avresa mot Alaska.</figcaption></figure><figure><img uri=\"sdlABACSZwTvBo\" src=\"https://thumbnail.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalThumbnail.jpg\" alt=\"Alaskabon Dug Loshbaugh protesterar inför mötet i Anchorage, Alaska.\" data-assoc-ref=\"a002\" data-uri=\"http://tt.se/media/image/sdlABACSZwTvBo\" data-preview-src=\"https://beta.tt.se/media/text/250815-usaryssmote6uv-06eb0f86/a002_NormalPreview.jpg\"/><div class=\"byline\">Jae C. Hong/AP/TT</div><figcaption>Alaskabon Dug Loshbaugh protesterar inför mötet i Anchorage, Alaska.</figcaption></figure></section></article></body></html>",
+            "versioncreated": "2025-09-24T08:16:02Z",
+            "body_html5": "<html><head><title>KI: Ekonomin lyfter nästa år</title></head><body><article><section data-charcount=\"2065\"><h1>KI: Ekonomin lyfter nästa år</h1><div class=\"dat\"><span class=\"vignette\">Ekonomi</span><span class=\"source\">TT</span></div><h4><p>Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  </p><p>Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  </p><blockquote>Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.</blockquote></h4><div class=\"bodytext\"><p>En försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. </p><blockquote>Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.</blockquote><p>KI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. </p><blockquote>Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  </blockquote><h2>Sänkt elskatt bidrar</h2><p>Inflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.</p><blockquote>Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. </blockquote><p>KI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).</p><blockquote>Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.</blockquote><h2>Inga fler sänkningar</h2><p>Efter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. </p><p>Rättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. </p></div><div class=\"byline\">Tobias Österberg/TT</div><figure><img uri=\"sdlg3pTraNl8TI\" src=\"https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg\" alt=\"Besökare på ett köpcentrum. Arkivbild. \" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdlg3pTraNl8TI\" data-preview-src=\"https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg\"/><div class=\"byline\">Amir Nabizadeh/TT</div><figcaption>Besökare på ett köpcentrum. Arkivbild. </figcaption></figure></section></article></body></html>",
             "copyrightholder": "TT",
-            "datetime": "2025-08-15T15:09:37Z",
-            "slugline": "usa-ryssmöte-6-UV",
-            "newsvalue": 5,
+            "datetime": "2025-09-24T08:16:02Z",
+            "slugline": "konjunkturläget-6-UV",
+            "newsvalue": 4,
             "representationtype": "complete",
             "urgency": 3,
             "genre": [
                 {
-                    "code": "UTR",
+                    "code": "EKO",
                     "scheme": "http://tt.se/spec/sector/1.0/",
-                    "name": "Utrikes"
+                    "name": "Ekonomi"
                 }
             ],
             "revisions": [
                 {
-                    "uri": "http://tt.se/media/text/250815-usaryssmote1-06eb0f86",
-                    "slug": "usa-ryssmöte-1",
-                    "versioncreated": "2025-08-15T08:56:05Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget1-ae8053fa",
+                    "slug": "konjunkturläget-1",
+                    "versioncreated": "2025-09-24T07:03:35Z"
                 },
                 {
                     "replacing": [
-                        "http://tt.se/media/text/250815-usaryssmote1-06eb0f86"
+                        "http://tt.se/media/text/250924-konjunkturlaget1-ae8053fa"
                     ],
-                    "uri": "http://tt.se/media/text/250815-usaryssmote2uv-06eb0f86",
-                    "slug": "usa-ryssmöte-2-UV",
-                    "versioncreated": "2025-08-15T09:15:24Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget2uv-ae8053fa",
+                    "slug": "konjunkturläget-2-UV",
+                    "versioncreated": "2025-09-24T07:09:16Z"
                 },
                 {
                     "replacing": [
-                        "http://tt.se/media/text/250815-usaryssmote2uv-06eb0f86"
+                        "http://tt.se/media/text/250924-konjunkturlaget2uv-ae8053fa"
                     ],
-                    "uri": "http://tt.se/media/text/250815-usaryssmote3uv-06eb0f86",
-                    "slug": "usa-ryssmöte-3-UV",
-                    "versioncreated": "2025-08-15T09:39:30Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget3uv-ae8053fa",
+                    "slug": "konjunkturläget-3-UV",
+                    "versioncreated": "2025-09-24T07:23:25Z"
                 },
                 {
                     "replacing": [
-                        "http://tt.se/media/text/250815-usaryssmote3uv-06eb0f86"
+                        "http://tt.se/media/text/250924-konjunkturlaget3uv-ae8053fa"
                     ],
-                    "uri": "http://tt.se/media/text/250815-usaryssmote4uv-06eb0f86",
-                    "slug": "usa-ryssmöte-4-UV",
-                    "versioncreated": "2025-08-15T12:19:49Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget4uv-ae8053fa",
+                    "slug": "konjunkturläget-4-UV",
+                    "versioncreated": "2025-09-24T07:44:06Z"
                 },
                 {
                     "replacing": [
-                        "http://tt.se/media/text/250815-usaryssmote4uv-06eb0f86"
+                        "http://tt.se/media/text/250924-konjunkturlaget4uv-ae8053fa"
                     ],
-                    "uri": "http://tt.se/media/text/250815-usaryssmote5uv-06eb0f86",
-                    "slug": "usa-ryssmöte-5-UV",
-                    "versioncreated": "2025-08-15T13:18:56Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa",
+                    "slug": "konjunkturläget-5-UV",
+                    "versioncreated": "2025-09-24T07:56:21Z"
                 },
                 {
                     "replacing": [
-                        "http://tt.se/media/text/250815-usaryssmote5uv-06eb0f86"
+                        "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa"
                     ],
-                    "uri": "http://tt.se/media/text/250815-usaryssmote6uv-06eb0f86",
-                    "slug": "usa-ryssmöte-6-UV",
-                    "versioncreated": "2025-08-15T15:09:37Z"
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+                    "slug": "konjunkturläget-6-UV",
+                    "versioncreated": "2025-09-24T08:16:02Z"
                 }
             ],
-            "place": [
-                {
-                    "code": "75586e8b-a425-588f-b103-1b4ece93b2e0",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Alaska",
-                    "rel": "delstat",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            -154.493062,
-                            63.588753
-                        ],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "code": "d51c141c-294b-52ff-8950-8da3a690accd",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "USA",
-                    "rel": "land",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            -95.712891,
-                            37.09024
-                        ],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "code": "50253a34-235c-597d-84cb-45e6701644c9",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Ukraina",
-                    "rel": "land",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            31.16558,
-                            48.379433
-                        ],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "code": "cb2a32cb-5687-51d2-bb16-fc947f6d5022",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Maryland",
-                    "rel": "delstat",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            -76.641271,
-                            39.045755
-                        ],
-                        "type": "Point"
-                    }
-                }
-            ],
-            "sector": "UTR",
-            "headline": "Trump: Höga insatser i mötet med Putin",
-            "slug": "usa-ryssmöte-6-UV",
-            "ednote": "Uppdaterad, omvinklad på möte vid flygplats, tillägg med uttalande från Zelenskyj.",
+            "sector": "EKO",
+            "byline": "Tobias Österberg/TT",
+            "headline": "KI: Ekonomin lyfter nästa år",
+            "slug": "konjunkturläget-6-UV",
+            "ednote": "Utförligare.",
             "product": [
                 {
-                    "code": "TTUTR",
+                    "code": "TTEKO",
                     "scheme": "http://tt.se/spec/product/1.0",
-                    "name": "Utrikes"
+                    "name": "Ekonomi"
                 },
                 {
-                    "code": "TWUTR",
+                    "code": "TWEKO",
                     "scheme": "http://tt.se/spec/product/1.0",
-                    "name": "Webb utrikes"
+                    "name": "Webb ekonomi"
                 },
                 {
-                    "code": "TTUTR0",
+                    "code": "TTEKO0",
                     "scheme": "http://tt.se/spec/product/1.0",
                     "name": "Arkiv"
                 },
                 {
-                    "code": "TWUTR0",
+                    "code": "TWEKO0",
                     "scheme": "http://tt.se/spec/product/1.0",
                     "name": "Arkiv"
                 }
             ],
-            "charcount": 2475,
+            "charcount": 2065,
             "pubstatus": "usable",
-            "firstcreated": "2025-08-15T08:56:05Z",
+            "firstcreated": "2025-09-24T07:03:35Z",
             "profile": "PUBL",
-            "description_text": "President Donald Trump tar emot den ryske ledaren Vladimir Putin redan när det ryska planet landar i Anchorage på fredagskvällen. Förväntningarna inför toppmötet i Alaska om kriget i Ukraina är blandade – men Volodymyr Zelenskyj konstaterar...",
+            "description_text": "Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.   Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.   – Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett...",
             "replacing": [
-                "http://tt.se/media/text/250815-usaryssmote5uv-06eb0f86"
+                "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa"
             ],
             "version": "1",
-            "fixture": [
-                {
-                    "code": "8ea26b1e-e5b4-415a-b99c-7e8571c30662",
-                    "scheme": "http://tt.se/spec/story/1.1/",
-                    "name": "Kriget i Ukraina"
-                }
-            ],
-            "description_usage": "Uppdaterad, omvinklad på möte vid flygplats, tillägg med uttalande från Zelenskyj.",
+            "description_usage": "Utförligare.",
             "signals": {
                 "updatetype": "UV"
             },
             "person": [
                 {
-                    "code": "f9b817c1-a4b6-4580-9cd9-ba56358b22f7",
                     "scheme": "http://tt.se/spec/person/1.0/",
-                    "name": "Sergej Lavrov",
-                    "rel": "mentions"
-                },
-                {
-                    "code": "0a2c49d1-49b1-4696-abc6-b36199a9d57e",
-                    "scheme": "http://tt.se/spec/person/1.0/",
-                    "name": "Vladimir Putin",
-                    "rel": "mentions"
-                },
-                {
-                    "code": "fad3eea8-9943-4277-b7e9-db7df4234bd2",
-                    "scheme": "http://tt.se/spec/person/1.0/",
-                    "name": "Donald Trump",
-                    "rel": "mentions"
-                },
-                {
-                    "code": "800a7fc0-2652-4518-96a5-a67055006063",
-                    "scheme": "http://tt.se/spec/person/1.0/",
-                    "name": "Volodymyr Zelenskyj",
-                    "rel": "mentions"
-                },
-                {
-                    "code": "e74e93bb-77b0-4948-8eae-2a70815897d4",
-                    "scheme": "http://tt.se/spec/person/1.0/",
-                    "name": "Dmitrij Peskov",
+                    "name": "Ylva Hedén Westerdahl",
                     "rel": "mentions"
                 }
             ],
-            "originaltransmissionreference": "06eb0f86-4f8f-454b-9610-f524bc54129f",
+            "originaltransmissionreference": "ae8053fa-9100-460d-9589-ee2a75535877",
             "mimetype": "text/html",
-            "job": "ecde8704-0444-411e-8a46-c16a01b26368",
+            "job": "89f761b9-d161-465c-9084-b780a9b01cdb",
             "$standard": {
                 "schema": "https://tt.se/spec/ttninjs/ttninjs-schema_1.8.json",
                 "name": "TTNINJS",
@@ -331,321 +217,192 @@
             }
         },
         {
-            "uri": "http://tt.se/media/text/250815-indienmonsun7uv-6c1f6aba",
+            "uri": "http://tt.se/media/text/250924-bookmarkpabo-4068424",
             "associations": {
                 "a001": {
-                    "representationtype": "incomplete",
-                    "description_text": "En brandbil täckt av vatten efter kraftiga monsunregn i Swatdalen i nordvästra Pakistan.",
-                    "mimetype": "image/jpeg",
+                    "representationtype": "complete",
+                    "description_text": "",
                     "renditions": {
                         "r01": {
-                            "sizeinbytes": 388055,
-                            "usage": "Preview",
-                            "variant": "Normal",
-                            "width": 1024,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalPreview.jpg",
-                            "height": 683
-                        },
-                        "r00": {
-                            "sizeinbytes": 5454197,
+                            "unit": "PX",
                             "usage": "Hires",
                             "variant": "Normal",
-                            "width": 3240,
+                            "width": 8000,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalHires.jpg",
-                            "height": 2160
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalHires.jpg",
+                            "height": 4500
                         },
-                        "r03": {
-                            "sizeinbytes": 30351,
+                        "r00": {
+                            "unit": "PX",
                             "usage": "Thumbnail",
                             "variant": "Normal",
-                            "width": 256,
+                            "width": 512,
                             "mimetype": "image/jpeg",
-                            "href": "https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalThumbnail.jpg",
-                            "height": 171
+                            "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalThumbnail.jpg",
+                            "height": 288
                         },
-                        "r02": {
-                            "sizeinbytes": 388055,
+                        "r03": {
+                            "unit": "PX",
                             "usage": "Preview",
                             "variant": "Watermark",
                             "width": 1024,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_WatermarkPreview.jpg",
-                            "height": 683
-                        }
-                    },
-                    "type": "picture",
-                    "byline": "Sherin Zada/AP/TT",
-                    "uri": "http://tt.se/media/image/sdl0kd8pyf-v8A"
-                },
-                "a002": {
-                    "representationtype": "incomplete",
-                    "description_text": "Byn Chositi drabbades hårt av torsdagens plötsliga skyfall i Indienkontrollerade Kashmir.",
-                    "mimetype": "image/jpeg",
-                    "renditions": {
-                        "r01": {
-                            "sizeinbytes": 456493,
-                            "usage": "Preview",
-                            "variant": "Normal",
-                            "width": 1024,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalPreview.jpg",
-                            "height": 683
-                        },
-                        "r00": {
-                            "sizeinbytes": 7888674,
-                            "usage": "Hires",
-                            "variant": "Normal",
-                            "width": 8484,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalHires.jpg",
-                            "height": 5656
-                        },
-                        "r03": {
-                            "sizeinbytes": 38250,
-                            "usage": "Thumbnail",
-                            "variant": "Normal",
-                            "width": 256,
-                            "mimetype": "image/jpeg",
-                            "href": "https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalThumbnail.jpg",
-                            "height": 171
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_WatermarkPreview.jpg",
+                            "height": 576
                         },
                         "r02": {
-                            "sizeinbytes": 456493,
+                            "unit": "PX",
                             "usage": "Preview",
-                            "variant": "Watermark",
+                            "variant": "Cropped",
                             "width": 1024,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_WatermarkPreview.jpg",
-                            "height": 683
-                        }
-                    },
-                    "type": "picture",
-                    "byline": "Channi Anand/AP/TT",
-                    "uri": "http://tt.se/media/image/sdlkzcisTJ4z2A"
-                },
-                "a003": {
-                    "representationtype": "incomplete",
-                    "description_text": "Strandsatta pilgrimer får hjälp att fly de översvämningsdrabbade områdena i distriktet Kishtwar i indiskhållna Kashmir på fredagen.",
-                    "mimetype": "image/jpeg",
-                    "renditions": {
-                        "r01": {
-                            "sizeinbytes": 387972,
-                            "usage": "Preview",
-                            "variant": "Normal",
-                            "width": 1024,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalPreview.jpg",
-                            "height": 683
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedPreview.jpg",
+                            "height": 1024
                         },
-                        "r00": {
-                            "sizeinbytes": 7854562,
-                            "usage": "Hires",
-                            "variant": "Normal",
-                            "width": 6965,
-                            "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalHires.jpg",
-                            "height": 4643
-                        },
-                        "r03": {
-                            "sizeinbytes": 34543,
+                        "r05": {
+                            "unit": "PX",
                             "usage": "Thumbnail",
-                            "variant": "Normal",
-                            "width": 256,
+                            "variant": "Cropped",
+                            "width": 512,
                             "mimetype": "image/jpeg",
-                            "href": "https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalThumbnail.jpg",
-                            "height": 171
+                            "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedThumbnail.jpg",
+                            "height": 512
                         },
-                        "r02": {
-                            "sizeinbytes": 387972,
+                        "r04": {
+                            "unit": "PX",
                             "usage": "Preview",
-                            "variant": "Watermark",
+                            "variant": "Normal",
                             "width": 1024,
                             "mimetype": "image/jpeg",
-                            "href": "https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_WatermarkPreview.jpg",
-                            "height": 683
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalPreview.jpg",
+                            "height": 576
                         }
                     },
                     "type": "picture",
-                    "byline": "Channi Anand/AP/TT",
-                    "uri": "http://tt.se/media/image/sdlCntwwAwhtj0"
+                    "uri": "http://tt.se/media/image/68847ef9304c48267feaaac57dda0fa6"
                 }
             },
             "altids": {
-                "originaltransmissionreference": "6c1f6aba-1efb-4563-929a-ba97e38fe160"
+                "originaltransmissionreference": "viatt4068424"
             },
-            "webprio": 2,
-            "body_text": "Över 200 döda i monsunregn i Pakistan och Indien\nPakistan/Indien TT-AFP\nNärmare 200 människor har omkommit i Pakistan i plötsliga skyfall och dödliga jordskred.\nI Indien rapporteras över 60 människor ha mist livet i de kraftiga monsunregnen. En överlevare beskriver en vägg av vatten som lät som en jordbävning.\nMånga saknas fortfarande efter översvämningarna i norra och nordvästra Pakistan. Minst 194 människor har omkommit det senaste dygnet, uppger uppger den nationella katastrofmyndigheten. Av dem har över 180 personer omkommit i den bergiga provinsen Khyber Pakhtunkhwa. \nBland de döda finns fem personer som dog sedan en räddningshelikopter störtat i provinsen på grund av det dåliga vädret.\nFlera personer har därtill omkommit i Gilgit-Baltistan samt i den Pakistankontrollerade delen av Kashmir.\nI Mansehra längre norrut arbetade räddningstjänsten i timmar för att nå 1 300 strandsatta turister som skurits av från omvärlden till följd av de katastrofala monsunregnen.\nTrodde det var jordbävning\nEtt 80-tal personer saknas även efter torsdagens skyfall i den indiskhållna delen av Kashmir, bland dem hinduiska pilgrimer som besökte en helgedom när vattennivåerna plötsligt steg. Lera och vattenmassor drog genom byn Chositi i Himalaya och dödade minst 60 personer.\nRegnstormen översvämmade byn, som är ett vanligt stopp längs en pilgrimsled i området. Ett soppkök för pilgrimer sveptes med i vattenmassorna, som även drog med sig lera, bråte och stora stenblock som rullade nedför bergssluttningarna.\nEn överlevare beskriver hur han hörde en ”stor smäll” när en vägg av vatten nådde byn.\n– Vi trodde att det var en jordbävning, säger han till Press Trust of India.\nKlimatförändringar förvärrar\nHittills har cirka 60 personer bekräftats döda efter skyfallen i indiska Chositi. Ytterligare 50 svårt skadade vårdas på sjukhus.\nDet är den andra stora dödliga översvämningen som drabbar Indien på en dryg vecka. I tisdags i förra veckan begravdes byn Dharali i delstaten Uttarakhand i lera efter kraftiga skyfall, med omkring 70 döda till följd.\nÖversvämningar och jordskred drabbar ofta Indien och Pakistan under monsunsäsongen, som vanligen varar mellan juni och september. Klimatförändringarna bedöms dock förvärra skyfallens frekvens, svårighetsgrad och  följdverkan.\n",
+            "body_text": "Årets program bjuder på något för alla.Mästaren på spänning, Pascal Engman, lanserar en helt ny serie på mässan – Klanenserien – och berättar hur samhällsfrågor och politik kan vävas in i spänningsromaner. En av årets mest hyllade författare, Katarina Wennstam, fortsätter succéserien Sekelskiftesmorden, och samtalar om kvinnor som vägrar låta sig tystas. Sofie Sarenbrant och Henrik Fexeus diskuterar konsten att skriva samtidsskildringar som samtidigt får pulsen att rusa. Anna Jinghede och Lena Ljungdahl diskuterar hur man gestaltar verkliga brott i fiktionens värld.Jenny Fagerlund och Carina Nunstedt delar med sig av sina bästa skrivtips, bland annat hur man väljer rätt miljö för sin berättelse. Och Lina Bengtsdotter pratar om något alla författare fruktar: skrivkrampen. Hur tar man sig vidare när orden fastnar?Dessutom intar Krigshistoriepodden scenen för att visa hur militärhistoria kan göras både underhållande och lättillgänglig.För de yngre besökarna väntar härliga möten med Lilla spöket Laban, Labolina och Lollo & Bernie – som dessutom bjuder på en riktigt härlig show i En liten talkshow.Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokglädje. Varmt välkomna att uppleva Bokmässan tillsammans med oss. Vi ses där!",
             "subject": [
                 {
-                    "code": "17000000",
+                    "code": "20000013",
                     "scheme": "http://tt.se/spec/subref/1.0/",
-                    "name": "Väder",
-                    "rel": "classifies"
+                    "name": "Litteratur",
+                    "rel": "0.7849160432815552"
                 }
             ],
             "language": "sv",
-            "body_richhtml5": "<html><head><title>Över 200 döda i monsunregn i Pakistan och Indien</title></head><body><article><section data-charcount=\"2238\"><h1>Över 200 döda i monsunregn i Pakistan och Indien</h1><div class=\"dat\"><span class=\"vignette\">Pakistan/Indien</span><span class=\"source\">TT-AFP</span></div><div class=\"ingress\"><p>Närmare 200 människor har omkommit i Pakistan i plötsliga skyfall och dödliga jordskred.</p><p>I Indien rapporteras över 60 människor ha mist livet i de kraftiga monsunregnen. En överlevare beskriver en vägg av vatten som lät som en jordbävning.</p></div><div class=\"bodytext\"><figure><img uri=\"sdl0kd8pyf-v8A\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalThumbnail.jpg\" alt=\"En brandbil täckt av vatten efter kraftiga monsunregn i Swatdalen i nordvästra Pakistan.\" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdl0kd8pyf-v8A\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalPreview.jpg\"/><div class=\"byline\">Sherin Zada/AP/TT</div><figcaption>En brandbil täckt av vatten efter kraftiga monsunregn i Swatdalen i nordvästra Pakistan.</figcaption></figure><p>Många saknas fortfarande efter översvämningarna i norra och nordvästra Pakistan. Minst 194 människor har omkommit det senaste dygnet, uppger uppger den nationella katastrofmyndigheten. Av dem har över 180 personer omkommit i den bergiga provinsen Khyber Pakhtunkhwa. </p><p>Bland de döda finns fem personer som dog sedan en räddningshelikopter störtat i provinsen på grund av det dåliga vädret.</p><p>Flera personer har därtill omkommit i Gilgit-Baltistan samt i den Pakistankontrollerade delen av Kashmir.</p><p>I Mansehra längre norrut arbetade räddningstjänsten i timmar för att nå 1 300 strandsatta turister som skurits av från omvärlden till följd av de katastrofala monsunregnen.</p><h2>Trodde det var jordbävning</h2><p>Ett 80-tal personer saknas även efter torsdagens skyfall i den indiskhållna delen av Kashmir, bland dem hinduiska pilgrimer som besökte en helgedom när vattennivåerna plötsligt steg. Lera och vattenmassor drog genom byn Chositi i Himalaya och dödade minst 60 personer.</p><p>Regnstormen översvämmade byn, som är ett vanligt stopp längs en pilgrimsled i området. Ett soppkök för pilgrimer sveptes med i vattenmassorna, som även drog med sig lera, bråte och stora stenblock som rullade nedför bergssluttningarna.</p><p>En överlevare beskriver hur han hörde en ”stor smäll” när en vägg av vatten nådde byn.</p><figure><img uri=\"sdlkzcisTJ4z2A\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalThumbnail.jpg\" alt=\"Byn Chositi drabbades hårt av torsdagens plötsliga skyfall i Indienkontrollerade Kashmir.\" data-assoc-ref=\"a002\" data-uri=\"http://tt.se/media/image/sdlkzcisTJ4z2A\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalPreview.jpg\"/><div class=\"byline\">Channi Anand/AP/TT</div><figcaption>Byn Chositi drabbades hårt av torsdagens plötsliga skyfall i Indienkontrollerade Kashmir.</figcaption></figure><blockquote>Vi trodde att det var en jordbävning, säger han till Press Trust of India.</blockquote><h2>Klimatförändringar förvärrar</h2><p>Hittills har cirka 60 personer bekräftats döda efter skyfallen i indiska Chositi. Ytterligare 50 svårt skadade vårdas på sjukhus.</p><p>Det är den andra stora dödliga översvämningen som drabbar Indien på en dryg vecka. I tisdags i förra veckan begravdes byn Dharali i delstaten Uttarakhand i lera efter kraftiga skyfall, med omkring 70 döda till följd.</p><p>Översvämningar och jordskred drabbar ofta Indien och Pakistan under monsunsäsongen, som vanligen varar mellan juni och september. Klimatförändringarna bedöms dock förvärra skyfallens frekvens, svårighetsgrad och  följdverkan.</p><figure><img uri=\"sdlCntwwAwhtj0\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalThumbnail.jpg\" alt=\"Strandsatta pilgrimer får hjälp att fly de översvämningsdrabbade områdena i distriktet Kishtwar i indiskhållna Kashmir på fredagen.\" data-assoc-ref=\"a003\" data-uri=\"http://tt.se/media/image/sdlCntwwAwhtj0\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalPreview.jpg\"/><div class=\"byline\">Channi Anand/AP/TT</div><figcaption>Strandsatta pilgrimer får hjälp att fly de översvämningsdrabbade områdena i distriktet Kishtwar i indiskhållna Kashmir på fredagen.</figcaption></figure></div></section></article></body></html>",
-            "source": "TT-AFP",
+            "source": "ViaTT",
+            "body_richhtml5": "<html><body><article><section><h1>Bookmark p&#xE5; Bokm&#xE4;ssan 2025</h1><h4><p><p>Den 25 september sl&#xE5;r portarna upp till &#xE5;rets Bokm&#xE4;ssa och vi p&#xE5; Bookmark F&#xF6;rlag &#xE4;r sj&#xE4;lvklart p&#xE5; plats tillsammans med m&#xE5;nga av v&#xE5;ra f&#xF6;rfattare! Under fyra intensiva dagar fyller vi v&#xE5;r monter  <strong>B04:22 </strong> med b&#xF6;cker, signeringar och massor av m&#xF6;ten med er l&#xE4;sare. H&#xE4;r hittar du allt fr&#xE5;n sp&#xE4;nningsromaner och historia till sj&#xE4;lvbiografier, fackb&#xF6;cker och l&#xE4;supplevelser f&#xF6;r alla &#xE5;ldrar!</p></p></h4><div class=\"bodytext\"><p>&#xC5;rets program bjuder p&#xE5; n&#xE5;got f&#xF6;r alla.</p><p>M&#xE4;staren p&#xE5; sp&#xE4;nning, <strong>Pascal Engman, </strong>lanserar en helt ny serie p&#xE5; m&#xE4;ssan &#x2013; Klanenserien &#x2013; och ber&#xE4;ttar hur samh&#xE4;llsfr&#xE5;gor och politik kan v&#xE4;vas in i sp&#xE4;nningsromaner. En av &#xE5;rets mest hyllade f&#xF6;rfattare, <strong>Katarina Wennstam </strong>, forts&#xE4;tter succ&#xE9;serien Sekelskiftesmorden, och samtalar om kvinnor som v&#xE4;grar l&#xE5;ta sig tystas.<strong/></p><p> <strong>Sofie Sarenbrant </strong>och <strong>Henrik Fexeus </strong>diskuterar konsten att skriva samtidsskildringar som samtidigt f&#xE5;r pulsen att rusa. <strong>Anna Jinghede och Lena Ljungdahl </strong>diskuterar hur man gestaltar verkliga brott i fiktionens v&#xE4;rld.</p><p> <strong>Jenny Fagerlund </strong>och <strong>Carina Nunstedt </strong>delar med sig av sina b&#xE4;sta skrivtips, bland annat hur man v&#xE4;ljer r&#xE4;tt milj&#xF6; f&#xF6;r sin ber&#xE4;ttelse. Och <strong>Lina Bengtsdotter </strong>pratar om n&#xE5;got alla f&#xF6;rfattare fruktar: skrivkrampen. Hur tar man sig vidare n&#xE4;r orden fastnar?</p><p>Dessutom intar <strong>Krigshistoriepodden </strong>scenen f&#xF6;r att visa hur milit&#xE4;rhistoria kan g&#xF6;ras b&#xE5;de underh&#xE5;llande och l&#xE4;ttillg&#xE4;nglig.</p><p>F&#xF6;r de yngre bes&#xF6;karna v&#xE4;ntar h&#xE4;rliga m&#xF6;ten med <strong>Lilla sp&#xF6;ket Laban, Labolina </strong>och <strong>Lollo &amp; Bernie </strong>&#x2013; som dessutom bjuder p&#xE5; en riktigt h&#xE4;rlig show i <em>En liten talkshow </em>.</p><p>Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokgl&#xE4;dje. Varmt v&#xE4;lkomna att uppleva Bokm&#xE4;ssan tillsammans med oss. Vi ses d&#xE4;r!</p><p> <strong>Kontakta: </strong></p><p>Simon Brodding, , 0735054527, simon.brodding@bookmarkforlag.se</p><p>Melina Roy, , 076-146 89 46, melina.roy@bookmarkforlag.se</p><p> <strong>Fr&#xE5;n: </strong></p><p>Bookmark F&#xF6;rlag, Kungsgatan 58, 111 22, Stockholm (http://www.bookmarkforlag.se/)</p><p><p>Med h&#xE4;ngivenhet till v&#xE5;ra f&#xF6;rfattare och engagemang f&#xF6;r varje titel har Bookmark F&#xF6;rlag etablerat sig som ett av Sveriges ledande bokf&#xF6;rlag. V&#xE5;r ambition &#xE4;r att ge ut verkligt starka och unika titlar inom allt fr&#xE5;n sk&#xF6;n- och facklitteratur till barnb&#xF6;cker.</p></p></div></section></article></body></html>",
             "type": "text",
-            "versioncreated": "2025-08-15T14:31:37Z",
-            "body_html5": "<html><head><title>Över 200 döda i monsunregn i Pakistan och Indien</title></head><body><article><section data-charcount=\"2238\"><h1>Över 200 döda i monsunregn i Pakistan och Indien</h1><div class=\"dat\"><span class=\"vignette\">Pakistan/Indien</span><span class=\"source\">TT-AFP</span></div><h4><p>Närmare 200 människor har omkommit i Pakistan i plötsliga skyfall och dödliga jordskred.</p><p>I Indien rapporteras över 60 människor ha mist livet i de kraftiga monsunregnen. En överlevare beskriver en vägg av vatten som lät som en jordbävning.</p></h4><div class=\"bodytext\"><p>Många saknas fortfarande efter översvämningarna i norra och nordvästra Pakistan. Minst 194 människor har omkommit det senaste dygnet, uppger uppger den nationella katastrofmyndigheten. Av dem har över 180 personer omkommit i den bergiga provinsen Khyber Pakhtunkhwa. </p><p>Bland de döda finns fem personer som dog sedan en räddningshelikopter störtat i provinsen på grund av det dåliga vädret.</p><p>Flera personer har därtill omkommit i Gilgit-Baltistan samt i den Pakistankontrollerade delen av Kashmir.</p><p>I Mansehra längre norrut arbetade räddningstjänsten i timmar för att nå 1 300 strandsatta turister som skurits av från omvärlden till följd av de katastrofala monsunregnen.</p><h2>Trodde det var jordbävning</h2><p>Ett 80-tal personer saknas även efter torsdagens skyfall i den indiskhållna delen av Kashmir, bland dem hinduiska pilgrimer som besökte en helgedom när vattennivåerna plötsligt steg. Lera och vattenmassor drog genom byn Chositi i Himalaya och dödade minst 60 personer.</p><p>Regnstormen översvämmade byn, som är ett vanligt stopp längs en pilgrimsled i området. Ett soppkök för pilgrimer sveptes med i vattenmassorna, som även drog med sig lera, bråte och stora stenblock som rullade nedför bergssluttningarna.</p><p>En överlevare beskriver hur han hörde en ”stor smäll” när en vägg av vatten nådde byn.</p><blockquote>Vi trodde att det var en jordbävning, säger han till Press Trust of India.</blockquote><h2>Klimatförändringar förvärrar</h2><p>Hittills har cirka 60 personer bekräftats döda efter skyfallen i indiska Chositi. Ytterligare 50 svårt skadade vårdas på sjukhus.</p><p>Det är den andra stora dödliga översvämningen som drabbar Indien på en dryg vecka. I tisdags i förra veckan begravdes byn Dharali i delstaten Uttarakhand i lera efter kraftiga skyfall, med omkring 70 döda till följd.</p><p>Översvämningar och jordskred drabbar ofta Indien och Pakistan under monsunsäsongen, som vanligen varar mellan juni och september. Klimatförändringarna bedöms dock förvärra skyfallens frekvens, svårighetsgrad och  följdverkan.</p></div><figure><img uri=\"sdl0kd8pyf-v8A\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalThumbnail.jpg\" alt=\"En brandbil täckt av vatten efter kraftiga monsunregn i Swatdalen i nordvästra Pakistan.\" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdl0kd8pyf-v8A\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a001_NormalPreview.jpg\"/><div class=\"byline\">Sherin Zada/AP/TT</div><figcaption>En brandbil täckt av vatten efter kraftiga monsunregn i Swatdalen i nordvästra Pakistan.</figcaption></figure><figure><img uri=\"sdlkzcisTJ4z2A\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalThumbnail.jpg\" alt=\"Byn Chositi drabbades hårt av torsdagens plötsliga skyfall i Indienkontrollerade Kashmir.\" data-assoc-ref=\"a002\" data-uri=\"http://tt.se/media/image/sdlkzcisTJ4z2A\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a002_NormalPreview.jpg\"/><div class=\"byline\">Channi Anand/AP/TT</div><figcaption>Byn Chositi drabbades hårt av torsdagens plötsliga skyfall i Indienkontrollerade Kashmir.</figcaption></figure><figure><img uri=\"sdlCntwwAwhtj0\" src=\"https://thumbnail.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalThumbnail.jpg\" alt=\"Strandsatta pilgrimer får hjälp att fly de översvämningsdrabbade områdena i distriktet Kishtwar i indiskhållna Kashmir på fredagen.\" data-assoc-ref=\"a003\" data-uri=\"http://tt.se/media/image/sdlCntwwAwhtj0\" data-preview-src=\"https://beta.tt.se/media/text/250815-indienmonsun7uv-6c1f6aba/a003_NormalPreview.jpg\"/><div class=\"byline\">Channi Anand/AP/TT</div><figcaption>Strandsatta pilgrimer får hjälp att fly de översvämningsdrabbade områdena i distriktet Kishtwar i indiskhållna Kashmir på fredagen.</figcaption></figure></section></article></body></html>",
-            "copyrightholder": "TT",
-            "datetime": "2025-08-15T14:31:37Z",
-            "slugline": "indien-monsun-7-UV",
-            "newsvalue": 4,
+            "versioncreated": "2025-09-24T10:12:00+02:00",
+            "body_html5": "<html><body><article><section><h1>Bookmark p&#xE5; Bokm&#xE4;ssan 2025</h1><h4><p><p>Den 25 september sl&#xE5;r portarna upp till &#xE5;rets Bokm&#xE4;ssa och vi p&#xE5; Bookmark F&#xF6;rlag &#xE4;r sj&#xE4;lvklart p&#xE5; plats tillsammans med m&#xE5;nga av v&#xE5;ra f&#xF6;rfattare! Under fyra intensiva dagar fyller vi v&#xE5;r monter  <strong>B04:22 </strong> med b&#xF6;cker, signeringar och massor av m&#xF6;ten med er l&#xE4;sare. H&#xE4;r hittar du allt fr&#xE5;n sp&#xE4;nningsromaner och historia till sj&#xE4;lvbiografier, fackb&#xF6;cker och l&#xE4;upplevelser f&#xF6;r alla &#xE5;ldrar!</p></p></h4><div class=\"bodytext\"><p>&#xC5;rets program bjuder p&#xE5; n&#xE5;got f&#xF6;r alla.</p><p>M&#xE4;staren p&#xE5; sp&#xE4;nning, <strong>Pascal Engman, </strong>lanserar en helt ny serie p&#xE5; m&#xE4;ssan &#x2013; Klanenserien &#x2013; och ber&#xE4;ttar hur samh&#xE4;llsfr&#xE5;gor och politik kan v&#xE4;vas in i sp&#xE4;nningsromaner. En av &#xE5;rets mest hyllade f&#xF6;rfattare, <strong>Katarina Wennstam </strong>, forts&#xE4;tter succ&#xE9;serien Sekelskiftesmorden, och samtalar om kvinnor som v&#xE4;grar l&#xE5;ta sig tystas.<strong/></p><p> <strong>Sofie Sarenbrant </strong>och <strong>Henrik Fexeus </strong>diskuterar konsten att skriva samtidsskildringar som samtidigt f&#xE5;r pulsen att rusa. <strong>Anna Jinghede och Lena Ljungdahl </strong>diskuterar hur man gestaltar verkliga brott i fiktionens v&#xE4;rld.</p><p> <strong>Jenny Fagerlund </strong>och <strong>Carina Nunstedt </strong>delar med sig av sina b&#xE4;sta skrivtips, bland annat hur man v&#xE4;ljer r&#xE4;tt milj&#xF6; f&#xF6;r sin ber&#xE4;ttelse. Och <strong>Lina Bengtsdotter </strong>pratar om n&#xE5;got alla f&#xF6;rfattare fruktar: skrivkrampen. Hur tar man sig vidare n&#xE4;r orden fastnar?</p><p>Dessutom intar <strong>Krigshistoriepodden </strong>scenen f&#xF6;r att visa hur milit&#xE4;rhistoria kan g&#xF6;ras b&#xE5;de underh&#xE5;llande och l&#xE4;ttillg&#xE4;nglig.</p><p>F&#xF6;r de yngre bes&#xF6;karna v&#xE4;ntar h&#xE4;rliga m&#xF6;ten med <strong>Lilla sp&#xF6;ket Laban, Labolina </strong>och <strong>Lollo &amp; Bernie </strong>&#x2013; som dessutom bjuder p&#xE5; en riktigt h&#xE4;rlig show i <em>En liten talkshow </em>.</p><p>Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokgl&#xE4;dje. Varmt v&#xE4;lkomna att uppleva Bokm&#xE4;ssan tillsammans med oss. Vi ses d&#xE4;r!</p><p> <strong>Kontakta: </strong></p><p>Simon Brodding, , 0735054527, simon.brodding@bookmarkforlag.se</p><p>Melina Roy, , 076-146 89 46, melina.roy@bookmarkforlag.se</p><p> <strong>Fr&#xE5;n: </strong></p><p>Bookmark F&#xF6;rlag, Kungsgatan 58, 111 22, Stockholm (http://www.bookmarkforlag.se/)</p><p><p>Med h&#xE4;ngivenhet till v&#xE5;ra f&#xF6;rfattare och engagemang f&#xF6;r varje titel har Bookmark F&#xF6;rlag etablerat sig som ett av Sveriges ledande bokf&#xF6;rlag. V&#xE5;r ambition &#xE4;r att ge ut verkligt starka och unika titlar inom allt fr&#xE5;n sk&#xF6;n- och facklitteratur till barnb&#xF6;cker.</p></p></div></section></article></body></html>",
+            "copyrightholder": "Bookmark Förlag",
+            "slugline": "bookmarkpåbokmässan2025",
+            "datetime": "2025-09-24T10:12:00+02:00",
             "representationtype": "complete",
-            "urgency": 3,
+            "urgency": 4,
             "genre": [
                 {
-                    "code": "UTR",
+                    "code": "PRM",
                     "scheme": "http://tt.se/spec/sector/1.0/",
-                    "name": "Utrikes"
+                    "genre": "Pressmeddelanden"
                 }
             ],
             "revisions": [
                 {
-                    "uri": "http://tt.se/media/text/250815-indienmonsun1-6c1f6aba",
-                    "slug": "indien-monsun-1",
-                    "versioncreated": "2025-08-15T06:58:51Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun1-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun2uv-6c1f6aba",
-                    "slug": "indien-monsun-2-UV",
-                    "versioncreated": "2025-08-15T07:39:04Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun2uv-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun3korr-6c1f6aba",
-                    "slug": "indien-monsun-3-KORR",
-                    "versioncreated": "2025-08-15T08:00:14Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun3korr-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun4uv-6c1f6aba",
-                    "slug": "indien-monsun-4-UV",
-                    "versioncreated": "2025-08-15T12:19:28Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun4uv-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun5uv-6c1f6aba",
-                    "slug": "indien-monsun-5-UV",
-                    "versioncreated": "2025-08-15T12:49:34Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun5uv-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun6uv-6c1f6aba",
-                    "slug": "indien-monsun-6-UV",
-                    "versioncreated": "2025-08-15T13:32:48Z"
-                },
-                {
-                    "replacing": [
-                        "http://tt.se/media/text/250815-indienmonsun6uv-6c1f6aba"
-                    ],
-                    "uri": "http://tt.se/media/text/250815-indienmonsun7uv-6c1f6aba",
-                    "slug": "indien-monsun-7-UV",
-                    "versioncreated": "2025-08-15T14:31:37Z"
+                    "replacing": [],
+                    "uri": "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+                    "slug": "bookmarkpåbokmässan2025",
+                    "versioncreated": "2025-09-24T10:12:00+02:00"
                 }
             ],
-            "place": [
-                {
-                    "code": "b51d1084-ffbb-5202-a838-986a89790c50",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Himalaya",
-                    "rel": "region",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            84,
-                            29
-                        ],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "code": "9af5164f-2ce4-5245-ae63-550d033c042f",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Indien",
-                    "rel": "land",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            78.96288,
-                            20.593684
-                        ],
-                        "type": "Point"
-                    }
-                },
-                {
-                    "code": "20973094-e734-533d-9da8-51ce1a453bf1",
-                    "scheme": "http://tt.se/spec/place/1.0/",
-                    "name": "Pakistan",
-                    "rel": "land",
-                    "geometry_geojson": {
-                        "coordinates": [
-                            69.345116,
-                            30.375321
-                        ],
-                        "type": "Point"
-                    }
-                }
-            ],
-            "sector": "UTR",
-            "headline": "Över 200 döda i monsunregn i Pakistan och Indien",
-            "slug": "indien-monsun-7-UV",
-            "ednote": "Uppdaterad. Närmare 200 döda i Pakistan. Ny rubrik",
+            "event": [],
+            "headline": "Bookmark på Bokmässan 2025",
+            "sector": "PRM",
+            "slug": "bookmarkpåbokmässan2025",
             "product": [
                 {
-                    "code": "TTUTR",
+                    "code": "PRM",
                     "scheme": "http://tt.se/spec/product/1.0",
-                    "name": "Utrikes"
+                    "name": "Pressmeddelande"
                 },
                 {
-                    "code": "TWUTR",
+                    "code": "PRMVTT",
                     "scheme": "http://tt.se/spec/product/1.0",
-                    "name": "Webb utrikes"
+                    "name": "Pressm Via TT"
                 },
                 {
-                    "code": "TTUTR0",
+                    "code": "PRM0",
                     "scheme": "http://tt.se/spec/product/1.0",
                     "name": "Arkiv"
                 },
                 {
-                    "code": "TWUTR0",
+                    "code": "PRMVTT0",
                     "scheme": "http://tt.se/spec/product/1.0",
                     "name": "Arkiv"
                 }
             ],
-            "charcount": 2238,
             "pubstatus": "usable",
-            "firstcreated": "2025-08-15T06:58:51Z",
             "profile": "PUBL",
-            "description_text": "Närmare 200 människor har omkommit i Pakistan i plötsliga skyfall och dödliga jordskred. I Indien rapporteras över 60 människor ha mist livet i de kraftiga monsunregnen. En överlevare beskriver en vägg av vatten som lät som en jordbävning.",
-            "replacing": [
-                "http://tt.se/media/text/250815-indienmonsun6uv-6c1f6aba"
+            "description_text": "Den 25 september slår portarna upp till årets Bokmässa och vi på Bookmark Förlag är självklart på plats tillsammans med många av våra författare! Under fyra intensiva dagar fyller vi vår monter B04:22 med böcker, signeringar och massor av möten med er läsare. Här hittar du allt från spänningsromaner och historia till självbiografier, fackböcker och läsupplevelser för alla åldrar!",
+            "replacing": [],
+            "person": [
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Pascal Engman",
+                    "rel": "0.9998095631599426"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Sofie Sarenbrant",
+                    "rel": "0.9995262026786804"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Carina Nunstedt",
+                    "rel": "0.9998839497566223"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Jenny Fagerlund",
+                    "rel": "0.9998624920845032"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Lina Bengtsdotter",
+                    "rel": "0.9998586177825928"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Lena Ljungdahl",
+                    "rel": "0.9997861385345459"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Henrik Fexeus",
+                    "rel": "0.9997308850288391"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Anna Jinghede",
+                    "rel": "0.9994449615478516"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Katarina Wennstam",
+                    "rel": "0.9993661046028137"
+                }
             ],
-            "version": "1",
-            "description_usage": "Uppdaterad. Närmare 200 döda i Pakistan. Ny rubrik",
-            "signals": {
-                "updatetype": "UV"
-            },
-            "originaltransmissionreference": "6c1f6aba-1efb-4563-929a-ba97e38fe160",
+            "originaltransmissionreference": "viatt4068424",
             "mimetype": "text/html",
-            "job": "19d3bdc0-f0e8-4b7a-b013-29bc9fea948a",
             "$standard": {
-                "schema": "https://tt.se/spec/ttninjs/ttninjs-schema_1.8.json",
+                "schema": "https://tt.se/spec/ttninjs/ttninjs-schema_1.3.json",
                 "name": "TTNINJS",
-                "version": "1.8"
+                "version": "1.3"
             }
         }
     ],
