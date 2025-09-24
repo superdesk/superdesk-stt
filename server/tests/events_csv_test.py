@@ -1,26 +1,123 @@
 import os
-
+from contextlib import contextmanager
+from unittest.mock import patch, MagicMock
 from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
 
 
-def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
+# === Shared helpers for occurrence status tests ===
+@contextmanager
+def mock_eventoccurstatus(items):
+    """Patch the vocab service to return `items` for eventoccurstatus."""
+    with patch(
+        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
+    ) as get_service:
+        mock = MagicMock()
+        mock.get_items.return_value = items
+        get_service.return_value = mock
+        yield
+
+
+def write(tmp_path, filename, content):
+    p = tmp_path / filename
+    p.write_text(content, encoding="utf-8")
+    return str(p)
+
+
+def parse_file(path):
     parser = EventsCSVFeedParser()
-    p = tmp_path / "events.csv"
-    p.write_text(
-        "Start Date,Start Time,Event Name,Timezone,Slugline\n"
-        "2024-07-01,14:30,  Summer Fair  ,America/New_York,  slug  \n",
-        encoding="utf-8",
-    )
+    return parser.parse(path)
 
-    items = parser.parse(str(p))
+
+def create_csv_file(tmp_path, filename, headers, rows):
+    """Create a CSV file with given headers and rows."""
+    content = ",".join(headers) + "\n"
+    for row in rows:
+        content += ",".join(str(cell) for cell in row) + "\n"
+    return write(tmp_path, filename, content)
+
+
+def create_parser():
+    """Create a new EventsCSVFeedParser instance."""
+    return EventsCSVFeedParser()
+
+
+def parse_csv_content(tmp_path, headers, rows, filename="test.csv"):
+    """Helper to create CSV file and parse it in one step."""
+    path = create_csv_file(tmp_path, filename, headers, rows)
+    return parse_file(path)
+
+
+def assert_event_basic_structure(event, expected_name=None, expected_source="CSV"):
+    """Assert basic event structure and properties."""
+    assert event.get("original_source") == expected_source
+    assert event.get("type") == "event"
+    assert "dates" in event
+    assert event["dates"].get("start")
+    if expected_name:
+        assert event.get("name") == expected_name
+
+
+def assert_event_dates(event, expected_start_date=None, expected_tz=None, has_end=True):
+    """Assert event date properties."""
+    dates = event["dates"]
+    if expected_start_date:
+        assert dates["start"].isoformat().startswith(expected_start_date)
+    if expected_tz:
+        assert dates["tz"] == expected_tz
+    if has_end:
+        assert "end" in dates and dates["end"]
+
+
+def assert_single_event_parsed(items, expected_name=None):
+    """Assert that exactly one event was parsed."""
     assert len(items) == 1
-    ev = items[0]
+    if expected_name:
+        assert items[0]["name"] == expected_name
+    return items[0]
 
-    assert ev["name"] == "Summer Fair"
+
+def parse_occur_status_csv(tmp_path, occurrence_status_value, vocab_items=None):
+    """Helper to test occurrence status parsing with mocked vocabulary."""
+    headers = ["Start Date", "Event Name", "Occurrence Status"]
+    rows = [["2024-01-01", "Test Event", occurrence_status_value]]
+
+    if vocab_items is None:
+        vocab_items = [
+            {
+                "qcode": "eocstat:eos5",
+                "name": "Planned, occurs certainly",
+                "label": "Planned, occurs certainly",
+            }
+        ]
+
+    with mock_eventoccurstatus(vocab_items):
+        return parse_csv_content(tmp_path, headers, rows)
+
+
+def assert_eos5(event):
+    assert "occur_status" in event
+    os5 = event["occur_status"]
+    assert os5["qcode"] == "eocstat:eos5"
+    assert os5["name"] == "Planned, occurs certainly"
+    assert os5["label"] == "Planned, occurs certainly"
+    assert len(os5) == 3
+
+
+def assert_no_occur_status(event):
+    assert "occur_status" not in event or event["occur_status"] is None
+
+
+def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
+    headers = ["Start Date", "Start Time", "Event Name", "Timezone", "Slugline"]
+    rows = [["2024-07-01", "14:30", "  Summer Fair  ", "America/New_York", "  slug  "]]
+
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "Summer Fair")
+
     assert ev["slugline"] == "slug"
-    assert ev["dates"]["tz"] == "America/New_York"
-    assert ev["dates"]["start"].isoformat().startswith("2024-07-01T14:30:00")
+    assert_event_dates(ev, "2024-07-01T14:30:00", "America/New_York")
     assert ev["dates"]["start"].isoformat().endswith("-04:00")
+
     # End time should be 1 hour after start time when no end time is provided
     from datetime import timedelta
 
@@ -29,56 +126,76 @@ def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
 
 
 def test_can_parse_and_sniff_delimiters_csv_tsv(tmp_path):
-    parser = EventsCSVFeedParser()
+    parser = create_parser()
 
-    comma = tmp_path / "comma.csv"
-    comma.write_text(
-        "Start Date,Event Name\n" "2024-01-01,One\n",
-        encoding="utf-8",
+    # Create files with different delimiters manually since create_csv_file uses commas
+    comma_path = write(tmp_path, "comma.csv", "Start Date,Event Name\n2024-01-01,One\n")
+    semi_path = write(tmp_path, "semi.csv", "Start Date;Event Name\n2024-01-02;Two\n")
+    tab_path = write(
+        tmp_path, "file.tsv", "Start Date\tEvent Name\n2024-01-03\tThree\n"
     )
 
-    semicolon = tmp_path / "semi.csv"
-    semicolon.write_text(
-        "Start Date;Event Name\n" "2024-01-02;Two\n",
-        encoding="utf-8",
-    )
+    assert parser.can_parse(comma_path) is True
+    assert parser.can_parse(tab_path) is False  # only .csv is accepted
 
-    tabbed = tmp_path / "file.tsv"
-    tabbed.write_text(
-        "Start Date\tEvent Name\n" "2024-01-03\tThree\n",
-        encoding="utf-8",
-    )
+    items1 = parse_file(comma_path)
+    assert_single_event_parsed(items1, "One")
 
-    assert parser.can_parse(str(comma)) is True
-    assert parser.can_parse(str(tabbed)) is False  # only .csv is accepted
+    items2 = parse_file(semi_path)
+    assert_single_event_parsed(items2, "Two")
 
-    items1 = parser.parse(str(comma))
-    assert len(items1) == 1 and items1[0]["name"] == "One"
-
-    items2 = parser.parse(str(semicolon))
-    assert len(items2) == 1 and items2[0]["name"] == "Two"
-
-    items3 = parser.parse(str(tabbed))
-    assert len(items3) == 1 and items3[0]["name"] == "Three"
+    items3 = parse_file(tab_path)
+    assert_single_event_parsed(items3, "Three")
 
 
 def test_builds_links_calendars_location_contact(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "rich.csv"
-    p.write_text(
-        "Start Date,Event Name,External Links,External link 2,Calendars,"
-        "Location Name,Location Address,Location City/Town,Location State/Province/Region,Location Country,"
-        "Contact Honorific,Contact First Name,Contact Last Name,Contact Organisation,Contact Point of Contact,"
-        "Contact Email,Contact Phone Number,Contact Phone Usage,Contact Phone Public\n"
-        "2024-05-05,Sample,http://a.com, http://b.com ,cal1; cal2,"
-        "Venue,123 St,Metropolis,State,US,"
-        "Dr,Jane,Doe,Org,POC,jane@org.com,123456,work,y\n",
-        encoding="utf-8",
-    )
+    headers = [
+        "Start Date",
+        "Event Name",
+        "External Links",
+        "External link 2",
+        "Calendars",
+        "Location Name",
+        "Location Address",
+        "Location City/Town",
+        "Location State/Province/Region",
+        "Location Country",
+        "Contact Honorific",
+        "Contact First Name",
+        "Contact Last Name",
+        "Contact Organisation",
+        "Contact Point of Contact",
+        "Contact Email",
+        "Contact Phone Number",
+        "Contact Phone Usage",
+        "Contact Phone Public",
+    ]
+    rows = [
+        [
+            "2024-05-05",
+            "Sample",
+            "http://a.com",
+            " http://b.com ",
+            "cal1; cal2",
+            "Venue",
+            "123 St",
+            "Metropolis",
+            "State",
+            "US",
+            "Dr",
+            "Jane",
+            "Doe",
+            "Org",
+            "POC",
+            "jane@org.com",
+            "123456",
+            "work",
+            "y",
+        ]
+    ]
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "Sample")
 
     assert ev["links"] == [{"href": "http://a.com"}, {"href": "http://b.com"}]
     assert ev["calendars"] == [{"qcode": "cal1"}, {"qcode": "cal2"}]
@@ -105,39 +222,38 @@ def test_builds_links_calendars_location_contact(tmp_path):
 
 
 def test_skips_row_when_required_fields_missing(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "missing.csv"
-    p.write_text(
-        "Start Date,Event Name\n"
-        ",HasNameButNoStart\n"
-        "2024-01-01,\n"
-        "2024-01-02,   \n"
-        "2024-01-03,Valid\n",
-        encoding="utf-8",
-    )
+    headers = ["Start Date", "Event Name"]
+    rows = [
+        ["", "HasNameButNoStart"],
+        ["2024-01-01", ""],
+        ["2024-01-02", "   "],
+        ["2024-01-03", "Valid"],
+    ]
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    assert items[0]["name"] == "Valid"
-    assert items[0]["dates"]["start"].isoformat().startswith("2024-01-03")
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "Valid")
+    assert_event_dates(ev, "2024-01-03")
 
 
 def test_invalid_start_skips_and_invalid_end_falls_back(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "invalid_dates.csv"
-    p.write_text(
-        "Start Date,Start Time,End Date,End Time,Event Name,Timezone\n"
-        "not a date,10:00,2024-01-02,11:00,Bad,UTC\n"
-        "2024-02-03,10:00,nope,12:00,Good,UTC\n",
-        encoding="utf-8",
-    )
+    headers = [
+        "Start Date",
+        "Start Time",
+        "End Date",
+        "End Time",
+        "Event Name",
+        "Timezone",
+    ]
+    rows = [
+        ["not a date", "10:00", "2024-01-02", "11:00", "Bad", "UTC"],
+        ["2024-02-03", "10:00", "nope", "12:00", "Good", "UTC"],
+    ]
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-    assert ev["name"] == "Good"
-    assert ev["dates"]["start"].isoformat().startswith("2024-02-03T10:00:00")
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "Good")
+    assert_event_dates(ev, "2024-02-03T10:00:00", "UTC")
     assert ev["dates"]["start"].isoformat().endswith("+00:00")
+
     # End time should be 1 hour after start time when no end time is provided
     from datetime import timedelta
 
@@ -146,20 +262,12 @@ def test_invalid_start_skips_and_invalid_end_falls_back(tmp_path):
 
 
 def test_preserves_existing_timezone_when_tz_hint_provided(tmp_path):
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "tz.csv"
-    # Embed -05:00 in the start value while providing a tz hint that should not override it
-    p.write_text(
-        "Start Date,Event Name,Timezone\n"
-        "2024-03-10 01:30 -05:00,HasTZ,Europe/Paris\n",
-        encoding="utf-8",
-    )
+    headers = ["Start Date", "Event Name", "Timezone"]
+    rows = [["2024-03-10 01:30 -05:00", "HasTZ", "Europe/Paris"]]
 
-    items = parser.parse(str(p))
-    assert len(items) == 1
-    ev = items[0]
-    assert ev["dates"]["tz"] == "Europe/Paris"
-    assert ev["dates"]["start"].isoformat().startswith("2024-03-10T01:30:00")
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "HasTZ")
+    assert_event_dates(ev, "2024-03-10T01:30:00", "Europe/Paris")
     assert ev["dates"]["start"].isoformat().endswith("-05:00")
 
 
@@ -171,7 +279,6 @@ def test_parse_eventsheet_fixture_csv():
     """
     from unittest.mock import patch
 
-    parser = EventsCSVFeedParser()
     fixture_path = os.path.join(
         os.path.dirname(__file__), "fixtures", "csv", "eventsheet.csv"
     )
@@ -181,18 +288,14 @@ def test_parse_eventsheet_fixture_csv():
         "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
     ) as mock_service:
         mock_service.return_value = None
-
-        items = parser.parse(fixture_path)
+        items = parse_file(fixture_path)
 
     # Basic structure assertions
     assert isinstance(items, list)
     assert len(items) > 0
 
     first = items[0]
-    assert first.get("original_source") == "CSV"
-    assert first.get("type") == "event"
-    assert first.get("name")  # non-empty
-    assert "dates" in first and first["dates"].get("start")
+    assert_event_basic_structure(first)
 
     # Calendars column should map to list of qcodes when present
     # Fixture has values like "Urheilu" in the Calendars column
@@ -203,20 +306,7 @@ def test_parse_eventsheet_fixture_csv():
 
 def test_build_occur_status_with_valid_qcode(tmp_path):
     """Test _build_occur_status with a valid qcode that matches vocabulary."""
-    from unittest.mock import patch, MagicMock
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,eocstat:eos5\n",
-        encoding="utf-8",
-    )
-
-    # Mock the vocabulary service to return test data
-    mock_vocab_service = MagicMock()
-    mock_vocab_service.get_items.return_value = [
+    vocab_items = [
         {
             "qcode": "eocstat:eos5",
             "name": "Planned, occurs certainly",
@@ -229,236 +319,63 @@ def test_build_occur_status_with_valid_qcode(tmp_path):
         },
     ]
 
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = mock_vocab_service
-
-        items = parser.parse(str(p))
-        assert len(items) == 1
-
-        event = items[0]
-        assert "occur_status" in event
-        occur_status = event["occur_status"]
-
-        # Test that actual values are returned, not just presence
-        assert occur_status["qcode"] == "eocstat:eos5"
-        assert occur_status["name"] == "Planned, occurs certainly"
-        assert occur_status["label"] == "Planned, occurs certainly"
-
-        # Ensure values are not None or empty
-        assert occur_status["qcode"] is not None
-        assert occur_status["qcode"] != ""
-        assert occur_status["name"] is not None
-        assert occur_status["name"] != ""
+    items = parse_occur_status_csv(tmp_path, "eocstat:eos5", vocab_items)
+    ev = assert_single_event_parsed(items, "Test Event")
+    assert_eos5(ev)
 
 
 def test_build_occur_status_with_label_match(tmp_path):
     """Test _build_occur_status matching by exact label/name instead of qcode."""
-    from unittest.mock import patch, MagicMock
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
+    items = parse_occur_status_csv(tmp_path, '"Planned, occurs certainly"')
+    ev = assert_single_event_parsed(items, "Test Event")
+    assert_eos5(ev)
 
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_label.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        '2024-01-01,Test Event,"Planned, occurs certainly"\n',
-        encoding="utf-8",
-    )
 
-    # Mock the vocabulary service - ensure get_items is properly callable
-    mock_vocab_service = MagicMock()
-    mock_vocab_service.get_items = MagicMock(
-        return_value=[
+def test_build_occur_status_with_no_exact_match_fallback(tmp_path):
+    """Test _build_occur_status fallback when no exact match exists."""
+    items = parse_occur_status_csv(tmp_path, "Planned")
+    ev = assert_single_event_parsed(items, "Test Event")
+    assert_no_occur_status(ev)
+
+
+def test_build_occur_status_fallback_when_no_vocabulary_match(tmp_path):
+    """Test _build_occur_status fallback when vocabulary lookup fails."""
+    items = parse_occur_status_csv(tmp_path, "unknown_status", vocab_items=[])
+    ev = assert_single_event_parsed(items, "Test Event")
+    assert_no_occur_status(ev)
+
+
+def test_build_occur_status_with_empty_or_missing_status(tmp_path):
+    """Test _build_occur_status when occur_status is empty or missing."""
+    headers = ["Start Date", "Event Name", "Occurrence Status"]
+    rows = [["2024-01-01", "Test Event", ""], ["2024-01-02", "Test Event 2", "   "]]
+
+    items = parse_csv_content(tmp_path, headers, rows)
+    assert len(items) == 2
+
+    # Both events should not have occur_status when it's empty/whitespace
+    for event in items:
+        assert_no_occur_status(event)
+
+
+def test_build_occur_status_case_insensitive_matching(tmp_path):
+    """Test _build_occur_status performs case-insensitive matching."""
+    headers = ["Start Date", "Event Name", "Occurrence Status"]
+    rows = [
+        ["2024-01-01", "Test Event", "EOCSTAT:EOS5"],
+        ["2024-01-02", "Test Event 2", '"PLANNED, OCCURS CERTAINLY"'],
+    ]
+
+    with mock_eventoccurstatus(
+        [
             {
                 "qcode": "eocstat:eos5",
                 "name": "Planned, occurs certainly",
                 "label": "Planned, occurs certainly",
             }
         ]
-    )
-    # Remove find_one to ensure get_items path is used
-    if hasattr(mock_vocab_service, "find_one"):
-        del mock_vocab_service.find_one
-
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = mock_vocab_service
-
-        items = parser.parse(str(p))
-        assert len(items) == 1
-
-        event = items[0]
-        assert "occur_status" in event
-        occur_status = event["occur_status"]
-        assert occur_status["qcode"] == "eocstat:eos5"
-        assert occur_status["name"] == "Planned, occurs certainly"
-        assert occur_status["label"] == "Planned, occurs certainly"
-        assert len(occur_status) == 3
-
-
-def test_build_occur_status_with_no_exact_match_fallback(tmp_path):
-    """Test _build_occur_status fallback when no exact match exists."""
-    from unittest.mock import patch, MagicMock
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_no_match.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,Planned\n",  # No exact match for "Planned" vs "Planned, occurs certainly"
-        encoding="utf-8",
-    )
-
-    # Mock the vocabulary service
-    mock_vocab_service = MagicMock()
-    mock_vocab_service.get_items.return_value = [
-        {
-            "qcode": "eocstat:eos5",
-            "name": "Planned, occurs certainly",
-            "label": "Planned, occurs certainly",
-        }
-    ]
-
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = mock_vocab_service
-
-        items = parser.parse(str(p))
-        assert len(items) == 1
-
-        event = items[0]
-        # Should not set occur_status when there is no exact vocabulary match
-        assert "occur_status" not in event or event["occur_status"] is None
-
-
-def test_build_occur_status_fallback_when_no_vocabulary_match(tmp_path):
-    """Test _build_occur_status fallback when vocabulary lookup fails."""
-    from unittest.mock import patch, MagicMock
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_fallback.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,unknown_status\n",
-        encoding="utf-8",
-    )
-
-    # Mock the vocabulary service to return empty items
-    mock_vocab_service = MagicMock()
-    mock_vocab_service.get_items.return_value = []
-
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = mock_vocab_service
-
-        items = parser.parse(str(p))
-        assert len(items) == 1
-
-        event = items[0]
-        # Should not set occur_status when there are no vocabulary items
-        assert "occur_status" not in event or event["occur_status"] is None
-
-
-def test_build_occur_status_with_empty_or_missing_status(tmp_path):
-    """Test _build_occur_status when occur_status is empty or missing."""
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_empty.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,\n"
-        "2024-01-02,Test Event 2,   \n",
-        encoding="utf-8",
-    )
-
-    items = parser.parse(str(p))
-    assert len(items) == 2
-
-    # Both events should not have occur_status when it's empty/whitespace
-    for event in items:
-        assert "occur_status" not in event or event["occur_status"] is None
-
-
-def test_build_occur_status_with_vocabulary_service_unavailable(tmp_path):
-    """Test _build_occur_status when vocabulary service is not available."""
-    from unittest.mock import patch
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_no_service.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,custom_status\n",
-        encoding="utf-8",
-    )
-
-    # Mock get_resource_service to return None (service unavailable)
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = None
-
-        items = parser.parse(str(p))
-        assert len(items) == 1
-
-        event = items[0]
-        # Should not set occur_status when vocabulary service unavailable
-        assert "occur_status" not in event or event["occur_status"] is None
-
-
-def test_build_occur_status_case_insensitive_matching(tmp_path):
-    """Test _build_occur_status performs case-insensitive matching."""
-    from unittest.mock import patch, MagicMock
-    from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
-
-    parser = EventsCSVFeedParser()
-    p = tmp_path / "occur_status_case.csv"
-    p.write_text(
-        "Start Date,Event Name,Occurrence Status\n"
-        "2024-01-01,Test Event,EOCSTAT:EOS5\n"
-        '2024-01-02,Test Event 2,"PLANNED, OCCURS CERTAINLY"\n',
-        encoding="utf-8",
-    )
-
-    # Mock the vocabulary service
-    mock_vocab_service = MagicMock()
-    mock_vocab_service.get_items.return_value = [
-        {
-            "qcode": "eocstat:eos5",
-            "name": "Planned, occurs certainly",
-            "label": "Planned, occurs certainly",
-        }
-    ]
-
-    with patch(
-        "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
-    ) as mock_get_service:
-        mock_get_service.return_value = mock_vocab_service
-
-        items = parser.parse(str(p))
+    ):
+        items = parse_csv_content(tmp_path, headers, rows)
         assert len(items) == 2
-
-        event1, event2 = items[0], items[1]
-
-        # First event: EOCSTAT:EOS5 actually DOES match qcode (case-insensitive!)
-        assert "occur_status" in event1
-        occur_status1 = event1["occur_status"]
-        assert occur_status1["qcode"] == "eocstat:eos5"  # Matched vocabulary qcode
-        assert (
-            occur_status1["name"] == "Planned, occurs certainly"
-        )  # Full vocabulary entry
-        assert len(occur_status1) == 3  # qcode, name, label
-
-        # Second event: "PLANNED, OCCURS CERTAINLY" matches vocabulary (case-insensitive)
-        assert "occur_status" in event2
-        occur_status2 = event2["occur_status"]
-        assert occur_status2["qcode"] == "eocstat:eos5"
-        assert occur_status2["name"] == "Planned, occurs certainly"
-        assert occur_status2["label"] == "Planned, occurs certainly"
-        assert len(occur_status2) == 3
+        assert_eos5(items[0])
+        assert_eos5(items[1])
