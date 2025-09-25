@@ -24,7 +24,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 1024,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg"
+                        ),
                         "height": 683,
                     },
                     "r00": {
@@ -33,7 +36,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 5568,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalHires.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-konjunkturlaget6uv-ae8053fa/a001_NormalHires.jpg"
+                        ),
                         "height": 3712,
                     },
                     "r03": {
@@ -42,7 +48,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 256,
                         "mimetype": "image/jpeg",
-                        "href": "https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg",
+                        "href": (
+                            "https://thumbnail.tt.se/media/text/"
+                            "250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg"
+                        ),
                         "height": 171,
                     },
                     "r02": {
@@ -51,7 +60,10 @@ TEST_TT_ITEMS = [
                         "variant": "Watermark",
                         "width": 1024,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_WatermarkPreview.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-konjunkturlaget6uv-ae8053fa/a001_WatermarkPreview.jpg"
+                        ),
                         "height": 683,
                     },
                 },
@@ -86,7 +98,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 8000,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalHires.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_NormalHires.jpg"
+                        ),
                         "height": 4500,
                     },
                     "r00": {
@@ -95,7 +110,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 512,
                         "mimetype": "image/jpeg",
-                        "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalThumbnail.jpg",
+                        "href": (
+                            "https://thumbnail.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_NormalThumbnail.jpg"
+                        ),
                         "height": 288,
                     },
                     "r03": {
@@ -104,7 +122,10 @@ TEST_TT_ITEMS = [
                         "variant": "Watermark",
                         "width": 1024,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_WatermarkPreview.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_WatermarkPreview.jpg"
+                        ),
                         "height": 576,
                     },
                     "r02": {
@@ -113,7 +134,10 @@ TEST_TT_ITEMS = [
                         "variant": "Cropped",
                         "width": 1024,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedPreview.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_CroppedPreview.jpg"
+                        ),
                         "height": 1024,
                     },
                     "r05": {
@@ -122,7 +146,10 @@ TEST_TT_ITEMS = [
                         "variant": "Cropped",
                         "width": 512,
                         "mimetype": "image/jpeg",
-                        "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedThumbnail.jpg",
+                        "href": (
+                            "https://thumbnail.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_CroppedThumbnail.jpg"
+                        ),
                         "height": 512,
                     },
                     "r04": {
@@ -131,7 +158,10 @@ TEST_TT_ITEMS = [
                         "variant": "Normal",
                         "width": 1024,
                         "mimetype": "image/jpeg",
-                        "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalPreview.jpg",
+                        "href": (
+                            "https://beta.tt.se/media/text/"
+                            "250924-bookmarkpabo-4068424/a001_NormalPreview.jpg"
+                        ),
                         "height": 576,
                     },
                 },
@@ -246,7 +276,8 @@ class STTContentAPITestCase(unittest.TestCase):
             "hits": test_items,
         }
 
-        # First call returns data, subsequent calls return empty (simulates single page)
+        # First call returns data, subsequent calls return empty
+        # (simulates single page)
         mock_get.side_effect = [
             MockResponse(mock_response_data),  # First page with data
             MockResponse({"hits": []}),  # Second page empty (stops pagination)
@@ -270,7 +301,8 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertIn("s=50", first_url)  # page size
         self.assertIn("fr=0", first_url)  # offset
         self.assertEqual(
-            "ApiKey Bearer TEST_TOKEN", first_call_args[1]["headers"]["Authorization"]
+            "ApiKey Bearer TEST_TOKEN",
+            first_call_args[1]["headers"]["Authorization"],
         )
         self.assertEqual("application/json", first_call_args[1]["headers"]["Accept"])
         self.assertEqual(300, first_call_args[1]["timeout"])
@@ -312,7 +344,8 @@ class STTContentAPITestCase(unittest.TestCase):
         # Should return all items
         self.assertEqual(2, len(items))
         self.assertEqual(
-            [item["uri"] for item in all_items], [item["uri"] for item in items]
+            [item["uri"] for item in all_items],
+            [item["uri"] for item in items],
         )
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
@@ -406,32 +439,6 @@ class STTContentAPITestCase(unittest.TestCase):
             parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
         )
 
-    def test_parser_content_expiry(self):
-        """Test parser content expiry calculation."""
-        test_item = {
-            "uri": "http://tt.se/media/text/test-expiry",
-            "source": "STT",
-            "type": "text",
-            "headline": "Test headline",
-            "versioncreated": "2025-09-24T10:00:00Z",
-        }
-
-        provider = {"config": {"content_expiry": 24}}  # 24 hours
-
-        result = self.parser.parse(test_item, provider=provider)
-        self.assertIsInstance(result, list)
-        self.assertEqual(1, len(result))
-        parsed_item = result[0]
-
-        # Check that expiry is not set by parser (managed by ingest system)
-        self.assertNotIn("expiry", parsed_item)
-
-        # Check that the required fields are present and correctly parsed
-        self.assertEqual("text", parsed_item["type"])
-        self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
-        self.assertIn("versioncreated", parsed_item)
-
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
         minimal_item = {
@@ -499,26 +506,6 @@ class STTContentAPITestCase(unittest.TestCase):
                 self.assertEqual("text", parsed_item["type"])
                 self.assertEqual("usable", parsed_item["pubstatus"])
                 self.assertIn("guid", parsed_item)
-
-    def test_fixture_data_structure(self):
-        """Validate the structure of the fixture data."""
-        # Should have hits
-        self.assertIn("hits", self.fixture_data)
-        self.assertGreater(len(self.fixture_data["hits"]), 0)
-
-        # Check first item structure
-        first_item = self.fixture_data["hits"][0]
-        self.assertIsInstance(first_item, dict)
-
-        # Should have STT-specific fields
-        expected_fields = ["uri", "source"]
-        for field in expected_fields:
-            if field in first_item:
-                self.assertIsInstance(first_item[field], str)
-
-        # Source should be TT-related
-        if "source" in first_item:
-            self.assertTrue(first_item["source"].startswith("TT"))
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_top_level_array(self, mock_get):

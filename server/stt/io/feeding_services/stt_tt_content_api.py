@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 
 class STTTTContentAPIService(BaseSTTContentAPIService):
     """
-    TT-specific Content API Service that uses ApiKey authentication and handles 'hits' response format.
-    Inherits most functionality from the base STTContentAPIService but overrides specific methods.
+    TT-specific Content API Service that uses ApiKey authentication and
+    handles 'hits' response format. Inherits most functionality from the base
+    STTContentAPIService but overrides specific methods.
     """
 
     NAME = "stt_tt_content_api"
@@ -23,7 +24,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
     label = "STT TT Content API"
 
     def _headers(self, api_key: str) -> Dict[str, str]:
-        """Generate headers for TT Content API requests using ApiKey instead of Bearer."""
+        """Generate headers for TT Content API requests using ApiKey
+        instead of Bearer."""
         auth_header = api_key if api_key.startswith("ApiKey ") else f"ApiKey {api_key}"
         return {
             "Accept": "application/json",
@@ -52,7 +54,10 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             "placeholder": "50",
             "required": False,
             "default": "50",
-            "description": "Number of items to request per page from TT Content API (query param s). Range: 1-1000.",
+            "description": (
+                "Number of items to request per page from TT Content API "
+                "(query param s). Range: 1-1000."
+            ),
         },
         {
             "id": "max_pages",
@@ -61,7 +66,21 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             "placeholder": "200",
             "required": False,
             "default": "200",
-            "description": "Safety cap for the number of pages to fetch when paginating. Range: 1-10000.",
+            "description": (
+                "Safety cap for the number of pages to fetch when "
+                "paginating. Range: 1-10000."
+            ),
+        },
+        {
+            "id": "timeout",
+            "type": "text",
+            "label": "Request timeout (seconds)",
+            "placeholder": "300",
+            "required": False,
+            "default": "300",
+            "description": (
+                "HTTP request timeout per page when calling TT Content API."
+            ),
         },
     ]
 
@@ -69,15 +88,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         """
         TT-specific update that fetches all pages and yields parsed dict items.
         """
-        logger.info(
-            "Updating TT Content API provider %s ...", provider.get("name", "<unnamed>")
-        )
-
         json_items = self._fetch_tt_data(provider)
         if not isinstance(json_items, list):
-            logger.warning(
-                "TT: _fetch_tt_data did not return list, got %s", type(json_items)
-            )
             json_items = [json_items]
 
         parsed_items: List[Dict] = []
@@ -88,11 +100,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         for item in json_items:
             try:
                 if not isinstance(item, dict):
-                    logger.warning(
-                        "Skipping non-dict JSON item before parse: %r (type: %s)",
-                        item,
-                        type(item).__name__,
-                    )
                     continue
 
                 parsed_result = parser.parse(item, provider)
@@ -104,36 +111,35 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 elif isinstance(parsed_result, dict):
                     parsed_items.append(parsed_result)
                 else:
-                    logger.warning(
-                        "Dropping non-dict parsed item (type=%s)",
-                        type(parsed_result).__name__,
-                    )
+                    pass
             except Exception as ex:
                 logger.error("Error processing item: %s", str(ex))
                 raise ParserError.parseMessageError(ex, provider, data=item)
 
-        # Final guard: ensure only dicts are returned (avoids filter_expired_items crash)
+        # Final guard: ensure only dicts are returned
+        # (avoids filter_expired_items crash)
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
         return parsed_items
 
     def _fetch_tt_data(self, provider) -> List[Dict]:
         """
         Fetch all items from TT Content API with pagination.
-        Uses `s` (page size) and `fr` (offset) according to docs, and the `total` field
-        when available to determine how many pages to request.
+        Uses `s` (page size) and `fr` (offset) according to docs, and the
+        `total` field when available to determine how many pages to request.
 
         Provider optional settings:
           - page_size: int (default 50)
           - max_pages: int safety cap (default 200)
+          - timeout: int per-request timeout (default 300)
         """
         url, api_key = self._get_config(provider)
         headers = self._headers(api_key)
 
         config = provider.get("config", {})
         page_size = int(config.get("page_size", 50))
-        max_pages = int(
-            config.get("max_pages", 200)
-        )  # safety cap to avoid runaway loops
+        max_pages = int(config.get("max_pages", 200))
+        # safety cap to avoid runaway loops
+        timeout = int(config.get("timeout", 300))
 
         # Prepare base URL components and preserve existing query params
         parsed = urlparse(url)
@@ -149,7 +155,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             page_url = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
 
             # Use base class HTTP retry infrastructure
-            response = self._get_with_retry(page_url, headers=headers, timeout=300)
+            response = self._get_with_retry(page_url, headers=headers, timeout=timeout)
             response.raise_for_status()
 
             # Use base class JSON parsing with error handling
@@ -158,16 +164,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             if total is None and isinstance(data, dict):
                 # `total` may not always be present; handle gracefully
                 total = data.get("total")
-                logger.info("TT API: total from first page = %s", total)
 
             batch = self._extract_tt_items_from_response(data)
-            logger.info(
-                "TT API page #%d: fr=%d, s=%d, batch=%d",
-                page + 1,
-                offset,
-                page_size,
-                len(batch) if isinstance(batch, list) else -1,
-            )
 
             # Normalize and collect dict items only
             if isinstance(batch, list) and batch:
@@ -187,8 +185,9 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
 
     def _extract_tt_items_from_response(self, data) -> List:
         """
-        Extract items from TT API response, specifically handling 'hits' property.
-        This is the main difference from the base class - TT API returns data in 'hits'.
+        Extract items from TT API response, specifically handling 'hits'
+        property. This is the main difference from the base class - TT API
+        returns data in 'hits'.
         """
         if isinstance(data, list):
             return data

@@ -39,7 +39,6 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         self.assertEqual(test_item["uri"], parsed_item["uri"])
         self.assertEqual(test_item["headline"], parsed_item["headline"])
 
-        # Check GUID generation
         self.assertTrue(
             parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
         )
