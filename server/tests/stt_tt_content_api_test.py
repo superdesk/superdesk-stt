@@ -3,6 +3,7 @@ import json
 import os
 import unittest
 import requests
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 from stt.io.feeding_services.stt_tt_content_api import STTTTContentAPIService
@@ -290,7 +291,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         # Verify pagination: expect 2 calls (first with data, second empty)
         self.assertEqual(2, mock_get.call_count)
@@ -305,7 +306,7 @@ class STTContentAPITestCase(unittest.TestCase):
             first_call_args[1]["headers"]["Authorization"],
         )
         self.assertEqual("application/json", first_call_args[1]["headers"]["Accept"])
-        self.assertEqual(300, first_call_args[1]["timeout"])
+        self.assertEqual(60, first_call_args[1]["timeout"])
 
         # Verify items returned
         self.assertEqual(2, len(items))
@@ -332,7 +333,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         # Should have made two requests (pagination logic)
         self.assertEqual(2, mock_get.call_count)
@@ -369,10 +370,126 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_fetch_data_uses_trs_with_last_updated(self, mock_get):
+        """When use_trs is enabled and update contains last_updated, include trs in query."""
+        # minimal 1-page flow
+        mock_get.side_effect = [
+            MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
+            MockResponse({"hits": []}),
+        ]
+
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+                "use_trs": True,
+            }
+        }
+        update = {"last_updated": "2025-09-24T10:00:00Z"}
+
+        _ = self.service._fetch_tt_data(provider, update)
+
+        # First call URL should contain trs param with the exact timestamp
+        first_call_args = mock_get.call_args_list[0]
+        first_url = first_call_args[0][0]
+        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", first_url)  # URL-encoded ':'
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_fetch_data_uses_trs_fallback_since_minutes(self, mock_get):
+        """When use_trs enabled but no last_updated, use now - since_minutes as trs."""
+        # one page then empty
+        mock_get.side_effect = [
+            MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
+            MockResponse({"hits": []}),
+        ]
+
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+                "use_trs": True,
+                "since_minutes": "120",
+            }
+        }
+        update = {}
+
+        # Freeze datetime.now in the target module
+        with patch("stt.io.feeding_services.stt_tt_content_api.datetime") as mock_dt:
+            mock_dt.now.return_value = datetime(
+                2025, 9, 25, 12, 0, 0, tzinfo=timezone.utc
+            )
+            mock_dt.fromisoformat.side_effect = datetime.fromisoformat
+            # timezone is used in code; pass through the real timezone
+            mock_dt.timezone = timezone
+
+            _ = self.service._fetch_tt_data(provider, update)
+
+        # Expected trs = 2025-09-25T10:00:00Z (12:00 - 120 minutes)
+        first_call_args = mock_get.call_args_list[0]
+        first_url = first_call_args[0][0]
+        self.assertIn("trs=2025-09-25T10%3A00%3A00Z", first_url)
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_timeout_configurable(self, mock_get):
+        """Provider timeout should override default."""
+        mock_get.side_effect = [MockResponse({"hits": []})]
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+                "timeout": "15",
+            }
+        }
+        update = {}
+
+        _ = self.service._fetch_tt_data(provider, update)
+
+        call_args = mock_get.call_args
+        self.assertEqual(15, call_args[1]["timeout"])
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_use_trs_boolean_coercion_from_text(self, mock_get):
+        """use_trs text values like 'true' should be treated as boolean True."""
+        mock_get.side_effect = [MockResponse({"hits": []})]
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+                "use_trs": "true",
+            }
+        }
+        update = {"last_updated": "2025-09-24T10:00:00Z"}
+
+        _ = self.service._fetch_tt_data(provider, update)
+
+        call_args = mock_get.call_args
+        url = call_args[0][0]
+        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", url)
+
+    @patch.object(STTTTContentAPIService, "_get_with_retry")
+    def test_use_trs_disabled_no_param(self, mock_get):
+        """When use_trs is disabled, the trs param should not be present."""
+        mock_get.side_effect = [MockResponse({"hits": []})]
+        provider = {
+            "config": {
+                "url": "https://api.example.com/contentapi/items",
+                "api_key": "MY_TOKEN",
+                "use_trs": False,
+            }
+        }
+        update = {"last_updated": "2025-09-24T10:00:00Z"}
+
+        _ = self.service._fetch_tt_data(provider, update)
+
+        call_args = mock_get.call_args
+        url = call_args[0][0]
+        self.assertNotIn("trs=", url)
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_list_response(self, mock_get):
@@ -392,7 +509,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
@@ -410,7 +527,7 @@ class STTContentAPITestCase(unittest.TestCase):
         }
 
         with self.assertRaises(Exception):
-            self.service._fetch_tt_data(provider)
+            self.service._fetch_tt_data(provider, {})
 
     def test_parser_with_fixture_data(self):
         """Test parser with real fixture data."""
@@ -525,7 +642,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(
@@ -548,7 +665,7 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertIn("fr=50", second_url)  # offset for second page
 
         # Check headers on second call
-        self.assertEqual(300, second_call_args[1].get("timeout"))
+        self.assertEqual(60, second_call_args[1].get("timeout"))
         self.assertIn("headers", second_call_args[1])
         self.assertEqual(
             "ApiKey MY_TOKEN", second_call_args[1]["headers"]["Authorization"]
@@ -579,7 +696,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
         }
 
-        items = self.service._fetch_tt_data(provider)
+        items = self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(
@@ -606,7 +723,7 @@ class STTContentAPITestCase(unittest.TestCase):
         }
 
         with self.assertRaises(requests.exceptions.HTTPError):
-            self.service._fetch_tt_data(provider)
+            self.service._fetch_tt_data(provider, {})
 
         # The error is raised directly, not wrapped by mock_api_error
         mock_api_error.assert_not_called()
@@ -629,7 +746,7 @@ class STTContentAPITestCase(unittest.TestCase):
         }
 
         with self.assertRaises(RuntimeError) as ctx:
-            self.service._fetch_tt_data(provider)
+            self.service._fetch_tt_data(provider, {})
 
         self.assertIn("JSON parse error", str(ctx.exception))
         mock_api_error.assert_called_once()

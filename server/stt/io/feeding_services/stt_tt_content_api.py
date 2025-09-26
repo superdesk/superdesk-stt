@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 
 import logging
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
@@ -72,12 +73,35 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             ),
         },
         {
+            "id": "use_trs",
+            "type": "boolean",
+            "label": "Use incremental sync (trs)",
+            "required": False,
+            "default": False,
+            "description": (
+                "When enabled, add the 'trs' query param with the last-updated timestamp "
+                "to fetch only items changed since the previous run."
+            ),
+        },
+        {
+            "id": "since_minutes",
+            "type": "text",
+            "label": "Fallback lookback minutes",
+            "placeholder": "1440",
+            "required": False,
+            "default": "1440",
+            "description": (
+                "If no previous run time is available, use this many minutes before now "
+                "as the starting point for 'trs'."
+            ),
+        },
+        {
             "id": "timeout",
             "type": "text",
             "label": "Request timeout (seconds)",
-            "placeholder": "300",
+            "placeholder": "60",
             "required": False,
-            "default": "300",
+            "default": "60",
             "description": (
                 "HTTP request timeout per page when calling TT Content API."
             ),
@@ -88,7 +112,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         """
         TT-specific update that fetches all pages and yields parsed dict items.
         """
-        json_items = self._fetch_tt_data(provider)
+        json_items = self._fetch_tt_data(provider, update)
         if not isinstance(json_items, list):
             json_items = [json_items]
 
@@ -121,7 +145,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
         return parsed_items
 
-    def _fetch_tt_data(self, provider) -> List[Dict]:
+    def _fetch_tt_data(self, provider, update) -> List[Dict]:
         """
         Fetch all items from TT Content API with pagination.
         Uses `s` (page size) and `fr` (offset) according to docs, and the
@@ -131,6 +155,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
           - page_size: int (default 50)
           - max_pages: int safety cap (default 200)
           - timeout: int per-request timeout (default 300)
+          - use_trs: bool (default False)
+          - since_minutes: int fallback lookback (default 1440)
         """
         url, api_key = self._get_config(provider)
         headers = self._headers(api_key)
@@ -139,7 +165,48 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         page_size = int(config.get("page_size", 50))
         max_pages = int(config.get("max_pages", 200))
         # safety cap to avoid runaway loops
-        timeout = int(config.get("timeout", 300))
+        timeout = int(config.get("timeout", 60))
+
+        def _coerce_bool(v):
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, (int, float)):
+                return v != 0
+            if isinstance(v, str):
+                s = v.strip().lower()
+                if s in {"1", "true", "yes", "y", "on"}:
+                    return True
+                if s in {"0", "false", "no", "n", "off", ""}:
+                    return False
+            return False
+
+        # Optional incremental sync using 'trs' (timestamp since last run)
+        use_trs = _coerce_bool(config.get("use_trs", False))
+        trs_value: str | None = None
+        if use_trs:
+            # Prefer last_updated from the update context, fallback to provider storage or lookback window
+            last_updated_str = None
+            if isinstance(update, dict):
+                last_updated_str = update.get("last_updated") or update.get(
+                    "last_update"
+                )
+            # Parse if available
+            dt_from: datetime | None = None
+            if isinstance(last_updated_str, str):
+                try:
+                    # Accept ISO-8601 with/without Z
+                    dt_from = datetime.fromisoformat(
+                        last_updated_str.replace("Z", "+00:00")
+                    )
+                except Exception:
+                    dt_from = None
+            if dt_from is None:
+                # Fallback: now - since_minutes
+                minutes = int(config.get("since_minutes", 1440))
+                dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
+            # Normalize to UTC Z format expected by TT (e.g., 2025-09-24T10:00:00Z)
+            dt_from = dt_from.astimezone(timezone.utc)
+            trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         # Prepare base URL components and preserve existing query params
         parsed = urlparse(url)
@@ -152,6 +219,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         for page in range(max_pages):
             # Merge/override pagination params each loop
             qs = {**base_qs, "s": str(page_size), "fr": str(offset)}
+            if trs_value:
+                qs["trs"] = trs_value
             page_url = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
 
             # Use base class HTTP retry infrastructure
