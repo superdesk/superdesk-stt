@@ -76,8 +76,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             "id": "use_trs",
             "type": "boolean",
             "label": "Use incremental sync (trs)",
-            "required": False,
-            "default": False,
+            "required": True,
+            "default": True,
             "description": (
                 "When enabled, add the 'trs' query param with the last-updated timestamp "
                 "to fetch only items changed since the previous run."
@@ -140,8 +140,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 logger.error("Error processing item: %s", str(ex))
                 raise ParserError.parseMessageError(ex, provider, data=item)
 
-        # Final guard: ensure only dicts are returned
-        # (avoids filter_expired_items crash)
+        # Final guard: ensure only dicts are returned (avoids filter_expired_items crash)
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
         return parsed_items
 
@@ -154,8 +153,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         Provider optional settings:
           - page_size: int (default 50)
           - max_pages: int safety cap (default 200)
-          - timeout: int per-request timeout (default 300)
-          - use_trs: bool (default False)
+          - timeout: int per-request timeout (default 60)
+          - use_trs: bool (default True, 'trs' is RFC3339 timestamp in UTC)
           - since_minutes: int fallback lookback (default 1440)
         """
         url, api_key = self._get_config(provider)
@@ -167,21 +166,11 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         # safety cap to avoid runaway loops
         timeout = int(config.get("timeout", 60))
 
-        def _coerce_bool(v):
-            if isinstance(v, bool):
-                return v
-            if isinstance(v, (int, float)):
-                return v != 0
-            if isinstance(v, str):
-                s = v.strip().lower()
-                if s in {"1", "true", "yes", "y", "on"}:
-                    return True
-                if s in {"0", "false", "no", "n", "off", ""}:
-                    return False
-            return False
-
-        # Optional incremental sync using 'trs' (timestamp since last run)
-        use_trs = _coerce_bool(config.get("use_trs", False))
+        use_trs_config = config.get("use_trs", True)
+        if isinstance(use_trs_config, str):
+            use_trs = use_trs_config.strip().lower() in {"true", "1", "yes", "on"}
+        else:
+            use_trs = bool(use_trs_config)
         trs_value: str | None = None
         if use_trs:
             # Prefer last_updated from the update context, fallback to provider storage or lookback window
@@ -204,8 +193,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 # Fallback: now - since_minutes
                 minutes = int(config.get("since_minutes", 1440))
                 dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
-            # Normalize to UTC Z format expected by TT (e.g., 2025-09-24T10:00:00Z)
-            dt_from = dt_from.astimezone(timezone.utc)
+            # TT expects 'trs' as an RFC3339 timestamp in UTC with seconds precision
+            dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
             trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         # Prepare base URL components and preserve existing query params
