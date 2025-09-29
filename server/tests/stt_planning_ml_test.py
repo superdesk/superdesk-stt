@@ -90,7 +90,7 @@ class STTPlanningMLParserTest(TestCase):
                 "news_coverage_status": {
                     "qcode": "ncostat:notint",
                     "name": "coverage not intended",
-                    "label": "Not planned",
+                    "label": "Ei",
                 },
             },
         )
@@ -124,7 +124,7 @@ class STTPlanningMLParserTest(TestCase):
                 "news_coverage_status": {
                     "qcode": "ncostat:notint",
                     "name": "coverage not intended",
-                    "label": "Not planned",
+                    "label": "Ei",
                 },
             },
         )
@@ -158,7 +158,7 @@ class STTPlanningMLParserTest(TestCase):
             {
                 "qcode": "ncostat:notint",
                 "name": "coverage not intended",
-                "label": "Not planned",
+                "label": "Ei",
             },
         )
         self.assertEqual(

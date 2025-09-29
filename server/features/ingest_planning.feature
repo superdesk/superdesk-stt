@@ -77,7 +77,6 @@ Feature: Ingest STT Planning items
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
-                    "label": "Planned",
                     "name": "coverage intended"
                 },
                 "planning": {
@@ -95,7 +94,6 @@ Feature: Ingest STT Planning items
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
-                    "label": "Planned",
                     "name": "coverage intended"
                 },
                 "planning": {
