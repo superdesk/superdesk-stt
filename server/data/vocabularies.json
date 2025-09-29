@@ -1217,6 +1217,7 @@
         "type": "manageable",
         "display_name": "Genre",
         "description": "Genre",
+        "schema_field": "genre",
         "disable_entire_category_selection": false,
         "selection_type": "single selection",
         "items": [
