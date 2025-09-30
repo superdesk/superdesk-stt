@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     "stt.ai_proxy",
     "stt.stt_newsroom_ninjs_formatter",
     "stt.stt_json_planning_formatter",
+    "superdesk.auth.saml",
 ]
 
 MODULES.append("planning")
