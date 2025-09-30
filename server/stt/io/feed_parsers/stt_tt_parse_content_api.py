@@ -19,31 +19,6 @@ class ContentAPITTItemParser(ContentAPIItemParser):
             isinstance(payload, list) and all(isinstance(i, dict) for i in payload)
         )
 
-    def _ensure_guid(self, item: Dict[str, Any]) -> str:
-        """Normalize GUIDs into the TT Content API NewsML namespace.
-        - Ensure a `urn:newsml:stt.fi:stt_tt_content_api:` prefix.
-        - Preserve suffixes from TT and legacy STT GUID schemes.
-        """
-        base_guid = super()._ensure_guid(item)
-
-        target_prefix = "urn:newsml:stt.fi:stt_tt_content_api:"
-        if base_guid.startswith(target_prefix):
-            return base_guid
-
-        # Normalize TT and legacy STT GUID prefixes to the TT Content API namespace
-        prefix_mappings = [
-            ("urn:tt.fi:", target_prefix),
-            ("urn:newsml:stt.fi:contentapi:", target_prefix),
-            ("urn:newsml:stt.fi:", target_prefix),
-        ]
-
-        for legacy_prefix, normalized_prefix in prefix_mappings:
-            if base_guid.startswith(legacy_prefix):
-                return f"{normalized_prefix}{base_guid[len(legacy_prefix):]}"
-
-        # Non-STT GUIDs (own urn namespace, external ids, etc.) are preserved
-        return base_guid
-
     def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
         """
         TT-specific parse method for single item or list processing by the
@@ -113,6 +88,23 @@ class ContentAPITTItemParser(ContentAPIItemParser):
         else:
             processed["body_html"] = body_html or ""
         return processed
+
+    def _ensure_guid(self, item: Dict[str, Any]) -> str:
+        """Ensure GUIDs use the TT-specific namespace when auto-generated."""
+        base_guid = super()._ensure_guid(item)
+        if not isinstance(base_guid, str):
+            return base_guid
+
+        tt_prefix = "urn:newsml:stt.fi:stt_tt_content_api:"
+        default_prefix = "urn:newsml:stt.fi:contentapi:"
+
+        if base_guid.startswith(tt_prefix):
+            return base_guid
+        if base_guid.startswith(default_prefix):
+            return tt_prefix + base_guid[len(default_prefix) :]
+        if base_guid.startswith("urn:"):
+            return base_guid
+        return tt_prefix + base_guid
 
 
 # Register like BusinessWire example: parse() returns List[Dict[str, Any]]

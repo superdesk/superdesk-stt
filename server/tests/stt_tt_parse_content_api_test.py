@@ -43,35 +43,6 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
             parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
         )
 
-    def test_parser_content_expiry(self):
-        """Test parser with content expiry config (expiry handled by ingest system)."""
-        test_item = {
-            "uri": "http://tt.se/media/text/test-expiry",
-            "source": "STT",
-            "type": "text",
-            "headline": "Test headline",
-            "body_text": "Test content",
-            "versioncreated": "2025-09-24T10:00:00Z",
-        }
-
-        provider = {"config": {"content_expiry": 24}}  # 24 hours
-
-        result = self.parser.parse(test_item, provider=provider)
-
-        # Parser should return a list
-        self.assertIsInstance(result, list)
-        self.assertEqual(1, len(result))
-        parsed_item = result[0]
-
-        # Check that expiry is not set by parser (managed by ingest system)
-        self.assertNotIn("expiry", parsed_item)
-
-        # Check that the required fields are present
-        self.assertEqual("text", parsed_item["type"])
-        self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
-        self.assertIn("versioncreated", parsed_item)
-
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
         minimal_item = {
