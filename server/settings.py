@@ -245,7 +245,7 @@ PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", "true
 ENABLE_FULFILL_ASSIGNMENTS = env("ENABLE_FULFILL_ASSIGNMENTS", "true")
 
 # automatically add coverage assignments to workflow
-PLANNING_AUTO_ASSIGN_TO_WORKFLOW = env("PLANNING_AUTO_ASSIGN_TO_WORKFLOW", False)
+PLANNING_AUTO_ASSIGN_TO_WORKFLOW = env("PLANNING_AUTO_ASSIGN_TO_WORKFLOW", True)
 
 # check for unfulfilled assignments when publishing a story (based on slugline)
 PLANNING_CHECK_FOR_ASSIGNMENT_ON_PUBLISH = env(
