@@ -1,7 +1,7 @@
 [
     {
-        "_id": "uutisteksti",
-        "name": "coverage",
+        "_id": "68db9965f7bdb22537301b67",
+        "name": "uutisteksti",
         "content_type": "text",
         "init_version": 1,
         "editor": {
@@ -144,8 +144,8 @@
         }
     },
     {
-        "_id": "kuvauskeikka",
-        "name": "coverage",
+        "_id": "68db9970f7bdb22537301b68",
+        "name": "kuvauskeikka",
         "content_type": "picture",
         "init_version": 1,
         "editor": {
@@ -482,9 +482,9 @@
         }
     },
     {
-        "_id": "kuvitus",
-        "name": "coverage",
-        "content_type": "picture",
+        "_id": "68db995bf7bdb22537301b66",
+        "name": "kuvitus",
+        "content_type": "graphic",
         "init_version": 1,
         "editor": {
             "add_coverage_to_workflow": {

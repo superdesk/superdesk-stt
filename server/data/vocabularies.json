@@ -33,19 +33,19 @@
             {
                 "is_active": true,
                 "name": "Kuvauskeikka",
-                "qcode": "kuvauskeikka",
+                "qcode": "picture",
                 "content item type": "picture"
             },
             {
                 "is_active": true,
                 "name": "Kuvitus",
-                "qcode": "kuvitus",
+                "qcode": "graphic",
                 "content item type": "picture"
             },
             {
                 "is_active": true,
                 "name": "Uutisteksti",
-                "qcode": "uutisteksti",
+                "qcode": "text",
                 "content item type": "text"
             }
         ]
