@@ -1,5 +1,7 @@
 honcho
+python3-saml
 google-cloud-translate==3.21.1
+
 
 git+https://github.com/superdesk/superdesk-core.git@develop-async#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@feature/embedded-events-editor-async#egg=superdesk-planning
