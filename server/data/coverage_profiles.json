@@ -3,15 +3,23 @@
         "_id": "68db9965f7bdb22537301b67",
         "name": "uutisteksti",
         "content_type": "text",
-        "init_version": 1,
+        "init_version": 2,
         "editor": {
+            "add_coverage_to_workflow": {
+                "enabled": true,
+                "index": 0
+            },
             "g2_content_type": {
                 "enabled": true,
                 "index": 1
             },
             "anpa_category": {
                 "enabled": true,
-                "index": 9
+                "index": 2
+            },
+            "scheduled": {
+                "enabled": true,
+                "index": 3
             }
         },
         "schema": {
@@ -100,7 +108,7 @@
             },
             "scheduled": {
                 "type": "datetime",
-                "required": true
+                "required": false
             },
             "scheduled_updates": {
                 "type": "list",
