@@ -25,32 +25,42 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# One paragraph per agenda item #}
+{# Macro to render a single planning item paragraph (reused for grouped & ungrouped) #}
+{% macro render_planning_item(item) -%}
+  {%- set bits = [] -%}
+  {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
+  {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
+  {%- for ev in item.related_events_expanded or [] -%}
+    {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
+    {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+    {%- if ev.location is iterable -%}
+      {%- set ev_loc = lupaus_location(ev.location) -%}
+      {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {# Call the priority macro #}
+  {%- set urg = stt_priority_text(item) -%}
+  {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
+  {# Add coverages if available #}
+  {%- if item.coverages is defined and item.coverages -%}
+    {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
+    {%- if cov_list | length > 0 -%}
+      {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if bits %}<p>{{- bits | join(', ') -}}.</p>{% endif -%}
+  <p></p>
+{%- endmacro %}
+
+{# One paragraph per agenda item; grouped by category if grouped_items present #}
 {%- for agenda in agendas or [] -%}
-    {%- for item in agenda['items'] | default([]) -%}
-        {%- set bits = [] -%}
-        {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
-        {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
-        {%- for ev in item.related_events_expanded or [] -%}
-            {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
-            {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
-            {%- if ev.location is iterable -%}
-                {%- set ev_loc = lupaus_location(ev.location) -%}
-                {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
-            {%- endif -%}
-        {%- endfor -%}
-        {# Call the priority macro #}
-        {%- set urg = stt_priority_text(item) -%}
-        {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
-        {# Add coverages if available #}
-        {%- if item.coverages is defined and item.coverages -%}
-        {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
-        {%- if cov_list | length > 0 -%}
-            {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
-        {%- endif -%}
-        {%- endif -%}
-        {%- if bits %}<p>{{- bits | join(', ') -}}.</p>{% endif -%}
-        {# add empty line between items #}
-        <p></p>
+  {%- set grouped = agenda.get('grouped_items') -%}
+  {%- if grouped and grouped.items() | count > 0 -%}
+    {%- for category, items in grouped.items() -%}
+      <h2>{{ category }}</h2>
+      {%- for item in items -%}
+        {{ render_planning_item(item) }}
+      {%- endfor -%}
     {%- endfor -%}
+  {%- endif -%}
 {%- endfor -%}

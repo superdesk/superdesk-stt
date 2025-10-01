@@ -187,6 +187,33 @@ def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
     return ""
 
 
+def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
+    """
+    Extracts the "scheme": "categories" value from an agenda item subjects.
+
+    The function looks for the 'categories' in the 'subject' field of the item,
+    which is expected to be a list of dictionaries. Each dictionary may contain
+    a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
+    the corresponding 'name' value is returned.
+
+    If 'categories' is not found, an empty string is returned.
+
+    Args:
+        item: A dictionary representing an agenda item.
+    Returns:
+        The name of 'categories' if found, otherwise an empty string.
+    """
+    # categories is stored in subject like:
+    # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
+    if not item:
+        return ""
+    if "subject" in item:
+        for sub in item["subject"]:
+            if sub.get("scheme") == "categories":
+                return sub.get("name", "")
+    return ""
+
+
 def get_numeric_value_from_priority(priority: str) -> str:
     """
     Extracts the numeric value from a priority string.
@@ -228,7 +255,7 @@ def _set_priority_fields(pl: Dict[str, Any]) -> None:
     pl["stt_priority_numeric"] = priority_numeric
 
 
-def set_stt_fields(
+def _set_stt_fields(
     agendas: List[Dict[str, Any]],
     by_key: Dict[str, Dict[str, Any]],
     events: List[Dict[str, Any]],
@@ -261,7 +288,35 @@ def set_stt_fields(
             pl["related_events_expanded"] = expanded
             new_items.append(pl)
         ag["items"] = new_items
+        # group agenda items by category
+        grouped_agendas = _group_agenda_items_by_category(ag)
+        # and attach to agenda
+        ag["grouped_items"] = grouped_agendas
     return agendas
+
+
+def _group_agenda_items_by_category(
+    ag: Dict[str, Any],
+) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Groups agenda items by their category.
+
+    Args:
+        agendas: A list of agenda dictionaries. Each agenda may include an "items"
+            list; each item may include a "categories" field.
+
+    Returns:
+        A dictionary where keys are categories and values are lists of agenda items
+        belonging to those categories. Items without a category are grouped under
+        the key 'Uncategorized'.
+    """
+    categorized_items: Dict[str, List[Dict[str, Any]]] = {}
+    for pl in ag.get("items") or []:
+        category_name = get_category_from_agenda_item(pl) or "Uncategorized"
+        if category_name not in categorized_items:
+            categorized_items[category_name] = []
+        categorized_items[category_name].append(pl)
+    return categorized_items
 
 
 def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -273,7 +328,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
     logger.info(f"Enriching agendas: found {len(ev_ids)} unique related event IDs")
     logger.info(f"Enriching agendas: event IDs: {ev_ids}")
     if not ev_ids:
-        set_stt_fields(agendas, {}, [])
+        _set_stt_fields(agendas, {}, [])
         return agendas
 
     # Search events by _ids
@@ -289,7 +344,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
         },
     )
     if not events:
-        set_stt_fields(agendas, {}, [])
+        _set_stt_fields(agendas, {}, [])
         return agendas
 
     # Map by both _id and guid for resilience
@@ -298,7 +353,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
         if "_id" in e:
             by_key[str(e["_id"])] = e
     # Attach to each planning item
-    set_stt_fields(agendas, by_key, events)
+    _set_stt_fields(agendas, by_key, events)
 
     # Sort related_events_expanded by start date
     for ag in agendas or []:
