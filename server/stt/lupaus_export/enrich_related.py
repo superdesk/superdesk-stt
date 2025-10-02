@@ -292,6 +292,9 @@ def _set_stt_fields(
         grouped_agendas = _group_agenda_items_by_category(ag)
         # and attach to agenda
         ag["grouped_items"] = grouped_agendas
+        # get main topic items (highest priority)
+        main_topic_items = _get_items_with_highest_priority(ag)
+        ag["main_topic_items"] = main_topic_items
     return agendas
 
 
@@ -317,6 +320,22 @@ def _group_agenda_items_by_category(
             categorized_items[category_name] = []
         categorized_items[category_name].append(pl)
     return categorized_items
+
+
+def _get_items_with_highest_priority(
+    ag: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    # if stt_priority_numeric is 3300, it is the highest priority
+    highest_priority = 3300
+    main_topic_items = []
+    for pl in ag.get("items") or []:
+        try:
+            priority_numeric = int(pl.get("stt_priority_numeric", "0"))
+            if priority_numeric == highest_priority:
+                main_topic_items.append(pl)
+        except ValueError:
+            continue
+    return main_topic_items
 
 
 def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
