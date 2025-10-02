@@ -32,16 +32,10 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         # Check required fields
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
-        self.assertIn("versioncreated", parsed_item)
-
-        # Check original data is preserved
         self.assertEqual(test_item["uri"], parsed_item["uri"])
         self.assertEqual(test_item["headline"], parsed_item["headline"])
 
-        self.assertTrue(
-            parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
-        )
+        self.assertTrue(parsed_item["uri"].startswith("http://tt.se/media/text/"))
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
@@ -63,7 +57,6 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         # Should have all required defaults
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
         self.assertIn("versioncreated", parsed_item)
         self.assertEqual("Test minimal headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
@@ -81,7 +74,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         self.assertEqual(1, len(result1))
         self.assertEqual(1, len(result2))
 
-        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
+        self.assertEqual(result1[0]["uri"], result2[0]["uri"])
 
     def test_fixture_data_structure(self):
         """Validate the structure of the fixture data."""

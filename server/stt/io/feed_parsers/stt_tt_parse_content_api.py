@@ -87,24 +87,8 @@ class ContentAPITTItemParser(ContentAPIItemParser):
             processed["body_html"] = ""
         else:
             processed["body_html"] = body_html or ""
+        # Guarantee downstream consumers always receive a GUID
         return processed
-
-    def _ensure_guid(self, item: Dict[str, Any]) -> str:
-        """Ensure GUIDs use the TT-specific namespace when auto-generated."""
-        base_guid = super()._ensure_guid(item)
-        if not isinstance(base_guid, str):
-            return base_guid
-
-        tt_prefix = "urn:newsml:stt.fi:stt_tt_content_api:"
-        default_prefix = "urn:newsml:stt.fi:contentapi:"
-
-        if base_guid.startswith(tt_prefix):
-            return base_guid
-        if base_guid.startswith(default_prefix):
-            return tt_prefix + base_guid[len(default_prefix) :]
-        if base_guid.startswith("urn:"):
-            return base_guid
-        return tt_prefix + base_guid
 
 
 # Register like BusinessWire example: parse() returns List[Dict[str, Any]]

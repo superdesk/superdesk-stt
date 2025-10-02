@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-import hashlib
-import json
 import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -133,10 +130,6 @@ class ContentAPIItemParser(FeedParser):
         # Apply default fields and normalize headline/body
         self._apply_defaults(processed)
 
-        # Generate GUID if missing
-        if not processed.get("guid"):
-            processed["guid"] = self._ensure_guid(processed)
-
         # Normalize all known timestamp fields
         for tf in ("versioncreated", "firstcreated", "_updated", "_created"):
             if processed.get(tf):
@@ -179,7 +172,7 @@ class ContentAPIItemParser(FeedParser):
         if not headline and not body_html:
             logger.info(
                 "Skipping item without meaningful content: %s",
-                processed.get("guid", "unknown"),
+                processed.get("uri", "unknown"),
             )
             return None
 
@@ -202,27 +195,6 @@ class ContentAPIItemParser(FeedParser):
             item.get("headline") or item.get("name") or item.get("title") or "",
         )
         item.setdefault("body_html", item.get("body_html") or "")
-
-    def _ensure_guid(self, item: Dict[str, Any]) -> str:
-        uri = (
-            item.get("uri")
-            or item.get("guid")
-            or item.get("original_id")
-            or item.get("_id")
-        )
-        if isinstance(uri, (str, int)):
-            s = str(uri)
-            # If it's already a URN, preserve it
-            if s.startswith("urn:"):
-                return s
-            # Otherwise generate a new URN with our namespace
-            return f"urn:newsml:stt.fi:contentapi:{hashlib.sha256(s.encode('utf-8')).hexdigest()}"
-        try:
-            blob = json.dumps(item, ensure_ascii=False, sort_keys=True)
-            h = hashlib.sha256(blob.encode("utf-8")).hexdigest()
-            return f"urn:newsml:stt.fi:contentapi:{h}"
-        except Exception:
-            return f"urn:newsml:stt.fi:contentapi:{uuid.uuid4()}"
 
     def _normalize_timestamp(self, value: Any) -> Optional[datetime]:
         """Normalize timestamps to tz-aware datetime (UTC)."""

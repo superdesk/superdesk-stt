@@ -544,17 +544,12 @@ class STTContentAPITestCase(unittest.TestCase):
         # Check required fields
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
+        self.assertIn("uri", parsed_item)
         self.assertIn("versioncreated", parsed_item)
 
         # Check original data is preserved
         self.assertEqual(test_item["uri"], parsed_item["uri"])
         self.assertEqual(test_item["headline"], parsed_item["headline"])
-
-        # Check GUID generation
-        self.assertTrue(
-            parsed_item["guid"].startswith("urn:newsml:stt.fi:stt_tt_content_api:")
-        )
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
@@ -573,23 +568,9 @@ class STTContentAPITestCase(unittest.TestCase):
         # Should have all required defaults
         self.assertEqual("text", parsed_item["type"])
         self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("guid", parsed_item)
         self.assertIn("versioncreated", parsed_item)
         self.assertEqual("Test minimal headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
-
-    def test_parser_guid_consistency(self):
-        """Test that GUID generation is consistent for the same input."""
-        test_item = self.fixture_data["hits"][0]
-
-        result1 = self.parser.parse(test_item, provider={"config": {}})
-        result2 = self.parser.parse(test_item, provider={"config": {}})
-
-        self.assertIsInstance(result1, list)
-        self.assertIsInstance(result2, list)
-        self.assertEqual(1, len(result1))
-        self.assertEqual(1, len(result2))
-        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_update_with_parser_integration(self, mock_get):
@@ -622,7 +603,6 @@ class STTContentAPITestCase(unittest.TestCase):
             for parsed_item in items:
                 self.assertEqual("text", parsed_item["type"])
                 self.assertEqual("usable", parsed_item["pubstatus"])
-                self.assertIn("guid", parsed_item)
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_top_level_array(self, mock_get):
