@@ -75,7 +75,7 @@
 {%- for agenda in agendas or [] -%}
   {%- set main_topic_items = agenda.get('main_topic_items') -%}
   {%- if main_topic_items and main_topic_items | count > 0 -%}
-    <h2>Kärkiaiheitamme</h2>
+    <h2>KÄRKIAIHEITAMME</h2>
     {%- for item in main_topic_items -%}
       {{ render_main_topic_item(item) }}
     {%- endfor -%}
@@ -83,10 +83,37 @@
   {%- set grouped = agenda.get('grouped_items') -%}
   {%- if grouped and grouped.items() | count > 0 -%}
     {%- for category, items in grouped.items() -%}
-      <h2>{{ category }}</h2>
+      <h2>{{ category | upper }}</h2>
+      {%- set coverage = namespace(intended=[], undecided=[], other=[]) -%}
       {%- for item in items -%}
+        {%- set status = item.news_coverage_status or {} -%}
+        {%- set status_name = (status.name or '') | lower -%}
+        {%- if status_name == 'coverage intended' -%}
+          {%- set _ = coverage.intended.append(item) -%}
+        {%- elif status_name == 'coverage not decided yet' -%}
+          {%- set _ = coverage.undecided.append(item) -%}
+        {%- else -%}
+          {%- set _ = coverage.other.append(item) -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- for item in coverage.intended -%}
         {{ render_planning_item(item) }}
       {%- endfor -%}
+
+      {%- if coverage.undecided -%}
+        <h2>JOS AIHETTA</h2>
+        {%- for item in coverage.undecided -%}
+          {{ render_planning_item(item) }}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- if coverage.other -%}
+        <h2>EI</h2>
+        {%- for item in coverage.other -%}
+          {{ render_planning_item(item) }}
+        {%- endfor -%}
+      {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}

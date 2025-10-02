@@ -160,6 +160,41 @@ def _find_many(
         return []
 
 
+def _get_planning_item_coverage_status_from_mongo(pl: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    For some reason item.coverages is like coverages': ['Kuvauskeikka', 'Teksti']
+    but we need "planning.coverages.news_coverage_status"-data from mongo by item _id
+    Get the 'news_coverage_status' from the 'coverages' of a planning item.
+    Args:
+        pl: A dictionary representing a planning item.
+    Returns:
+        The value of 'news_coverage_status' if found, otherwise an empty dictionary.
+    """
+    if not pl:
+        return {}
+    # skip if no coverages
+    if "coverages" not in pl or not pl["coverages"]:
+        return {}
+    pl_id = pl.get("_id")
+    # skip if no id for some reason
+    if not pl_id:
+        return {}
+    pl_from_mongo = _find_many(
+        "planning",
+        # get only coverages that have "planning.g2_content_type" = "teksti"
+        {"_id": pl_id, "coverages.planning.g2_content_type": "teksti"},
+        projection={"coverages": 1, "_id": 0},
+    )
+    if not pl_from_mongo:
+        return {}
+    if ("coverages" not in pl_from_mongo[0]) or (not pl_from_mongo[0]["coverages"]):
+        return {}
+    for cov in pl_from_mongo[0]["coverages"]:
+        if "news_coverage_status" in cov and cov["news_coverage_status"]:
+            return cov["news_coverage_status"]
+    return {}
+
+
 def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
     """
     Extracts the 'priority' value from an agenda item.
@@ -270,6 +305,8 @@ def _set_stt_fields(
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
+            news_coverage_status = _get_planning_item_coverage_status_from_mongo(pl)
+            pl["news_coverage_status"] = news_coverage_status
             _set_priority_fields(pl)
             if not pl.get("stt_priority"):
                 continue  # exclude items without priority
