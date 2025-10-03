@@ -19,5 +19,16 @@
       "body_html_template": "lupaus_events_template.html"
     },
     "label": "Lupaus Template"
+  },
+  {
+    "_id": "kuvalupaus_list",
+    "init_version": 1,
+    "name": "kuvalupaus_list",
+    "type": "planning",
+    "data": {
+      "body_html_template": "kuvalupaus_events_template.html",
+      "headline_template": "kuvalupaus_events_headline.html"
+    },
+    "label": "Kuvalupaus Template"
   }
 ]
