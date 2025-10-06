@@ -160,38 +160,38 @@ def _find_many(
         return []
 
 
-def get_stturgency_from_agenda_item(item: Dict[str, Any]) -> str:
+def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
     """
-    Extracts the 'stturgency' value from an agenda item.
+    Extracts the 'priority' value from an agenda item.
 
-    The function looks for the 'stturgency' in the 'subject' field of the item,
+    The function looks for the 'priority' in the 'subject' field of the item,
     which is expected to be a list of dictionaries. Each dictionary may contain
-    a 'scheme' key. If a dictionary with 'scheme' equal to 'stturgency' is found,
+    a 'scheme' key. If a dictionary with 'scheme' equal to 'priority' is found,
     the corresponding 'name' value is returned.
 
-    If 'stturgency' is not found, an empty string is returned.
+    If 'priority' is not found, an empty string is returned.
 
     Args:
         item: A dictionary representing an agenda item.
     Returns:
-        The value of 'stturgency' if found, otherwise an empty string.
+        The value of 'priority' if found, otherwise an empty string.
     """
-    # stturgency is stored in subject like:
-    # subject: [{'scheme': 'stturgency', 'name': 'Pääaihe (3 300)', 'qcode': 'stturgency-1'}]
+    # priority is stored in subject like:
+    # subject: [{'scheme': 'priority', 'name': 'Perus (2 700)', 'qcode': '2'}]
     if not item:
         return ""
     if "subject" in item:
         for sub in item["subject"]:
-            if sub.get("scheme") == "stturgency":
+            if sub.get("scheme") == "priority":
                 return sub.get("name", "")
     return ""
 
 
-def get_numeric_value_from_stturgency(stturgency: str) -> str:
+def get_numeric_value_from_priority(priority: str) -> str:
     """
-    Extracts the numeric value from a stturgency string.
+    Extracts the numeric value from a priority string.
 
-    The function assumes that the stturgency string is formatted as
+    The function assumes that the priority string is formatted as
     'Some text (number)', where 'number' is the numeric
     value to be extracted. It looks for the last pair of parentheses
     in the string and extracts the content within them. If the content
@@ -201,33 +201,67 @@ def get_numeric_value_from_stturgency(stturgency: str) -> str:
     There's one exception: "Vain tulokset" and in that case we return "Vain tulokset"
 
     Args:
-        stturgency: A string representing the stturgency.
+        priority: A string representing the priority.
     Returns:
-        The numeric value extracted from the stturgency string, or an empty string if not found or not convertible.
+        The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
-    if not stturgency:
+    if not priority:
         return ""
-    if stturgency == "Vain tulokset":
-        return stturgency
+    if priority == "Vain tulokset":
+        return priority
     try:
         # Find the last '(' and ')' and extract the content between them
-        start = stturgency.rindex("(") + 1
-        end = stturgency.rindex(")")
-        number_str = stturgency[start:end].strip()
+        start = priority.rindex("(") + 1
+        end = priority.rindex(")")
+        number_str = priority[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
-        logger.debug(
-            "Could not extract numeric value from stturgency: '%s'", stturgency
-        )
+        logger.error("Could not extract numeric value from priority: '%s'", priority)
         return ""
 
 
-def _set_stt_urgency_fields(pl: Dict[str, Any]) -> None:
-    """Compute and set urgency fields on a planning item in a single place."""
-    urgency = get_stturgency_from_agenda_item(pl)
-    urgency_numeric = get_numeric_value_from_stturgency(urgency)
-    pl["stturgency"] = urgency
-    pl["stturgency_numeric"] = urgency_numeric
+def _set_priority_fields(pl: Dict[str, Any]) -> None:
+    """Compute and set priority fields on a planning item in a single place."""
+    priority = get_priority_from_agenda_item(pl)
+    priority_numeric = get_numeric_value_from_priority(priority)
+    pl["stt_priority"] = priority
+    pl["stt_priority_numeric"] = priority_numeric
+
+
+def set_stt_fields(
+    agendas: List[Dict[str, Any]],
+    by_key: Dict[str, Dict[str, Any]],
+    events: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Sets stt_priority and stt_priority_numeric fields on each planning item.
+    Filters out items without a valid stt_priority.
+    If events is empty, sets related_events_expanded to [].
+    Expands related_events to related_events_expanded using by_key mapping.
+    """
+
+    for ag in agendas or []:
+        new_items: List[Dict[str, Any]] = []
+        for pl in ag.get("items") or []:
+            _set_priority_fields(pl)
+            if not pl.get("stt_priority"):
+                continue  # exclude items without priority
+            # if events is empty list, related_events_expanded will be empty
+            if not events:
+                pl["related_events_expanded"] = []
+                new_items.append(pl)
+                continue
+            # Expand related events
+            expanded: List[Dict[str, Any]] = []
+            for re in pl.get("related_events") or []:
+                key = re.get("_id")
+                ev = by_key.get(str(key)) if key else None
+                if ev:
+                    expanded.append(ev)
+            pl["related_events_expanded"] = expanded
+            new_items.append(pl)
+        ag["items"] = new_items
+    return agendas
 
 
 def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -239,6 +273,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
     logger.info(f"Enriching agendas: found {len(ev_ids)} unique related event IDs")
     logger.info(f"Enriching agendas: event IDs: {ev_ids}")
     if not ev_ids:
+        set_stt_fields(agendas, {}, [])
         return agendas
 
     # Search events by _ids
@@ -253,18 +288,8 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
             "language": 1,
         },
     )
-    logger.info(f"Enriching agendas: found {len(events)} events")
     if not events:
-        # No matches → leave empty but return agendas intact
-        for ag in agendas or []:
-            new_items: List[Dict[str, Any]] = []
-            for pl in ag.get("items") or []:
-                _set_stt_urgency_fields(pl)
-                if not pl.get("stturgency"):
-                    continue  # exclude items without stturgency
-                pl["related_events_expanded"] = []
-                new_items.append(pl)
-            ag["items"] = new_items
+        set_stt_fields(agendas, {}, [])
         return agendas
 
     # Map by both _id and guid for resilience
@@ -273,23 +298,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
         if "_id" in e:
             by_key[str(e["_id"])] = e
     # Attach to each planning item
-    for ag in agendas or []:
-        expanded_items: List[Dict[str, Any]] = []
-        for pl in ag.get("items") or []:
-            # compute urgency once per item
-            _set_stt_urgency_fields(pl)
-            if not pl.get("stturgency"):
-                continue  # exclude items without stturgency
-            expanded: List[Dict[str, Any]] = []
-
-            for re in pl.get("related_events") or []:
-                key = re.get("_id")
-                ev = by_key.get(str(key)) if key else None
-                if ev:
-                    expanded.append(ev)
-            pl["related_events_expanded"] = expanded
-            expanded_items.append(pl)
-        ag["items"] = expanded_items
+    set_stt_fields(agendas, by_key, events)
 
     # Sort related_events_expanded by start date
     for ag in agendas or []:

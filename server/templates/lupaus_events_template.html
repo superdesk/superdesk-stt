@@ -12,16 +12,16 @@
     {%- endif -%}
 {%- endmacro %}
 
-{# macro to render STT urgency text #}
-{% macro stt_urgency_text(item) -%}
-  {%- set has_str = (item.stturgency is defined) and (item.stturgency | trim) -%}
-  {%- set has_num = (item.stturgency_numeric is defined) and (item.stturgency_numeric is not none) -%}
+{# macro to render STT priority text #}
+{% macro stt_priority_text(item) -%}
+  {%- set has_str = (item.stt_priority is defined) and (item.stt_priority | trim) -%}
+  {%- set has_num = (item.stt_priority_numeric is defined) and (item.stt_priority_numeric is not none) -%}
   {%- if not has_str or not has_num -%}
     {# empty output when not set #}
-  {%- elif item.stturgency == 'Vain tulokset' -%}
-    {{- item.stturgency -}}
+  {%- elif item.stt_priority == 'Vain tulokset' -%}
+    {{- item.stt_priority -}}
   {%- else -%}
-    Mittaversio korkeintaan {{ item.stturgency_numeric }} merkkiä
+    Mittaversio korkeintaan {{ item.stt_priority_numeric }} merkkiä
   {%- endif -%}
 {%- endmacro %}
 
@@ -39,8 +39,8 @@
                 {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
             {%- endif -%}
         {%- endfor -%}
-        {# Call the urgency macro #}
-        {%- set urg = stt_urgency_text(item) -%}
+        {# Call the priority macro #}
+        {%- set urg = stt_priority_text(item) -%}
         {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
         {# Add coverages if available #}
         {%- if item.coverages is defined and item.coverages -%}
