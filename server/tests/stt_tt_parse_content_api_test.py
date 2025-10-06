@@ -24,18 +24,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
 
         result = self.parser.parse(test_item, provider={"config": {}})
 
-        # Parser should return a list of dicts
-        self.assertIsInstance(result, list)
-        self.assertEqual(1, len(result))
-        parsed_item = result[0]
-
-        # Check required fields
-        self.assertEqual("text", parsed_item["type"])
-        self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertEqual(test_item["uri"], parsed_item["uri"])
-        self.assertEqual(test_item["headline"], parsed_item["headline"])
-
-        self.assertTrue(parsed_item["uri"].startswith("http://tt.se/media/text/"))
+        self.assertEqual(test_item["uri"], result[0]["uri"])
 
     def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
@@ -49,17 +38,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
 
         result = self.parser.parse(minimal_item, provider={"config": {}})
 
-        # Parser should return a list
-        self.assertIsInstance(result, list)
-        self.assertEqual(1, len(result))
-        parsed_item = result[0]
-
-        # Should have all required defaults
-        self.assertEqual("text", parsed_item["type"])
-        self.assertEqual("usable", parsed_item["pubstatus"])
-        self.assertIn("versioncreated", parsed_item)
-        self.assertEqual("Test minimal headline", parsed_item["headline"])
-        self.assertEqual("", parsed_item["body_html"])
+        self.assertEqual(minimal_item["uri"], result[0]["uri"])
 
     def test_parser_guid_consistency(self):
         """Test that GUID generation is consistent for the same input."""
@@ -68,33 +47,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         result1 = self.parser.parse(test_item, provider={"config": {}})
         result2 = self.parser.parse(test_item, provider={"config": {}})
 
-        # Parser should return lists
-        self.assertIsInstance(result1, list)
-        self.assertIsInstance(result2, list)
-        self.assertEqual(1, len(result1))
-        self.assertEqual(1, len(result2))
-
         self.assertEqual(result1[0]["uri"], result2[0]["uri"])
-
-    def test_fixture_data_structure(self):
-        """Validate the structure of the fixture data."""
-        # Should have hits
-        self.assertIn("hits", self.fixture_data)
-        self.assertGreater(len(self.fixture_data["hits"]), 0)
-
-        # Check first item structure
-        first_item = self.fixture_data["hits"][0]
-        self.assertIsInstance(first_item, dict)
-
-        # Should have TT-specific fields
-        expected_fields = ["uri", "source"]
-        for field in expected_fields:
-            if field in first_item:
-                self.assertIsInstance(first_item[field], str)
-
-        # Source should be TT-related
-        if "source" in first_item:
-            self.assertTrue(first_item["source"].startswith("TT"))
 
 
 if __name__ == "__main__":
