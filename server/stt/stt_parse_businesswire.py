@@ -171,9 +171,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
         super().populate_fields(item)
         return item
 
-    def parse(self, xml, provider=None):
+    async def parse(self, xml, provider=None):
         """Override parse to return a list of items instead of a single item"""
-        item = super().parse(xml, provider)
+        item = await super().parse(xml, provider)
         return [item] if item else []
 
 

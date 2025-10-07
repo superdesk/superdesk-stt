@@ -116,7 +116,7 @@ class VeikkausTextFeedParser(FeedParser):
         except Exception:
             return False
 
-    def parse(
+    async def parse(
         self, file_path: str, provider: Optional[dict] = None
     ) -> List[Dict[str, Any]]:
         """Parse the Veikkaus file into a Superdesk ingest item.
@@ -126,7 +126,11 @@ class VeikkausTextFeedParser(FeedParser):
         # Provider is part of the base signature; not used here.
         del provider
 
+        print("PARSING", file_path)
+
         raw = detect_and_read_file(file_path)
+
+        print("RAW", raw)
 
         match = XML_WRAP_RE.match(raw)
         text = match.group(1) if match else raw

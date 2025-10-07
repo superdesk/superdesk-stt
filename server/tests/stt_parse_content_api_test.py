@@ -18,7 +18,7 @@ class STTContentAPITestCase(TestCase):
     fixture = "api/stt_content_api.json"
     parser_class = ContentAPIItemParser
 
-    def parse_source_content(self):
+    async def parse_source_content(self):
         """Override to handle JSON files instead of XML."""
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture_path = os.path.join(dirname, "fixtures", self.fixture)
@@ -28,7 +28,8 @@ class STTContentAPITestCase(TestCase):
         if self.fixture_data.get("_items"):
             test_item = self.fixture_data["_items"][0]
             self.parser = self.parser_class()
-            self.item = self.parser.parse(test_item, provider={"config": {}})[0]
+            parsed = await self.parser.parse(test_item, provider={"config": {}})
+            self.item = parsed[0]
         else:
             self.item = {}
 
@@ -283,11 +284,11 @@ class STTContentAPITestCase(TestCase):
         with self.assertRaises(Exception):
             self.service._fetch_data(provider, "")
 
-    def test_parser_with_fixture_data(self):
+    async def test_parser_with_fixture_data(self):
         """Test parser with real fixture data."""
         test_item = self.fixture_data["_items"][0]
 
-        result = self.parser.parse(test_item, provider={"config": {}})
+        result = await self.parser.parse(test_item, provider={"config": {}})
 
         # Parser should return a list
         self.assertIsInstance(result, list)
@@ -317,33 +318,33 @@ class STTContentAPITestCase(TestCase):
         # Check GUID generation format
         self.assertTrue(parsed_item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
 
-    def test_parser_content_expiry(self):
+    async def test_parser_content_expiry(self):
         """Test parser ignores content expiry configuration."""
         test_item = {"_id": "expiry_test", "source": "STT", "headline": "Test headline"}
 
         provider = {"config": {"content_expiry": 24}}  # 24 hours
 
-        result = self.parser.parse(test_item, provider=provider)
+        result = await self.parser.parse(test_item, provider=provider)
         parsed_item = result[0]
 
         # Should not have expiry set (functionality removed)
         self.assertIsNone(parsed_item.get("expiry"))
 
-    def test_parser_minimal_item(self):
+    async def test_parser_minimal_item(self):
         """Test parser with minimal required data - should be filtered out."""
         minimal_item = {"source": "STT"}
 
-        result = self.parser.parse(minimal_item, provider={"config": {}})
+        result = await self.parser.parse(minimal_item, provider={"config": {}})
 
         # Should return empty list since item has no meaningful content
         self.assertIsInstance(result, list)
         self.assertEqual(0, len(result))
 
-    def test_parser_item_with_headline_only(self):
+    async def test_parser_item_with_headline_only(self):
         """Test parser with item that has headline but no body - should be kept."""
         item_with_headline = {"source": "STT", "headline": "Test headline"}
 
-        result = self.parser.parse(item_with_headline, provider={"config": {}})
+        result = await self.parser.parse(item_with_headline, provider={"config": {}})
 
         # Should return one item since it has meaningful content
         self.assertIsInstance(result, list)
@@ -353,11 +354,11 @@ class STTContentAPITestCase(TestCase):
         self.assertEqual("Test headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
 
-    def test_parser_item_with_body_only(self):
+    async def test_parser_item_with_body_only(self):
         """Test parser with item that has body but no headline - should be kept."""
         item_with_body = {"source": "STT", "body_html": "<p>Test content</p>"}
 
-        result = self.parser.parse(item_with_body, provider={"config": {}})
+        result = await self.parser.parse(item_with_body, provider={"config": {}})
 
         # Should return one item since it has meaningful content
         self.assertIsInstance(result, list)
@@ -367,20 +368,20 @@ class STTContentAPITestCase(TestCase):
         self.assertEqual("", parsed_item["headline"])
         self.assertEqual("<p>Test content</p>", parsed_item["body_html"])
 
-    def test_parser_guid_consistency(self):
+    async def test_parser_guid_consistency(self):
         """Test that GUID generation is consistent for the same input."""
         test_item = self.fixture_data["_items"][0]
 
-        result1 = self.parser.parse(test_item, provider={"config": {}})
-        result2 = self.parser.parse(test_item, provider={"config": {}})
+        result1 = await self.parser.parse(test_item, provider={"config": {}})
+        result2 = await self.parser.parse(test_item, provider={"config": {}})
 
         self.assertEqual(result1[0]["guid"], result2[0]["guid"])
 
-    def test_parser_list_input(self):
+    async def test_parser_list_input(self):
         """Test parser with list input."""
         test_items = self.fixture_data["_items"][:3]
 
-        result = self.parser.parse(test_items, provider={"config": {}})
+        result = await self.parser.parse(test_items, provider={"config": {}})
 
         self.assertEqual(3, len(result))
         for i, parsed_item in enumerate(result):
@@ -389,7 +390,7 @@ class STTContentAPITestCase(TestCase):
             self.assertEqual(test_items[i]["uri"], parsed_item["uri"])
 
     @responses.activate
-    def test_update_with_parser_integration(self):
+    async def test_update_with_parser_integration(self):
         """Test _update method with parser integration using fixture data."""
         test_items = self.fixture_data["_items"][:2]
         mock_response_data = {"_items": test_items, "_links": {}}
@@ -418,7 +419,7 @@ class STTContentAPITestCase(TestCase):
                 "feed_parser": "content_api_json",
             }
             update = {}
-            items = list(self.service._update(provider, update))
+            items = list(await self.service._update(provider, update))
             # Should have processed all items
             self.assertEqual(2, len(items))
             # Check that items were parsed correctly

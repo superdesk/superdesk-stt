@@ -52,7 +52,8 @@ class TestCase(CoreTestCase):
             with open(fixture, "rb") as f:
                 parser = self.parser_class()
                 self.xml_root = etree.parse(f).getroot()
-                self.item = (await parser.parse(self.xml_root, provider))[0]
+                parsed = await parser.parse(self.xml_root, provider)
+                self.item = parsed[0]
 
     async def addSttCVs(self):
         async with self.app.app_context():

@@ -14,12 +14,12 @@ class EventsCSVFeedParserTestCase(TestCase):
     fixture = "csv/eventsheet.csv"
     parser_class = EventsCSVFeedParser
 
-    def parse_source_content(self):
+    async def parse_source_content(self):
         """Override to handle CSV files instead of XML."""
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, "fixtures", self.fixture)
         provider = {"name": "Test"}
-        with self.ctx:
+        async with self.ctx:
             parser = self.parser_class()
             self.item = parser.parse(fixture, provider)[0]
 

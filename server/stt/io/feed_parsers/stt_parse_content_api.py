@@ -72,7 +72,9 @@ class ContentAPIItemParser(FeedParser):
             return True
         return False
 
-    def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
+    async def parse(
+        self, item: Any, provider: Optional[dict] = None
+    ) -> List[Dict[str, Any]]:
         provider = provider or {}
         # Case 1: Already a list of items
         if isinstance(item, list):
