@@ -250,9 +250,7 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
 
 
 def get_numeric_value_from_priority(priority: str) -> str:
-def get_numeric_value_from_priority(priority: str) -> str:
     """
-    Extracts the numeric value from a priority string.
     Extracts the numeric value from a priority string.
 
     The function assumes that the priority string is formatted as
@@ -267,12 +265,9 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     Args:
         priority: A string representing the priority.
-        priority: A string representing the priority.
     Returns:
         The numeric value extracted from the priority string, or an empty string if not found or not convertible.
-        The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
-    if not priority:
     if not priority:
         return ""
     if priority == "Vain tulokset":
