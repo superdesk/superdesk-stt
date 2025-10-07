@@ -254,7 +254,6 @@ def get_numeric_value_from_priority(priority: str) -> str:
     Extracts the numeric value from a priority string.
 
     The function assumes that the priority string is formatted as
-    The function assumes that the priority string is formatted as
     'Some text (number)', where 'number' is the numeric
     value to be extracted. It looks for the last pair of parentheses
     in the string and extracts the content within them. If the content
@@ -272,19 +271,13 @@ def get_numeric_value_from_priority(priority: str) -> str:
         return ""
     if priority == "Vain tulokset":
         return priority
-    if priority == "Vain tulokset":
-        return priority
     try:
         # Find the last '(' and ')' and extract the content between them
         start = priority.rindex("(") + 1
         end = priority.rindex(")")
         number_str = priority[start:end].strip()
-        start = priority.rindex("(") + 1
-        end = priority.rindex(")")
-        number_str = priority[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
-        logger.error("Could not extract numeric value from priority: '%s'", priority)
         logger.error("Could not extract numeric value from priority: '%s'", priority)
         return ""
 
