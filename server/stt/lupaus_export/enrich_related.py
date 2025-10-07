@@ -250,9 +250,12 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
 
 
 def get_numeric_value_from_priority(priority: str) -> str:
+def get_numeric_value_from_priority(priority: str) -> str:
     """
     Extracts the numeric value from a priority string.
+    Extracts the numeric value from a priority string.
 
+    The function assumes that the priority string is formatted as
     The function assumes that the priority string is formatted as
     'Some text (number)', where 'number' is the numeric
     value to be extracted. It looks for the last pair of parentheses
@@ -264,11 +267,16 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     Args:
         priority: A string representing the priority.
+        priority: A string representing the priority.
     Returns:
+        The numeric value extracted from the priority string, or an empty string if not found or not convertible.
         The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
     if not priority:
+    if not priority:
         return ""
+    if priority == "Vain tulokset":
+        return priority
     if priority == "Vain tulokset":
         return priority
     try:
@@ -276,8 +284,12 @@ def get_numeric_value_from_priority(priority: str) -> str:
         start = priority.rindex("(") + 1
         end = priority.rindex(")")
         number_str = priority[start:end].strip()
+        start = priority.rindex("(") + 1
+        end = priority.rindex(")")
+        number_str = priority[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
+        logger.error("Could not extract numeric value from priority: '%s'", priority)
         logger.error("Could not extract numeric value from priority: '%s'", priority)
         return ""
 

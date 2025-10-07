@@ -29,7 +29,10 @@
     {# empty output when not set #}
   {%- elif item.stt_priority == 'Vain tulokset' -%}
     {{- item.stt_priority -}}
+  {%- elif item.stt_priority == 'Vain tulokset' -%}
+    {{- item.stt_priority -}}
   {%- else -%}
+    Mittaversio korkeintaan {{ item.stt_priority_numeric }} merkkiä
     Mittaversio korkeintaan {{ item.stt_priority_numeric }} merkkiä
   {%- endif -%}
 {%- endmacro %}
