@@ -1,5 +1,4 @@
 from typing import Dict, List, Any, Set
-from flask import current_app
 from superdesk import get_resource_service
 import logging
 
