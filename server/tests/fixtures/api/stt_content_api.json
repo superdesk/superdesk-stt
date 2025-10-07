@@ -1,0 +1,3059 @@
+{
+    "_items": [
+        {
+            "coverage_id": "ID_TEXT_122269044",
+            "associations": {},
+            "wordcount": 34,
+            "body_html": "<p>Pirkkalan koulupuukotuksesta epäilty 16-vuotias poika on määrätty mielentilatutkimukseen, kertoo <a href=\"https://yle.fi/a/74-20176995\" target=\"_blank\">Yle.</a> Hänen epäillään puukottaneen kolmea 15-vuotiasta tyttöä toukokuussa. Häntä epäillään kolmesta murhan yrityksestä.</p>\n\n<p>Ylen mukaan Pirkanmaan käräjäoikeus määräsi epäillyn mielentilatutkimukseen istunnossa, joka pidettiin yleisöltä suljettuna.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttdepartment",
+                    "name": "Kotimaa"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02001000",
+                    "scheme": "sttsubj",
+                    "name": "Rikokset"
+                },
+                {
+                    "code": "02001006",
+                    "scheme": "sttsubj",
+                    "name": "Väkivaltarikokset"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02008000",
+                    "scheme": "sttsubj",
+                    "name": "Oikeudenkäynti Oikeusprosessit"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14024000",
+                    "scheme": "sttsubj",
+                    "name": "Kansanryhmät"
+                },
+                {
+                    "code": "14024003",
+                    "scheme": "sttsubj",
+                    "name": "Nuoret"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttversion",
+                    "name": "Pika"
+                },
+                {
+                    "code": "15805",
+                    "scheme": "sttlocmeta",
+                    "name": "Pirkanmaa"
+                },
+                {
+                    "code": "1",
+                    "scheme": "country",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "6840",
+                    "scheme": "sttlocmeta",
+                    "name": "Pirkkala"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:19:53+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269044",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1752",
+                "creator_name": "Korkee Elina",
+                "stt_topics": "685461",
+                "newsItem_guid": "urn:newsml:stt.fi::107136785"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "15805",
+                    "name": "Pirkanmaa"
+                },
+                {
+                    "code": "6840",
+                    "name": "Pirkkala"
+                }
+            ],
+            "headline": "Yle: Pirkkalan koulupuukotuksesta epäilty 16-vuotias mielentilatutkimukseen",
+            "charcount": 339,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T12:02:37+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685461",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136785",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T12:02:49+0000",
+            "authors": [
+                {
+                    "code": "Korkee Elina",
+                    "role": "",
+                    "name": "Korkee Elina",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136785"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136785"
+        },
+        {
+            "associations": {},
+            "wordcount": 212,
+            "body_html": "<p>Vihreiden kansanedustaja Hanna Holopainen ei ole yllättynyt, että työttömyysturvan suojaosan poisto on johtanut useammin työttömyyteen kuin kokoaikatyöhön ja vaatii suojaosien palauttamista. </p>\n\n<p></p>\n\n<p>Viime vuonna voimaan tullut lakimuutos poisti sovitellun työttömyyspäivärahan suojaosan. YTK Työttömyyskassan tuoreen jäsenkyselyn mukaan muutos on heikentänyt työnteon kannattavuutta. </p>\n\n<p></p>\n\n<p>“Orpon hallitus on täysin irrallaan ihmisten arjesta. On monia ihmisiä, jotka eivät syystä tai toisesta pysty tekemään kokoaikatyötä, mutta haluavat olla työelämässä ja myös tarvitsevat työttömyysturvan päälle tulevaa pientä palkkaa. Orpon hallituksen lakiesitys sai osakseen paljon vastusta kun sitä valmisteltiin. Nyt nähdään, että suojaosan poisto tosiaankin kasvattaa työttömyyttä eikä suinkaan työllisyyttä,” sanoo Holopainen. </p>\n\n<p></p>\n\n<p>Holopaisen mukaan työnteon on aina oltava kannattavaa. Holopainen muistuttaa, että Marinin hallituskaudella työttömyysetuuden suojaosaa myös korotettiin väliaikaisesti.</p>\n\n<p></p>\n\n<p>“Suojaosa mahdollisti sen, että palkkaa pystyi ansaitsemaan 300e verran ilman, että se pienensi työttömyysturvaa. Tämä kannusti työntekoon. Viime hallituskaudella nostimme työttömyysetuuden suojaosan väliaikaisesti 300 eurosta 500 euroon. Muutos tuki kausityön vastaanottamista, työn perässä liikkumista sekä paransi tuen saajien taloudellista tilannetta,” sanoo Holopainen.</p>\n\n<p></p>\n\n<p>Työttömyyspäivärahan ja asumistuen 300 euron suojaosan palauttamiseksi on laadittu myös kansalaisaloite ja se on ylittänyt eduskuntakäsittelyn vaatiman 50 000 allekirjoituksen rajan. </p>\n\n<p></p>\n\n<p>“Me Vihreät tulemme tukemaan kansalaisaloitetta. Myös vaihtoehtobudjetissamme olemme esittäneet työttömyysturvan suojaosan palauttamista. Suojaosat kannustavat saamaan työn syrjästä kiinni ja osoittavat, että pienikin työ on arvokasta,” päättää Holopainen. </p>\n\n<p></p>\n\n<p> </p>\n\n<p>Yhteyshenkilöt:</p>\n\n<p>Hanna Holopainen</p>\n\n<p>Kansanedustaja</p>\n\n<p>044-5713463</p>\n\n<p>hanna.holopainen@eduskunta.fi</p>\n\n<p></p>\n\n<p>Ville-Veikko Mastomäki</p>\n\n<p>Viestintäpäällikkö</p>\n\n<p>+358407641684</p>\n\n<p>ville-veikko.mastomaki@vihreat.fi</p>\n\n<p></p>\n\n<p>Pääkuva:</p>\n\n<p></p>\n\n<p>https://www.sttinfo.fi/data/images/public/69818932/71351203/e4e59f1d-0b0f-487a-a7c0-52c78f984f25.jpg</p>\n\n<p></p>\n\n<p></p>\n\n<p></p>",
+            "subject": [
+                {
+                    "code": "12",
+                    "scheme": "sttdepartment",
+                    "name": "Tiedotepalvelu"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                }
+            ],
+            "language": "en",
+            "source": "STT-STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:19:53+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269073",
+                "creator_id": "stteditorid:1",
+                "newsItem_guid": "urn:newsml:stt.fi::107136813"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "headline": "*** Tiedote/Vihreät - De Gröna: Vihreiden Hanna Holopainen: Työttömyysturvan suojaosa tulee palauttaa ***",
+            "charcount": 2070,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T12:04:01+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "description_text": "Vihreiden Hanna Holopainen: Työttömyysturvan suojaosa tulee palauttaa",
+            "priority": 6,
+            "version": "1",
+            "description_html": "Vihreiden Hanna Holopainen: Työttömyysturvan suojaosa tulee palauttaa",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136813",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T12:04:14+0000",
+            "authors": [
+                {
+                    "code": "None",
+                    "role": "",
+                    "name": null,
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136813"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136813"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268757",
+            "associations": {},
+            "wordcount": 206,
+            "body_html": "<h2>Rikko saattaa kadota joiltain sen eteläisimmiltä esiintymisalueilta ennen pitkää kokonaan.</h2>\n\n<p>Riekkokanta on vähentynyt voimakkaasti, selviää Luonnonvarakeskuksen (Luke) <a href=\"https://www.luke.fi/fi/luonnonvaratieto/tiedetta-ja-tietoa/pienriista/riistakolmiolaskenta-metsakanalintukannat-kesalla-2025\" target=\"_blank\">riistakolmiolaskennasta</a>.</p>\n\n<p>Riekon poikasia on syntynyt kuluvana kesänä selvästi tavanomaista vähemmän. Poikueellisten naaraiden määrä on seurantahistorian matalin. Myös keskimääräinen poikuekoko on seurannan heikoimmasta päästä.</p>\n\n<p>Kuluvan vuoden olosuhteet eivät ole olleet metsäkanalinnuille parhaat.</p>\n\n<p>–  Metsäkanalintujen pienet poikaset tarvitsevat kehittyäkseen hyönteisravintoa, jota on parhaiten tarjolla lämpimällä. Lämpötilaltaan normaalia kylmempi tai keskinkertainen loppukevät ja alkukesä eivät suosineet kanalintupoikueita. Heinäkuun ensimmäisen kolmanneksen jälkeen saapuneet helteet saattoivat tulla liian myöhään kanalintupoikueiden näkökulmasta, kertoo Luonnonvarakeskuksen erikoistutkija Andreas Lindén tiedotteessa.</p>\n\n<p>Myös myyrien määrä on kuluvana vuonna vaikuttanut metsäkanalintujen selviytymiseen. Kun myyriä on vähän, pedot turvautuvat saalistuksessaan enemmän maassa pesivien lintujen muniin ja poikasiin. Luken mukaan myyriä on ollut vähän Lapissa sekä Pohjois-Pohjanmaalla ja Kainuussa.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Sopeutunut kylmään</h3>\n\n\n<p></p>\n\n<p>Riekkokannan taantuminen on voimakasta jo toista vuotta peräkkäin. Viime vuoteen verrattuna kannantiheys on vähentynyt noin neljänneksen. Pohjois-Pohjanmaalla tiheys on matalin seurantahistorian aikana, ja kanta pieneni alueella 68 prosenttia verrattuna viime vuoteen.</p>\n\n<p>Luken mukaan on mahdollista, että laji häviää ennen pitkää joiltakin sen eteläisimmiltä esiintyvyysalueilta kuten Pohjanmaalta, Keski-Suomesta ja Pohjois-Karjalasta. Kuluvan vuoden laskennassa on mainituista alueista havaintoja ainoastaan Pohjanmaalta.</p>\n\n<p>Taustalla vaikuttaa etenkin ilmastonmuutos. Riekko on kylmään sopeutunut lintu.</p>\n\n<p>Metsäkanalintuja laskettiin tänä vuonna 26.7.–10.8. välisenä aikana. Raportoidut tulokset perustuvat 801 riistakolmioon eri puolilta Suomea.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttdepartment",
+                    "name": "Kotimaa"
+                },
+                {
+                    "code": "13000000",
+                    "scheme": "sttsubj",
+                    "name": "Tiede Teknologia"
+                },
+                {
+                    "code": "13004000",
+                    "scheme": "sttsubj",
+                    "name": "Luonnontieteet "
+                },
+                {
+                    "code": "13000000",
+                    "scheme": "sttsubj",
+                    "name": "Tiede Teknologia"
+                },
+                {
+                    "code": "13012000",
+                    "scheme": "sttsubj",
+                    "name": "Eläintutkimus"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "16927",
+                    "scheme": "sttlocmeta",
+                    "name": "Helsinki"
+                },
+                {
+                    "code": "31",
+                    "scheme": "state",
+                    "name": "Uusimaa"
+                },
+                {
+                    "code": "1",
+                    "scheme": "country",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:19:51+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Kuvituskuvaa arkistosta",
+                    "id": "28"
+                },
+                "sttidtype_textid": "122268757",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:33260",
+                "creator_name": "Rautio Jenna",
+                "stt_topics": "685432",
+                "newsItem_guid": "urn:newsml:stt.fi::107136783"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "16927",
+                    "name": "Helsinki"
+                }
+            ],
+            "byline": "Jenna Rautio",
+            "headline": "Riekkokanta on vähentynyt huomattavasti",
+            "charcount": 1925,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T12:01:15+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685432",
+            "version": "1",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136783",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T12:01:56+0000",
+            "authors": [
+                {
+                    "code": "Rautio Jenna",
+                    "role": "",
+                    "name": "Rautio Jenna",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136783"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136783"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268929",
+            "associations": {},
+            "wordcount": 294,
+            "body_html": "<h2>Miestä epäillään suomalaisuhreihin kohdistuneesta törkeästä ihmiskaupasta. Hänet otettiin kiinni vuosien hakemisen jälkeen Ranskassa loppuvuodesta 2023.</h2>\n\n<p>Törkeistä rikoksista epäillyn joogagurun syytteet on peruutettu Suomessa ja tapauksen käsittely on siirretty Ranskaan. Asia selviää Helsingin käräjäoikeuden aiemmin kesällä antamasta ratkaisusta.</p>\n\n<p>Ylen MOT-ohjelma <a href=\"https://areena.yle.fi/1-1883373\" target=\"_blank\">uutisoi</a> keväällä 2013 hyväksikäyttöepäilyistä Romaniasta lähtöisin olevan MISA-joogayhteisön toiminnassa. Ohjelmassa parikymppinen suomalainen nainen kertoi joutuneensa yhteisön romanialaisen perustajan seksuaalisesti hyväksikäyttämäksi Pariisissa.</p>\n\n<p>MOT:n jutun jälkeen keskusrikospoliisi (KRP) kertoi tutkivansa kokonaisuutta, jossa suomalaisia uhreja oli saatu matkustamaan Ranskaan rikosten kohteiksi. Poliisin epäilyn mukaan rikoksissa oli käytetty hyväksi uhrien riippuvaista asemaa.</p>\n\n<p>Vuonna 2017 syyttäjä nosti yhteisön perustajaa vastaan useita syytteitä seksuaalisesta hyväksikäytöstä ja törkeästä ihmiskaupasta. Syyttäjän mukaan rikokset olivat jatkuneet vuodesta 2006 vuoteen 2013 Suomessa ja Ranskassa. Ihmiskauppasyytteissä oli myös toinen syytetty, nainen.</p>\n\n<p>Helsinkiin vuodelle 2018 suunniteltua oikeudenkäyntiä ei pystytty järjestämään, koska romanialaismiestä ei tavoitettu. Syyttäjän mukaan mies oli vuonna 2017 vapautunut Romaniassa kuuden vuoden vankeusrangaistuksesta ja kadonnut. Suomen viranomaiset antoivat hänestä eurooppalaisen pidätysmääräyksen.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Lisää raskaita rikosepäilyjä Ranskassa</h3>\n\n\n<p></p>\n\n<p>Mies oli kateissa Suomen viranomaisilta vuosia. Marraskuussa 2023 hänet otettiin kiinni Ranskassa, missä häntä epäillään myös muun muassa sieppauksesta ja raiskauksesta. Joogagurun lisäksi operaatiossa pidätettiin kymmeniä muita ihmisiä ja kymmeniä naisia löydettiin asumasta kyseenalaisissa oloissa.</p>\n\n<p>Miestä on sittemmin yritetty saada Suomeen useita kertoja. Syyttäjän mukaan miehen luovuttamista käsiteltiin Ranskassa viime vuonna ainakin neljä kertaa ja jokaisella kerralla mies vastusti sitä.</p>\n\n<p>Viime vuonna loppukesästä syyttäjä sai Ranskalta pyynnön siirtää syyteasia Ranskaan, minkä takia syyttäjä peruutti omat syytteensä. Hyväksikäyttösyytteet ehtivät jo vanhentua, joten kyse oli enää viidestä syytteestä törkeästä ihmiskaupasta.</p>\n\n<p>Nykyisin 73-vuotias mies vastusti syytteiden siirtoa Ranskaan muun muassa siksi, että rangaistusasteikko törkeästä ihmiskaupasta on siellä huomattavasti ankarampi kuin Suomessa. Myös naissyytetty vastusti syytteiden siirtoa. Jutun asianomistajat eli epäiltyjen rikosten uhrit sen sijaan hyväksyivät syyttäjän päätöksen.</p>\n\n<p>Helsingin käräjäoikeus päätti jättää asian sillensä. Ranskassa oikeudenkäynnin on arvioitu toteutuvan ensi vuonna tai vuonna 2027.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttdepartment",
+                    "name": "Kotimaa"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02001000",
+                    "scheme": "sttsubj",
+                    "name": "Rikokset"
+                },
+                {
+                    "code": "02001005",
+                    "scheme": "sttsubj",
+                    "name": "Seksuaalirikokset"
+                },
+                {
+                    "code": "10000000",
+                    "scheme": "sttsubj",
+                    "name": "Vapaa-aika"
+                },
+                {
+                    "code": "10004000",
+                    "scheme": "sttsubj",
+                    "name": "Harrastukset"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02001000",
+                    "scheme": "sttsubj",
+                    "name": "Rikokset"
+                },
+                {
+                    "code": "02001999",
+                    "scheme": "sttsubj",
+                    "name": "Ihmiskauppa"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02008000",
+                    "scheme": "sttsubj",
+                    "name": "Oikeudenkäynti Oikeusprosessit"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "17931",
+                    "scheme": "sttlocmeta",
+                    "name": "Ranska"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:19:50+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Arkistokuvaa",
+                    "id": "21"
+                },
+                "sttidtype_textid": "122268929",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1893",
+                "creator_name": "Rosvall Maria",
+                "stt_topics": "685447",
+                "newsItem_guid": "urn:newsml:stt.fi::107136685"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "17931",
+                    "name": "Ranska"
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "byline": "Maria Rosvall",
+            "headline": "Törkeistä rikoksista epäilty joogaguru ei joudu oikeuden eteen Suomessa – tapaus siirrettiin Ranskaan",
+            "charcount": 2651,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T12:01:15+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685447",
+            "version": "1",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136685",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T12:01:55+0000",
+            "authors": [
+                {
+                    "code": "Rosvall Maria",
+                    "role": "",
+                    "name": "Rosvall Maria",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136685"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136685"
+        },
+        {
+            "coverage_id": "ID_TEXT_122263304",
+            "associations": {},
+            "wordcount": 410,
+            "body_html": "<h2>Rajavartijoiden resurssit ovat tiukilla, kertoo Suomen Riian-suurlähettiläs Anne Saloranta. Vaikeasta tilanteesta huolimatta Latvian raja Valko-Venäjälle on auki ja luvallinen matkustaminen vilkasta.</h2>\n\n<p>Latvia on Suomen tavoin etulinjan Nato-maa, mutta Latviassa rajoja Venäjälle ja Valko-Venäjälle ei ole suljettu. Luvallinen henkilö- ja tavaraliikenne molempiin suuntiin on vilkasta.</p>\n\n<p>Siinä missä itärajansa sulkeneessa Suomessa puhutaan välineellistetyn maahantulon uhasta, Latviassa se on päivittäistä todellisuutta ja tilanne on pahenemassa.</p>\n\n<p>Latvian rajavartiolaitos kertoo torjuneensa tänä vuonna jo reilusti yli 8  000 laitonta maahantuloyritystä, viime vuonna vastaavia yrityksiä kirjattiin selvästi alle 6  000. Tätä tahtia vuonna 2023 kirjattu 14  500:n laittoman maahantuloyrityksen ennätys lähestyy jo uhkaavasti.</p>\n\n<p>–  Viranomaisia huolestuttaa kovasti se, millaisena trendi jatkuu loppuvuotta kohden. Paine on kova, ja rajavartiolaitoksen resurssit alkavat olla tiukalla. Kyllä täällä aika varpaillaan ollaan, kertoo Suomen Riian-suurlähettiläs Anne Saloranta STT:lle Riiasta.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Kaiken takana on Venäjä</h3>\n\n\n<p></p>\n\n<p>Paine koskee nimenomaan Valko-Venäjän vastaista rajaa. Pidemmän Venäjän vastaisen rajan yli vastaavaa pyrkyä maaston kautta ja aitojen yli Latviaan ei ole havaittu.</p>\n\n<p>Salorannan mukaan perimmäinen paine välineellistettyyn maahantuloon tulee kuitenkin Venäjältä, joka on latvialaisten tulkinnan mukaan valjastanut Valko-Venäjän välikädekseen.</p>\n\n<p>–  Venäjällä ei ole tietenkään intressiä tehdä samaa Venäjän ja Latvian rajalla, koska siinä kärsisivät sitten sen omatkin kauppasuhteet -- rekkaliikenne maiden välillä on aika valtaisaa, Saloranta taustoittaa.</p>\n\n<p>Latvialaiset ovat myös todenneet Valko-Venäjän aktiivisesti auttavan maahanpyrkijöitä, joilla on ollut käytössään muun muassa leikkureita ja tikkaita.</p>\n\n<p>Salorannan mukaan maahantulon vilkastumiseen havahduttiin Latviassa keväällä, jolloin se näkyi ainoalla avoimena olleella rajanylityspaikalla. Niinpä Latvia kielsi rajan ylittämisen polkupyörillä tai kävellen, ja vain ajoneuvot sallittiin. Valko-Venäjän kilvissä nekään eivät pääse maahan.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Lähi-idästä ja Intiasta</h3>\n\n\n<p></p>\n\n<p>Rajan yli laittomasti pyrkivät ovat kolmansien maiden kansalaisia, Latvian rajavartiolaitoksen mukaan pääosin Lähi-idästä ja Intiasta. Latviaan on perinteisesti pyritty virallisten rajanylityspaikkojen ulkopuolelta, koska tulijoilla ei ole yleensä aikomusta rekisteröityä ja hakea turvapaikkaa.</p>\n\n<p>–  Tarkoitus on jatkaa matkaa eteenpäin, Saksa on se ykkösmaa, johon pyritään, Saloranta kertoo.</p>\n\n<p>Yksi houkutteleva reitti voisi myös kulkea autolla Viroon ja sieltä lautalla Suomeen.</p>\n\n<p>–  Tällaisia havaintoja Latvian viranomaisilla ei ole ollut, mutta en sulkisi pois sitäkään mahdollisuutta, Saloranta pohtii.</p>\n\n<p>Ongelmat huomioiden on ehkä yllättävää, että muu liikenne rajan yli on samaan aikaan vilkasta. Latvian televisio <a href=\"https://eng.lsm.lv/article/society/society/04.08.2025-thousands-still-happy-to-travel-to-belarus-from-latvia-every-month.a609093/\" target=\"_blank\">kertoi</a> viime viikolla jo 40  000 ihmisen matkustaneen tänä vuonna Valko-Venäjälle ja takaisin, Latvian ulkoministeriön vahvasta päinvastaisesta <a href=\"https://www.mfa.gov.lv/lv/baltkrievija-celojumu-bridinajumi\" target=\"_blank\">suosituksesta</a> huolimatta.</p>\n\n<p>Valko-Venäjälle järjestetään Latviasta jopa suosittuja matkatoimistojen ryhmämatkoja. Sellaisten kieltämiseksi on Latvian tv:n mukaan tehty jo lakiesitys, jota parlamentti ei ole vielä ehtinyt käsitellä.</p>\n\n<p>Salorannan mukaan vilkasta liikennettä rajan yli selittävät osaltaan ihmisten tiiviit sukulaisuussuhteet – saman perheen jäseniä saattaa asua molemmin puolin rajaa käytännössä samassa kylässä. Lisäksi Valko-Venäjältä Latviaan kulkee paljon salakuljetustavaraa, kuten tupakkaa ja huumeita.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14003000",
+                    "scheme": "sttsubj",
+                    "name": "Väestökysymykset"
+                },
+                {
+                    "code": "14003003",
+                    "scheme": "sttsubj",
+                    "name": "Laiton maahanmuutto"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11001000",
+                    "scheme": "sttsubj",
+                    "name": "Puolustus"
+                },
+                {
+                    "code": "11001002",
+                    "scheme": "sttsubj",
+                    "name": "Kansallinen turvallisuus Rajavalvonta"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "24970",
+                    "scheme": "sttlocmeta",
+                    "name": "Latvia"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:19:49+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Handoutkuvaa",
+                    "id": "23"
+                },
+                "sttidtype_textid": "122263304",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:1891",
+                "creator_name": "Simojoki Niilo",
+                "stt_topics": "684998",
+                "sttnote_private": "Handoutkuvaa suurlähettiläästä ja kv. kuvaa",
+                "newsItem_guid": "urn:newsml:stt.fi::107134790"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "24970",
+                    "name": "Latvia"
+                }
+            ],
+            "byline": "Niilo Simojoki",
+            "headline": "Välineellistetty maahantulo on Latviassa uhan sijasta todellisuutta",
+            "ednote": "Lähteinä myös uutistoimisto BNS, uutistoimisto Belta ja Notes from Poland -sivusto.",
+            "charcount": 3487,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T12:00:38+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:684998",
+            "version": "1",
+            "readtime": 2,
+            "original_id": "urn:newsml:stt.fi::107134790",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T12:00:45+0000",
+            "authors": [
+                {
+                    "code": "Simojoki Niilo",
+                    "role": "",
+                    "name": "Simojoki Niilo",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107134790"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107134790"
+        },
+        {
+            "associations": {},
+            "wordcount": 198,
+            "body_html": "<p>Pirkanmaan elinkeino-, liikenne- ja ympäristökeskus uusii Oriveden Myllykylässä maantien 3381 (Enokunnantie) alittavan Myllyojan putkisillan. Työstä johtuen tie katkaistaan ja ajoneuvoliikenne ohjataan kiertoreitille. Siltatyö tehdään 18.–20.8. välisenä aikana.</p>\n\n<p></p>\n\n<p>Myllyojan silta on v. 1974 rakennettu erittäin huonokuntoinen teräsputkisilta, joka on rakenteellisen käyttöikänsä päässä. Putkisilta korvataan uudella vastaavalla.</p>\n\n<p></p>\n\n<p>Tie on siltatyömaan kohdalla suljettuna maanantain 18.8. klo 8.00 ja keskiviikon 20.8. klo 20.00 välisen ajan. Siltapaikan päällystyöt tehdään erikseen 27.8. Työkohde on Myllyojan kohdalla, 900 m Onnistaipaleentien liittymästä länteen. </p>\n\n<p></p>\n\n<p>Töiden ajan ajoneuvoliikenteen käytössä Lehdistön ja Ukaan välillä on 3 päivän ajan kier-toreitti Viitapohjan kautta. Reitti kulkee Mäntäntien (kt58), Tampereentien (vt9), Viitapoh-janraitin-Peräpohjantien (mt 14199) ja Siltasavontien (mt 14276) kautta.</p>\n\n<p></p>\n\n<p>Työstä aiheutuu merkittävää haittaa liikenteelle.</p>\n\n<p></p>\n\n<p>Työt sisältyvät Pirkanmaan putkisilta- ja rumpu-urakkaan, jossa ELY-keskus uusii useita kohteita eri puolella Pirkanmaata. </p>\n\n<p></p>\n\n<p>Urakoitsijana toimii Ylöjärven Kiviset Oy. </p>\n\n<p></p>\n\n<p> </p>\n\n<p>Yhteyshenkilöt:</p>\n\n<p>Urakoitsijan edustaja työmaapäällikkö Henna Patinen, Kiviset Oy, p. 050 5370 401  Projektipäällikkö Veli-Pekka Pelttari, VarsinaisSuomen ELY-keskus, p.0295 022 821 Siltainsinööri Jyrki Toivonen, Pirkanmaan ELY-keskus, p. 0295 036 097  Tilaajan valvontakonsultti Markus Toivanen, Welado Oy, p. 040 511 6677</p>\n\n<p>Pääkuva:</p>\n\n<p>Myllyojan silta Orivedellä.</p>\n\n<p>https://www.sttinfo.fi/data/images/public/69817881/71351140/fc15f947-a6de-492a-a719-2c583ef60c14.jpg</p>\n\n<p></p>\n\n<p>Liitteet:</p>\n\n<p>Myllyojan silta kiertotiekartta.pdf</p>\n\n<p>https://www.sttinfo.fi/files/69817881/71351140/252306/fi</p>\n\n<p></p>\n\n<p></p>\n\n<p>Huolehdimme sujuvasta arjesta; teiden rakennuttamisesta ja niiden kunnosta, ympäristön tilasta ja suojelusta sekä yritysten tukemisesta. Maakunnan kehittäjänä ja rahoituksen myöntäjänä teemme ELY-keskuksessa päivittäin työtä kestävän tulevaisuuden ja Pirkanmaan parhaaksi.</p>",
+            "subject": [
+                {
+                    "code": "12",
+                    "scheme": "sttdepartment",
+                    "name": "Tiedotepalvelu"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                }
+            ],
+            "language": "en",
+            "source": "STT-STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:04:50+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269053",
+                "creator_id": "stteditorid:1",
+                "newsItem_guid": "urn:newsml:stt.fi::107136793"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "headline": "*** Tiedote/Pirkanmaan ELY-keskus: Enokunnantie poikki Orivedellä siltatyön vuoksi 18.-20.8.2025 ***",
+            "charcount": 1957,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:56:07+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "description_text": "Enokunnantie poikki Orivedellä siltatyön vuoksi 18.-20.8.2025",
+            "priority": 6,
+            "version": "1",
+            "description_html": "Enokunnantie poikki Orivedellä siltatyön vuoksi 18.-20.8.2025",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136793",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:56:12+0000",
+            "authors": [
+                {
+                    "code": "None",
+                    "role": "",
+                    "name": null,
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136793"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136793"
+        },
+        {
+            "associations": {},
+            "wordcount": 31,
+            "body_html": "<p>*** STT-TIEDOTEPALVELU ***</p>\n\n<p>Keno 33/25</p>\n\n<p>Tiistai 12. 8.</p>\n\n<p></p>\n\n<p>Päiväarvonta</p>\n\n<p></p>\n\n<p>Oikeat numerot: 1, 10, 11, 12, 13, 24, 27, 29, 36, 41, 45, 47, 48, 52, 57, 59, 60, 63, 65, 70</p>\n\n<p>Kunkkunumero: 48</p>",
+            "subject": [
+                {
+                    "code": "8",
+                    "scheme": "sttdepartment",
+                    "name": "Peliuutiset"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                }
+            ],
+            "language": "en",
+            "source": "STT-Veikkaus",
+            "type": "text",
+            "versioncreated": "2025-08-12T12:04:49+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269050",
+                "creator_id": "stteditorid:1",
+                "newsItem_guid": "urn:newsml:stt.fi::107136790"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "headline": "*** Veikkaus/Keno ***",
+            "charcount": 171,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:54:16+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "description_text": "kenotulos",
+            "priority": 6,
+            "version": "1",
+            "description_html": "kenotulos",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136790",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:54:21+0000",
+            "authors": [
+                {
+                    "code": "None",
+                    "role": "",
+                    "name": null,
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136790"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136790"
+        },
+        {
+            "associations": {},
+            "wordcount": 146,
+            "body_html": "<p>Yhdysvaltain presidentti Donald Trump vahvistaa allekirjoittaneensa määräyksen Kiinan kanssa sovitun tullivälirauhan jatkumisesta. Trump kertoi asiasta <a href=\"https://truthsocial.com/@realDonaldTrump/115012849265805680\" target=\"_blank\">Truth Social</a> -viestipalvelussaan maanantai-iltana paikallista aikaa.</p>\n\n<p>Trumpin mukaan tullivälirauha jatkuu 90 päivää samoilla ehdoilla kuin aiemminkin. Väliaikainen tullisopu jatkuu siis marraskuun alkupuolelle.</p>\n\n<p>Useat yhdysvaltalaismediat uutisoivat jo aiemmin maanantaina, että Trump on päättänyt jatkaa Kiinalle asetettavien tuontitullien lykkäystä.</p>\n\n<p>Kiinan ja Yhdysvaltojen välille aiemmin sovitun tullivälirauhan oli määrä päättyä tiistaina.</p>\n\n<p></p>\n\n<p><b>Jatko neuvoteltiin Ruotsissa heinäkuussa</b></p>\n\n<p></p>\n\n<p>Trumpin maanantaisen ilmoituksen aikoihin Kiinan valtiollinen uutistoimisto <a href=\"https://english.news.cn/20250812/d47d9be901cf440f87dcc37e93219484/c.html\" target=\"_blank\">Xinhua</a> sekä <a href=\"https://www.whitehouse.gov/briefings-statements/2025/08/joint-statement-on-u-s-china-economic-and-trade-meeting-in-stockholm/\" target=\"_blank\">Valkoinen talo</a> julkaisivat Kiinan ja Yhdysvaltojen yhteislausunnon. Lausunnossa kerrotaan, että tullivälirauhan jatkuminen neuvoteltiin heinäkuun lopulla Tukholmassa pidetyissä kauppaneuvotteluissa.</p>\n\n<p>Maat sopivat toukokuussa, että niiden toisilleen asettamat yli sadan prosentin rangaistustullit menevät tauolle 90 päivän ajaksi. Tauon aikana Yhdysvaltain asettamat tuontitullit ovat olleet 30 prosentissa, Kiinan vastatullit 10 prosentissa.</p>\n\n<p>Trumpin hallinto oli ennen toukokuun sopua asettanut yhteensä 145 prosentin edestä tuontitulleja suurelle määrälle kiinalaistuotteita. Kiina on vuorostaan vastannut omilla 125 prosentin tulleillaan.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008035",
+                    "scheme": "sttsubj",
+                    "name": "Tullimaksut"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008011",
+                    "scheme": "sttsubj",
+                    "name": "Kansainvälinen kauppa"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008033",
+                    "scheme": "sttsubj",
+                    "name": "Kauppapolitiikka"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008015",
+                    "scheme": "sttsubj",
+                    "name": "Kansainväliset kauppakiistat"
+                },
+                {
+                    "code": "6",
+                    "scheme": "sttversion",
+                    "name": "Nettiuutiset"
+                },
+                {
+                    "code": "26768",
+                    "scheme": "sttlocmeta",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "021",
+                    "scheme": "world_region",
+                    "name": "Pohjois-Amerikka"
+                },
+                {
+                    "code": "7212",
+                    "scheme": "sttlocmeta",
+                    "name": "Kiina"
+                },
+                {
+                    "code": "142",
+                    "scheme": "world_region",
+                    "name": "Aasia"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:58:53+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268350",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:31947",
+                "creator_name": "Peltonen Elias",
+                "stt_topics": "685388",
+                "newsItem_guid": "urn:newsml:stt.fi:20250812:107136051"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "26768",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "7212",
+                    "name": "Kiina"
+                }
+            ],
+            "headline": "Trump vahvistaa: Tullivälirauha Kiinan kanssa jatkuu vielä 90 päivää",
+            "charcount": 1357,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T00:37:10+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "version": "5",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi:20250812:107136051",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:49:19+0000",
+            "authors": [
+                {
+                    "code": "Peltonen Elias",
+                    "role": "",
+                    "name": "Peltonen Elias",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi:20250812:107136051"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A20250812%3A107136051"
+        },
+        {
+            "associations": {},
+            "wordcount": 571,
+            "body_html": "<p>Latvia on Suomen tavoin etulinjan Nato-maa, mutta Latviassa rajoja Venäjälle ja Valko-Venäjälle ei ole suljettu. Luvallinen henkilö- ja tavaraliikenne molempiin suuntiin on rajoituksineenkin vilkasta.</p>\n\n<p>Siinä missä itärajansa sulkeneessa Suomessa puhutaan välineellistetyn maahantulon uhasta, Latviassa se on päivittäistä todellisuutta ja tilanne on juuri nyt jälleen pahenemassa.</p>\n\n<p>Latvian rajavartiolaitos kertoo torjuneensa tänä vuonna jo reilusti yli 8   000 laitonta maahantuloyritystä, siinä missä koko viime vuonna vastaavia yrityksiä kirjattiin selvästi alle 6   000 kappaletta. Nykyistä tahtia vuonna 2023 kirjattu 14   500:n laittoman maahantuloyrityksen ennätys lähestyy jo uhkaavasti.</p>\n\n<p>–   Tietysti viranomaisia huolestuttaa kovasti se, millaisena trendi jatkuu loppuvuotta kohden. Paine on kova, ja rajavartiolaitoksen resurssit alkavat olla tiukalla. Kyllä täällä aika varpaillaan ollaan, kertoo Suomen Riian-suurlähettiläs Anne Saloranta STT:lle Riiasta.</p>\n\n<p></p>\n\n<p><b>Kaiken takana on Venäjä</b></p>\n\n<p></p>\n\n<p>Paine koskee nimenomaan Valko-Venäjän vastaista noin 173 kilometrin rajaa. Pidemmän Venäjän vastaisen rajan yli vastaavaa pyrkyä maaston kautta ja aitojen yli Latviaan ei ole havaittu.</p>\n\n<p>Salorannan mukaan perimmäinen paine välineellistettyyn maahantuloon tulee kuitenkin Venäjältä, joka on latvialaisten tulkinnan mukaan valjastanut Valko-Venäjän välikädekseen.</p>\n\n<p>–   Venäjällä ei ole tietenkään intressiä tehdä samaa Venäjän ja Latvian rajalla, koska siinä kärsisivät sitten sen omatkin kauppasuhteet -- rekkaliikenne maiden välillä on aika valtaisaa, Saloranta taustoittaa.</p>\n\n<p>Latvialaiset ovat myös todenneet Valko-Venäjän aktiivisesti auttavan maahanpyrkijöitä, joilla on ollut käytössään muun muassa leikkureita ja tikkaita.</p>\n\n<p>Salorannan mukaan maahantulon vilkastumiseen havahduttiin Latviassa keväällä, jolloin vilkastuminen näkyi ainoalla avoimena olleella rajanylityspaikalla Suomestakin tutulla tavalla. Niinpä Latvia kielsi rajan ylittämisen polkupyörillä tai kävellen, ja vain ajoneuvot sallittiin. Valko-Venäjän kilvissä tosin nekään eivät pääse maahan.</p>\n\n<p></p>\n\n<p><b>Lähi-idästä ja Intiasta</b></p>\n\n<p></p>\n\n<p>Salorannan mukaan käytännössä kaikki rajan yli laittomasti pyrkivät ovat kolmansien maiden kansalaisia, Latvian rajavartiolaitoksen mukaan pääosin Lähi-idästä ja Intiasta – sekä vähäisemmässä määrin Afrikasta.</p>\n\n<p>–   Valko-Venäjä on houkutellut maahan väärin perustein siirtotyövoimaa erityisesti Intiasta ja Pakistanista, mikä on osaltaan kasvattanut Latviaan pyrkivien määrää, Saloranta kertoo.</p>\n\n<p>Hän muistuttaa, että Latviaan on perinteisesti pyritty virallisten rajanylityspaikkojen ulkopuolelta, koska tulijoilla ei ole yleensä aikomusta rekisteröityä ja hakea turvapaikkaa.</p>\n\n<p>–   Tarkoitus on jatkaa matkaa eteenpäin, Saksa on se ykkösmaa, johon pyritään, Saloranta kertoo.</p>\n\n<p>Hänen mukaansa Latvian vastaanottokeskuksissa ei ole tungosta ja monet turvapaikkaa hakeneetkin katoavat hakemusprosessin aikana. Latviasta pääsee helposti eteenpäin, ja Saloranta pohtii, että yksi houkutteleva reitti voisi kulkea autolla Viroon ja sieltä lautalla Suomeen.</p>\n\n<p>–   Tällaisia havaintoja Latvian viranomaisilla ei ole ollut, mutta en sulkisi pois sitäkään mahdollisuutta, Saloranta pohtii.</p>\n\n<p>Suoraan etelään Saksaan suuntaavien matkaa voivat entisestään mutkistaa <a href=\"https://notesfrompoland.com/2025/08/03/poland-to-extend-border-controls-with-germany-and-lithuania-for-two-more-months/\" target=\"_blank\">Puolan</a> Liettuan ja Saksan vastaisilla rajoillaan aloittamat tarkastukset.</p>\n\n<p></p>\n\n<p><b>Tuhannet uhmaavat matkustussuositusta</b></p>\n\n<p></p>\n\n<p>Vaikea järjestetyn maahantulon tilanne huomioiden on ehkä hiukan yllättävää, että muu liikenne rajan yli on vilkasta. Latvian televisio <a href=\"https://eng.lsm.lv/article/society/society/04.08.2025-thousands-still-happy-to-travel-to-belarus-from-latvia-every-month.a609093/\" target=\"_blank\">kertoi</a> viime viikolla jo 40   000 ihmisen matkustaneen tänä vuonna Valko-Venäjälle ja takaisin. Näin siitä huolimatta, että Latvian ulkoministeriön, kuten <a href=\"https://um.fi/matkustustiedote/-/c/BY\" target=\"_blank\">Suomenkin</a>, vahva suositus on välttää matkustamista maahan.</p>\n\n<p>Salorannan mukaan Latviasta matkustaa Valko-Venäjälle myös muiden maiden kansalaisia, kuten moldovalaisia ja ukrainalaisia.</p>\n\n<p>Latvian ulkoministeriö luettelee <a href=\"https://www.mfa.gov.lv/lv/baltkrievija-celojumu-bridinajumi\" target=\"_blank\">suosituksessaan</a> pitkän listan erilaisia vaikeuksia, joihin Latvian kansalainen voi Valko-Venäjällä joutua. Matkustaminen on kuitenkin ainakin toistaiseksi helppoa molemminpuolisen viisumivapauden vuoksi.</p>\n\n<p>Valko-Venäjälle järjestetään Latviasta jopa suosittuja matkatoimistojen ryhmämatkoja. Sellaisten kieltämiseksi on Latvian tv:n mukaan tehty jo lakiesitys, jota parlamentti ei ole vielä ehtinyt käsitellä.</p>\n\n<p></p>\n\n<p><b>Sukulaissuhteita ja salakuljetusta</b></p>\n\n<p></p>\n\n<p>Valko-Venäjän viranomaisten <a href=\"https://eng.belta.by/society/view/belarus-welcomes-nearly-140000-visa-waiver-travelers-since-1-jan-2025-170177-2025/\" target=\"_blank\">mukaan</a> maassa on vieraillut tänä vuonna viisumivapaasti jo lähes 140   000 ihmistä 38:sta Euroopan maasta, enimmäkseen naapurimaista Liettuasta, Latviasta ja Puolasta.</p>\n\n<p>Salorannan mukaan vilkasta liikennettä rajan yli selittävät osaltaan ihmisten tiiviit sukulaisuussuhteet – saman perheen jäseniä saattaa asua molemmin puolin rajaa käytännössä samassa kylässä. Lisäksi Valko-Venäjältä Latviaan kulkee paljon salakuljetustavaraa, kuten tupakkaa ja huumeita, hän lisää.</p>\n\n<p>Salorannan mukaan Suomen ja Latvian rajavartiolaitosten yhteistyö on tiivistä. Suomalaisia rajavartijoita käy hänen mukaansa säännöllisesti komennuksilla Latviassa Euroopan rajaturvallisuusviraston Frontexin kautta.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14003000",
+                    "scheme": "sttsubj",
+                    "name": "Väestökysymykset"
+                },
+                {
+                    "code": "14003003",
+                    "scheme": "sttsubj",
+                    "name": "Laiton maahanmuutto"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11001000",
+                    "scheme": "sttsubj",
+                    "name": "Puolustus"
+                },
+                {
+                    "code": "11001002",
+                    "scheme": "sttsubj",
+                    "name": "Kansallinen turvallisuus Rajavalvonta"
+                },
+                {
+                    "code": "6",
+                    "scheme": "sttversion",
+                    "name": "Nettiuutiset"
+                },
+                {
+                    "code": "24970",
+                    "scheme": "sttlocmeta",
+                    "name": "Latvia"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:58:52+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 1,
+            "extra": {
+                "sttidtype_textid": "122263304",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:1891",
+                "creator_name": "Simojoki Niilo",
+                "stt_topics": "684998",
+                "newsItem_guid": "urn:newsml:stt.fi:20250812:107136768"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "24970",
+                    "name": "Latvia"
+                }
+            ],
+            "byline": "Niilo Simojoki",
+            "headline": "Välineellistetty maahantulo ottaa Latviassa taas uusia kierroksia ja venyttää rajavartioinnin kestokykyä",
+            "charcount": 4964,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:47:28+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "version": "2",
+            "readtime": 2,
+            "original_id": "urn:newsml:stt.fi:20250812:107136768",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:49:20+0000",
+            "authors": [
+                {
+                    "code": "Simojoki Niilo",
+                    "role": "",
+                    "name": "Simojoki Niilo",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi:20250812:107136768"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A20250812%3A107136768"
+        },
+        {
+            "associations": {},
+            "wordcount": 154,
+            "body_html": "<p>Suomen vienti Yhdysvaltoihin putosi vuoden toisella neljänneksellä kymmenen prosenttia viime vuoden vastaavasta ajanjaksosta, kertoo Tilastokeskus.</p>\n\n<p>Tavaroita ja palveluita vietiin huhti-kesäkuussa Yhdysvaltoihin 3,2 miljardin euron arvosta.</p>\n\n<p>Tuonnin arvo Yhdysvalloista oli toisella vuosineljänneksellä 1,7 miljardia euroa. Tuonnin arvo kasvoi seitsemän prosenttia viime vuoden vastaavasta ajanjaksosta.</p>\n\n<p>Tilastokeskuksen yliaktuaarin Reetta Karinluoman mukaan presidentti Donald Trumpin käynnistämät tullineuvottelut eivät vielä keväällä merkittävästi vaikuttaneet Suomen ja Yhdysvaltojen väliseen kauppaan.</p>\n\n<p>–   Vaikka vienti Yhdysvaltoihin on laskussa edellisvuoteen verrattuna, ei tullineuvottelujen vaikutusta ole ainakaan vielä merkittävästi havaittavissa Yhdysvaltojen kaupan kokonaistasoissa, Karinluoma sanoo Tilastokeskuksen <a href=\"https://stat.fi/fi/uutinen/Vienti-Yhdysvaltoihin-vaeheni-tullineuvottelujen-vaikutusta-ei-silti-naey\" target=\"_blank\">tiedotteessa</a>.</p>\n\n<p>Yhdysvallat oli huhti-kesäkuussa Suomen toiseksi tärkein vientimaa Ruotsin jälkeen.</p>\n\n<p>Jos vienti- ja tuontiluvut lasketaan yhteen, Yhdysvallat on Suomen kolmanneksi tärkein kauppakumppani Ruotsin ja Saksan jälkeen.</p>\n\n<p></p>\n\n<p><b>Koko vienti väheni kolme prosenttia</b></p>\n\n<p></p>\n\n<p>Kaiken kaikkiaan Suomen tavaroiden ja palveluiden viennin arvo väheni Tilastokeskuksen mukaan vuoden toisella neljänneksellä kolme prosenttia eli noin miljardi euroa vuotta aiemmasta.</p>\n\n<p>Tavaroiden ja palveluiden tuonnin arvo puolestaan väheni huhti-kesäkuussa kaksi prosenttia eli noin puoli miljardia euroa vuotta aiemmasta.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008035",
+                    "scheme": "sttsubj",
+                    "name": "Tullimaksut"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008011",
+                    "scheme": "sttsubj",
+                    "name": "Kansainvälinen kauppa"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008004",
+                    "scheme": "sttsubj",
+                    "name": "Talouden indikaattorit Talousennusteet"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008031",
+                    "scheme": "sttsubj",
+                    "name": "Vienti"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04008000",
+                    "scheme": "sttsubj",
+                    "name": "Makrotalous"
+                },
+                {
+                    "code": "04008030",
+                    "scheme": "sttsubj",
+                    "name": "Tuonti"
+                },
+                {
+                    "code": "6",
+                    "scheme": "sttversion",
+                    "name": "Nettiuutiset"
+                },
+                {
+                    "code": "26768",
+                    "scheme": "sttlocmeta",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "021",
+                    "scheme": "world_region",
+                    "name": "Pohjois-Amerikka"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:58:51+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 2,
+            "extra": {
+                "sttidtype_textid": "122268598",
+                "filename": "1824760.jpg",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:1728",
+                "creator_name": "Savonen Tuomas",
+                "stt_topics": "685412",
+                "newsItem_guid": "urn:newsml:stt.fi:20250812:107136343"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "26768",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "headline": "Suomen vienti Yhdysvaltoihin putosi kymmenen prosenttia",
+            "charcount": 1409,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T06:48:10+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "version": "4",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi:20250812:107136343",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:49:19+0000",
+            "authors": [
+                {
+                    "code": "Savonen Tuomas",
+                    "role": "",
+                    "name": "Savonen Tuomas",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi:20250812:107136343"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A20250812%3A107136343"
+        },
+        {
+            "coverage_id": "ID_TEXT_122269003",
+            "associations": {},
+            "wordcount": 49,
+            "body_html": "<p>Auringon uv-säteilyn kokonaiskertymä heinäkuussa oli mittaushistorian toiseksi suurin sekä Etelä- että Pohjois-Suomessa, <a href=\"https://www.ilmatieteenlaitos.fi/tiedote/1x6IX3GmgS8XgBpiGCw52s\" target=\"_blank\">kertoo</a> Ilmatieteen laitos.</p>\n\n<p>Aurinkoisen sään takia uv-säteilyltä suojautumisen raja, eli uv-indeksi 3, ylittyi heinäkuussa kuukauden jokaisena päivänä.</p>\n\n<p>Pohjoisessa on mitattu suurempia uv-kertymiä vain heinäkuussa 2018.</p>\n\n<p>Heinäkuun alun tavanomaista alhaisempi ilmakehän otsonimäärä myös edesauttoi uv-lukemien nousun lähelle ennätysarvoja.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttdepartment",
+                    "name": "Kotimaa"
+                },
+                {
+                    "code": "17000000",
+                    "scheme": "sttsubj",
+                    "name": "Sää"
+                },
+                {
+                    "code": "17999000",
+                    "scheme": "sttsubj",
+                    "name": "Sääilmiöt"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttversion",
+                    "name": "Pika"
+                },
+                {
+                    "code": "16927",
+                    "scheme": "sttlocmeta",
+                    "name": "Helsinki"
+                },
+                {
+                    "code": "31",
+                    "scheme": "state",
+                    "name": "Uusimaa"
+                },
+                {
+                    "code": "1",
+                    "scheme": "country",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:58:50+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269003",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:33260",
+                "creator_name": "Rautio Jenna",
+                "stt_topics": "685454",
+                "newsItem_guid": "urn:newsml:stt.fi::107136756"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "16927",
+                    "name": "Helsinki"
+                }
+            ],
+            "headline": "Heinäkuun aurinkoiset päivät kerryttivät uv-säteilyä lähelle ennätyslukemia",
+            "charcount": 455,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:46:40+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685454",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136756",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:46:49+0000",
+            "authors": [
+                {
+                    "code": "Rautio Jenna",
+                    "role": "",
+                    "name": "Rautio Jenna",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136756"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136756"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268977",
+            "associations": {},
+            "wordcount": 136,
+            "body_html": "<p>Jalkapallon Englannin Valioliigan Newcastlen ruotsalainen hyökkääjätähti Alexander Isak haluaa seurasta pois. Ja ilmeisen ehdoitta: The Athleticin toimittaja David Ornstein kirjoitti X-viestipalvelun <a href=\"https://x.com/David_Ornstein/status/1955159244073832600\" target=\"_blank\">tilillään</a>, että Isak on \"järkkymätön\" sen suhteen, ettei pelaa Newcastlessa enää.</p>\n\n<p>Viime kaudella Valioliigan maalitilastossa toiseksi 23 maalillaan sijoittunut 25-vuotias Isak on ollut liigan hallitsevan mestarin Liverpoolin tavoitteissa, ja mies itsekin haluaa Liverpooliin. Mestariseura teki hänestä 110 miljoonan punnan tarjouksen, jonka Newcastle hylkäsi. Valioliigan siirtoaika päättyy 1. syyskuuta.</p>\n\n<p>–  Vaikka siirtoikkuna sulkeutuisikin ilman siirtoa, Isak näkee Newcastle-uransa olevan ohi eikä hänellä ole mitään halua sopeutua enää (paluuseen). Seuran mukaan (Isak) ei ole myynnissä, mutta seuraa kuitenkin markkinatilannetta, Ornstein raportoi.</p>\n\n<p>Newcastle on jo brittimedian mukaan kartoittanut mahdollista Isakin korvaajaa. Benjamin Seskon kerrottiin olevan tavoittelussa, mutta hän valitsi Manchester Unitedin. Chelsean Nicolas Jacksonin arvellaan olevan yksi ehdokas Isakin saappaisiin.</p>\n\n<p>Newcastle avaa uuden valioliigakauden lauantaina vieraspelillä Aston Villaa vastaan.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "16",
+                    "scheme": "sttdepartment",
+                    "name": "Urheilu"
+                },
+                {
+                    "code": "15000000",
+                    "scheme": "sttsubj",
+                    "name": "Urheilu"
+                },
+                {
+                    "code": "15054000",
+                    "scheme": "sttsubj",
+                    "name": "Jalkapallo"
+                },
+                {
+                    "code": "15054987",
+                    "scheme": "sttsubj",
+                    "name": "Englanti Valioliiga"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "6934",
+                    "scheme": "sttlocmeta",
+                    "name": "Britannia"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:58:49+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Kv. kuvaa arkistosta",
+                    "id": "29"
+                },
+                "sttidtype_textid": "122268977",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1881",
+                "creator_name": "Lehikoinen Janne",
+                "stt_topics": "685451",
+                "newsItem_guid": "urn:newsml:stt.fi::107136755"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "6934",
+                    "name": "Britannia"
+                }
+            ],
+            "headline": "Athleticin toimittaja: Alexander Isak on päättänyt, ettei pelaa Newcastlessa enää",
+            "charcount": 1179,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:45:36+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685451",
+            "version": "1",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136755",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:46:11+0000",
+            "authors": [
+                {
+                    "code": "Lehikoinen Janne",
+                    "role": "",
+                    "name": "Lehikoinen Janne",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136755"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136755"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268688",
+            "associations": {},
+            "wordcount": 90,
+            "body_html": "<p>\nFortumin Loviisan ydinvoimalassa alkaa sunnuntaina yli kuukauden kestävä vuosihuolto.</p>\n\n<p>Vuosihuolto alkaa sunnuntaina laitoksen kakkosyksiköstä, minkä jälkeen huolletaan ykkösyksikkö. Huoltotoimien arvioidaan kestävän yhteensä 38 vuorokautta.</p>\n\n<p>Yksiköt huolletaan vuorotellen, joten toinen yksikkö on toiminnassa sillä välin kun toista huolletaan.</p>\n\n<p>Vuosihuolloissa voimalan polttoaineesta vaihdetaan neljäsosa uuteen. Polttoaineen vaihdon lisäksi vuosihuolloissa tehdään useita ennakkohuolto-, kunnossapito- ja tarkastustöitä.</p>\n\n<p>Fortumin mukaan vuosihuolloissa työskentelee yhteensä yli 1  400 ihmistä.</p>\n\n<p>Loviisan voimalaitos työllistää vakituisesti noin 570 työntekijää ja 100 urakoitsijayritysten työntekijää, joiden lisäksi vuosihuoltoihin osallistuu noin 100 kesäharjoittelijaa ja muuta määräaikaista työntekijää sekä noin 650 ulkopuolisten urakoitsijayritysten työntekijää.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04005000",
+                    "scheme": "sttsubj",
+                    "name": "Energia Energian tuotanto Raaka-aineet"
+                },
+                {
+                    "code": "04005006",
+                    "scheme": "sttsubj",
+                    "name": "Sähköntuotanto Sähkönjakelu"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04005000",
+                    "scheme": "sttsubj",
+                    "name": "Energia Energian tuotanto Raaka-aineet"
+                },
+                {
+                    "code": "04005005",
+                    "scheme": "sttsubj",
+                    "name": "Ydinvoima"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "25323",
+                    "scheme": "sttlocmeta",
+                    "name": "Uusimaa"
+                },
+                {
+                    "code": "1",
+                    "scheme": "country",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:51:20+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Arkistokuvaa",
+                    "id": "21"
+                },
+                "sttidtype_textid": "122268688",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1728",
+                "creator_name": "Savonen Tuomas",
+                "stt_topics": "685422",
+                "newsItem_guid": "urn:newsml:stt.fi::107136744"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "25323",
+                    "name": "Uusimaa"
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "headline": "Loviisan ydinvoimalassa alkaa sunnuntaina vuosihuolto",
+            "charcount": 865,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:42:24+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685422",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136744",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:43:01+0000",
+            "authors": [
+                {
+                    "code": "Savonen Tuomas",
+                    "role": "",
+                    "name": "Savonen Tuomas",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136744"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136744"
+        },
+        {
+            "coverage_id": "ID_TEXT_122263304",
+            "associations": {},
+            "wordcount": 583,
+            "body_html": "<h2>Vaikeasta tilanteesta huolimatta Latvian raja Valko-Venäjälle on auki ja luvallinen matkustaminen vilkasta.</h2>\n\n<p>Latvia on Suomen tavoin etulinjan Nato-maa, mutta Latviassa rajoja Venäjälle ja Valko-Venäjälle ei ole suljettu. Luvallinen henkilö- ja tavaraliikenne molempiin suuntiin on rajoituksineenkin vilkasta.</p>\n\n<p>Siinä missä itärajansa sulkeneessa Suomessa puhutaan välineellistetyn maahantulon uhasta, Latviassa se on päivittäistä todellisuutta ja tilanne on juuri nyt jälleen pahenemassa.</p>\n\n<p>Latvian rajavartiolaitos kertoo torjuneensa tänä vuonna jo reilusti yli 8  000 laitonta maahantuloyritystä, siinä missä koko viime vuonna vastaavia yrityksiä kirjattiin selvästi alle 6  000 kappaletta. Nykyistä tahtia vuonna 2023 kirjattu 14  500:n laittoman maahantuloyrityksen ennätys lähestyy jo uhkaavasti.</p>\n\n<p>–  Tietysti viranomaisia huolestuttaa kovasti se, millaisena trendi jatkuu loppuvuotta kohden. Paine on kova, ja rajavartiolaitoksen resurssit alkavat olla tiukalla. Kyllä täällä aika varpaillaan ollaan, kertoo Suomen Riian-suurlähettiläs Anne Saloranta STT:lle Riiasta.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Kaiken takana on Venäjä</h3>\n\n\n<p></p>\n\n<p>Paine koskee nimenomaan Valko-Venäjän vastaista noin 173 kilometrin rajaa. Pidemmän Venäjän vastaisen rajan yli vastaavaa pyrkyä maaston kautta ja aitojen yli Latviaan ei ole havaittu.</p>\n\n<p>Salorannan mukaan perimmäinen paine välineellistettyyn maahantuloon tulee kuitenkin Venäjältä, joka on latvialaisten tulkinnan mukaan valjastanut Valko-Venäjän välikädekseen.</p>\n\n<p>–  Venäjällä ei ole tietenkään intressiä tehdä samaa Venäjän ja Latvian rajalla, koska siinä kärsisivät sitten sen omatkin kauppasuhteet -- rekkaliikenne maiden välillä on aika valtaisaa, Saloranta taustoittaa.</p>\n\n<p>Latvialaiset ovat myös todenneet Valko-Venäjän aktiivisesti auttavan maahanpyrkijöitä, joilla on ollut käytössään muun muassa leikkureita ja tikkaita.</p>\n\n<p>Salorannan mukaan maahantulon vilkastumiseen havahduttiin Latviassa keväällä, jolloin vilkastuminen näkyi ainoalla avoimena olleella rajanylityspaikalla Suomestakin tutulla tavalla. Niinpä Latvia kielsi rajan ylittämisen polkupyörillä tai kävellen, ja vain ajoneuvot sallittiin. Valko-Venäjän kilvissä tosin nekään eivät pääse maahan.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Lähi-idästä ja Intiasta</h3>\n\n\n<p></p>\n\n<p>Salorannan mukaan käytännössä kaikki rajan yli laittomasti pyrkivät ovat kolmansien maiden kansalaisia, Latvian rajavartiolaitoksen mukaan pääosin Lähi-idästä ja Intiasta – sekä vähäisemmässä määrin Afrikasta.</p>\n\n<p>–  Valko-Venäjä on houkutellut maahan väärin perustein siirtotyövoimaa erityisesti Intiasta ja Pakistanista, mikä on osaltaan kasvattanut Latviaan pyrkivien määrää, Saloranta kertoo.</p>\n\n<p>Hän muistuttaa, että Latviaan on perinteisesti pyritty virallisten rajanylityspaikkojen ulkopuolelta, koska tulijoilla ei ole yleensä aikomusta rekisteröityä ja hakea turvapaikkaa.</p>\n\n<p>–  Tarkoitus on jatkaa matkaa eteenpäin, Saksa on se ykkösmaa, johon pyritään, Saloranta kertoo.</p>\n\n<p>Hänen mukaansa Latvian vastaanottokeskuksissa ei ole tungosta ja monet turvapaikkaa hakeneetkin katoavat hakemusprosessin aikana. Latviasta pääsee helposti eteenpäin, ja Saloranta pohtii, että yksi houkutteleva reitti voisi kulkea autolla Viroon ja sieltä lautalla Suomeen.</p>\n\n<p>–  Tällaisia havaintoja Latvian viranomaisilla ei ole ollut, mutta en sulkisi pois sitäkään mahdollisuutta, Saloranta pohtii.</p>\n\n<p>Suoraan etelään Saksaan suuntaavien matkaa voivat entisestään mutkistaa <a href=\"https://notesfrompoland.com/2025/08/03/poland-to-extend-border-controls-with-germany-and-lithuania-for-two-more-months/\" target=\"_blank\">Puolan</a> Liettuan ja Saksan vastaisilla rajoillaan aloittamat tarkastukset.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Tuhannet uhmaavat matkustussuositusta</h3>\n\n\n<p></p>\n\n<p>Vaikea järjestetyn maahantulon tilanne huomioiden on ehkä hiukan yllättävää, että muu liikenne rajan yli on vilkasta. Latvian televisio <a href=\"https://eng.lsm.lv/article/society/society/04.08.2025-thousands-still-happy-to-travel-to-belarus-from-latvia-every-month.a609093/\" target=\"_blank\">kertoi</a> viime viikolla jo 40  000 ihmisen matkustaneen tänä vuonna Valko-Venäjälle ja takaisin. Näin siitä huolimatta, että Latvian ulkoministeriön, kuten <a href=\"https://um.fi/matkustustiedote/-/c/BY\" target=\"_blank\">Suomenkin</a>, vahva suositus on välttää matkustamista maahan.</p>\n\n<p>Salorannan mukaan Latviasta matkustaa Valko-Venäjälle myös muiden maiden kansalaisia, kuten moldovalaisia ja ukrainalaisia.</p>\n\n<p>Latvian ulkoministeriö luettelee <a href=\"https://www.mfa.gov.lv/lv/baltkrievija-celojumu-bridinajumi\" target=\"_blank\">suosituksessaan</a> pitkän listan erilaisia vaikeuksia, joihin Latvian kansalainen voi Valko-Venäjällä joutua. Matkustaminen on kuitenkin ainakin toistaiseksi helppoa molemminpuolisen viisumivapauden vuoksi.</p>\n\n<p>Valko-Venäjälle järjestetään Latviasta jopa suosittuja matkatoimistojen ryhmämatkoja. Sellaisten kieltämiseksi on Latvian tv:n mukaan tehty jo lakiesitys, jota parlamentti ei ole vielä ehtinyt käsitellä.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Sukulaissuhteita ja salakuljetusta</h3>\n\n\n<p></p>\n\n<p>Valko-Venäjän viranomaisten <a href=\"https://eng.belta.by/society/view/belarus-welcomes-nearly-140000-visa-waiver-travelers-since-1-jan-2025-170177-2025/\" target=\"_blank\">mukaan</a> maassa on vieraillut tänä vuonna viisumivapaasti jo lähes 140  000 ihmistä 38:sta Euroopan maasta, enimmäkseen naapurimaista Liettuasta, Latviasta ja Puolasta.</p>\n\n<p>Salorannan mukaan vilkasta liikennettä rajan yli selittävät osaltaan ihmisten tiiviit sukulaisuussuhteet – saman perheen jäseniä saattaa asua molemmin puolin rajaa käytännössä samassa kylässä. Lisäksi Valko-Venäjältä Latviaan kulkee paljon salakuljetustavaraa, kuten tupakkaa ja huumeita, hän lisää.</p>\n\n<p>Salorannan mukaan Suomen ja Latvian rajavartiolaitosten yhteistyö on tiivistä. Suomalaisia rajavartijoita käy hänen mukaansa säännöllisesti komennuksilla Latviassa Euroopan rajaturvallisuusviraston Frontexin kautta.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14003000",
+                    "scheme": "sttsubj",
+                    "name": "Väestökysymykset"
+                },
+                {
+                    "code": "14003003",
+                    "scheme": "sttsubj",
+                    "name": "Laiton maahanmuutto"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11001000",
+                    "scheme": "sttsubj",
+                    "name": "Puolustus"
+                },
+                {
+                    "code": "11001002",
+                    "scheme": "sttsubj",
+                    "name": "Kansallinen turvallisuus Rajavalvonta"
+                },
+                {
+                    "code": "4",
+                    "scheme": "sttversion",
+                    "name": "Pika+"
+                },
+                {
+                    "code": "24970",
+                    "scheme": "sttlocmeta",
+                    "name": "Latvia"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:51:19+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Handoutkuvaa",
+                    "id": "23"
+                },
+                "sttidtype_textid": "122263304",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1891",
+                "creator_name": "Simojoki Niilo",
+                "stt_topics": "684998",
+                "sttnote_private": "Korjattu kieliasua mm. 3. kpl, po. laitonta maahantuloyritystä (ei laitonta maahanpyrkijää), sekä typo jutun puolivälistä sanasta rajanylityspaikkojen. Handoutkuvaa suurlähettiläästä ja kv. kuvaa",
+                "newsItem_guid": "urn:newsml:stt.fi::107130467"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "24970",
+                    "name": "Latvia"
+                }
+            ],
+            "byline": "Niilo Simojoki",
+            "headline": "Välineellistetty maahantulo ottaa Latviassa taas uusia kierroksia ja venyttää rajavartioinnin kestokykyä",
+            "signal": [
+                {
+                    "code": "correction",
+                    "scheme": "http://cv.iptc.org/newscodes/signal/",
+                    "name": "sig:correction"
+                }
+            ],
+            "ednote": "Lähteinä myös uutistoimisto BNS, uutistoimisto Belta ja Notes from Poland -sivusto.",
+            "charcount": 5065,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:00:29+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:684998",
+            "version": "2",
+            "readtime": 2,
+            "original_id": "urn:newsml:stt.fi::107130467",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:38:11+0000",
+            "authors": [
+                {
+                    "code": "Simojoki Niilo",
+                    "role": "",
+                    "name": "Simojoki Niilo",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107130467"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107130467"
+        },
+        {
+            "associations": {},
+            "wordcount": 156,
+            "body_html": "<p>Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut paperikone 2:n mahdollisesta sulkemisesta. Asiasta kertoo eteläafrikkalaiseen Sappi-konserniin kuuluva Sappi Europe.</p>\n\n<p>Muutosneuvottelut koskevat enintään sataa työtehtävää tehtaalla. Tehtaalla työskentelee kaikkiaan noin 550 ihmistä.</p>\n\n<p>Jos paperikone suljetaan, vähenisi päällystetyn aikakauslehtipaperin vuosituotantokapasiteetti tehtaalla 175   000 tonnilla. Toimintaa tehtaalla jatkaisivat paperikone 1 ja 3.</p>\n\n<p>Sappi Europen mukaan muutosneuvotteluilla vastataan graafisten papereiden kysynnän rakenteelliseen laskuun Euroopassa sekä pitkäkestoisiin taloudellisiin haasteisiin.</p>\n\n<p></p>\n\n<p><b>Kaupunki tapaa Sappin johtoa </b></p>\n\n<p></p>\n\n<p>Lohjan kaupunki kertoo käynnistäneensä tänään Sappin ilmoituksen pohjalta tukivalmistelut, joita varten se on muodostanut työryhmän. Kaupungin työllisyys- ja yrityspalvelut voivat tarjota työntekijöille muun muassa työllistymisneuvontaa ja työ- ja koulutusmahdollisuuksien kartoitusta, kaupunki kertoo <a href=\"https://www.lohja.fi/ajankohtaiset/sappi-aloittaa-muutosneuvottelut-lohjalla-kaupunki-kaynnisti-tukivalmistelut/\" target=\"_blank\">tiedotteessa</a>.</p>\n\n<p>Kaupungin johto myös tapaa Sappin johtoa huomenna keskustellakseen tilanteesta ja sen vaikutuksista.</p>\n\n<p>Kirkniemen tehtaan kaikki kolme paperikonetta valmistavat päällystettyä aikakauslehtipaperia. Tehdas sijaitsee Uudellamaalla Lohjan Jönsbölen kaupunginosassa.</p>\n\n<p>M-real eli nykyinen Metsä Board myi Kirkniemen, Kankaan, saksalaisen Stockstadtin ja sveitsiläisen Biberistin paperitehtaat Sappille vuonna 2008. Kauppahinta oli 750 miljoonaa euroa. Sappi sulki Biberistin ja Jyväskylässä sijainneen Kankaan tehtaat 2010-luvun taitteessa.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04013000",
+                    "scheme": "sttsubj",
+                    "name": "Prosessiteollisuus Metsä- ja paperiteollisuus"
+                },
+                {
+                    "code": "04013004",
+                    "scheme": "sttsubj",
+                    "name": "Paperiteollisuus"
+                },
+                {
+                    "code": "09000000",
+                    "scheme": "sttsubj",
+                    "name": "Työelämä"
+                },
+                {
+                    "code": "09999000",
+                    "scheme": "sttsubj",
+                    "name": "Yt-neuvottelut"
+                },
+                {
+                    "code": "6",
+                    "scheme": "sttversion",
+                    "name": "Nettiuutiset"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "25323",
+                    "scheme": "sttlocmeta",
+                    "name": "Uusimaa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:42:20+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268943",
+                "filename": "1411667.jpg",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:33828",
+                "creator_name": "Uusitalo Aliisa",
+                "stt_topics": "685448",
+                "newsItem_guid": "urn:newsml:stt.fi:20250812:107136706"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "25323",
+                    "name": "Uusimaa"
+                }
+            ],
+            "byline": "Aliisa Uusitalo",
+            "headline": "Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut – paperikone 2 sulku-uhan alla",
+            "charcount": 1501,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:20:08+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "version": "3",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi:20250812:107136706",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:31:51+0000",
+            "authors": [
+                {
+                    "code": "Uusitalo Aliisa",
+                    "role": "",
+                    "name": "Uusitalo Aliisa",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi:20250812:107136706"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A20250812%3A107136706"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268943",
+            "associations": {},
+            "wordcount": 163,
+            "body_html": "<h2>Muutosneuvottelut koskevat enintään sataa työtehtävää tehtaalla. </h2>\n\n<p>Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut paperikone 2:n mahdollisesta sulkemisesta. Asiasta kertoo eteläafrikkalaiseen Sappi-konserniin kuuluva Sappi Europe.</p>\n\n<p>Muutosneuvottelut koskevat enintään sataa työtehtävää tehtaalla. Tehtaalla työskentelee kaikkiaan noin 550 ihmistä.</p>\n\n<p>Jos paperikone suljetaan, vähenisi päällystetyn aikakauslehtipaperin vuosituotantokapasiteetti tehtaalla 175  000 tonnilla. Toimintaa tehtaalla jatkaisivat paperikone 1 ja 3.</p>\n\n<p>Sappi Europen mukaan muutosneuvotteluilla vastataan graafisten papereiden kysynnän rakenteelliseen laskuun Euroopassa sekä pitkäkestoisiin taloudellisiin haasteisiin.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Kaupunki tapaa huomenna Sappin johtoa </h3>\n\n\n<p></p>\n\n<p>Lohjan kaupunki kertoo käynnistäneensä tänään Sappin ilmoituksen pohjalta tukivalmistelut, joita varten se on muodostanut työryhmän. Kaupungin työllisyys- ja yrityspalvelut voivat tarjota työntekijöille muun muassa työllistymisneuvontaa ja työ- ja koulutusmahdollisuuksien kartoitusta, kaupunki kertoo <a href=\"https://www.lohja.fi/ajankohtaiset/sappi-aloittaa-muutosneuvottelut-lohjalla-kaupunki-kaynnisti-tukivalmistelut/\" target=\"_blank\">tiedotteessa</a>.</p>\n\n<p>Kaupungin johto myös tapaa Sappin johtoa huomenna keskustellakseen tilanteesta ja sen vaikutuksista.</p>\n\n<p>Kirkniemen tehtaan kaikki kolme paperikonetta valmistavat päällystettyä aikakauslehtipaperia. Tehdas sijaitsee Uudellamaalla Lohjan Jönsbölen kaupunginosassa.</p>\n\n<p>M-real eli nykyinen Metsä Board myi Kirkniemen, Kankaan, saksalaisen Stockstadtin ja sveitsiläisen Biberistin paperitehtaat Sappille vuonna 2008. Kauppahinta oli 750 miljoonaa euroa. Sappi sulki Biberistin ja Jyväskylässä sijainneen Kankaan tehtaat 2010-luvun taitteessa.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04013000",
+                    "scheme": "sttsubj",
+                    "name": "Prosessiteollisuus Metsä- ja paperiteollisuus"
+                },
+                {
+                    "code": "04013004",
+                    "scheme": "sttsubj",
+                    "name": "Paperiteollisuus"
+                },
+                {
+                    "code": "09000000",
+                    "scheme": "sttsubj",
+                    "name": "Työelämä"
+                },
+                {
+                    "code": "09999000",
+                    "scheme": "sttsubj",
+                    "name": "Yt-neuvottelut"
+                },
+                {
+                    "code": "4",
+                    "scheme": "sttversion",
+                    "name": "Pika+"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "25323",
+                    "scheme": "sttlocmeta",
+                    "name": "Uusimaa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:42:19+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Arkistokuvaa",
+                    "id": "21"
+                },
+                "sttidtype_textid": "122268943",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:33828",
+                "creator_name": "Uusitalo Aliisa",
+                "stt_topics": "685448",
+                "sttnote_private": "Päivitetty väliotsikon alle Lohjan kaupungin tiedotteesta.",
+                "newsItem_guid": "urn:newsml:stt.fi::107136691"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "25323",
+                    "name": "Uusimaa"
+                }
+            ],
+            "byline": "Aliisa Uusitalo",
+            "headline": "Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut – paperikone 2 sulku-uhan alla",
+            "signal": [
+                {
+                    "code": "update",
+                    "scheme": "http://cv.iptc.org/newscodes/signal/",
+                    "name": "sig:update"
+                }
+            ],
+            "charcount": 1575,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:17:40+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685448",
+            "version": "2",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136691",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:30:08+0000",
+            "authors": [
+                {
+                    "code": "Uusitalo Aliisa",
+                    "role": "",
+                    "name": "Uusitalo Aliisa",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136691"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136691"
+        },
+        {
+            "associations": {},
+            "wordcount": 107,
+            "body_html": "<p>22 maan parlamenttien ulkoasiainvaliokuntien puheenjohtajat vaativat yhteisessä julistuksessaan Yhdysvaltain ja Venäjän presidenttejä Donald Trumpia ja Vladimir Putinia kunnioittamaan Ukrainan itsemääräämisoikeutta Alaskassa perjantaina järjestettävässä tapaamisessa.</p>\n\n<p>–   Kaikkien Alaskassa 15. elokuuta 2025 tai sen jälkeen käytävissä neuvotteluissa saavutettavien sopimusten on lujasti ylläpidettävä Ukrainan itsemääräämisoikeutta, alueellista koskemattomuutta, perustuslakia ja YK:n peruskirjan periaatteita, puheenjohtajat kirjoittavat julistuksessaan. </p>\n\n<p>–   On äärimmäisen tärkeää, ettei Venäjää palkita Ukrainaa vastaan ​​käymästään raa'asta ja laittomasta hyökkäyssodasta alueellisilla eduilla, puheenjohtajat jatkavat.</p>\n\n<p>Puheenjohtajat korostavat, että Ukrainan tulevaisuudesta voivat päättää vain ukrainalaiset itse.</p>\n\n<p>Julistuksen allekirjoittivat Britannian, Italian, Puolan, Ranskan, Saksan ja Ukrainan parlamenttien ulkoasiainvaliokuntien puheenjohtajien lisäksi myös muun muassa kaikkien Pohjoismaiden ja Baltian maiden valiokuntien puheenjohtajat. Suomesta julistuksen allekirjoitti Johannes Koskinen (sd.).</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11002000",
+                    "scheme": "sttsubj",
+                    "name": "Diplomatia Ulkopolitiikka"
+                },
+                {
+                    "code": "11002003",
+                    "scheme": "sttsubj",
+                    "name": "Rauhanneuvottelut"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11002000",
+                    "scheme": "sttsubj",
+                    "name": "Diplomatia Ulkopolitiikka"
+                },
+                {
+                    "code": "11002002",
+                    "scheme": "sttsubj",
+                    "name": "Kansainväliset suhteet"
+                },
+                {
+                    "code": "16000000",
+                    "scheme": "sttsubj",
+                    "name": "Levottomuudet Konfliktit Sodat"
+                },
+                {
+                    "code": "16009000",
+                    "scheme": "sttsubj",
+                    "name": "Sodat"
+                },
+                {
+                    "code": "6",
+                    "scheme": "sttversion",
+                    "name": "Nettiuutiset"
+                },
+                {
+                    "code": "8734",
+                    "scheme": "sttlocmeta",
+                    "name": "Venäjä"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "26768",
+                    "scheme": "sttlocmeta",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "021",
+                    "scheme": "world_region",
+                    "name": "Pohjois-Amerikka"
+                },
+                {
+                    "code": "6965",
+                    "scheme": "sttlocmeta",
+                    "name": "Ukraina"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:33:21+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268923",
+                "filename": "1805561.jpg",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1728",
+                "creator_name": "Savonen Tuomas",
+                "stt_topics": "685445",
+                "newsItem_guid": "urn:newsml:stt.fi:20250812:107136740"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8734",
+                    "name": "Venäjä"
+                },
+                {
+                    "code": "26768",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "6965",
+                    "name": "Ukraina"
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "headline": "Ulkoasiainvaliokuntien puheenjohtajat vaativat Trumpia ja Putinia kunnioittamaan Ukrainan suvereniteettia",
+            "charcount": 1112,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:27:39+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "version": "2",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi:20250812:107136740",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:28:20+0000",
+            "authors": [
+                {
+                    "code": "Savonen Tuomas",
+                    "role": "",
+                    "name": "Savonen Tuomas",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi:20250812:107136740"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A20250812%3A107136740"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268923",
+            "associations": {},
+            "wordcount": 114,
+            "body_html": "<h2>\"Ukrainan tulevaisuudesta voivat päättää vain ukrainalaiset itse.\"</h2>\n\n<p>22 maan parlamenttien ulkoasiainvaliokuntien puheenjohtajat vaativat yhteisessä julistuksessaan Yhdysvaltain ja Venäjän presidenttejä Donald Trumpia ja Vladimir Putinia kunnioittamaan Ukrainan itsemääräämisoikeutta Alaskassa perjantaina järjestettävässä tapaamisessa.</p>\n\n<p>–  Kaikkien Alaskassa 15. elokuuta 2025 tai sen jälkeen käytävissä neuvotteluissa saavutettavien sopimusten on lujasti ylläpidettävä Ukrainan itsemääräämisoikeutta, alueellista koskemattomuutta, perustuslakia ja YK:n peruskirjan periaatteita, puheenjohtajat kirjoittavat julistuksessaan. </p>\n\n<p>–  On äärimmäisen tärkeää, ettei Venäjää palkita Ukrainaa vastaan ​​käymästään raa'asta ja laittomasta hyökkäyssodasta alueellisilla eduilla, puheenjohtajat jatkavat.</p>\n\n<p>Puheenjohtajat korostavat, että Ukrainan tulevaisuudesta voivat päättää vain ukrainalaiset itse.</p>\n\n<p>Julistuksen allekirjoittivat Britannian, Italian, Puolan, Ranskan, Saksan ja Ukrainan parlamenttien ulkoasiainvaliokuntien puheenjohtajien lisäksi myös muun muassa kaikkien Pohjoismaiden ja Baltian maiden valiokuntien puheenjohtajat. Suomesta julistuksen allekirjoitti Johannes Koskinen (sd.).</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11002000",
+                    "scheme": "sttsubj",
+                    "name": "Diplomatia Ulkopolitiikka"
+                },
+                {
+                    "code": "11002003",
+                    "scheme": "sttsubj",
+                    "name": "Rauhanneuvottelut"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11002000",
+                    "scheme": "sttsubj",
+                    "name": "Diplomatia Ulkopolitiikka"
+                },
+                {
+                    "code": "11002002",
+                    "scheme": "sttsubj",
+                    "name": "Kansainväliset suhteet"
+                },
+                {
+                    "code": "16000000",
+                    "scheme": "sttsubj",
+                    "name": "Levottomuudet Konfliktit Sodat"
+                },
+                {
+                    "code": "16009000",
+                    "scheme": "sttsubj",
+                    "name": "Sodat"
+                },
+                {
+                    "code": "4",
+                    "scheme": "sttversion",
+                    "name": "Pika+"
+                },
+                {
+                    "code": "8734",
+                    "scheme": "sttlocmeta",
+                    "name": "Venäjä"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "26768",
+                    "scheme": "sttlocmeta",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "021",
+                    "scheme": "world_region",
+                    "name": "Pohjois-Amerikka"
+                },
+                {
+                    "code": "6965",
+                    "scheme": "sttlocmeta",
+                    "name": "Ukraina"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:33:20+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268923",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1728",
+                "creator_name": "Savonen Tuomas",
+                "stt_topics": "685445",
+                "newsItem_guid": "urn:newsml:stt.fi::107136716"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8734",
+                    "name": "Venäjä"
+                },
+                {
+                    "code": "26768",
+                    "name": "Yhdysvallat "
+                },
+                {
+                    "code": "6965",
+                    "name": "Ukraina"
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "headline": "Ulkoasiainvaliokuntien puheenjohtajat vaativat Trumpia ja Putinia kunnioittamaan Ukrainan suvereniteettia",
+            "charcount": 1176,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:26:26+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685445",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136716",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:26:33+0000",
+            "authors": [
+                {
+                    "code": "Savonen Tuomas",
+                    "role": "",
+                    "name": "Savonen Tuomas",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136716"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136716"
+        },
+        {
+            "associations": {},
+            "wordcount": 550,
+            "body_html": "<p>Tervetuloa Helmi-ohjelman ministeri- ja mediaretkelle perjantaina 22. elokuuta! Retkellä vierailemme ympäristöministeri Sari Multalan kanssa Helmi-ohjelmassa kunnostetuissa kohteissa ja kuulemme perinnebiotooppien sekä lehtojen hoidosta.</p>\n\n<p></p>\n\n<p>Aihe: Helmi-ohjelman ministeri- ja mediaretki Paikka: Helmi-elinympäristöohjelmassa hoidetut ja kunnostetut kohteet Kirkkonummella Aika: perjantai 22. elokuuta kello 13–17</p>\n\n<p></p>\n\n<p>Perinnebiotoopit ovat perinteisen maankäytön synnyttämiä luonnonlaitumia, laidunniittyjä, hakamaita, metsälaitumia ja niittoniittyjä. Perinnebiotooppien hoitaminen auttaa niissä elävää runsasta uhanalaista lajistoa.  </p>\n\n<p></p>\n\n<p>Lehtojen osuus Suomen metsien pinta-alasta on alle kaksi prosenttia, mutta kaikista uhanalaisista metsälajeista lehtojen lajeja on peräti 45 prosenttia. Lehtojen hoito on keskeistä luontokadon torjunnassa. </p>\n\n<p></p>\n\n<p>Ilmoittaudu mukaan viimeistään torstaina 14.8. </p>\n\n<p></p>\n\n<p>EU:n ennallistamisasetuksen myötä ennallistaminen ja luonnonhoito ovat entistäkin laajemman kiinnostuksen kohteena ja vapaaehtoiset keinot, kuten Helmi-ohjelma, ovat keskeinen osa luontokadon torjuntaa. </p>\n\n<p></p>\n\n<p>Helmi-elinympäristöohjelma on ollut vuodesta 2021 alkaen Suomen merkittävin ennallistamista ja luonnonhoitoa toteuttava ohjelma. Tervetuloa kuulemaan ja keskustelemaan Helmi-ohjelman etenemisestä sekä tapaamaan ohjelman asiantuntijajoukkoa maastokohteiden äärelle! </p>\n\n<p></p>\n\n<p>Ilmoittautuminen  </p>\n\n<p></p>\n\n<p>Ilmoittautumislinkki tilaisuuteen (https://www.lyyti.fi/reg/Helmi_ministeri_ja_mediaretki_0391: Helmi- ministeri- ja mediaretki)</p>\n\n<p></p>\n\n<p>Aikataulu </p>\n\n<p></p>\n\n<p>13.00 Lähtö Kiasman bussipysäkiltä  </p>\n\n<p></p>\n\n<p>Matkalla Lohjalle Helmi-ohjelman asiantuntijat esittelevät ohjelmaa ja kuulijoilla on mahdollisuus osallistua keskusteluun (bussimatka noin 1h). </p>\n\n<p></p>\n\n<p>14.00 Siirtyminen bussilla kohteelle 1: Vrångnäsudden, Hemgårdintie 95, 02400 Kirkkonummi </p>\n\n<p></p>\n\n<p>Kohteella Uudenmaan ELY-keskuksen asiantuntijat ja kohteella toimia tehnyt urakoitsija kertovat jalopuumetsien hoidon tavoitteista ja jo tehdyistä toimenpiteistä. </p>\n\n<p></p>\n\n<p>14.45 Siirtyminen bussilla kohteelle 2: Volsin kartano,  Volsin Puistotie, 02400 Kirkkonummi </p>\n\n<p></p>\n\n<p>Volsin kartanolla Uudenmaan ELY-keskuksen esittelyä perinnebiotooppien hoidosta, maanomistajan kokemuksia Kunta- ja Järjestö-Helmistä. Lopuksi aikaa kysymyksille ja ministerin haastattelulle.</p>\n\n<p></p>\n\n<p>15.35 Siirtyminen bussilla kohteelle 3: Saltfjärden, Saltfjärdintie, 02480 Kirkkonummi </p>\n\n<p></p>\n\n<p>Kohteella Metsähallituksen luontopalvelujen edustajat kertovat linnustollisesti arvokkaiden perinnebiotooppikohteiden hoidosta.  </p>\n\n<p></p>\n\n<p>16:30 Bussimatka Helsinkiin (n. 45 min)  </p>\n\n<p></p>\n\n<p>Paluumatkalla aikaa keskustelulle ja kysymyksille. </p>\n\n<p></p>\n\n<p>17.15 Paluu Kiasman bussipysäkille </p>\n\n<p></p>\n\n<p>Vierailukohteet </p>\n\n<p></p>\n\n<p>Vrångnäsuddenin jalopuumetsä </p>\n\n<p></p>\n\n<p>Vrångnäsuddenin lehtoalueen luonnonsuojelualue on 8,5 hehtaarin kokoinen ja sijaitsee Kirkkonummella Volsin kylässä, Humaljärven pohjoisrannalla. Alue kuuluu Meiko-Lappträskin Natura-alueeseen. Alueella kasvaa järeitä ja pitkäikäisiä tammia, lehmuksia ja haapoja sekä pähkinäpensaslehtoa.  </p>\n\n<p></p>\n\n<p>Keväällä 2025 alueelle tehtiin erilaisia hoitotoimia, kuten puiden kaatamista, jotta jalopuut pääsevät järeytymään entisestään. Osa rungoista jätettiin maalahopuiksi minkä lisäksi myös pystylahopuita tuotettiin. Alueelle tuotiin lampaita ylläpitämään perinnebiotooppia ja turvaamaan sille ominaisen lajiston elinympäristön säilyminen. </p>\n\n<p></p>\n\n<p>Kohdetta esittelee Uudenmaan ELY-keskuksesta Paula Salomäki.  </p>\n\n<p></p>\n\n<p>Volsin kartano </p>\n\n<p></p>\n\n<p>Reetta Kandolinin lampaat ovat laiduntaneet Volsin kartanon laitumilla vuodesta 2022 lähtien. Volsin kartanon pihalaidun ja rantalaidun on luokiteltu paikallisesti arvokkaiksi perinnebiotoopeiksi ja niitä on kunnostettu Kunta- ja Järjestö-Helmi -ohjelman avulla ja laidunnettu maatalouden ympäristösopimuksen turvin.  </p>\n\n<p></p>\n\n<p>Kohdetta esittelevät tilan asiamies Håkan Näsman sekä luonnonsuojeluasiantuntija Sonja Still ELY-keskuksesta. </p>\n\n<p></p>\n\n<p>Saltfjärdenin lintuvesikohde  </p>\n\n<p></p>\n\n<p>Saltfjärden on kansallisesti tärkeä lintualue eli niin sanottu FINIBA-alue, jolla on suuri merkitys niin alueella pesivien kuin levähtävien ja ruokailevienkin lintujen elinympäristönä. Valtakunnallisessa perinnemaisemainventoinnissa rantaniitty on arvioitu paikallisesti arvokkaaksi perinnebiotooppikohteeksi. Alue kuuluu Natura 2000 -verkostoon ja sille on perustettu kaksi yksityistä luonnonsuojelualuetta. </p>\n\n<p></p>\n\n<p>Saltfjärdenin luonnonhoidon päätavoitteena on alueella levähtävien ja pesivien lintujen elinympäristöjen säilyttäminen ja parantaminen. Lintujen elinympäristöjä parannetaan mm. lisäämällä ja säilyttämällä avoimia alueita sekä kosteutta alueen keskiosassa. Osa korkeakasvuisesta ruovikosta on kunnostettu matalakasvuiseksi luhta- tai rantaniityksi. Laidunnuksella ylläpidetään myös perinnebiotooppeja ja niistä riippuvia eliölajeja sekä suojellaan kulttuurihistoriallisesti arvokasta perinnemaisemaa. </p>\n\n<p></p>\n\n<p>Kohdetta esittelevät Metsähallituksen luontopalvelujen asiantuntijat. </p>\n\n<p></p>\n\n<p>https://docs.google.com/forms/d/e/1FAIpQLSfQ4yeHI8hUEXK14u1tVvTBWCBw73mefCoXqeyj3vufnkE0KA/viewform?usp=sharing&amp;ouid=114052843441820860374: Täältä voit lähettää ennakkokysymyksiä Helmi-ohjelman asiantuntijoille </p>\n\n<p></p>\n\n<p>Ilmoittaudu mukaan viimeistään torstaina 14.8.  </p>\n\n<p></p>\n\n<p>Helmi-ohjelma</p>\n\n<p></p>\n\n<p>Helmi-ohjelmassa tartumme Suomen luonnon köyhtymisen suurimpaan suoraan syyhyn: elinympäristöjen vähenemiseen ja laadun heikkenemiseen. Helmi-elinympäristöohjelma on ympäristöministeriön ja maa- ja metsätalousministeriön yhteinen ohjelma, jota toteuttavat yhdessä ministeriöiden hallinnonalat sekä kunnat ja järjestöt. Toimia tehdään sekä suojelualueilla että niiden ulkopuolella. Toimet perustuvat maanomistajien vapaaehtoisuuteen. </p>\n\n<p></p>\n\n<p>Lisätietoja </p>\n\n<p></p>\n\n<p>Venla Pennanen </p>\n\n<p></p>\n\n<p>Viestinnän korkeakouluharjoittelija mailto:etunimi.sukunimi@gov.fi: etunimi.sukunimi@gov.fi </p>\n\n<p></p>\n\n<p>Inka Keränen  </p>\n\n<p></p>\n\n<p>Helmi-elinympäristöohjelman koordinaattori mailto:etunimi.sukunimi@gov.fi: etunimi.sukunimi@gov.fi </p>\n\n<p></p>\n\n<p> </p>\n\n<p>Yhteyshenkilöt:</p>\n\n<p>Inka Keränen</p>\n\n<p>Helmi-elinympäristöohjelman koordinaattori</p>\n\n<p>0295250403</p>\n\n<p>inka.keränen@gov.fi</p>\n\n<p></p>\n\n<p>Venla Pennanen</p>\n\n<p>Korkeakouluharjoittelija, Viestintä</p>\n\n<p>0295250070</p>\n\n<p>venla.pennanen@gov.fi</p>\n\n<p></p>\n\n<p>Pääkuva:</p>\n\n<p></p>\n\n<p>https://www.sttinfo.fi/data/images/public/64783600/71350849/d34a0b59-bccc-4eb0-bb27-d53c9ae47fe4.jpg</p>\n\n<p></p>\n\n<p></p>\n\n<p></p>",
+            "subject": [
+                {
+                    "code": "13",
+                    "scheme": "sttdepartment",
+                    "name": "Toimituksille tiedoksi"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                }
+            ],
+            "language": "en",
+            "source": "STT-STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:33:19+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122269000",
+                "creator_id": "stteditorid:1",
+                "newsItem_guid": "urn:newsml:stt.fi::107136736"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "headline": "*** Tiedote/Ympäristöministeriö: Muistutuskutsu: Helmi-ohjelman ministeri- & mediaretki 22.8.2025 ***",
+            "charcount": 5971,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:21:33+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "description_text": "Muistutuskutsu: Helmi-ohjelman ministeri-  mediaretki 22.8.2025",
+            "priority": 6,
+            "version": "1",
+            "description_html": "Muistutuskutsu: Helmi-ohjelman ministeri- & mediaretki 22.8.2025",
+            "readtime": 2,
+            "original_id": "urn:newsml:stt.fi::107136736",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:22:06+0000",
+            "authors": [
+                {
+                    "code": "None",
+                    "role": "",
+                    "name": null,
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136736"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136736"
+        },
+        {
+            "associations": {},
+            "wordcount": 318,
+            "body_html": "<p>Aurinkoinen heinäkuu näkyi UV-säteilykertymissä: auringon UV-säteilyn heinäkuun kokonaiskertymä oli mittaushistorian toiseksi suurin sekä Etelä- että Pohjois-Suomessa. Etelä-Suomessa auringolta on syytä suojautua vielä syyskuuhun saakka.</p>\n\n<p></p>\n\n<p>Kulunut heinäkuu oli mieleenpainuva paitsi lämpötilojen suhteen, myös aurinkoisten päivien osalta. Ilmatieteen laitoksen Helsingin mittausaseman UV-säteilykertymä oli noin viidenneksen suurempi kuin tavanomaisesti, ja UV-kertymä oli mittaushistorian toiseksi suurin vuoden 2021 jälkeen. Saman verran suurempi oli myös Pohjois-Suomen UV-kertymä; pohjoisessa on mitattu suurempia UV-kertymiä vain heinäkuussa 2018.</p>\n\n<p></p>\n\n<p>Heinäkuun alkupuolen tavanomaista alhaisempi ilmakehän otsonimäärä myös siivitti hetkelliset UV-lukemat lähelle ennätysarvoja.</p>\n\n<p></p>\n\n<p>\"Heinäkuun toisena päivänä UV-indeksi lähenteli arvoa 7, mikä on korkeimpia Etelä-Suomessa mitattuja arvoja\", toteaa Ilmatieteen laitoksen tutkija Kaisa Lakkala.</p>\n\n<p></p>\n\n<p>Auringon UV-säteilyltä on syytä suojautua elo-syyskuussakin</p>\n\n<p></p>\n\n<p>Aurinkoisen sään takia UV-säteilyltä suojautumisen raja, eli UV-indeksi 3, ylittyi heinäkuussa kuukauden jokaisena päivänä. Etelä-Suomessa UV-indeksi on kohonnut arvoon 5 tälläkin viikolla, joten UV-säteilyltä on syytä suojautua vielä tässäkin vaiheessa kesää.</p>\n\n<p></p>\n\n<p>\"Etelä-Suomessa UV-indeksi voi aurinkoisena päivänä saavuttaa suojautumisrajan syyskuun puoliväliin saakka ja Pohjois-Suomessa elokuun loppuun saakka\", Lakkala korostaa.</p>\n\n<p></p>\n\n<p>Auringon UV-säteily voi vaurioittaa ihon kudoksia myös tuulisena ja viileänä päivänä.</p>\n\n<p></p>\n\n<p>Liiallinen UV-säteily on terveysriski</p>\n\n<p></p>\n\n<p>Vaikka auringossa tuntuu mukavalta, sen hellittävänä ei kannata viettää liian pitkiä aikoja. Auringon UV-säteily aiheuttaa ihon palamista, ja suuret kerta-annokset lisäävät ihomelanooman riskiä.</p>\n\n<p></p>\n\n<p>Auringossa olemisen määrällä on väliä, sillä iho ei unohda saamaansa UV-säteilyä. Koko eliniän aikana kertyvän UV-säteilyaltistuksen vähentäminen pienentää ihomelanooman lisäksi muidenkin ihosyöpien riskiä. UV-säteily myös vanhentaa ihoa ja lisää riskiä sairastua silmäsairauksiin.</p>\n\n<p></p>\n\n<p>Liialliselta UV-säteilyltä suojautumiseen voi hyödyntää UV-indeksiä, jonka voi tarkistaa Ilmatieteen laitoksen verkkopalvelusta ja mobiilisovelluksesta. Palveluista voi myös tarkistaa ulkomaan kohteen UV-indeksin. Monessa maassa UV-indeksi on huomattavasti korkeampi kuin Suomessa, jolloin iho voi palaa huomattavasti lyhyemmässä ajassa kuin kotimaassa.</p>\n\n<p></p>\n\n<p> </p>\n\n<p>Yhteyshenkilöt:</p>\n\n<p>Tutkija Kaisa Lakkala, Ilmatieteen laitos, puh. 040 747 6792, etunimi.sukunimi@fmi.fi</p>\n\n<p>Linkit:</p>\n\n<p>UV-indeksin ennuste <a href=\"https://www.ilmatieteenlaitos.fi/uvi-ennuste\" target=\"_blank\">https://www.ilmatieteenlaitos.fi/uvi-ennuste</a></p>\n\n<p>Mitä ovat UV-säteily ja UV-indeksi? <a href=\"https://www.ilmatieteenlaitos.fi/ultraviolettisateily\" target=\"_blank\">https://www.ilmatieteenlaitos.fi/ultraviolettisateily</a></p>\n\n<p>Suojautuminen auringolta <a href=\"https://www.ilmatieteenlaitos.fi/suojautuminen-auringolta\" target=\"_blank\">https://www.ilmatieteenlaitos.fi/suojautuminen-auringolta</a></p>\n\n<p></p>\n\n<p>Tietoja julkaisijastaIlmatieteen laitos havainnoi ja tutkii ilmakehää, lähiavaruutta ja meriä. Lisäksi se tuottaa palveluita säästä, merestä, ilmastosta, ilmanlaadusta ja lähiavaruudesta yleisen turvallisuuden, elinkeinoelämän ja kansalaisten tarpeisiin. Osoitteessa https://www.ilmatieteenlaitos.fi/: ilmatieteenlaitos.fi voit tutustua meihin paremmin.</p>",
+            "subject": [
+                {
+                    "code": "12",
+                    "scheme": "sttdepartment",
+                    "name": "Tiedotepalvelu"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                }
+            ],
+            "language": "en",
+            "source": "STT-STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:28:50+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268992",
+                "creator_id": "stteditorid:1",
+                "newsItem_guid": "urn:newsml:stt.fi::107136727"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "headline": "*** Tiedote/Ilmatieteen laitos: UV-säteilyn kertymät lähellä ennätystä heinäkuussa ***",
+            "charcount": 3070,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:18:34+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "description_text": "UV-säteilyn kertymät lähellä ennätystä heinäkuussa",
+            "priority": 6,
+            "version": "1",
+            "description_html": "UV-säteilyn kertymät lähellä ennätystä heinäkuussa",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136727",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:18:41+0000",
+            "authors": [
+                {
+                    "code": "None",
+                    "role": "",
+                    "name": null,
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136727"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136727"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268739",
+            "associations": {},
+            "wordcount": 88,
+            "body_html": "<p>Intian Himalajalla ainakin 68 ihmistä oli tiistaina yhä kateissa alueelle viime viikolla iskeneen tulvan jäljiltä, kertoivat paikalliset viranomaiset.</p>\n\n<p>Virallisesti kuolleita on raportoitu olevan ainakin neljä.</p>\n\n<p>Jäätävän kylmä vesi ja muta tulvi reilu viikko sitten vuoristoa pitkin alas Uttarakhandin osavaltiossa sijaitsevaan Dharalin turistikaupunkiin. Viranomaiset etsivät tiistaina ruumiita Pohjois-Intiassa sijaitsevan kaupungin raunioista.</p>\n\n<p>Virallista syytä tulvalle ei ole esitetty. Tutkijoiden mukaan on todennäköistä, että voimakkaat sateet romahduttivat nopeasti sulavan jäätikön.</p>\n\n<p>Himalajan jäätiköt sulavat nopeammin kuin koskaan ennen ilmastonmuutoksen vuoksi, mikä altistaa alueella asuvat ihmiset arvaamattomille katastrofeille. Ikiroudan pehmeneminen lisää maanvyörymien mahdollisuuksia.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "03000000",
+                    "scheme": "sttsubj",
+                    "name": "Onnettomuudet ja tuhot"
+                },
+                {
+                    "code": "03005000",
+                    "scheme": "sttsubj",
+                    "name": "Tulvat "
+                },
+                {
+                    "code": "03000000",
+                    "scheme": "sttsubj",
+                    "name": "Onnettomuudet ja tuhot"
+                },
+                {
+                    "code": "03999000",
+                    "scheme": "sttsubj",
+                    "name": "Kuolemaan johtaneet onnettomuudet"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14023000",
+                    "scheme": "sttsubj",
+                    "name": "Kuolema"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14017000",
+                    "scheme": "sttsubj",
+                    "name": "Kadonneet ihmiset"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "24712",
+                    "scheme": "sttlocmeta",
+                    "name": "Intia"
+                },
+                {
+                    "code": "142",
+                    "scheme": "world_region",
+                    "name": "Aasia"
+                }
+            ],
+            "language": "en",
+            "source": "STT-AFP",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:16:49+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Kv. kuvaa arkistosta",
+                    "id": "29"
+                },
+                "sttidtype_textid": "122268739",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:30741",
+                "creator_name": "Viitanen Minja",
+                "stt_topics": "685429",
+                "newsItem_guid": "urn:newsml:stt.fi::107136650"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "24712",
+                    "name": "Intia"
+                }
+            ],
+            "headline": "Kymmeniä kateissa tulvan jäljiltä Intian Himalajalla",
+            "charcount": 796,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:13:54+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685429",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136650",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:14:00+0000",
+            "authors": [
+                {
+                    "code": "Viitanen Minja",
+                    "role": "",
+                    "name": "Viitanen Minja",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136650"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136650"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268925",
+            "associations": {},
+            "wordcount": 59,
+            "body_html": "<p>Ilta-Sanomien entinen päätoimittaja, koripallovaikuttaja ja kirjailija Martti Huhtamäki on kuollut tänään 90-vuotiaana, kertoo hänen tyttärensä STT:lle.</p>\n\n<p>Huhtamäki toimi Ilta-Sanomien päätoimittajana vuodet 1974–1984. Lisäksi hän toimi lehden urheiluosaston esimiehenä vuodet 1962–1968.</p>\n\n<p>Huhtamäelle myönnettiin valtion journalistipalkinto vuonna 2006.</p>\n\n<p>Etelä-Pohjanmaan Lapualla syntynyt Huhtamäki on nimetty Suomen koripalloilun Hall of Fameen. Hän toimi urallaan koripalloliiton puheenjohtajana, kansainvälisenä erotuomarina sekä SM-sarjassa pelaajana ja valmentajana.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttdepartment",
+                    "name": "Kotimaa"
+                },
+                {
+                    "code": "08000000",
+                    "scheme": "sttsubj",
+                    "name": "Human interest"
+                },
+                {
+                    "code": "08005000",
+                    "scheme": "sttsubj",
+                    "name": "Tunnettujen henkilöiden elämä"
+                },
+                {
+                    "code": "08005002",
+                    "scheme": "sttsubj",
+                    "name": "Kuolemantapaukset"
+                },
+                {
+                    "code": "15000000",
+                    "scheme": "sttsubj",
+                    "name": "Urheilu"
+                },
+                {
+                    "code": "15008000",
+                    "scheme": "sttsubj",
+                    "name": "Koripallo"
+                },
+                {
+                    "code": "01000000",
+                    "scheme": "sttsubj",
+                    "name": "Taide Kulttuuri Viihde"
+                },
+                {
+                    "code": "01026000",
+                    "scheme": "sttsubj",
+                    "name": "Joukkoviestintä Journalismi"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttversion",
+                    "name": "Pika"
+                },
+                {
+                    "code": "26989",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:12:22+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268925",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:33826",
+                "creator_name": "Oikarinen Anni",
+                "stt_topics": "685446",
+                "sttnote_private": "Sopii myös urheilun koodille.",
+                "newsItem_guid": "urn:newsml:stt.fi::107136690"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "26989",
+                    "name": "Suomi"
+                }
+            ],
+            "headline": "Ilta-Sanomien entinen päätoimittaja Martti Huhtamäki on kuollut",
+            "charcount": 565,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:04:11+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685446",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136690",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:04:19+0000",
+            "authors": [
+                {
+                    "code": "Oikarinen Anni",
+                    "role": "",
+                    "name": "Oikarinen Anni",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136690"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136690"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268943",
+            "associations": {},
+            "wordcount": 53,
+            "body_html": "<p>Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut paperikone 2:n mahdollisesta sulkemisesta. Asiasta kertoo Sappi-konserniin kuuluva Sappi Europe.</p>\n\n<p>Muutosneuvottelut koskevat enintään sataa työtehtävää tehtaalla.</p>\n\n<p>Jos paperikone suljetaan, vähenisi päällystetyn aikakauslehtipaperin vuosituotantokapasiteetti 175  000 tonnilla. Toimintaa tehtaalla jatkaisivat paperikone 1 ja 3.</p>\n\n<p>Sappi Europen mukaan muutosneuvotteluilla vastataan graafisten papereiden kysynnän rakenteelliseen laskuun Euroopassa sekä pitkäkestoisiin taloudellisiin haasteisiin.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "11",
+                    "scheme": "sttdepartment",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04000000",
+                    "scheme": "sttsubj",
+                    "name": "Talous"
+                },
+                {
+                    "code": "04013000",
+                    "scheme": "sttsubj",
+                    "name": "Prosessiteollisuus Metsä- ja paperiteollisuus"
+                },
+                {
+                    "code": "04013004",
+                    "scheme": "sttsubj",
+                    "name": "Paperiteollisuus"
+                },
+                {
+                    "code": "09000000",
+                    "scheme": "sttsubj",
+                    "name": "Työelämä"
+                },
+                {
+                    "code": "09999000",
+                    "scheme": "sttsubj",
+                    "name": "Yt-neuvottelut"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttversion",
+                    "name": "Pika"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "25323",
+                    "scheme": "sttlocmeta",
+                    "name": "Uusimaa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:12:21+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "sttidtype_textid": "122268943",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:33828",
+                "creator_name": "Uusitalo Aliisa",
+                "stt_topics": "685448",
+                "newsItem_guid": "urn:newsml:stt.fi::107136672"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "25323",
+                    "name": "Uusimaa"
+                }
+            ],
+            "headline": "Kirkniemen tehtaalla Lohjalla alkavat muutosneuvottelut paperikone 2:n sulkemisesta",
+            "charcount": 546,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T11:03:09+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685448",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107136672",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:03:42+0000",
+            "authors": [
+                {
+                    "code": "Uusitalo Aliisa",
+                    "role": "",
+                    "name": "Uusitalo Aliisa",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136672"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136672"
+        },
+        {
+            "coverage_id": "ID_TEXT_122263304",
+            "associations": {},
+            "wordcount": 51,
+            "body_html": "<p>Latvian ja Valko-Venäjän rajalla on pysäytetty tänä vuonna jo yli 8  300 laittomasti Latviaan pyrkivää henkilöä. Määrä on huomattavasti suurempi kuin koko viime vuonna yhteensä.</p>\n\n<p>Suomen Riian-suurlähettilään Anne Salorannan mukaan tilanne huolestuttaa Latviassa, jonka rajavartiolaitoksen resurssit ovat tiukilla. Latvialaisten mielestä ilmiön taustalla on Venäjä, joka käyttää Valko-Venäjää välikätenä, Saloranta kertoo STT:lle.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "14",
+                    "scheme": "sttdepartment",
+                    "name": "Ulkomaat"
+                },
+                {
+                    "code": "14000000",
+                    "scheme": "sttsubj",
+                    "name": "Sosiaalikysymykset"
+                },
+                {
+                    "code": "14003000",
+                    "scheme": "sttsubj",
+                    "name": "Väestökysymykset"
+                },
+                {
+                    "code": "14003003",
+                    "scheme": "sttsubj",
+                    "name": "Laiton maahanmuutto"
+                },
+                {
+                    "code": "11000000",
+                    "scheme": "sttsubj",
+                    "name": "Politiikka"
+                },
+                {
+                    "code": "11001000",
+                    "scheme": "sttsubj",
+                    "name": "Puolustus"
+                },
+                {
+                    "code": "11001002",
+                    "scheme": "sttsubj",
+                    "name": "Kansallinen turvallisuus Rajavalvonta"
+                },
+                {
+                    "code": "3",
+                    "scheme": "sttversion",
+                    "name": "Pika"
+                },
+                {
+                    "code": "24970",
+                    "scheme": "sttlocmeta",
+                    "name": "Latvia"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:12:19+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Handoutkuvaa",
+                    "id": "23"
+                },
+                "sttidtype_textid": "122263304",
+                "sttrating_webprio": 4,
+                "creator_id": "stteditorid:1891",
+                "creator_name": "Simojoki Niilo",
+                "stt_topics": "684998",
+                "newsItem_guid": "urn:newsml:stt.fi::107130712"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "24970",
+                    "name": "Latvia"
+                }
+            ],
+            "headline": "Välineellistetyn maahantulon kiihtyminen Valko-Venäjältä huolestuttaa Latviassa",
+            "ednote": "Lähteenä myös uutistoimisto BNS.",
+            "charcount": 427,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T10:59:31+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:684998",
+            "version": "1",
+            "readtime": 0,
+            "original_id": "urn:newsml:stt.fi::107130712",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T11:00:06+0000",
+            "authors": [
+                {
+                    "code": "Simojoki Niilo",
+                    "role": "",
+                    "name": "Simojoki Niilo",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107130712"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107130712"
+        },
+        {
+            "coverage_id": "ID_TEXT_122268600",
+            "associations": {},
+            "wordcount": 304,
+            "body_html": "<h2>Syyttäjän mukaan Heikkinen toimi törkeän huolimattomasti. Heikkinen katsoo tapauksen olleen pikemminkin tapaturma.</h2>\n\n<p>Ampumahiihtäjä Arttu Heikkinen on saanut syytteen metsästysrikoksesta ja törkeästä vammantuottamuksesta. Heikkinen ampui viime syyskuussa metsästysretkellä Hyrynsalmella lintua, mutta osui metsästyskaveriinsa.</p>\n\n<p>Syyttäjän mukaan haulisuihkun hauleja osui metsästyskaverin ylävartaloon, yläraajoihin ja pään alueelle. Miehen oikea silmä vaurioitui niin pahoin, että sen näkökyky on mennyt.</p>\n\n<p>Syyttäjän mukaan Heikkisen menettely osoitti törkeää huolimattomuutta. Syyttäjä vaatii Heikkiselle rangaistukseksi 80:tä päiväsakkoa.</p>\n\n<p>Loukkaantunut metsästyskaveri oli syytteen mukaan noin 30–60 metrin päässä Heikkisestä.</p>\n\n<p>–  Heikkinen on laiminlyönyt riittävän turvallisuuden kannalta varmistaa, että hän voi ampua aiheuttamatta vaaraa, sanoi syyttäjä haastehakemuksessa.</p>\n\n<p>Kainuun käräjäoikeus käsitteli syytteitä tiistaina. Tuomio asiassa annetaan myöhemmin.</p>\n<p>\n</p>\n<h3>Metsällä oli tuttu porukka</h3>\n\n\n<p></p>\n\n<p>Käräjäoikeudelle jättämässään kirjallisessa ennakkovastauksessa Heikkinen katsoo, että ei ole toiminut huolimattomasti. Hänen mukaansa metsästyskaveri oli ampumishetkellä puiden takana näkymättömissä ja oli poikennut sovitulta reitiltä. Heikkisen mukaan haulien osuminen mieheen oli pikemminkin tapaturma kuin huolimattomuutta. Hän katsoo, että syyte tulee hylätä.</p>\n\n<p>Metsällä oltiin kolmen miehen porukalla, joka oli metsästänyt yhdessä useasti ennenkin. Heikkinen toteaa vastauksessaan oikeudelle, että hän on saanut metsästyskortin jo 10-vuotiaana ja rinnakkaisluvan haulikkoon 15-vuotiaana.</p>\n\n<p>Vammoja saanut metsästyskaveri vaatii Heikkiseltä vahingonkorvauksia yhteensä 23  500 euroa. Oikeudenkäyntiä paikan päällä seuranneen <a href=\"https://www.savonsanomat.fi/paikalliset/8757793\" target=\"_blank\">Savon Sanomien</a> mukaan mies joutui sairaalahoitoon ja kertoi oikeudessa joutuneensa olemaan kolme kuukautta pois töistä.</p>\n\n<p>Heikkinen, 21, on yksi Suomen lupaavimmista ampumahiihtäjistä. Hän edusti Suomea ampumahiihdon MM-kilpailuissa viime kaudella. Tätä ennen hän on saavuttanut muun muassa nuorten maailmanmestaruuden ja kaksi nuorten MM-pronssia. Heikkinen edustaa Puijon Hiihtoseuraa.</p>\n\n<p></p>\n<p>\n</p>\n<h3>Liitto käsittelee asian</h3>\n\n\n<p></p>\n\n<p>Ampumahiihtoliitto aikoo käsitellä Heikkisen tapauksen, vaikka kyse on vapaa-ajan tapahtumasta. Ampumahiihtoliiton puheenjohtajan Jaakko Puurulan mukaan liitto sai tiedon Heikkisen rikossyytteistä viime viikolla, kun asia tuli julkisuuteen.</p>\n\n<p>–  Ampumahiihtoliiton toiminnassa aseturvallisuus on kaiken toiminnan perusta, ja liitto on pahoillaan tästä tapahtumasta, Puurula sanoi STT:lle.</p>\n\n<p>Puurula kertoi, että liitto tiedottaa asiasta viimeistään oikeuden päätöksen jälkeen. Puheenjohtajan mukaan Ampumahiihtoliitto on ilmoittanut Heikkisen tapauksesta myös Kansainväliselle ampumahiihtoliitolle.</p>\n\n<p>STT ei tavoittanut Heikkistä tiistaina kommentoimaan asiaa.</p>",
+            "subject": [
+                {
+                    "code": "1",
+                    "scheme": "sttdone1"
+                },
+                {
+                    "code": "16",
+                    "scheme": "sttdepartment",
+                    "name": "Urheilu"
+                },
+                {
+                    "code": "15000000",
+                    "scheme": "sttsubj",
+                    "name": "Urheilu"
+                },
+                {
+                    "code": "15009000",
+                    "scheme": "sttsubj",
+                    "name": "Ampumahiihto"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02001000",
+                    "scheme": "sttsubj",
+                    "name": "Rikokset"
+                },
+                {
+                    "code": "02001006",
+                    "scheme": "sttsubj",
+                    "name": "Väkivaltarikokset"
+                },
+                {
+                    "code": "02000000",
+                    "scheme": "sttsubj",
+                    "name": "Laki Oikeus Rikokset"
+                },
+                {
+                    "code": "02008000",
+                    "scheme": "sttsubj",
+                    "name": "Oikeudenkäynti Oikeusprosessit"
+                },
+                {
+                    "code": "10000000",
+                    "scheme": "sttsubj",
+                    "name": "Vapaa-aika"
+                },
+                {
+                    "code": "10012000",
+                    "scheme": "sttsubj",
+                    "name": "Metsästys"
+                },
+                {
+                    "code": "5",
+                    "scheme": "sttversion",
+                    "name": "Loppuversio"
+                },
+                {
+                    "code": "8159",
+                    "scheme": "sttlocmeta",
+                    "name": "Kainuu"
+                },
+                {
+                    "code": "1",
+                    "scheme": "country",
+                    "name": "Suomi"
+                },
+                {
+                    "code": "150",
+                    "scheme": "world_region",
+                    "name": "Eurooppa"
+                },
+                {
+                    "code": "8975",
+                    "scheme": "sttlocmeta",
+                    "name": "Suomi"
+                }
+            ],
+            "language": "en",
+            "source": "STT",
+            "type": "text",
+            "versioncreated": "2025-08-12T11:01:49+0000",
+            "copyrightholder": "",
+            "slugline": " ",
+            "urgency": 3,
+            "extra": {
+                "imagetype": {
+                    "name": "Arkistokuvaa",
+                    "id": "21"
+                },
+                "sttidtype_textid": "122268600",
+                "sttrating_webprio": 1,
+                "creator_id": "stteditorid:1752",
+                "creator_name": "Korkee Elina",
+                "stt_topics": "685078",
+                "newsItem_guid": "urn:newsml:stt.fi::107136656"
+            },
+            "genre": [
+                {
+                    "code": "1",
+                    "name": "Pääjuttu"
+                }
+            ],
+            "place": [
+                {
+                    "code": "8159",
+                    "name": "Kainuu"
+                },
+                {
+                    "code": "8975",
+                    "name": "Suomi"
+                }
+            ],
+            "byline": "Elina Korkee, Paavali Pastila",
+            "headline": "Haulit veivät metsästyskaverilta näön toisesta silmästä – ampumahiihtäjä Arttu Heikkinen sai syytteen törkeästä vammantuottamuksesta",
+            "charcount": 2764,
+            "pubstatus": "usable",
+            "firstcreated": "2025-08-12T10:54:06+0000",
+            "profile": "Article",
+            "usageterms": "",
+            "priority": 6,
+            "planning_id": "urn:newsml:stt.fi:685078",
+            "version": "1",
+            "readtime": 1,
+            "original_id": "urn:newsml:stt.fi::107136656",
+            "copyrightnotice": "",
+            "firstpublished": "2025-08-12T10:54:13+0000",
+            "authors": [
+                {
+                    "code": "Korkee Elina",
+                    "role": "",
+                    "name": "Korkee Elina",
+                    "biography": ""
+                }
+            ],
+            "_type": "content_api",
+            "_links": {
+                "self": {
+                    "title": "Item",
+                    "href": "items/urn:newsml:stt.fi::107136656"
+                }
+            },
+            "uri": "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136656"
+        }
+    ],
+    "_links": {
+        "parent": {
+            "title": "home",
+            "href": "/"
+        },
+        "self": {
+            "title": "items",
+            "href": "contentapi/items?"
+        },
+        "next": {
+            "title": "next page",
+            "href": "items?page=2"
+        },
+        "last": {
+            "title": "last page",
+            "href": "items?page=70"
+        }
+    },
+    "_meta": {
+        "page": 1,
+        "max_results": 25,
+        "total": 1745
+    }
+}

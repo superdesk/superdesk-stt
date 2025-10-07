@@ -1,0 +1,46 @@
+{# ---------------------------------------- #
+   paivalista_events_template.html
+# ---------------------------------------- #}
+
+{% set formatted = format_paivalista_for_export(items) %}
+
+{#-- A helper macro: replicates printPaivalistaLocation --#}
+{% macro paivalista_location(location) -%}
+    {%- set loc = location[0] if location and location[0].address.name else None -%}
+    {%- if loc %}
+        {{- loc.address.name -}}
+        {%- if loc.address.line and loc.address.line[0].strip() -%}, {{ loc.address.line[0] }}{%- endif -%}
+        {%- if loc.address.city -%}, {{ loc.address.city }}{%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+{#-- MAIN LOOP — sort first, then print a <h3> when the day changes --#}
+{% set ns = namespace(cur='') %}
+{% for item in formatted.rows | selectattr('dates','defined') | sort(attribute='dates.start') %}
+    {%- set day  = item.dates.start | fi_date %}
+    {%- if ns.cur != day %}
+        {%- set ns.cur = day %}
+        <h3>{{ day|capitalize }}</h3>
+    {%- endif %}
+
+    {# Time + name -------------------------------------------------------- #}
+    {% if item.dates and item.dates.start %}
+        <p>{{ item.dates.start | fi_time }} {{ item.name }}</p>
+    {% endif %}
+
+    {# Short definition --------------------------------------------------- #}
+    {% if item.definition_short %}
+        <p>{{ item.definition_short }}</p>
+    {% endif %}
+
+    {# Location ----------------------------------------------------------- #}
+    {% if item.location is iterable %}
+        {% set loc_text = paivalista_location(item.location) %}
+        {% if loc_text %}<p>{{ loc_text }}</p>{% endif %}
+    {% endif %}
+
+    {# Registration details (already HTML, keep it “safe”) ---------------- #}
+    {{ item.registration_details | safe }}
+
+    <p></p>   {# blank line exactly like the TS version - kept for parity #}
+{% endfor %}

@@ -73,14 +73,18 @@ class STTEventsMLParserEventTypeCVTest(TestCase):
     fixture = "events_ml_259431.xml"
     parser_class = STTEventsMLParser
     parse_source = False
+    add_stt_cvs = True
 
     async def test_event_type_cv_updated(self):
-        self.assertIsNone(
-            self.app.data.find_one("vocabularies", req=None, _id="event_type")
-        )
-        await self.parse_source_content()
+        # Check that event_type vocabulary exists but is empty initially
         event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
         self.assertIsNotNone(event_types)
+        qcodes = [item["qcode"] for item in event_types["items"]]
+        assert "type21" not in qcodes
+
+        await self.parse_source_content()
+
+        event_types = self.app.data.find_one("vocabularies", req=None, _id="event_type")
         self.assertIn(
             {"qcode": "type21", "name": "Mediatilaisuudet", "is_active": True},
             event_types["items"],

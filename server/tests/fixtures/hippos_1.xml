@@ -1,0 +1,1929 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<ns3:result xmlns:ns2="http://hippos.fi/heppa/horse" xmlns:ns3="http://hippos.fi/heppa/event">
+    <ns3:raceEvent>
+        <ns3:eventInfo>
+            <ns3:date>2025-07-16</ns3:date>
+            <ns3:name>Derby-kenraali, Hevari Junioritähti, KK-25 ja SH Tammasarja</ns3:name>
+            <ns3:number>0</ns3:number>
+            <ns3:type>Toto65</ns3:type>
+            <ns3:location>Vermo</ns3:location>
+            <ns3:locationCode>H</ns3:locationCode>
+            <ns3:locationPlace>Helsinki</ns3:locationPlace>
+        </ns3:eventInfo>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>1</ns3:number>
+                <ns3:name>Kivikylä Voimaliiga</ns3:name>
+                <ns3:basicDistance>2620</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Kylmäveriset ryhmäajo 2620 m Kivikylä Voimaliiga enintään 75 000 e. Etus. Suom. synt. P. 2400 e. (2400-1200-720-480)</ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Kylmäveriset ryhmäajo 2620 m Kivikylä Voimaliiga enintään 75 000 e. Etus. Suom. synt. P. 2400 e. (2400-1200-720-480)</ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>1. lähtö, sh 2620 m Kivikylä Voimaliiga</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Tuhti-Kersantti</ns2:name>
+                        <ns2:competitionAge>6</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00191278</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Costello</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Tuhti-Piika</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Vara-Onni</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Kessun Komppania</ns2:ownerName>
+                        <ns2:domicileOfOwner>Iitti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Christa Packalén</ns2:trainerName>
+                        <ns2:trainerLicense>B</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>Ha Torvinen</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>5</ns3:programNumber>
+                        <ns3:track>5</ns3:track>
+                        <ns3:kmTime>27,0a</ns3:kmTime>
+                        <ns3:overallTime>3.47,9</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>13,15</ns3:winOdds>
+                        <ns3:prize>2400</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Hannu Torvinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Matteus Kevätön</ns2:name>
+                        <ns2:competitionAge>8</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00171514</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprt</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Fiiling</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Julia-Kevätön</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Romeo Lax</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Raivio Pauli &amp; Virkkunen Henna</ns2:ownerName>
+                        <ns2:trainerName>Pauli Raivio</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>He Bollström</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>4</ns3:track>
+                        <ns3:kmTime>27,1a</ns3:kmTime>
+                        <ns3:overallTime>3.48,1</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>16,97</ns3:winOdds>
+                        <ns3:prize>1200</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Henri Bollström</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Helkan Urho</ns2:name>
+                        <ns2:competitionAge>11</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00141733</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rt</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Sipori</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Helka-Liina</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Vokker</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Talli Jäänmurtajat</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kaustinen</ns2:domicileOfOwner>
+                        <ns2:trainerName>Teemu Okkolin</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Okkolin</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>27,1a</ns3:kmTime>
+                        <ns3:overallTime>3.48,3</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>11,6</ns3:winOdds>
+                        <ns3:prize>720</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Teemu Okkolin</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Laurilan Jokeri</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00181071</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>vprt</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>H.V. Tuuri</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Laurilan Cindy</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Joihuri</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Nadja Hagert</ns2:ownerName>
+                        <ns2:domicileOfOwner>Imatra</ns2:domicileOfOwner>
+                        <ns2:trainerName>Jussi Suominen</ns2:trainerName>
+                        <ns2:trainerLicense>F</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>S Raitala</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>6</ns3:programNumber>
+                        <ns3:track>6</ns3:track>
+                        <ns3:kmTime>27,1a</ns3:kmTime>
+                        <ns3:overallTime>3.48,3</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>true</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>1,14</ns3:winOdds>
+                        <ns3:prize>480</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Santtu Raitala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Matteus Kevätön</ns3:horseName>
+                    <ns3:kmtime>23,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Matteus Kevätön</ns3:horseName>
+                    <ns3:kmtime>27,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Matteus Kevätön</ns3:horseName>
+                    <ns3:kmtime>28,1</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Matteus Kevätön</ns3:horseName>
+                    <ns3:kmtime>25,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:absentHorses>
+                    <ns3:programNumber>2</ns3:programNumber>
+                </ns3:absentHorses>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>2</ns3:number>
+                <ns3:name></ns3:name>
+                <ns3:basicDistance>2120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Lämminveriset ryhmäajo 2120 m enintään 3500 e. P. 1500 e. (1500-750-450-300-150-150)</ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Lämminveriset ryhmäajo 2120 m enintään 3500 e. P. 1500 e. (1500-750-450-300-150-150)</ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>2. lähtö, lv 2120 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>King Cruzado</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>DK-0Y0369</ns2:registerNumber>
+                        <ns2:birthCountryCode>DK</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Cruzado Dela Noche*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>My Love di Quattro*</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Love You*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FR</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Lepistö Hanna &amp; Lintula Valtteri</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Hanna Lepistö</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>S Raitala</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>14,9a</ns3:kmTime>
+                        <ns3:overallTime>2.38,8</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>8,41</ns3:winOdds>
+                        <ns3:prize>1500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Santtu Raitala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Mudcake Comery</ns2:name>
+                        <ns2:competitionAge>3</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00221107</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Wishing Stone*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Emelie</ns2:damName>
+                        <ns2:damBirthCountryCode>FR</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Amigo Hall*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Team Mutakakku</ns2:ownerName>
+                        <ns2:domicileOfOwner>Iitti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Matias Salo</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Kylliäinen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>10</ns3:programNumber>
+                        <ns3:track>10</ns3:track>
+                        <ns3:kmTime>15,0a</ns3:kmTime>
+                        <ns3:overallTime>2.39,1</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>2,13</ns3:winOdds>
+                        <ns3:prize>750</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Tommi Kylliäinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Dynamo Garden</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211200</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Bar Hopping*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Dandridge Hall</ns2:damName>
+                        <ns2:damBirthCountryCode>US</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Conway Hall*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Eriksson Kati &amp; Sundberg Kalle</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kotka</ns2:domicileOfOwner>
+                        <ns2:trainerName>Kati Eriksson</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>Ju Torvinen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>15,1a</ns3:kmTime>
+                        <ns3:overallTime>2.39,3</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>4,06</ns3:winOdds>
+                        <ns3:prize>450</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Jukka Torvinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Callela Usain</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211868</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Diamond Duo</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Ula Belle Hoss</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Windsong's Legacy*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>JJM-Stable </ns2:ownerName>
+                        <ns2:domicileOfOwner>Turku</ns2:domicileOfOwner>
+                        <ns2:trainerName>Jonna-Mari Lundgren</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>J Saarela</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>2</ns3:programNumber>
+                        <ns3:track>2</ns3:track>
+                        <ns3:kmTime>15,2a</ns3:kmTime>
+                        <ns3:overallTime>2.39,4</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>11,51</ns3:winOdds>
+                        <ns3:prize>300</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Jarmo Saarela</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Dynamo Garden</ns3:horseName>
+                    <ns3:kmtime>12,2</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Callela Usain</ns3:horseName>
+                    <ns3:kmtime>14,6</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Mudcake Comery</ns3:horseName>
+                    <ns3:kmtime>16,3</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Mudcake Comery</ns3:horseName>
+                    <ns3:kmtime>13,8</ns3:kmtime>
+                </ns3:intermediateTime>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>3</ns3:number>
+                <ns3:name>Tammasarja</ns3:name>
+                <ns3:basicDistance>2120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Suomenhevoset tasoitusajo 2120 m 4-v. Tammasarja p. 2500e, 20 m/ 4500e, 40 m/ 7000e, 60 m/ 12 000e. Tammasarja pt. 80 m. P. 4000 e. (4000-2000-1200-800-400-400)</ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Suomenhevoset tasoitusajo 2120 m 4-v.  p. 2500e, 20 m/ 4500e, 40 m/ 7000e, 60 m/ 12 000e.  pt. 80 m. P. 4000 e. (4000-2000-1200-800-400-400)</ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>false</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>3. lähtö, sh 2120 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Tara</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00211967</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Välähdys</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Taranella</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Auraus</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Ravitalli Suuronen Oy</ns2:ownerName>
+                        <ns2:domicileOfOwner>Juva</ns2:domicileOfOwner>
+                        <ns2:trainerName>Seppo Suuronen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>He Bollström</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>32,7</ns3:kmTime>
+                        <ns3:overallTime>3.16,6</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>1,46</ns3:winOdds>
+                        <ns3:prize>4000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Henri Bollström</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Vilkkeen Viehätys</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00211279</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Tähen Toivomus</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Vihjeen Vilke</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>A.T. Eko</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Heikki Mikkonen</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kuopio</ns2:domicileOfOwner>
+                        <ns2:trainerName>Heikki Mikkonen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>Hei Mikkonen</ns3:driverName>
+                        <ns3:distance>2160</ns3:distance>
+                        <ns3:programNumber>7</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>31,2</ns3:kmTime>
+                        <ns3:overallTime>3.16,9</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>16,55</ns3:winOdds>
+                        <ns3:prize>2000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Heikki Mikkonen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Ceepra</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00211999</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Costello</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Kenguru</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Apassi</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Sensation Farm Ou &amp; Odd Trot Team</ns2:ownerName>
+                        <ns2:domicileOfOwner>Estonia-Vehmersalmi</ns2:domicileOfOwner>
+                        <ns2:trainerName>Antti Tupamäki</ns2:trainerName>
+                        <ns2:trainerLicense>B</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>An Tupamäki</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>33,0</ns3:kmTime>
+                        <ns3:overallTime>3.17,1</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>12,84</ns3:winOdds>
+                        <ns3:prize>1200</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Antti Tupamäki</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Winnova</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00211414</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Vitter</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Kuminova</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Turo</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Elina Filatoff</ns2:ownerName>
+                        <ns2:domicileOfOwner>Parainen</ns2:domicileOfOwner>
+                        <ns2:trainerName>Jyrki Filatoff</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>J Filatoff</ns3:driverName>
+                        <ns3:distance>2140</ns3:distance>
+                        <ns3:programNumber>5</ns3:programNumber>
+                        <ns3:track>2</ns3:track>
+                        <ns3:kmTime>32,1</ns3:kmTime>
+                        <ns3:overallTime>3.17,1</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>33,79</ns3:winOdds>
+                        <ns3:prize>800</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Jyrki Filatoff</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Tara</ns3:horseName>
+                    <ns3:kmtime>35,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Tara</ns3:horseName>
+                    <ns3:kmtime>34,2</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Tara</ns3:horseName>
+                    <ns3:kmtime>31,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Tara</ns3:horseName>
+                    <ns3:kmtime>31,8</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:sanction>
+                    <ns3:reason>Kielletty ajotapa</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>72</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Jyrki Filatoff</ns3:personName>
+                    <ns3:horseName>Winnova</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Sääntöjen vastainen kaista-ajo</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>72</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Teemu Okkolin</ns3:personName>
+                    <ns3:horseName>Vuaran Hurma</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>4</ns3:number>
+                <ns3:name>Siivous-10</ns3:name>
+                <ns3:basicDistance>1620</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Lämminveriset ryhmäajo 1620 m Siivous-10 enintään 32 500 e. P. 2000 e. (2000-1000-600-400-200-200) Toto65 </ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Lämminveriset ryhmäajo 1620 m  enintään 32 500 e. P. 2000 e. (2000-1000-600-400-200-200) Toto65 </ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>4. lähtö, Toto65-1, lv 1620 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Unelmako</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00181143</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Timoko*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FR</ns2:sireBirthCountryCode>
+                        <ns2:damName>Madame Ace</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Dream Vacation*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Liisa Nummi</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kokemäki</ns2:domicileOfOwner>
+                        <ns2:trainerName>Liisa Nummi</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>L Nummi</ns3:driverName>
+                        <ns3:distance>1620</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>12,0a</ns3:kmTime>
+                        <ns3:overallTime>1.56,7</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>24,9</ns3:winOdds>
+                        <ns3:prize>2000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Liisa Nummi</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Sunshine Boy</ns2:name>
+                        <ns2:competitionAge>5</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00201377</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Jontte Boy</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Sunshinesky</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>From Above*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>SE</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Team Walking On Sunshine</ns2:ownerName>
+                        <ns2:domicileOfOwner>Luhanka </ns2:domicileOfOwner>
+                        <ns2:trainerName>Harri Koivunen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>O Koivunen</ns3:driverName>
+                        <ns3:distance>1620</ns3:distance>
+                        <ns3:programNumber>6</ns3:programNumber>
+                        <ns3:track>6</ns3:track>
+                        <ns3:kmTime>12,6a</ns3:kmTime>
+                        <ns3:overallTime>1.57,6</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>7,83</ns3:winOdds>
+                        <ns3:prize>1000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Olli Koivunen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Stonehard</ns2:name>
+                        <ns2:competitionAge>6</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00191058</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Il Villaggio</ns2:sireName>
+                        <ns2:sireBirthCountryCode>CA</ns2:sireBirthCountryCode>
+                        <ns2:damName>BWT Hardcore</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Supertoy</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Finnström Niki &amp; Packalén Christa</ns2:ownerName>
+                        <ns2:domicileOfOwner>Hollola</ns2:domicileOfOwner>
+                        <ns2:trainerName>Christa Packalén</ns2:trainerName>
+                        <ns2:trainerLicense>B</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>J Utala</ns3:driverName>
+                        <ns3:distance>1620</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>4</ns3:track>
+                        <ns3:kmTime>12,6a</ns3:kmTime>
+                        <ns3:overallTime>1.57,6</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>4,12</ns3:winOdds>
+                        <ns3:prize>600</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Juha Utala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Muska*</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>S-18-3697</ns2:registerNumber>
+                        <ns2:birthCountryCode>SE</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>SE</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Super Photo Kosmos*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Moneymaker Lavec*</ns2:damName>
+                        <ns2:damBirthCountryCode>IT</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Viking Kronos*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>IT</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Ravitalli Hope Ky</ns2:ownerName>
+                        <ns2:domicileOfOwner>Ylöjärvi</ns2:domicileOfOwner>
+                        <ns2:trainerName>Aripekka Pakkanen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Keväänranta</ns3:driverName>
+                        <ns3:distance>1620</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>12,8a</ns3:kmTime>
+                        <ns3:overallTime>1.57,9</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>61,37</ns3:winOdds>
+                        <ns3:prize>400</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Tino Keväänranta</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sunshine Boy</ns3:horseName>
+                    <ns3:kmtime>11,2</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sunshine Boy</ns3:horseName>
+                    <ns3:kmtime>12,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sunshine Boy</ns3:horseName>
+                    <ns3:kmtime>11,8</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:sanction>
+                    <ns3:reason>Jättäytyminen</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>48</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Juha Utala</ns3:personName>
+                    <ns3:horseName>Stonehard</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:absentHorses>
+                    <ns3:programNumber>12</ns3:programNumber>
+                </ns3:absentHorses>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>5</ns3:number>
+                <ns3:name>Hevari Junioritähti</ns3:name>
+                <ns3:basicDistance>2120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Lämminveriset ryhmäajo 2120 m Hevari Junioritähti vähint. 5001 e. enintään 17 500 e. Juniorilähtö P. 1500 e. (1500-1000-750-500-300-200) Toto65 </ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Lämminveriset ryhmäajo 2120 m Hevari Junioritähti vähint. 5001 e. enintään 17 500 e. Juniorilähtö P. 1500 e. (1500-1000-750-500-300-200) Toto65 </ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>5. lähtö, Toto65-2, lv 2120 m Hevari Junioritähti</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Aurelia's Pearl KS</ns2:name>
+                        <ns2:competitionAge>5</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00201919</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>m</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Centurion A.T.M.*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Aurelia</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>The Best Madrik*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FR</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Team Helmipöllöt</ns2:ownerName>
+                        <ns2:domicileOfOwner>Hämeenlinna</ns2:domicileOfOwner>
+                        <ns2:trainerName>Minna Rampa</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Keväänranta</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>11</ns3:programNumber>
+                        <ns3:track>11</ns3:track>
+                        <ns3:kmTime>14,3a</ns3:kmTime>
+                        <ns3:overallTime>2.37,6</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>5,09</ns3:winOdds>
+                        <ns3:prize>1500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Tino Keväänranta</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Arctic Dash</ns2:name>
+                        <ns2:competitionAge>5</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00201099</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Express Duo</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Arctic Passion</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Classic Photo*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Star-Racing Oy &amp; Elvis Trotting Oy &amp; Viitala Matti</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti-Oulu</ns2:domicileOfOwner>
+                        <ns2:trainerName>Pekka Korpi</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>E Havulehto</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>8</ns3:programNumber>
+                        <ns3:track>8</ns3:track>
+                        <ns3:kmTime>15,5a</ns3:kmTime>
+                        <ns3:overallTime>2.40,0</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>5,47</ns3:winOdds>
+                        <ns3:prize>1000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Emil Havulehto</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Celeste Orden</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211154</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>All Laid Out</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Caller Id Hanover</ns2:damName>
+                        <ns2:damBirthCountryCode>US</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Lindy Lane*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Ravitalli Emma Väre</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti </ns2:domicileOfOwner>
+                        <ns2:trainerName>Emma Väre</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>W Koivunen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>15,8a</ns3:kmTime>
+                        <ns3:overallTime>2.40,7</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>54,68</ns3:winOdds>
+                        <ns3:prize>750</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Wilhelmina Koivunen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>I Don't Care</ns2:name>
+                        <ns2:competitionAge>6</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00191671</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>mrn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Lexus Font</ns2:sireName>
+                        <ns2:sireBirthCountryCode>IT</ns2:sireBirthCountryCode>
+                        <ns2:damName>Prima Nuvoletta</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Berto Primo</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Jenni Solas</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Jenni Solas</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>van Craen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>12</ns3:programNumber>
+                        <ns3:track>12</ns3:track>
+                        <ns3:kmTime>16,0a</ns3:kmTime>
+                        <ns3:overallTime>2.41,1</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>11,58</ns3:winOdds>
+                        <ns3:prize>500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Oliver van Craen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Lotta Leg</ns3:horseName>
+                    <ns3:kmtime>14,4</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Lotta Leg</ns3:horseName>
+                    <ns3:kmtime>14,9</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Lotta Leg</ns3:horseName>
+                    <ns3:kmtime>13,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Lotta Leg</ns3:horseName>
+                    <ns3:kmtime>14,3</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:sanction>
+                    <ns3:reason>Ilman sääntöjen mukaista kypärää tai turvaliiviä ajaminen tai lähdössä avustaminen</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>100</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Mertsi Salminen</ns3:personName>
+                    <ns3:horseName>Sugar Dance</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Ilman sääntöjen mukaista kypärää tai turvaliiviä ajaminen tai lähdössä avustaminen</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>100</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Valde Salminen</ns3:personName>
+                    <ns3:horseName>Global Embassy</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>SE</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Jättäytyminen</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>36</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Johanna Pirttijoki</ns3:personName>
+                    <ns3:horseName>Skype</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Roikkuvat ohjakset</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>10</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Oliver van Craen</ns3:personName>
+                    <ns3:horseName>I Don't Care</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Sääntöjen vastainen kaista-ajo</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>36</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Väinö-Kalle Korhonen</ns3:personName>
+                    <ns3:horseName>Lotta Leg</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Kielletty ajotapa</ns3:reason>
+                    <ns3:category>SAKKO</ns3:category>
+                    <ns3:fineAmount>50</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Oliver van Craen</ns3:personName>
+                    <ns3:horseName>I Don't Care</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:absentHorses>
+                    <ns3:programNumber>6</ns3:programNumber>
+                    <ns3:programNumber>9</ns3:programNumber>
+                </ns3:absentHorses>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>6</ns3:number>
+                <ns3:name>Lämminveriraviliitto 70 vuotta - Derby-kenraali</ns3:name>
+                <ns3:basicDistance>2620</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Lämminveriset ryhmäajo 2620 m 4-v. Suom.synt. Lämminveriraviliitto 70 vuotta - Derby-kenraali P. 5000 e. (5000-2500-1500-1000-500) Toto65 </ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Lämminveriset ryhmäajo 2620 m 4-v. Suom.synt. Derby-kenraali P. 5000 e. (5000-2500-1500-1000-500) Toto65 </ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>6. lähtö, Toto65-3, lv 2620 m Derby-kenraali</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Venome*</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211853</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>SE</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Varenne*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>IT</ns2:sireBirthCountryCode>
+                        <ns2:damName>Vannina FB</ns2:damName>
+                        <ns2:damBirthCountryCode>IT</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Civil Action*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Annamari Sipilä</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kangasala</ns2:domicileOfOwner>
+                        <ns2:trainerName>Henna Halme</ns2:trainerName>
+                        <ns2:trainerLicense>B</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>H Halme</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>9</ns3:programNumber>
+                        <ns3:track>9</ns3:track>
+                        <ns3:kmTime>16,0a</ns3:kmTime>
+                        <ns3:overallTime>3.19,0</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>38,08</ns3:winOdds>
+                        <ns3:prize>5000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Henna Halme</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Arctic Emerald</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211081</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Express Duo</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Arctic Passion</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Classic Photo*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Star-Racing Oy</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Pekka Korpi</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>P Korpi</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>16,0a</ns3:kmTime>
+                        <ns3:overallTime>3.19,2</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>1,28</ns3:winOdds>
+                        <ns3:prize>2500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Pekka Korpi</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Nacho Web</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211044</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Like A Prayer</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Liu Hanover</ns2:damName>
+                        <ns2:damBirthCountryCode>US</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Andover Hall*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Nacho Team</ns2:ownerName>
+                        <ns2:domicileOfOwner>Orimattila</ns2:domicileOfOwner>
+                        <ns2:trainerName>Timo Korvenheimo</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>He Bollström</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>4</ns3:track>
+                        <ns3:kmTime>16,2a</ns3:kmTime>
+                        <ns3:overallTime>3.19,6</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>7,59</ns3:winOdds>
+                        <ns3:prize>1500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Henri Bollström</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Knight Rider Hoss</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00211005</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Scarlet Knight*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Ski to the Max</ns2:damName>
+                        <ns2:damBirthCountryCode>US</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Conway Hall*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Klang Jukka &amp; Lempiäinen Harri</ns2:ownerName>
+                        <ns2:domicileOfOwner>Naantali</ns2:domicileOfOwner>
+                        <ns2:trainerName>Harri Koivunen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>O Koivunen</ns3:driverName>
+                        <ns3:distance>2620</ns3:distance>
+                        <ns3:programNumber>10</ns3:programNumber>
+                        <ns3:track>10</ns3:track>
+                        <ns3:kmTime>16,2a</ns3:kmTime>
+                        <ns3:overallTime>3.19,6</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>20,0</ns3:winOdds>
+                        <ns3:prize>1000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Olli Koivunen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Arctic Emerald</ns3:horseName>
+                    <ns3:kmtime>15,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Arctic Emerald</ns3:horseName>
+                    <ns3:kmtime>18,9</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Arctic Emerald</ns3:horseName>
+                    <ns3:kmtime>17,1</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Arctic Emerald</ns3:horseName>
+                    <ns3:kmtime>09,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:absentHorses>
+                    <ns3:programNumber>2</ns3:programNumber>
+                </ns3:absentHorses>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>7</ns3:number>
+                <ns3:name>Karanor</ns3:name>
+                <ns3:basicDistance>2120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Lämminveriset ryhmäajo 2120 m Karanor enintään 80 000 e. P. 2000 e. (2000-1000-600-400-200-200) Toto65 </ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Lämminveriset ryhmäajo 2120 m  enintään 80 000 e. P. 2000 e. (2000-1000-600-400-200-200) Toto65 </ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>7. lähtö, Toto65-4 TROIKKA-1, lv 2120 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>I Love You Sisu*</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>S-18-1884</ns2:registerNumber>
+                        <ns2:birthCountryCode>SE</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>SE</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Django Riff*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FR</ns2:sireBirthCountryCode>
+                        <ns2:damName>Beloved Love*</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Love You*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FR</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Olavi Nikkinen</ns2:ownerName>
+                        <ns2:domicileOfOwner>Lahti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Pia Huusari</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>A Moilanen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>12,5a</ns3:kmTime>
+                        <ns3:overallTime>2.33,8</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>4,09</ns3:winOdds>
+                        <ns3:prize>2000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Ari Moilanen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Mr Big Money</ns2:name>
+                        <ns2:competitionAge>9</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00161381</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Mr Pine Chip*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Julia Savoy</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Juliano Star</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FR</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Minna Rampa</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kokemäki</ns2:domicileOfOwner>
+                        <ns2:trainerName>Minna Rampa</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Keväänranta</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>4</ns3:track>
+                        <ns3:kmTime>12,7a</ns3:kmTime>
+                        <ns3:overallTime>2.34,2</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>52,5</ns3:winOdds>
+                        <ns3:prize>1000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Tino Keväänranta</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Sahara Dangerous</ns2:name>
+                        <ns2:competitionAge>6</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00191869</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>mrn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Raja Mirchi*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>SE</ns2:sireBirthCountryCode>
+                        <ns2:damName>Salpaus Royalty</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>RC Royalty</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>It's Dangerous Stable</ns2:ownerName>
+                        <ns2:domicileOfOwner>Tammela</ns2:domicileOfOwner>
+                        <ns2:trainerName>Tapio Mäki-Tulokas</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>S Raitala</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>8</ns3:programNumber>
+                        <ns3:track>8</ns3:track>
+                        <ns3:kmTime>13,1a</ns3:kmTime>
+                        <ns3:overallTime>2.35,0</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>13,22</ns3:winOdds>
+                        <ns3:prize>600</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Santtu Raitala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Albarino Sala</ns2:name>
+                        <ns2:competitionAge>5</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00201950</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>mrn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Quite Easy*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Rosebud Sala</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Express It*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Sala Stable</ns2:ownerName>
+                        <ns2:domicileOfOwner>Parainen</ns2:domicileOfOwner>
+                        <ns2:trainerName>Harri Koivunen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>O Koivunen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>5</ns3:programNumber>
+                        <ns3:track>5</ns3:track>
+                        <ns3:kmTime>13,2a</ns3:kmTime>
+                        <ns3:overallTime>2.35,1</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>19,5</ns3:winOdds>
+                        <ns3:prize>400</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Olli Koivunen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sahara Vision</ns3:horseName>
+                    <ns3:kmtime>09,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sahara Vision</ns3:horseName>
+                    <ns3:kmtime>10,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Sahara Vision</ns3:horseName>
+                    <ns3:kmtime>12,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>I Love You Sisu</ns3:horseName>
+                    <ns3:kmtime>15,0</ns3:kmtime>
+                </ns3:intermediateTime>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>8</ns3:number>
+                <ns3:name>Kuninkuusravit Oulu 1.-3.8.2025 - A.V. Marttilan Tammasarja</ns3:name>
+                <ns3:basicDistance>3120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Suomenhevoset ryhmäajo 3120 m Kuninkuusravit Oulu 1.-3.8.2025 - A.V. Marttilan Tammasarja Tammalähtö P. 3000 e. (3000-1500-900-600-300-300) Toto65 </ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Suomenhevoset ryhmäajo 3120 m KK-25 A.V. Marttilan Tammasarja Tammalähtö P. 3000 e. (3000-1500-900-600-300-300) Toto65 </ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>TOTO</ns3:classification>
+                <ns3:isMobileStart>true</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>8. lähtö, Toto65-5 DUO-1, sh 3120 m KK-25 A.V. Marttilan Tammasarja</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Jockas Rita</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00181286</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Jokivarren Kunkku</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Cordiitta</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Cameron</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Santtu Raitala</ns2:ownerName>
+                        <ns2:domicileOfOwner>Pihtipudas</ns2:domicileOfOwner>
+                        <ns2:trainerName>Santtu Raitala</ns2:trainerName>
+                        <ns2:trainerLicense>D</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>S Raitala</ns3:driverName>
+                        <ns3:distance>3120</ns3:distance>
+                        <ns3:programNumber>8</ns3:programNumber>
+                        <ns3:track>8</ns3:track>
+                        <ns3:kmTime>27,7a</ns3:kmTime>
+                        <ns3:overallTime>4.33,5</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>1,63</ns3:winOdds>
+                        <ns3:prize>3000</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Santtu Raitala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Runoneito</ns2:name>
+                        <ns2:competitionAge>14</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00111373</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>vprt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Ramiini</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Venlatar</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Rallaus</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Mia Liipola</ns2:ownerName>
+                        <ns2:domicileOfOwner>Iitti</ns2:domicileOfOwner>
+                        <ns2:trainerName>Mia Liipola</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>Ju Torvinen</ns3:driverName>
+                        <ns3:distance>3120</ns3:distance>
+                        <ns3:programNumber>9</ns3:programNumber>
+                        <ns3:track>9</ns3:track>
+                        <ns3:kmTime>27,7a</ns3:kmTime>
+                        <ns3:overallTime>4.33,6</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>7,95</ns3:winOdds>
+                        <ns3:prize>1500</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Jukka Torvinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Varjohehku</ns2:name>
+                        <ns2:competitionAge>7</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00181923</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Erikasson</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Pistoliekki</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>A.T. Eko</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Mäkäräinen Timo &amp; Sinkkonen Lea</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kiuruvesi</ns2:domicileOfOwner>
+                        <ns2:trainerName>Timo Mäkäräinen</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Mäkäräinen</ns3:driverName>
+                        <ns3:distance>3120</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>27,9a</ns3:kmTime>
+                        <ns3:overallTime>4.34,4</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>16,96</ns3:winOdds>
+                        <ns3:prize>900</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Timo Mäkäräinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Brenna</ns2:name>
+                        <ns2:competitionAge>8</ns2:competitionAge>
+                        <ns2:registerNumber>246001S00171423</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>prt</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Boker</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Volsuenna</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Tume</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>FI</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Kari Hoffren</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kuopio</ns2:domicileOfOwner>
+                        <ns2:trainerName>Ilkka Hoffren</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>I Hoffren</ns3:driverName>
+                        <ns3:distance>3120</ns3:distance>
+                        <ns3:programNumber>10</ns3:programNumber>
+                        <ns3:track>10</ns3:track>
+                        <ns3:kmTime>28,2a</ns3:kmTime>
+                        <ns3:overallTime>4.35,1</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:winOdds>12,09</ns3:winOdds>
+                        <ns3:prize>600</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Ilkka Hoffren</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Runoneito</ns3:horseName>
+                    <ns3:kmtime>27,3</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Runoneito</ns3:horseName>
+                    <ns3:kmtime>29,3</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Runoneito</ns3:horseName>
+                    <ns3:kmtime>29,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>4</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Runoneito</ns3:horseName>
+                    <ns3:kmtime>26,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Runoneito</ns3:horseName>
+                    <ns3:kmtime>22,5</ns3:kmtime>
+                </ns3:intermediateTime>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>21</ns3:number>
+                <ns3:name></ns3:name>
+                <ns3:basicDistance>2120</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>Yhdistetty tasoitusajo 2120 m Avoin P. 0 e.</ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>Yhdistetty tasoitusajo 2120 m Avoin P. 0 e.</ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>KOE</ns3:classification>
+                <ns3:isMobileStart>false</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>1. koelähtö, 2120 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Gremlin Combo</ns2:name>
+                        <ns2:competitionAge>2</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00231052</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>rn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Nuncio*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Classical Duo</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Viking Kronos*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>IT</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Star-Racing Oy &amp; Wipunen varainhallinta Oy</ns2:ownerName>
+                        <ns2:domicileOfOwner>Vihti-Helsinki</ns2:domicileOfOwner>
+                        <ns2:trainerName>Pekka Korpi</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>P Korpi</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>3</ns3:track>
+                        <ns3:kmTime>21,7</ns3:kmTime>
+                        <ns3:overallTime>2.53,1</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:accepted>hyv</ns3:accepted>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Pekka Korpi</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Monster Mile Sisu*</ns2:name>
+                        <ns2:competitionAge>3</ns2:competitionAge>
+                        <ns2:registerNumber>S-22-2710</ns2:registerNumber>
+                        <ns2:birthCountryCode>SE</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>SE</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>trn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Hard Livin*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>SE</ns2:sireBirthCountryCode>
+                        <ns2:damName>Delaware Zet*</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Trixton*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Kalevi Pietilä</ns2:ownerName>
+                        <ns2:domicileOfOwner>Lappeenranta</ns2:domicileOfOwner>
+                        <ns2:trainerName>Matias Salo</ns2:trainerName>
+                        <ns2:trainerLicense>A</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>T Kylliäinen</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>21,7</ns3:kmTime>
+                        <ns3:overallTime>2.53,2</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:accepted>hyv</ns3:accepted>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Tommi Kylliäinen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Karsten</ns2:name>
+                        <ns2:competitionAge>3</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00221015</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprn</ns2:colorAbbre>
+                        <ns2:gender>R</ns2:gender>
+                        <ns2:sireName>Love You*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FR</ns2:sireBirthCountryCode>
+                        <ns2:damName>Ginger Belle</ns2:damName>
+                        <ns2:damBirthCountryCode>DE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Here Comes Joey*</ns2:damsSireName>
+                        <ns2:ownerName>Team Avanti Avanti!</ns2:ownerName>
+                        <ns2:domicileOfOwner>Espoo</ns2:domicileOfOwner>
+                        <ns2:trainerName>Tero Pohjolainen</ns2:trainerName>
+                        <ns2:trainerLicense>B</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>S Raitala</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>6</ns3:programNumber>
+                        <ns3:track>6</ns3:track>
+                        <ns3:kmTime>21,9</ns3:kmTime>
+                        <ns3:overallTime>2.53,6</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:accepted>hyv</ns3:accepted>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Santtu Raitala</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Club Nord Prince</ns2:name>
+                        <ns2:competitionAge>2</ns2:competitionAge>
+                        <ns2:registerNumber>246001L00231436</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>mrn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Andover Hall*</ns2:sireName>
+                        <ns2:sireBirthCountryCode>US</ns2:sireBirthCountryCode>
+                        <ns2:damName>Club Nord Yankee</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Muscles Yankee*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>US</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Suomalainen R &amp; H Ay</ns2:ownerName>
+                        <ns2:trainerName>Reijo Suomalainen</ns2:trainerName>
+                        <ns2:trainerLicense>C</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>J Saarela</ns3:driverName>
+                        <ns3:distance>2120</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>4</ns3:track>
+                        <ns3:kmTime>21,9</ns3:kmTime>
+                        <ns3:overallTime>2.53,7</ns3:overallTime>
+                        <ns3:placing>4</ns3:placing>
+                        <ns3:accepted>hyv</ns3:accepted>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Jarmo Saarela</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Gremlin Combo</ns3:horseName>
+                    <ns3:kmtime>23,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Ypäjä Jallu</ns3:horseName>
+                    <ns3:kmtime>41,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Gremlin Combo</ns3:horseName>
+                    <ns3:kmtime>23,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>2</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Ypäjä Jallu</ns3:horseName>
+                    <ns3:kmtime>39,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Gremlin Combo</ns3:horseName>
+                    <ns3:kmtime>20,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>3</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Ypäjä Jallu</ns3:horseName>
+                    <ns3:kmtime>33,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Gremlin Combo</ns3:horseName>
+                    <ns3:kmtime>18,5</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Ypäjä Jallu</ns3:horseName>
+                    <ns3:kmtime>32,2</ns3:kmtime>
+                </ns3:intermediateTime>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+        <ns3:race>
+            <ns3:raceInfo>
+                <ns3:number>31</ns3:number>
+                <ns3:name>ULHO:n PoniExpress</ns3:name>
+                <ns3:basicDistance>1140</ns3:basicDistance>
+                <ns3:conditionsOfRacingToDisplay>A-Ponit tasoitusajo 1140 m ULHO:n PoniExpress p. 3.05.0 + 20 m/ 3,1 s P. 100 e. (100-50-30-20)</ns3:conditionsOfRacingToDisplay>
+                <ns3:definitionOfCategoryNoSponsor>A-Ponit tasoitusajo 1140 m  p. 3.05.0 + 20 m/ 3,1 s P. 100 e. (100-50-30-20)</ns3:definitionOfCategoryNoSponsor>
+                <ns3:classification>PONI</ns3:classification>
+                <ns3:isMobileStart>false</ns3:isMobileStart>
+                <ns3:isMonte>false</ns3:isMonte>
+                <ns3:description>1. ponilähtö, ponilähtö 1140 m</ns3:description>
+            </ns3:raceInfo>
+            <ns3:raceResults>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Ihmemaan Halihali</ns2:name>
+                        <ns2:competitionAge>5</ns2:competitionAge>
+                        <ns2:registerNumber>246001H00201200</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>m</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Smedens Max Speed 340 SH</ns2:sireName>
+                        <ns2:sireBirthCountryCode>SE</ns2:sireBirthCountryCode>
+                        <ns2:damName>Jive</ns2:damName>
+                        <ns2:damBirthCountryCode>FI</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Celex SWE 62 SH</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>SE</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Oona Hänninen</ns2:ownerName>
+                        <ns2:domicileOfOwner>Kouvola</ns2:domicileOfOwner>
+                        <ns2:trainerName>Oona Hänninen</ns2:trainerName>
+                        <ns2:trainerLicense>P2</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>O Hänninen</ns3:driverName>
+                        <ns3:distance>1200</ns3:distance>
+                        <ns3:programNumber>3</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>2,48,6</ns3:kmTime>
+                        <ns3:overallTime>3.22,3</ns3:overallTime>
+                        <ns3:placing>1</ns3:placing>
+                        <ns3:isBreak>true</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:prize>100</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Oona Hänninen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>First of  May Player</ns2:name>
+                        <ns2:competitionAge>4</ns2:competitionAge>
+                        <ns2:registerNumber>246001H00211065</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>m</ns2:colorAbbre>
+                        <ns2:gender>T</ns2:gender>
+                        <ns2:sireName>Lähteelän Carlos 184 SH</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Polina</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Junibackens Martini 98 SH</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>SE</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Julia Rytkönen</ns2:ownerName>
+                        <ns2:domicileOfOwner>Forssa</ns2:domicileOfOwner>
+                        <ns2:trainerName>Julia Rytkönen</ns2:trainerName>
+                        <ns2:trainerLicense>P2</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>Ju Rytkönen</ns3:driverName>
+                        <ns3:distance>1160</ns3:distance>
+                        <ns3:programNumber>1</ns3:programNumber>
+                        <ns3:track>1</ns3:track>
+                        <ns3:kmTime>2,55,1</ns3:kmTime>
+                        <ns3:overallTime>3.23,1</ns3:overallTime>
+                        <ns3:placing>2</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:prize>50</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Julia Rytkönen</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:horseResultEntry>
+                    <ns3:horseData>
+                        <ns2:name>Kersantti Elohopea</ns2:name>
+                        <ns2:competitionAge>6</ns2:competitionAge>
+                        <ns2:registerNumber>246001H00191100</ns2:registerNumber>
+                        <ns2:birthCountryCode>FI</ns2:birthCountryCode>
+                        <ns2:registeredCountryCode>FI</ns2:registeredCountryCode>
+                        <ns2:colorAbbre>tprn</ns2:colorAbbre>
+                        <ns2:gender>O</ns2:gender>
+                        <ns2:sireName>Dust Mane 221 SH</ns2:sireName>
+                        <ns2:sireBirthCountryCode>FI</ns2:sireBirthCountryCode>
+                        <ns2:damName>Gläntans Gurlie</ns2:damName>
+                        <ns2:damBirthCountryCode>SE</ns2:damBirthCountryCode>
+                        <ns2:damsSireName>Gläntans Babar*</ns2:damsSireName>
+                        <ns2:damsSireBirthCountryCode>SE</ns2:damsSireBirthCountryCode>
+                        <ns2:ownerName>Siru Lind</ns2:ownerName>
+                        <ns2:domicileOfOwner>Loviisa</ns2:domicileOfOwner>
+                        <ns2:trainerName>Emmi Uljas</ns2:trainerName>
+                        <ns2:trainerLicense>P2</ns2:trainerLicense>
+                    </ns3:horseData>
+                    <ns3:horseResult>
+                        <ns3:isAbsent>false</ns3:isAbsent>
+                        <ns3:driverName>E Uljas</ns3:driverName>
+                        <ns3:distance>1200</ns3:distance>
+                        <ns3:programNumber>4</ns3:programNumber>
+                        <ns3:track>2</ns3:track>
+                        <ns3:kmTime>2,54,3</ns3:kmTime>
+                        <ns3:overallTime>3.29,1</ns3:overallTime>
+                        <ns3:placing>3</ns3:placing>
+                        <ns3:isBreak>false</ns3:isBreak>
+                        <ns3:isImproperGait>false</ns3:isImproperGait>
+                        <ns3:prize>30</ns3:prize>
+                        <ns3:isRoutineRace>false</ns3:isRoutineRace>
+                        <ns3:driverNameComplete>Emmi Uljas</ns3:driverNameComplete>
+                    </ns3:horseResult>
+                </ns3:horseResultEntry>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>1</ns3:intermediateTimeNumber>
+                    <ns3:horseName>First of  May Player</ns3:horseName>
+                    <ns3:kmtime>2,57,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:intermediateTime>
+                    <ns3:intermediateTimeNumber>5</ns3:intermediateTimeNumber>
+                    <ns3:horseName>Ihmemaan Halihali</ns3:horseName>
+                    <ns3:kmtime>2,53,0</ns3:kmtime>
+                </ns3:intermediateTime>
+                <ns3:sanction>
+                    <ns3:reason>Lähdön uusinnan aiheuttaminen (volttilähtö)</ns3:reason>
+                    <ns3:category>VAROITUS</ns3:category>
+                    <ns3:fineAmount>0</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Oona Hänninen</ns3:personName>
+                    <ns3:horseName>Ihmemaan Halihali</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+                <ns3:sanction>
+                    <ns3:reason>Sääntöjen vastainen kaista-ajo</ns3:reason>
+                    <ns3:category>VAROITUS</ns3:category>
+                    <ns3:fineAmount>0</ns3:fineAmount>
+                    <ns3:raisedFine>false</ns3:raisedFine>
+                    <ns3:personName>Oona Hänninen</ns3:personName>
+                    <ns3:horseName>Ihmemaan Halihali</ns3:horseName>
+                    <ns3:horseRegisteredCountryCode>FI</ns3:horseRegisteredCountryCode>
+                </ns3:sanction>
+            </ns3:raceResults>
+            <ns3:gameDataThisRace/>
+        </ns3:race>
+    </ns3:raceEvent>
+</ns3:result>
