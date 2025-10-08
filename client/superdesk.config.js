@@ -15,6 +15,25 @@ module.exports = function (grunt) {
       analytics: true,
     },
 
+    vocabulariesToExcludeAsFields: ['sttsubj'],
+
+    authoring: {
+        customEditorTags: [
+            {
+                id: 'company',
+                icon: 'business',
+                label: 'Yritys',
+                borderColor: 'tag-color-2',
+            },
+            {
+                id: 'person',
+                icon: 'user',
+                label: 'Henkilö',
+                borderColor: 'tag-color-1',
+            },
+        ],
+    },
+
     /* landing page after login */
     defaultRoute: "/workspace/monitoring",
 
@@ -49,6 +68,11 @@ module.exports = function (grunt) {
         publish: false /* publish */,
         publishAndContinue: false /* publish and create update */,
         closeAndContinue: false /* save, close, and update */,
+
+        sendAndDuplicate: {
+          deskName: 'Deski',
+          stageName: 'Incoming Stage',
+        },
       },
       confirmDueDate: true /* confirm due date */,
     },
@@ -109,6 +133,19 @@ module.exports = function (grunt) {
         "fetchedDesk",
         "associatedItems",
       ],
+      compactView: {
+        firstLine: [
+          "slugline",
+          "highlights",
+          "markedDesks",
+          "headline",
+          "wordcount",
+          "associations",
+          "publish_queue_errors",
+          "versioncreated",
+        ],
+        secondLine: [],
+      }
     },
 
     /* configuration of monitoring features */
@@ -119,20 +156,6 @@ module.exports = function (grunt) {
           allowed_fields_to_sort: ["publish_schedule"],
         },
       },
-    },
-    /* configuration of assignments view */
-    assignmentsList: {
-      firstLine: ["slugline", "name"],
-      secondLine: [
-        "priority",
-        "state",
-        "accepted",
-        "content",
-        "internal",
-        "due_date",
-        "desk",
-        "genre",
-      ],
     },
 
     /* display alternative labels for some stings */
@@ -154,6 +177,105 @@ module.exports = function (grunt) {
           spellcheckerId: 'stt_fin',
           runningMode: 'initially-disabled',
         },
+      },
+    },
+    planning: {
+      planning_list_item: {
+        firstLine: [
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+            position: 'start',
+          },
+          {fieldId: 'priority', position: 'start', fieldOptions: {hideLabel: true}},
+          {fieldId: 'slugline', position: 'start'},
+          {fieldId: 'coverages', position: 'end'}
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'files'},
+          {fieldId: 'internalnote'},
+          {fieldId: 'related_events', position: 'end'},
+        ],
+        compact_view: {
+          firstLine: [
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+              position: 'start',
+            },
+            {fieldId: 'priority', position: 'start', fieldOptions: {hideLabel: true}},
+            {fieldId: 'slugline', position: 'start'},
+            {fieldId: 'state'},
+          ],
+        },
+      },
+      event_list_item: {
+        firstLine: [
+          {
+            fieldId: 'anpa_category',
+            fieldOptions: {
+              hideLabel: true,
+            },
+            position: 'start',
+          },
+          {fieldId: 'event_datetime', position: 'start'},
+          {fieldId: 'name', position: 'start'},
+          {
+            fieldId: 'vocabulary',
+            fieldOptions: {
+              vocabularyId: 'event_type',
+              hideVocabularyName: true,
+            },
+            position: 'end'
+          },
+        ],
+        secondLine: [
+          {fieldId: 'state'},
+          {fieldId: 'files'},
+          {fieldId: 'location', position: 'end'},
+          {fieldId: 'related_plannings', position: 'end'},
+        ],
+        compact_view: {
+          firstLine: [
+            {
+              fieldId: 'anpa_category',
+              fieldOptions: {
+                hideLabel: true,
+              },
+              position: 'start',
+            },
+            {fieldId: 'event_datetime', position: 'start'},
+            {fieldId: 'name', position: 'start'},
+            {fieldId: 'state', position: 'end'},
+          ],
+        },
+      },
+
+      assignment_list_item: {
+        firstLine: [
+          {fieldId: 'slugline'},
+          {fieldId: 'description_text'},
+        ],
+        secondLine: [
+          {fieldId: 'priority'},
+          {fieldId: 'state'},
+          {fieldId: 'accepted'},
+          {fieldId: 'content'},
+          {fieldId: 'internal'},
+          {fieldId: 'headline'},
+          {fieldId: 'name'},
+          {fieldId: 'due_date'},
+          {fieldId: 'desk'},
+          {fieldId: 'genre'},
+          {fieldId: 'language'},
+          {fieldId: 'vocabulary', fieldOptions: {vocabularyId: 'sttsource'}},
+          {fieldId: 'anpa_category'},
+        ],
       },
     },
   };

@@ -1,9 +1,8 @@
-from typing import Dict, Any, Union, TypedDict
+from typing import Dict, Any, TypedDict
 import logging
 from copy import deepcopy
 
 from lxml.etree import Element
-from eve.utils import config
 
 from superdesk import get_resource_service
 from superdesk.metadata.item import ITEM_TYPE, ITEM_STATE
@@ -13,6 +12,8 @@ from planning.common import (
     update_post_item,
     update_assignment_on_link_unlink,
 )
+from planning.events.events_spike import process_spike_event
+from planning.planning.planning_spike import process_spike_planning_item
 
 
 logger = logging.getLogger(__name__)
@@ -45,11 +46,11 @@ def planning_xml_contains_remove_signal(xml: Element) -> bool:
     return False
 
 
-def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
+async def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
     item_resource = "events" if item.get(ITEM_TYPE) == "event" else "planning"
-    original: Union[Dict[str, Any], None] = get_resource_service(
-        item_resource
-    ).find_one(req=None, _id=item["guid"])
+    original: dict | None = await get_resource_service(item_resource).find_one_async(
+        req=None, _id=item["guid"]
+    )
 
     if not original:
         logger.error(
@@ -60,7 +61,7 @@ def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
 
     # Wrap ``unlink_item_from_all_content`` in a try...except, so if it fails the item is still spiked/cancelled
     try:
-        unlink_item_from_all_content(original)
+        await unlink_item_from_all_content(original)
     except Exception:
         logger.exception(
             "Failed to unlink content from item", extra={"item_id": item["guid"]}
@@ -72,16 +73,17 @@ def unpost_or_spike_event_or_planning(item: Dict[str, Any]) -> None:
         WORKFLOW_STATE.POSTPONED,
         WORKFLOW_STATE.CANCELLED,
     ]:
-        get_resource_service(item_resource + "_spike").patch(
-            original[config.ID_FIELD], original
-        )
+        if item_resource == "events":
+            await process_spike_event({}, original)
+        else:
+            await process_spike_planning_item({}, original)
     elif original.get("pubstatus") != POST_STATE.CANCELLED:
-        update_post_item(
+        await update_post_item(
             {"pubstatus": POST_STATE.CANCELLED, "_etag": original["_etag"]}, original
         )
 
 
-def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
+async def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
     """Attempts to unlink all content/assignments from the provided item
 
     Performs the following actions:
@@ -99,8 +101,10 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
     item_id = item["_id"]
     planning_service = get_resource_service("planning")
     if item.get(ITEM_TYPE) == "event":
-        for planning_item in planning_service.find(where={"event_item": item_id}):
-            unlink_item_from_all_content(planning_item)
+        async for planning_item in await planning_service.find_async(
+            where={"event_item": item_id}
+        ):
+            await unlink_item_from_all_content(planning_item)
     else:
         delivery_service = get_resource_service("delivery")
         archive_service = get_resource_service("search")
@@ -115,7 +119,7 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
             coverage.pop("assigned_to", None)
             coverage["workflow_status"] = WORKFLOW_STATE.DRAFT
 
-            for content_link in delivery_service.find(
+            async for content_link in await delivery_service.find_async(
                 where={"coverage_id": coverage["coverage_id"]}
             ):
                 content_id = content_link.get("item_id")
@@ -123,24 +127,30 @@ def unlink_item_from_all_content(item: Dict[str, Any]) -> None:
                     # Content ID not on this delivery, no need to unlink
                     continue
 
-                content_item = archive_service.find_one(req=None, _id=content_id)
+                content_item = await archive_service.find_one_async(
+                    req=None, _id=content_id
+                )
                 if not content_item or not content_item.get("assignment_id"):
                     # Either content not found, or does not contain the ``assignment_id``
                     # Nothing to do for this one
                     continue
 
                 # Update the content item to remove the ``assignment_id``
-                update_assignment_on_link_unlink(None, content_item)
+                await update_assignment_on_link_unlink(None, content_item)
 
         # Delete all delivery entries for this Planning item
-        delivery_service.delete_action(lookup={"planning_id": item_id})
+        await delivery_service.delete_action_async(lookup={"planning_id": item_id})
 
         # Delete all assignments for this Planning item directly
         # Note: skips ``on_delete`` and ``on_deleted`` hooks, due to validation issues
-        get_resource_service("assignments").delete(lookup={"planning_item": item_id})
+        await get_resource_service("assignments").delete_async(
+            lookup={"planning_item": item_id}
+        )
 
         # Update the Planning item, to update its coverage assignee and workflow_status
-        planning_service.system_update(item_id, {"coverages": coverages}, item)
+        await planning_service.system_update_async(
+            item_id, {"coverages": coverages}, item
+        )
 
 
 def remove_date_portion_from_id(item_id: str) -> str:
@@ -162,8 +172,10 @@ def remove_date_portion_from_id(item_id: str) -> str:
     return ":".join(id_parts)
 
 
-def original_item_exists(resource: str, item_id: str) -> bool:
-    return get_resource_service(resource).find_one(req=None, _id=item_id) is not None
+async def original_item_exists(resource: str, item_id: str) -> bool:
+    return (
+        await get_resource_service(resource).find_one_async(req=None, _id=item_id)
+    ) is not None
 
 
 def is_online_version(item: Item) -> bool:
@@ -178,3 +190,45 @@ def is_online_version(item: Item) -> bool:
         )
         is not None
     )
+
+
+class STTParserMixin:
+
+    async def parse(self, xml, provider=None):
+        items = await super().parse(xml, provider)
+        for item in items:
+            department = [
+                s for s in item.get("subject", []) if s.get("scheme") == "sttdepartment"
+            ]
+            if department:
+                item["anpa_category"] = [
+                    {"name": d["name"], "qcode": d["qcode"]} for d in department
+                ]
+            if item.get("headline") and "TRANSLATED" in item["headline"]:
+                item["language"] = "en"
+            else:
+                item["language"] = "fi"
+        return items
+
+    def get_topics_lookup(self):
+        topics = self.get_cv_items("topics")
+        return {int(t["iptc_subject"], 10): t for t in topics if t.get("iptc_subject")}
+
+    def get_cv_items(self, _id):
+        return get_resource_service("vocabularies").get_items(_id)
+
+    def parse_subjects(self, item, subjects):
+        topics_lookup = self.get_topics_lookup()
+        topics_list = []
+        for subject in subjects:
+            qcode = subject.attrib.get("qcode", "")
+            if qcode.startswith("sttsubj:"):
+                code = qcode.split(":")[1]
+                topic = topics_lookup.get(int(code, 10))
+                if topic and topic not in topics_list:
+                    topics_list.append(topic)
+                    item.setdefault("subject", []).append(topic)
+            if qcode.startswith("stt-topics:"):
+                item.setdefault("extra", {})["stt_topics"] = qcode.split(":")[1]
+            if qcode.startswith("stt-events:"):
+                item.setdefault("extra", {})["stt_events"] = qcode.split(":")[1]

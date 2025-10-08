@@ -107,7 +107,7 @@ class HipposParser(XMLFeedParser):
                         str += ". "
         return str
 
-    def parse(self, xml, provider=None):
+    async def parse(self, xml, provider=None):
 
         uid = generate_guid(type=GUID_TAG)
 

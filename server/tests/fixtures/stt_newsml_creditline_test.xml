@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<newsItem xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" guid="urn:newsml:stt.fi:20170131:101159380" version="1" standardversion="2.12" conformance="power" xml:lang="fi-FI" standard="NewsML-G2" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" stt:formatversion="1.1">
+<newsItem xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" guid="urn:newsml:stt.fi:20170131:101159383" version="1" standardversion="2.12" conformance="power" xml:lang="fi-FI" standard="NewsML-G2" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" stt:formatversion="1.1">
   <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_19.xml"/>
   <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
   <catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
   <itemMeta>
     <itemClass qcode="ninat:text"/>
     <provider literal="STT"/>
-    <versionCreated/>
+    <versionCreated>2025-09-08T10:01:00+00:00</versionCreated>
     <firstCreated/>
     <pubStatus qcode="stat:usable"/>
-    <link rel="irel:seeAlso" residref="urn:newsml:stt.fi:20190521:1029359" contenttype="image/jpeg">
+    <link rel="irel:seeAlso" residref="urn:newsml:stt.fi:20190521:1029362" contenttype="image/jpeg">
         <title role="drol:caption">Kauppaministeriön mukaan 90 päivän lisäaika tarvitaan, jotta Huawei ja sen kumppanit ehtivät sopeutua muutokseen. LEHTIKUVA/AFP </title>
         <filename>1029359.jpg</filename>
     </link>
   </itemMeta>
   <contentMeta>
     <urgency>3</urgency>
-    <contentCreated>2011-05-01T10:44:43</contentCreated>
-    <contentModified>2011-05-01T10:44:43</contentModified>
+    <contentCreated>2025-09-08T10:03:00+00:00</contentCreated>
+    <contentModified>2025-09-08T10:03:00+00:00</contentModified>
     <creator qcode="stteditorid:26634">
       <name>Areva Mari</name>
     </creator>
-    <altId type="sttidtype:textid">117616076</altId>
+    <altId type="sttidtype:textid">117616079</altId>
     <located type="loctyp:City">
       <name/>
     </located>
@@ -60,15 +60,12 @@
     <subject type="cpnat:abstract" qcode="sttsubj:06000000">
       <name>Ympäristö</name>
     </subject>
-    <subject type="cpnat:abstract" qcode="sttsubj:06000000">
-      <name>Ympäristö</name>
-    </subject>
     <slugline/>
     <dateline/>
     <by/>
     <description role="drol:summary"/>
-    <headline/>
-    <creditline>STT–</creditline>
+    <headline>Test Headline for STT Source Mapping - Part 2</headline>
+    <creditline>STT–AFP</creditline>
     <genre qcode="sttgenre:1">
       <name>Pääjuttu</name>
     </genre>
@@ -123,29 +120,9 @@
     <inlineXML contenttype="xhtml/xml">
       <html>
         <body>
-          <p>Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p>Yhdysvalloissa on <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins </a>-yliopiston keräämien tietojen mukaan raportoitu yli 7,7 miljoonaa koronatartuntaa ja yli 214&#8201;  000 koronavirukseen liitettyä kuolemaa.</p>
-          <p>Olen kuullut Barack Obaman siellä kaksi kertaa puhuvan ja ne ovat oleet hyvin hyödyllisiä. Se on myös erinomainen tapa verkostoitua. Siellä on hirvittävän iso määrä ihmisiä eri puolilta maailmaa, senaattoireta,edustajahuoneen jäseniä, kaikennäköistä väkeä. Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p/>
-          <p>Mikser ja Soini tapasivat tänään aamulla, ja Soini lähtee vielä tänään Yhdysvaltoihin </p>
-          <p/>
-          <p>- tässä tilanteessa hyvin tärkeä ja ajanakohtainene. </p>
-          <p/>
-          <p>Osallistun myös konkressin rukousaamiaiselle. </p>
-          <p/>
-          <p>–   Minulla ei ole kahdenkeskistä tapaamista Donald Trumpin kanssa, mutta mielenkiinnolla odotan, jos hän sinne tulee ja mitä hän sanoo. Olen kuullut Barack Obaman siellä kaksi kertaa puhuvan ja ne ovat oleet hyvin hyödyllisiä. Se on myös erinomainen tapa verkostoitua. Siellä on hirvittävän iso määrä ihmisiä eri puolilta maailmaa, senaattoireta,edustajahuoneen jäseniä, kaikennäköistä väkeä. Saatuuu siinä mielessä hyvään saumaan. Mielenkiitnoista påuheenaiheita tulee olemaan. Hyvilä mielelä</p>
-          <p/>
-          <p/>
-          <p>Ulkoministeri Timo Soini vierailee 1.-4. helmikuuta Yhdysvalloissa Washington D.C:ssä. Vierailun tavoitteena on luoda suhteita Yhdysvaltojen uuteen hallintoon sekä käydä keskusteluja eri tahojen kanssa ajankohtaisista ulko- ja turvallisuuspoliittisista kysymyksistä sekä keskustella Suomen ja Yhdysvaltojen välisistä suhteista.  </p>
-          <p/>
-          <p>Ministeri Soini tapaa hallinnon ja kongressin ulko- ja turvallisuuspoliittisia vaikuttajia, mukaan lukien senaatin ulkoasiainvaliokunnan puheenjohtaja Bob Corkerin. Lisäksi ministeri Soini tapaa ajatushautomoiden edustajia.</p>
-          <p/>
-          <p>Vierailun aikana ministeri Soini osallistuu Yhdysvaltain kongressin isännöimälle kansalliselle rukousaamiaiselle, jossa on perinteisesti puhunut myös Yhdysvaltain presidentti.</p>
-          <p/>
+          <p>This is a test article for STT source mapping.</p>
+          <p>It includes content from STT and AFP sources.</p>
+          <p>Minister Soini is visiting the US for discussions.</p>
         </body>
       </html>
     </inlineXML>

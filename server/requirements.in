@@ -1,7 +1,8 @@
-gunicorn
 honcho
+python3-saml
 google-cloud-translate==3.21.1
 
-git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@feature/embedded-events-editor#egg=superdesk-planning
-git+https://github.com/superdesk/superdesk-analytics.git@develop#egg=superdesk-analytics
+
+git+https://github.com/superdesk/superdesk-core.git@release/3.1#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@release/3.1#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-analytics.git@release/3.1#egg=superdesk-analytics

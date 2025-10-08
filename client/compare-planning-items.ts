@@ -1,14 +1,17 @@
 import {groupBy} from 'lodash';
 
 const getCoverageScore = (item) => {
-    if ((item.coverages ?? []).length < 1) {
+    const allCoverages = item.coverages ?? [];
+    const textCoverages = allCoverages.filter(c => c.planning?.g2_content_type === 'text');
+
+    if (textCoverages.length < 1) {
         return -1;
     }
 
-    const coverages = groupBy(item.coverages, (c) => c.news_coverage_status.qcode);
+    const coveragesByStatus = groupBy(allCoverages, (c) => c.news_coverage_status.qcode);
 
-    const hasPlanned = (coverages['ncostat:int'] ?? []).length > 0;
-    const hasCompleted = (item.coverages ?? []).some((c) => c.assigned_to?.state === 'completed');
+    const hasPlanned = (coveragesByStatus['ncostat:int'] ?? []).length > 0;
+    const hasCompleted = allCoverages.some((c) => c.assigned_to?.state === 'completed');
 
     // move down coverages that have been completed, but news_coverage_status is still set to planned
     if (hasPlanned && !hasCompleted) {
@@ -19,13 +22,13 @@ const getCoverageScore = (item) => {
         return 3;
     }
 
-    const hasMaybe = (coverages['ncostat:notdec'] ?? []).length > 0;
+    const hasMaybe = (coveragesByStatus['ncostat:notdec'] ?? []).length > 0;
 
     if (hasMaybe) {
         return 2;
     }
 
-    const hasNotPlanned = (coverages['ncostat:notint'] ?? []).length > 0;
+    const hasNotPlanned = (coveragesByStatus['ncostat:notint'] ?? []).length > 0;
 
     if (hasNotPlanned) {
         return 1;
@@ -34,7 +37,7 @@ const getCoverageScore = (item) => {
     return 0;
 };
 
-export const comparePlanningItem = (a, b) => {
+export const comparePlanningItems = (a, b) => {
     const aDepartment = (
         a.anpa_category?.[0]?.name ?? ""
     ).toLowerCase();
@@ -54,11 +57,11 @@ export const comparePlanningItem = (a, b) => {
         return bCoverageScore - aCoverageScore;
     }
 
-    const aImportance = a.urgency ?? 5; // 5 is lowest
-    const bImportance = b.urgency ?? 5;
+    const aPriority = a.priority ?? 5; // 5 is lowest
+    const bPriority = b.priority ?? 5;
 
-    if (aImportance !== bImportance) {
-        return aImportance - bImportance;
+    if (aPriority !== bPriority) {
+        return aPriority - bPriority;
     }
 
     const aDate = a._updated || a._created || "";

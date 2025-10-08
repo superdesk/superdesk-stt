@@ -145,7 +145,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         response = self._get_with_retry(url, headers=headers, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
 
-    def _update(self, provider, update) -> Iterable[Dict]:
+    async def _update(self, provider, update) -> Iterable[Dict]:
         """
         Fetch pages from the Content API, parse items with the configured parser,
         and return a flat list of parsed dicts.
@@ -165,7 +165,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         for item in json_items:
             try:
                 # Get the configured parser for this provider and parse the item
-                parser = self.get_feed_parser(provider)
+                parser = await self.get_feed_parser(provider)
                 if not isinstance(item, dict):
                     logger.warning(
                         "Skipping non-dict JSON item before parse: %r (type: %s)",
@@ -174,7 +174,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                     )
                     continue
 
-                parsed_result = parser.parse(item, provider)
+                parsed_result = await parser.parse(item, provider)
                 # Only return dict items to the ingest pipeline
                 if isinstance(parsed_result, list):
                     parsed_items.extend(

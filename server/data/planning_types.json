@@ -1,633 +1,1290 @@
 [
-  {
-    "_id": "event",
-    "name": "event",
-    "init_version": 1,
-    "schema": {
-      "calendars": {
-        "type": "list",
-        "required": true,
-        "mandatory_in_list": null,
-        "schema": null
-      },
-      "slugline": {
-        "type": "string",
-        "required": false,
-        "minlength": null,
-        "maxlength": null
-      },
-      "occur_status": {
-        "type": "list",
-        "required": false,
-        "nullable": false
-      },
-      "language": {
-        "type": "string",
-        "required": true
-      }
-    },
-    "editor": {
-      "occur_status": {
-        "enabled": true
-      },
-      "anpa_category": {
-        "enabled": false
-      },
-      "subject": {
-        "enabled": false
-      },
-      "language": {
-        "enabled": true
-      }
-    }
-  },
-  {
-    "_id": "planning",
-    "name": "planning",
-    "init_version": 1,
-    "schema": {
-      "agendas": {
-        "required": false,
-        "type": "list"
-      },
-      "place": {
-        "required": false,
-        "type": "list"
-      },
-      "description_text": {
-        "required": false,
-        "type": "string"
-      },
-      "ednote": {
-        "required": false,
-        "type": "string"
-      },
-      "flags": {
-        "required": false,
-        "type": "dict"
-      },
-      "headline": {
-        "required": false,
-        "type": "string"
-      },
-      "name": {
-        "required": true,
-        "type": "string"
-      },
-      "internal_note": {
-        "required": false,
-        "type": "string"
-      },
-      "slugline": {
-        "required": false,
-        "type": "string"
-      },
-      "urgency": {
-        "required": false,
-        "type": "number"
-      },
-      "files": {
-        "required": false,
-        "type": "list"
-      },
-      "language": {
-        "type": "string",
-        "required": true
-      }
-    },
-    "editor": {
-      "agendas": {
-        "enabled": true
-      },
-      "place": {
-        "enabled": false
-      },
-      "description_text": {
-        "enabled": true
-      },
-      "ednote": {
-        "enabled": true
-      },
-      "flags": {
-        "enabled": true
-      },
-      "internal_note": {
-        "enabled": true
-      },
-      "slugline": {
-        "enabled": true
-      },
-      "headline": {
-        "enabled": false
-      },
-      "urgency": {
-        "enabled": true
-      },
-      "name": {
-        "enabled": true
-      },
-      "files": {
-        "enabled": true
-      },
-      "anpa_category": {
-        "enabled": false
-      },
-      "subject": {
-        "enabled": false
-      },
-      "language": {
-        "enabled": true
-      }
-    },
-    "list": {
-      "primary_fields": [
-        "slugline",
-        "internalnote",
-        "name"
-      ]
-    }
-  },
-  {
-    "_id": "advanced_search",
-    "name": "advanced_search",
-    "init_version": 1,
-    "editor": {
-        "event": {
-            "full_text": {
+    {
+        "_id": "event",
+        "name": "event",
+        "init_version": 1,
+        "editor": {
+            "recurring_rules": {
                 "enabled": true,
-                "index": 1,
-                "group": "common",
-                "search_enabled": false,
-                "filter_enabled": true
+                "group": "schedule",
+                "index": 1
             },
-            "name": {
+            "dates": {
                 "enabled": true,
-                "index": 2,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "slugline": {
-                "enabled": true,
-                "index": 3,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "schedule",
+                "index": 0,
+                "default_duration_on_change": 1,
+                "all_day": {
+                    "enabled": true
+                }
             },
             "language": {
                 "enabled": false,
-                "index": 4,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "description",
+                "index": 1
             },
-            "internal_note": {
-                "enabled": true,
-                "index": 5,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+            "slugline": {
+                "enabled": false,
+                "index": 0
             },
-            "sttsubj": {
+            "name": {
                 "enabled": true,
-                "index": 1,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "new_group_1",
+                "index": 0
             },
-            "sttgenre": {
+            "definition_short": {
                 "enabled": true,
-                "index": 2,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "stturgency": {
-                "enabled": true,
-                "index": 3,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "state": {
-                "enabled": true,
-                "index": 1,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "posted": {
-                "enabled": true,
-                "index": 2,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "spike_state": {
-                "enabled": true,
-                "index": 3,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "include_killed": {
-                "enabled": true,
-                "index": 4,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "lock_state": {
-                "enabled": true,
-                "index": 5,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "source": {
-                "enabled": true,
-                "index": 6,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "start_date": {
-                "enabled": true,
-                "index": 1,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "end_date": {
-                "enabled": true,
-                "index": 2,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "date_filter": {
-                "enabled": true,
-                "index": 3,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "no_calendar_assigned": {
-                "enabled": true,
-                "index": 1,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "calendars": {
-                "enabled": true,
-                "index": 2,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "description",
+                "index": 1
             },
             "reference": {
                 "enabled": false,
-                "index": 3,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "description",
+                "index": 5
+            },
+            "calendars": {
+                "enabled": false,
+                "index": 0
+            },
+            "place": {
+                "enabled": false,
+                "group": "description",
+                "index": 7
+            },
+            "occur_status": {
+                "enabled": false,
+                "index": 0
+            },
+            "priority": {
+                "enabled": false,
+                "group": "description",
+                "index": 9
+            },
+            "urgency": {
+                "enabled": false,
+                "group": "description",
+                "index": 10
             },
             "location": {
                 "enabled": true,
-                "index": 4,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
-            }
-        },
-        "planning": {
-            "full_text": {
+                "group": "location",
+                "index": 0
+            },
+            "event_contact_info": {
                 "enabled": true,
-                "index": 1,
-                "group": "common",
-                "search_enabled": false,
-                "filter_enabled": true
+                "group": "location",
+                "index": 1
             },
-            "name": {
-                "enabled": false,
-                "index": 2,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "slugline": {
+            "anpa_category": {
                 "enabled": true,
-                "index": 3,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+                "group": "description",
+                "index": 0
             },
-            "language": {
+            "subject": {
                 "enabled": false,
-                "index": 4,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+                "index": 0
+            },
+            "definition_long": {
+                "enabled": false,
+                "index": 0
             },
             "internal_note": {
-                "enabled": true,
-                "index": 5,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttsubj": {
-                "enabled": true,
-                "index": 1,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttgenre": {
-                "enabled": true,
-                "index": 2,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "stturgency": {
-                "enabled": true,
-                "index": 3,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "state": {
-                "enabled": true,
-                "index": 1,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "posted": {
-                "enabled": true,
-                "index": 2,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "spike_state": {
-                "enabled": true,
-                "index": 3,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "include_killed": {
-                "enabled": true,
-                "index": 4,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "lock_state": {
-                "enabled": true,
-                "index": 5,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "exclude_rescheduled_and_cancelled": {
-                "enabled": true,
-                "index": 6,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "source": {
-                "enabled": true,
-                "index": 7,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "start_date": {
-                "enabled": true,
-                "index": 1,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "end_date": {
-                "enabled": true,
-                "index": 2,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "date_filter": {
-                "enabled": true,
-                "index": 3,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "no_agenda_assigned": {
-                "enabled": true,
-                "index": 1,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "agendas": {
-                "enabled": true,
-                "index": 2,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "no_coverage": {
-                "enabled": true,
-                "index": 3,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "g2_content_type": {
-                "enabled": true,
-                "index": 4,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "urgency": {
-                "enabled": true,
-                "index": 5,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "coverage_assignment_status": {
-                "enabled": true,
-                "index": 6,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "ad_hoc_planning": {
                 "enabled": false,
-                "index": 6,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
+                "index": 0
             },
-            "featured": {
+            "ednote": {
                 "enabled": false,
-                "index": 7,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
+                "index": 0
             },
-            "include_scheduled_updates": {
-                "enabled": false,
-                "index": 8,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
+            "files": {
+                "enabled": true,
+                "group": "attachments",
+                "index": 0
+            },
+            "links": {
+                "enabled": false
+            },
+            "related_plannings": {
+                "enabled": true,
+                "group": "related_plannings",
+                "index": 0
+            },
+            "registration_details": {
+                "enabled": false
+            },
+            "invitation_details": {
+                "enabled": true,
+                "group": "details",
+                "index": 0
+            },
+            "accreditation_info": {
+                "enabled": false
+            },
+            "accreditation_deadline": {
+                "enabled": true,
+                "group": "location",
+                "index": 2
+            },
+            "event_type": {
+                "enabled": true,
+                "group": "description",
+                "index": 2
+            },
+            "topics": {
+                "enabled": true,
+                "group": "description",
+                "index": 3
             }
         },
-        "combined": {
-            "full_text": {
-                "enabled": true,
-                "index": 1,
-                "group": "common",
-                "search_enabled": false,
-                "filter_enabled": true
+        "schema": {
+            "accreditation_deadline": {
+                "type": "string",
+                "required": false
             },
-            "name": {
-                "enabled": true,
-                "index": 2,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
+            "accreditation_info": {
+                "type": "string",
+                "required": false,
+                "field_type": "single_line"
             },
-            "slugline": {
-                "enabled": true,
-                "index": 3,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "language": {
-                "enabled": false,
-                "index": 4,
-                "group": "common",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttsubj": {
-                "enabled": true,
-                "index": 1,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "sttgenre": {
-                "enabled": true,
-                "index": 2,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "stturgency": {
-                "enabled": true,
-                "index": 3,
-                "group": "vocabularies",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "state": {
-                "enabled": true,
-                "index": 1,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "posted": {
-                "enabled": true,
-                "index": 2,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "spike_state": {
-                "enabled": true,
-                "index": 3,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "include_killed": {
-                "enabled": true,
-                "index": 4,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "lock_state": {
-                "enabled": true,
-                "index": 5,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "source": {
-                "enabled": true,
-                "index": 6,
-                "group": "states",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "start_date": {
-                "enabled": true,
-                "index": 1,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "end_date": {
-                "enabled": true,
-                "index": 2,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
-            },
-            "date_filter": {
-                "enabled": true,
-                "index": 3,
-                "group": "dates",
-                "search_enabled": true,
-                "filter_enabled": true
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
             },
             "calendars": {
-                "enabled": true,
-                "index": 1,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "custom_vocabularies": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "dates": {
+                "type": "dict",
+                "required": true
+            },
+            "definition_long": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "definition_short": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "event_contact_info": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "files": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "internal_note": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line",
+                "expandable": true
+            },
+            "invitation_details": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "language": {
+                "type": "string",
+                "required": false,
+                "languages": null,
+                "default_langauge": null
+            },
+            "links": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "location": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "name": {
+                "type": "string",
+                "required": true,
+                "field_type": "single_line"
+            },
+            "occur_status": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "qcode": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "required": false
+                    },
+                    "label": {
+                        "type": "string",
+                        "required": false
+                    }
+                }
+            },
+            "place": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "priority": {
+                "type": "integer",
+                "required": false
+            },
+            "recurring_rules": {
+                "type": "dict",
+                "required": false
             },
             "reference": {
-                "enabled": false,
-                "index": 2,
-                "group": "events",
-                "search_enabled": true,
-                "filter_enabled": true
+                "type": "string",
+                "required": false
             },
-            "agendas": {
-                "enabled": true,
+            "registration_details": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "related_plannings": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null,
+                "read_only": false,
+                "planning_auto_publish": false,
+                "cancel_plan_with_event": true
+            },
+            "slugline": {
+                "type": "string",
+                "required": false
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        },
+                        "parent": {
+                            "nullable": true
+                        }
+                    }
+                }
+            },
+            "urgency": {
+                "type": "integer",
+                "required": false
+            },
+            "event_type": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "topics": {
+                "type": "custom_vocabulary",
+                "required": false
+            }
+        },
+        "groups": {
+            "schedule": {
+                "_id": "schedule",
+                "name": "Schedule",
                 "index": 1,
-                "group": "planning",
-                "search_enabled": true,
-                "filter_enabled": true
+                "showBookmark": true,
+                "icon": "time",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Schedule",
+                        "en": "Schedule"
+                    }
+                }
+            },
+            "description": {
+                "_id": "description",
+                "name": "Description",
+                "index": 2,
+                "showBookmark": true,
+                "icon": "align-left",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Description",
+                        "en": "Description"
+                    }
+                }
+            },
+            "location": {
+                "_id": "location",
+                "name": "Location",
+                "index": 3,
+                "showBookmark": true,
+                "icon": "map-marker",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Location",
+                        "en": "Location"
+                    }
+                }
+            },
+            "details": {
+                "_id": "details",
+                "name": "Kutsu",
+                "index": 4,
+                "showBookmark": true,
+                "icon": "align-right",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Kutsu",
+                        "en": "Invitation"
+                    }
+                }
+            },
+            "attachments": {
+                "_id": "attachments",
+                "name": "Attachments",
+                "index": 7,
+                "showBookmark": true,
+                "icon": "attachment",
+                "useToggleBox": true,
+                "translations": {
+                    "name": {
+                        "fi": "Attachments",
+                        "en": "Attachments"
+                    }
+                }
+            },
+            "related_plannings": {
+                "_id": "related_plannings",
+                "name": "Related Plannings",
+                "index": 6,
+                "showBookmark": true,
+                "icon": "calendar-list",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Related Plannings",
+                        "en": "Related Plannings"
+                    }
+                }
+            },
+            "new_group_1": {
+                "_id": "new_group_1",
+                "name": "Nimi",
+                "icon": "align-center",
+                "useToggleBox": false,
+                "showBookmark": false,
+                "index": 0,
+                "translations": {
+                    "name": {
+                        "fi": "Nimi",
+                        "en": "Name"
+                    }
+                }
             }
         }
     },
-    "schema": {}
-  }
+    {
+        "_id": "planning",
+        "name": "planning",
+        "init_version": 1,
+        "editor": {
+            "language": {
+                "enabled": false,
+                "group": "title",
+                "index": 1
+            },
+            "slugline": {
+                "enabled": true,
+                "group": "title",
+                "index": 0
+            },
+            "headline": {
+                "enabled": false,
+                "group": "title",
+                "index": 3
+            },
+            "name": {
+                "enabled": false,
+                "group": "title",
+                "index": 4
+            },
+            "planning_date": {
+                "enabled": true,
+                "group": "schedule",
+                "index": 0
+            },
+            "description_text": {
+                "enabled": true,
+                "group": "description",
+                "index": 0
+            },
+            "internal_note": {
+                "enabled": true,
+                "group": "description",
+                "index": 2
+            },
+            "place": {
+                "enabled": false,
+                "group": "description",
+                "index": 3
+            },
+            "agendas": {
+                "enabled": false,
+                "index": 0
+            },
+            "ednote": {
+                "enabled": false,
+                "index": 0
+            },
+            "anpa_category": {
+                "enabled": true,
+                "group": "schedule",
+                "index": 1
+            },
+            "subject": {
+                "enabled": false,
+                "index": 0
+            },
+            "urgency": {
+                "enabled": false,
+                "index": 0
+            },
+            "marked_for_not_publication": {
+                "enabled": true,
+                "group": "details",
+                "index": 1
+            },
+            "overide_auto_assign_to_workflow": {
+                "enabled": false,
+                "index": 0
+            },
+            "files": {
+                "enabled": true,
+                "group": "attachments",
+                "index": 0
+            },
+            "associated_event": {
+                "enabled": true,
+                "group": "associated_event",
+                "index": 0
+            },
+            "coverages": {
+                "enabled": true,
+                "group": "coverages",
+                "index": 0
+            },
+            "priority": {
+                "enabled": true,
+                "group": "description",
+                "index": 1
+            },
+            "topics": {
+                "enabled": true,
+                "group": "description",
+                "index": 3
+            },
+            "sttcheckedby": {
+                "enabled": true,
+                "group": "details",
+                "index": 0
+            }
+        },
+        "schema": {
+            "agendas": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "associated_event": null,
+            "coverages": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "custom_vocabularies": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "description_text": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "files": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "headline": {
+                "type": "string",
+                "required": false
+            },
+            "internal_note": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line",
+                "expandable": true
+            },
+            "language": {
+                "type": "string",
+                "required": false,
+                "languages": null,
+                "default_langauge": null
+            },
+            "location": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "marked_for_not_publication": {
+                "type": "boolean",
+                "required": false
+            },
+            "name": {
+                "type": "string",
+                "required": false,
+                "field_type": "single_line"
+            },
+            "overide_auto_assign_to_workflow": {
+                "type": "boolean",
+                "required": false
+            },
+            "place": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "planning_date": {
+                "type": "datetime",
+                "required": true
+            },
+            "priority": {
+                "type": "integer",
+                "required": false
+            },
+            "slugline": {
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        },
+                        "parent": {
+                            "nullable": true
+                        }
+                    }
+                }
+            },
+            "urgency": {
+                "type": "integer",
+                "required": false
+            },
+            "topics": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttcheckedby": {
+                "type": "custom_vocabulary",
+                "required": false
+            }
+        },
+        "groups": {
+            "title": {
+                "_id": "title",
+                "name": "Title",
+                "index": 0,
+                "showBookmark": true,
+                "icon": "align-left",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Title",
+                        "en": "Title"
+                    }
+                }
+            },
+            "schedule": {
+                "_id": "schedule",
+                "name": "Schedule",
+                "index": 1,
+                "showBookmark": true,
+                "icon": "time",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Schedule",
+                        "en": "Schedule"
+                    }
+                }
+            },
+            "description": {
+                "_id": "description",
+                "name": "Description",
+                "index": 2,
+                "showBookmark": true,
+                "icon": "align-left",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Description",
+                        "en": "Description"
+                    }
+                }
+            },
+            "details": {
+                "_id": "details",
+                "name": "Details",
+                "index": 3,
+                "showBookmark": true,
+                "icon": "info-sign",
+                "useToggleBox": true,
+                "translations": {
+                    "name": {
+                        "fi": "Details",
+                        "en": "Details"
+                    }
+                }
+            },
+            "attachments": {
+                "_id": "attachments",
+                "name": "Attachments",
+                "index": 6,
+                "showBookmark": true,
+                "icon": "attachment",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Attachments",
+                        "en": "Attachments"
+                    }
+                }
+            },
+            "associated_event": {
+                "_id": "associated_event",
+                "name": "Associated Event",
+                "index": 5,
+                "showBookmark": true,
+                "icon": "calendar",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Associated Event",
+                        "en": "Associated Event"
+                    }
+                }
+            },
+            "coverages": {
+                "_id": "coverages",
+                "name": "Coverages",
+                "index": 4,
+                "showBookmark": true,
+                "icon": "calendar-list",
+                "useToggleBox": false,
+                "translations": {
+                    "name": {
+                        "fi": "Coverages",
+                        "en": "Coverages"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "_id": "advanced_search",
+        "name": "advanced_search",
+        "init_version": 1,
+        "editor": {
+            "event": {
+                "full_text": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "common",
+                    "search_enabled": false,
+                    "filter_enabled": true
+                },
+                "name": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "internal_note": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "state": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "posted": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "spike_state": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "include_killed": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "lock_state": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "topics": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "anpa_category": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "source": {
+                    "enabled": true,
+                    "index": 6,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "start_date": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "end_date": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "date_filter": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "no_calendar_assigned": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "calendars": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "reference": {
+                    "enabled": false,
+                    "index": 3,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "location": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "event_type": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "invitation_details": {
+                    "enabled": true,
+                    "index": 6,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "registration_details": {
+                    "enabled": true,
+                    "index": 7,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "accreditation_info": {
+                    "enabled": true,
+                    "index": 8,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "definition_short": {
+                    "enabled": true,
+                    "index": 9,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "definition_long": {
+                    "enabled": true,
+                    "index": 10,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                }
+            },
+            "planning": {
+                "full_text": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "common",
+                    "search_enabled": false,
+                    "filter_enabled": true
+                },
+                "name": {
+                    "enabled": false,
+                    "index": 2,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "slugline": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "internal_note": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "topics": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "vocabularies",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "anpa_category": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "vocabularies",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "state": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "posted": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "spike_state": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "include_killed": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "lock_state": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "exclude_rescheduled_and_cancelled": {
+                    "enabled": true,
+                    "index": 6,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "source": {
+                    "enabled": true,
+                    "index": 7,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "start_date": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "end_date": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "date_filter": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "no_agenda_assigned": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "agendas": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "no_coverage": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "g2_content_type": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "coverage_assignment_status": {
+                    "enabled": true,
+                    "index": 6,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "ad_hoc_planning": {
+                    "enabled": false,
+                    "index": 6,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "featured": {
+                    "enabled": false,
+                    "index": 7,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "include_scheduled_updates": {
+                    "enabled": false,
+                    "index": 8,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "description_text": {
+                    "enabled": true,
+                    "index": 9,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                }
+            },
+            "combined": {
+                "full_text": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "common",
+                    "search_enabled": false,
+                    "filter_enabled": true
+                },
+                "name": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "slugline": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "internal_note": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "common",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "topics": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "vocabularies",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "anpa_category": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "vocabularies",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "state": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "posted": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "spike_state": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "include_killed": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "lock_state": {
+                    "enabled": true,
+                    "index": 5,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "source": {
+                    "enabled": true,
+                    "index": 6,
+                    "group": "states",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "start_date": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "end_date": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "date_filter": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "dates",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "calendars": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "reference": {
+                    "enabled": false,
+                    "index": 2,
+                    "group": "events",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                },
+                "agendas": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "planning",
+                    "search_enabled": true,
+                    "filter_enabled": true
+                }
+            },
+            "assignments": {
+                "slugline": {
+                    "enabled": true,
+                    "index": 1,
+                    "group": "common"
+                },
+                "sttregistrationinfo": {
+                    "enabled": true,
+                    "index": 3,
+                    "group": "common"
+                },
+                "genre": {
+                    "enabled": true,
+                    "index": 4,
+                    "group": "vocabularies"
+                },
+                "anpa_category": {
+                    "enabled": true,
+                    "index": 2,
+                    "group": "vocabularies"
+                },
+                "user": {
+                    "enabled": true,
+                    "index": 8,
+                    "group": "planning"
+                },
+                "content_type": {
+                    "enabled": true,
+                    "index": 9,
+                    "group": "planning"
+                },
+                "multiple_content": {
+                    "enabled": true,
+                    "index": 10,
+                    "group": "planning"
+                },
+                "assignment_priority": {
+                    "enabled": true,
+                    "index": 11,
+                    "group": "planning"
+                }
+            }
+        },
+        "schema": {}
+    }
 ]

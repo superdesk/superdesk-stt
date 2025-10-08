@@ -17,11 +17,10 @@ def _load_fixture_items() -> list:
     with open(fixture_path, "r") as fh:
         data = json.load(fh)
 
-    if isinstance(data, dict) and "_items" in data:
-        return data["_items"]
-    if isinstance(data, list):
-        return data
-    return [data]
+    async def parse_source_content(self):
+        """Override to handle JSON fixture instead of XML."""
+        import json
+        import os
 
 
 class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
@@ -33,10 +32,13 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
     def setUp(self):
         self.parser = ContentAPIItemParser()
 
-    def test_fixture_parses_and_has_expected_shape(self):
+    async def test_fixture_parses_and_has_expected_shape(self):
+        # Parse the JSON fixture
+        await self.parse_source_content()
+
         # Instantiate parser and parse the first item to validate core fields.
         first_raw = self.items[0]
-        parsed = self.parser.parse(first_raw, provider={"config": {}})
+        parsed = await parser.parse(first_raw, provider={"config": {}})
 
         # The parser returns a list, so get the first item
         if isinstance(parsed, list):
@@ -59,12 +61,16 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         if "body_html" in parsed:
             self.assertIsInstance(parsed["body_html"], str)
 
-    def test_all_fixture_items_parse_successfully(self):
+    async def test_all_fixture_items_parse_successfully(self):
         """Test that all items in the fixture can be parsed without errors."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
+
         # Parse all items from the fixture
         for i, raw_item in enumerate(self.items):
             with self.subTest(item_index=i):
-                parsed = self.parser.parse(raw_item, provider={"config": {}})
+                parsed = await parser.parse(raw_item, provider={"config": {}})
 
                 # Parser returns a list
                 if isinstance(parsed, list):
@@ -80,8 +86,31 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
                 self.assertIsInstance(parsed.get("versioncreated"), datetime)
                 self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
-    def test_timestamp_handling_with_fixture_data(self):
+    async def test_guid_generation_consistency(self):
+        """Test that GUID generation is consistent for the same input."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
+        first_item = self.items[0]
+
+        # Parse the same item multiple times
+        parsed1 = await parser.parse(first_item, provider={"config": {}})
+        parsed2 = await parser.parse(first_item, provider={"config": {}})
+
+        if isinstance(parsed1, list):
+            parsed1 = parsed1[0]
+        if isinstance(parsed2, list):
+            parsed2 = parsed2[0]
+
+        # GUIDs should be identical for the same input
+        self.assertEqual(parsed1["guid"], parsed2["guid"])
+        self.assertTrue(parsed1["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
+
+    async def test_timestamp_handling_with_fixture_data(self):
         """Test timestamp normalization with real fixture data."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
 
         # Find an item with timestamp data
         item_with_timestamp = None
@@ -94,7 +123,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
                 break
 
         if item_with_timestamp:
-            parsed = self.parser.parse(item_with_timestamp, provider={"config": {}})
+            parsed = await parser.parse(item_with_timestamp, provider={"config": {}})
             if isinstance(parsed, list):
                 parsed = parsed[0]
 
@@ -105,27 +134,30 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
                 self.assertIsInstance(parsed["versioncreated"], datetime)
                 self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
-    def test_content_expiry_calculation(self):
+    async def test_content_expiry_calculation(self):
         """Test content expiry configuration is ignored (functionality removed)."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
         first_item = self.items[0]
 
         # Test with expiry configuration
         provider = {"config": {"content_expiry": 48}}  # 48 hours
 
-        parsed = self.parser.parse(first_item, provider=provider)
+        parsed = await parser.parse(first_item, provider=provider)
         if isinstance(parsed, list):
             parsed = parsed[0]
 
         # Should not have expiry set (functionality removed)
         self.assertIsNone(parsed.get("expiry"))
 
-    def test_parser_handles_minimal_items(self):
+    async def test_parser_handles_minimal_items(self):
         """Test parser handles items with minimal required fields."""
 
         # Test with minimal item (needs headline or body_html to pass content validation)
         minimal_item = {"source": "STT", "headline": "Test headline"}
 
-        parsed = self.parser.parse(minimal_item, provider={"config": {}})
+        parsed = await parser.parse(minimal_item, provider={"config": {}})
         if isinstance(parsed, list):
             parsed = parsed[0]
 
@@ -139,7 +171,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         self.assertEqual(parsed["headline"], "Test headline")
         self.assertEqual(parsed["body_html"], "")
 
-    def test_parser_handles_missing_optional_fields(self):
+    async def test_parser_handles_missing_optional_fields(self):
         """Test parser gracefully handles missing optional fields."""
 
         # Test with item missing common optional fields (needs content to pass validation)
@@ -150,7 +182,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
             # Missing: headline, versioncreated, etc.
         }
 
-        parsed = self.parser.parse(incomplete_item, provider={"config": {}})
+        parsed = await parser.parse(incomplete_item, provider={"config": {}})
         if isinstance(parsed, list):
             parsed = parsed[0]
 
@@ -165,17 +197,20 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         self.assertIn("headline", parsed)
         self.assertIn("body_html", parsed)
 
-    def test_parser_with_different_provider_configs(self):
+    async def test_parser_with_different_provider_configs(self):
         """Test parser behavior with different provider configurations."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
         first_item = self.items[0]
 
         # Test with empty config
-        parsed1 = self.parser.parse(first_item, provider={"config": {}})
+        parsed1 = await parser.parse(first_item, provider={"config": {}})
         if isinstance(parsed1, list):
             parsed1 = parsed1[0]
 
         # Test with expiry config (should be ignored)
-        parsed2 = self.parser.parse(
+        parsed2 = await parser.parse(
             first_item, provider={"config": {"content_expiry": 24}}
         )
         if isinstance(parsed2, list):
@@ -190,8 +225,10 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         self.assertIsNone(parsed1.get("expiry"))
         self.assertIsNone(parsed2.get("expiry"))
 
-    def test_fixture_data_structure_validation(self):
+    async def test_fixture_data_structure_validation(self):
         """Validate the structure and content of the fixture data itself."""
+        await self.parse_source_content()
+
         # Should have items
         self.assertGreater(len(self.items), 0)
 
@@ -205,17 +242,21 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
             if field in first_item:
                 self.assertIsInstance(first_item[field], str)
 
-    def test_parser_return_format_consistency(self):
+    async def test_parser_return_format_consistency(self):
         """Test that parser always returns consistent format."""
+        await self.parse_source_content()
+
+        parser = self.parser_class()
+
         # Test with single item
-        single_result = self.parser.parse(self.items[0], provider={"config": {}})
+        single_result = await parser.parse(self.items[0], provider={"config": {}})
         self.assertIsInstance(single_result, list)
         self.assertEqual(len(single_result), 1)
         self.assertIsInstance(single_result[0], dict)
 
         # Test with list of items
         if len(self.items) > 1:
-            multi_result = self.parser.parse(self.items[:2], provider={"config": {}})
+            multi_result = await parser.parse(self.items[:2], provider={"config": {}})
             self.assertIsInstance(multi_result, list)
             self.assertEqual(len(multi_result), 2)
             for item in multi_result:

@@ -14,15 +14,15 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
     fixture = "json/stt_new_ninjs.json"
     parser_class = STTTTNEWNINJSFeedParser
 
-    def parse_source_content(self):
+    async def parse_source_content(self):
         """Override to handle JSON files instead of XML."""
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, "fixtures", self.fixture)
         provider = {"name": "Test"}
-        with self.ctx:
+        async with self.ctx:
             parser = self.parser_class()
-            self.json_data = load_file(fixture)
-            self.item = parser.parse(fixture, provider)[0]
+            parsed = await parser.parse(fixture, provider)
+            self.item = parsed[0]
 
     def test_headline_and_metadata(self):
         # This is a text item from the fixture

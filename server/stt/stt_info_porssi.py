@@ -47,7 +47,7 @@ class STTInfoPorssi(NewsMLOneFeedParser):
             and xml.get("Version", "") == "1.2"
         )
 
-    def parse(self, xml, provider=None):
+    async def parse(self, xml, provider=None):
         try:
             # Remove namespace for easier XPath
             xml = deepcopy(xml)

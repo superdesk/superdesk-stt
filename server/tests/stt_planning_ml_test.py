@@ -33,27 +33,32 @@ class STTPlanningMLParserTest(TestCase):
             self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799"
         )
 
-        # Urgency [STTNHUB-200]
-        self.assertIn(
-            {
-                "name": "Keskipitkä juttu",
-                "qcode": "stturgency-3",
-                "scheme": "stturgency",
-            },
-            self.item["subject"],
-        )
+    def test_department(self):
+        category = self.item["anpa_category"][0]
+        self.assertEqual("9", category["qcode"])
+        self.assertEqual("Politiikka", category["name"])
 
-    def test_event_link(self):
+    def test_priority(self):
+        self.assertEqual(3, self.item["priority"])
+
+    def test_mediatopics(self):
+        mediatopics = [s for s in self.item["subject"] if s.get("scheme") == "topics"]
+        assert mediatopics
+        assert mediatopics[0]["name"] == "Politiikka"
+        assert mediatopics[0]["qcode"] == "11000000"
+        assert mediatopics[0]["wikidata"] == "Q7163"
+
+    async def test_event_link(self):
         self.app.data.insert("events", [{"_id": "urn:newsml:stt.fi:259431"}])
-        self.parse_source_content()
+        await self.parse_source_content()
         self.assertEqual(self.item["event_item"], "urn:newsml:stt.fi:259431")
         self.assertEqual(self.item["extra"]["stt_events"], "259431")
 
-    def test_placeholder_coverage(self):
+    async def test_placeholder_coverage(self):
         # Case 1 : If Ingest Item does not contain any Coverage
 
         self.fixture = "stt_planning_ml_placeholder.xml"
-        self.parse_source_content()
+        await self.parse_source_content()
         self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:620121")
         self.assertEqual(self.item["state"], "ingested")
         self.assertEqual(len(self.item["coverages"]), 1)
@@ -85,7 +90,7 @@ class STTPlanningMLParserTest(TestCase):
                 "news_coverage_status": {
                     "qcode": "ncostat:notint",
                     "name": "coverage not intended",
-                    "label": "Not planned",
+                    "label": "Ei",
                 },
             },
         )
@@ -93,7 +98,7 @@ class STTPlanningMLParserTest(TestCase):
         # Case 2 : If ingest item contain coverage.
 
         self.fixture = "stt_planning_ml_placeholder-2.xml"
-        self.parse_source_content()
+        await self.parse_source_content()
         print(self.item["coverages"])
         self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:620121")
         self.assertEqual(len(self.item["coverages"]), 1)
@@ -119,15 +124,15 @@ class STTPlanningMLParserTest(TestCase):
                 "news_coverage_status": {
                     "qcode": "ncostat:notint",
                     "name": "coverage not intended",
-                    "label": "Not planned",
+                    "label": "Ei",
                 },
             },
         )
 
-    def test_update_planning(self):
+    async def test_update_planning(self):
         service = get_resource_service("planning")
         self.fixture = "stt_planning_ml_placeholder.xml"
-        self.parse_source_content()
+        await self.parse_source_content()
         source = self.item
         provider = {
             "_id": ObjectId(),
@@ -136,7 +141,7 @@ class STTPlanningMLParserTest(TestCase):
         }
 
         # Case 3 : Ingest Item with no coverage data
-        ingested, ids = ingest_item(source, provider=provider, feeding_service={})
+        ingested, ids = await ingest_item(source, provider=provider, feeding_service={})
 
         self.assertTrue(ingested)
         self.assertIn(source["guid"], ids)
@@ -153,7 +158,7 @@ class STTPlanningMLParserTest(TestCase):
             {
                 "qcode": "ncostat:notint",
                 "name": "coverage not intended",
-                "label": "Not planned",
+                "label": "Ei",
             },
         )
         self.assertEqual(
@@ -162,10 +167,10 @@ class STTPlanningMLParserTest(TestCase):
 
         # Case 4 : Remove Placeholder Coverage if item updates has coverage
         self.fixture = "stt_planning_ml_placeholder-2.xml"
-        self.parse_source_content()
+        await self.parse_source_content()
         source = self.item
         source["versioncreated"] += timedelta(hours=1)
-        ingested, ids = ingest_item(source, provider=provider, feeding_service={})
+        ingested, ids = await ingest_item(source, provider=provider, feeding_service={})
         dest = list(service.get_from_mongo(req=None, lookup={"guid": source["guid"]}))[
             0
         ]
