@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import json
 import os
 import unittest
@@ -22,7 +23,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         """Test parser with real fixture data."""
         test_item = self.fixture_data["hits"][0]
 
-        result = self.parser.parse(test_item, provider={"config": {}})
+        result = asyncio.run(self.parser.parse(test_item, provider={"config": {}}))
 
         self.assertEqual(test_item["uri"], result[0]["uri"])
 
@@ -36,7 +37,7 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
             "body_text": "Test content",
         }
 
-        result = self.parser.parse(minimal_item, provider={"config": {}})
+        result = asyncio.run(self.parser.parse(minimal_item, provider={"config": {}}))
 
         self.assertEqual(minimal_item["uri"], result[0]["uri"])
 
@@ -44,8 +45,8 @@ class ContentAPITTItemParserTestCase(unittest.TestCase):
         """Test that GUID generation is consistent for the same input."""
         test_item = self.fixture_data["hits"][0]
 
-        result1 = self.parser.parse(test_item, provider={"config": {}})
-        result2 = self.parser.parse(test_item, provider={"config": {}})
+        result1 = asyncio.run(self.parser.parse(test_item, provider={"config": {}}))
+        result2 = asyncio.run(self.parser.parse(test_item, provider={"config": {}}))
 
         self.assertEqual(result1[0]["uri"], result2[0]["uri"])
 

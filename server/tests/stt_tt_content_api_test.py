@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import json
 import os
 import unittest
@@ -533,7 +534,7 @@ class STTContentAPITestCase(unittest.TestCase):
         """Test parser with real fixture data."""
         test_item = self.fixture_data["hits"][0]
 
-        result = self.parser.parse(test_item, provider={"config": {}})
+        result = asyncio.run(self.parser.parse(test_item, provider={"config": {}}))
 
         # Parser should return a list of dicts
         self.assertIsInstance(result, list)
@@ -560,7 +561,7 @@ class STTContentAPITestCase(unittest.TestCase):
             "headline": "Test minimal headline",
         }
 
-        result = self.parser.parse(minimal_item, provider={"config": {}})
+        result = asyncio.run(self.parser.parse(minimal_item, provider={"config": {}}))
         self.assertIsInstance(result, list)
         self.assertEqual(1, len(result))
         parsed_item = result[0]
@@ -594,7 +595,7 @@ class STTContentAPITestCase(unittest.TestCase):
             }
             update = {}
 
-            items = list(self.service._update(provider, update))
+            items = asyncio.run(self.service._update(provider, update))
 
             # Should have processed all items
             self.assertEqual(2, len(items))
@@ -755,7 +756,7 @@ class STTContentAPITestCase(unittest.TestCase):
             with patch.object(
                 self.service, "get_feed_parser", return_value=DummyParser()
             ):
-                result = list(self.service._update(provider, update={}))
+                result = asyncio.run(self.service._update(provider, update={}))
 
         self.assertEqual(2, len(result))
         self.assertEqual([{"x": 1}, {"z": 3}], result)
@@ -785,7 +786,7 @@ class STTContentAPITestCase(unittest.TestCase):
                 self.service, "get_feed_parser", return_value=FailingParser()
             ):
                 with self.assertRaises(RuntimeError) as ctx:
-                    list(self.service._update(provider, update={}))
+                    asyncio.run(self.service._update(provider, update={}))
 
         self.assertEqual("wrapped", str(ctx.exception))
         mock_parse_error.assert_called_once()

@@ -1,42 +1,39 @@
 # ---- Fixture-based parser test (simple) -------------------------------------
-import json
-import os
-import unittest
-
+from tests import TestCase  # noqa: E402
 from stt.io.feed_parsers.stt_parse_content_api import ContentAPIItemParser  # noqa: E402
 
 
-def _load_fixture_items() -> list:
-    """Load and normalise JSON items from the fixture file."""
+class ContentAPIItemParserFixtureTestCase(TestCase):
 
-    fixture_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "fixtures",
-        "api/stt_content_api.json",
-    )
-    with open(fixture_path, "r") as fh:
-        data = json.load(fh)
+    fixture = "api/stt_content_api.json"
+    parser_class = ContentAPIItemParser
+    parse_source = False  # Disable automatic XML parsing
 
     async def parse_source_content(self):
         """Override to handle JSON fixture instead of XML."""
         import json
         import os
 
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture = os.path.join(dirname, "fixtures", self.fixture)
 
-class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
+        with open(fixture, "r") as f:
+            data = json.load(f)
 
-    @classmethod
-    def setUpClass(cls):
-        cls.items = _load_fixture_items()
-
-    def setUp(self):
-        self.parser = ContentAPIItemParser()
+        # Extract items from the fixture
+        if isinstance(data, dict) and "_items" in data:
+            self.items = data["_items"]
+        elif isinstance(data, list):
+            self.items = data
+        else:
+            self.items = [data]
 
     async def test_fixture_parses_and_has_expected_shape(self):
         # Parse the JSON fixture
         await self.parse_source_content()
 
         # Instantiate parser and parse the first item to validate core fields.
+        parser = self.parser_class()
         first_raw = self.items[0]
         parsed = await parser.parse(first_raw, provider={"config": {}})
 
@@ -51,7 +48,8 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         # Check actual values, not just presence
         from datetime import datetime
 
-        self.assertIsInstance(parsed.get("uri"), str)
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
         self.assertIsInstance(parsed.get("versioncreated"), datetime)
         self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
@@ -81,8 +79,8 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
                 self.assertIsInstance(parsed, dict)
                 self.assertEqual(parsed.get("type"), "text")
                 self.assertEqual(parsed.get("pubstatus"), "usable")
-                self.assertIsInstance(parsed.get("uri"), str)
-                self.assertTrue(parsed["uri"])  # non-empty
+                self.assertIsInstance(parsed.get("guid"), str)
+                self.assertTrue(parsed["guid"])  # non-empty
                 self.assertIsInstance(parsed.get("versioncreated"), datetime)
                 self.assertIsNotNone(parsed["versioncreated"].tzinfo)
 
@@ -153,6 +151,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
 
     async def test_parser_handles_minimal_items(self):
         """Test parser handles items with minimal required fields."""
+        parser = self.parser_class()
 
         # Test with minimal item (needs headline or body_html to pass content validation)
         minimal_item = {"source": "STT", "headline": "Test headline"}
@@ -166,6 +165,8 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         self.assertEqual(parsed["pubstatus"], "usable")
         from datetime import datetime
 
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
         self.assertIsInstance(parsed.get("versioncreated"), datetime)
         self.assertIsNotNone(parsed["versioncreated"].tzinfo)
         self.assertEqual(parsed["headline"], "Test headline")
@@ -173,6 +174,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
 
     async def test_parser_handles_missing_optional_fields(self):
         """Test parser gracefully handles missing optional fields."""
+        parser = self.parser_class()
 
         # Test with item missing common optional fields (needs content to pass validation)
         incomplete_item = {
@@ -192,6 +194,8 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         self.assertIsInstance(parsed, dict)
         self.assertEqual(parsed.get("type"), "text")
         self.assertEqual(parsed.get("pubstatus"), "usable")
+        self.assertIsInstance(parsed.get("guid"), str)
+        self.assertTrue(parsed["guid"])  # non-empty
         self.assertIsInstance(parsed.get("versioncreated"), datetime)
         self.assertIsNotNone(parsed["versioncreated"].tzinfo)
         self.assertIn("headline", parsed)
@@ -219,6 +223,7 @@ class ContentAPIItemParserFixtureTestCase(unittest.TestCase):
         # All should be valid but potentially different
         for parsed in [parsed1, parsed2]:
             self.assertIsInstance(parsed, dict)
+            self.assertIn("guid", parsed)
             self.assertIn("type", parsed)
 
         # Expiry should not be set in either (functionality removed)

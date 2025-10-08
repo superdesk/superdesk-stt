@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any, Dict, List, Optional
+import inspect
 
 from superdesk.io.registry import register_feed_parser
 from .stt_parse_content_api import ContentAPIItemParser
@@ -14,36 +15,40 @@ class ContentAPITTItemParser(ContentAPIItemParser):
     NAME = "stt_tt_parse_content_api"
     label = "STT TT Content API"
 
-    def can_parse(self, payload: Any) -> bool:
-        return isinstance(payload, dict) or (
-            isinstance(payload, list) and all(isinstance(i, dict) for i in payload)
-        )
-
-    def parse(self, item: Any, provider: Optional[dict] = None) -> List[Dict[str, Any]]:
+    async def parse(
+        self, item: Any, provider: Optional[dict] = None
+    ) -> List[Dict[str, Any]]:
         """
         TT-specific parse method for single item or list processing by the
         feeding service. This MUST return a List[Dict] to comply with Superdesk
-        ingest expectations.
+        ingest expectations. Async to match the base class contract.
         """
         provider = provider or {}
 
-        # Case 1: payload is a dict - parse one and return a single-item list
-        # (or empty if invalid)
-        if isinstance(item, dict):
-            parsed = self._parse_one(item, provider)
-            if isinstance(parsed, dict) and parsed:
-                return [parsed]
-            return []
+        # Helper to handle sync/async _parse_one uniformly
+        async def _parse_one_maybe_async(
+            elem: Dict[str, Any],
+        ) -> Optional[Dict[str, Any]]:
+            result = self._parse_one(elem, provider)
+            if inspect.isawaitable(result):
+                result = await result
+            if isinstance(result, dict) and result:
+                return result
+            return None
 
-        # Case 2: payload is a list - parse each dict item,
-        # ignore non-dicts
+        # Case 1: payload is a dict - parse one and return a single-item list
+        if isinstance(item, dict):
+            parsed = await _parse_one_maybe_async(item)
+            return [parsed] if parsed else []
+
+        # Case 2: payload is a list - parse each dict item, ignore non-dicts
         if isinstance(item, list):
             results: List[Dict[str, Any]] = []
             for idx, elem in enumerate(item):
                 if not isinstance(elem, dict):
                     continue
-                parsed = self._parse_one(elem, provider)
-                if isinstance(parsed, dict) and parsed:
+                parsed = await _parse_one_maybe_async(elem)
+                if parsed is not None:
                     results.append(parsed)
             return results
         return []

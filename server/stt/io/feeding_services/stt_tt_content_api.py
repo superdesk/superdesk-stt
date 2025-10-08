@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 
 import logging
+import asyncio
+import inspect
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 from typing import Dict, Iterable, List
 from superdesk.io.registry import register_feeding_service
@@ -108,18 +110,23 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         },
     ]
 
-    def _update(self, provider, update) -> Iterable[Dict]:
+    async def _update(self, provider, update) -> Iterable[Dict]:
         """
         TT-specific update that fetches all pages and yields parsed dict items.
+        Async to match the base class contract. Internally, the HTTP fetching is
+        still synchronous, so we offload it via asyncio.to_thread.
         """
-        json_items = self._fetch_tt_data(provider, update)
+        # Offload sync fetch to a worker thread to avoid blocking the event loop
+        json_items = await asyncio.to_thread(self._fetch_tt_data, provider, update)
         if not isinstance(json_items, list):
             json_items = [json_items]
 
         parsed_items: List[Dict] = []
 
-        # Resolve parser once
+        # Resolve parser once (supports async get_feed_parser implementations)
         parser = self.get_feed_parser(provider)
+        if inspect.isawaitable(parser):
+            parser = await parser
 
         for item in json_items:
             try:
@@ -127,6 +134,10 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                     continue
 
                 parsed_result = parser.parse(item, provider)
+                # Await if the parser is async
+                if inspect.isawaitable(parsed_result):
+                    parsed_result = await parsed_result
+
                 # Only return dict items to the ingest pipeline
                 if isinstance(parsed_result, list):
                     parsed_items.extend(
@@ -135,6 +146,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 elif isinstance(parsed_result, dict):
                     parsed_items.append(parsed_result)
                 else:
+                    # ignore non-dict results
                     pass
             except Exception as ex:
                 logger.error("Error processing item: %s", str(ex))
