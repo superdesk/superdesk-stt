@@ -1,5 +1,4 @@
 from typing import Dict, List, Any, Set
-from flask import current_app
 from superdesk import get_resource_service
 import logging
 
@@ -144,20 +143,7 @@ def _find_many(
             )
             pass
 
-    # 3) Eve data layer (no projection kwarg supported in your build)
-    try:
-        cursor = current_app.data.find(resource, req=None, lookup=lookup)
-        docs = list(cursor)
-        logger.info("Using Eve data layer (no projection)")
-        return _apply_projection_locally(docs, projection)
-    except Exception as e:
-        logger.exception(
-            "Error in _find_many Eve data layer (no projection) using service for %s (%s: %s).",
-            resource,
-            e.__class__.__name__,
-            e,
-        )
-        return []
+    return []
 
 
 def _get_planning_item_coverage_status_from_mongo(pl: Dict[str, Any]) -> Dict[str, Any]:

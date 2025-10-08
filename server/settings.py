@@ -12,17 +12,7 @@
 import os
 from pathlib import Path
 
-
-def env(variable, fallback_value=None):
-    env_value = os.environ.get(variable, "")
-    if len(env_value) == 0:
-        return fallback_value
-    else:
-        if env_value == "__EMPTY__":
-            return ""
-        else:
-            return env_value
-
+from superdesk.default_settings import env, MODULES
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -143,6 +133,9 @@ INSTALLED_APPS = [
     "stt.macros",
     "stt.search_providers.newshub",
     "stt.ai_proxy",
+    "stt.stt_newsroom_ninjs_formatter",
+    "stt.stt_json_planning_formatter",
+    "superdesk.auth.saml",
     "stt.io.feeding_services.stt_content_api",
     "stt.io.feed_parsers.stt_parse_content_api",
     "stt.stt_ntb_ninjs_parse",
@@ -154,6 +147,8 @@ INSTALLED_APPS = [
     "stt.io.feed_parsers.stt_events_csv_parse",
     "stt.io.feeding_services.stt_http_with_since",
 ]
+
+MODULES.append("planning")
 
 # enable legal archive is enabled
 LEGAL_ARCHIVE = True
@@ -265,7 +260,7 @@ PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", "true
 ENABLE_FULFILL_ASSIGNMENTS = env("ENABLE_FULFILL_ASSIGNMENTS", "true")
 
 # automatically add coverage assignments to workflow
-PLANNING_AUTO_ASSIGN_TO_WORKFLOW = env("PLANNING_AUTO_ASSIGN_TO_WORKFLOW", "true")
+PLANNING_AUTO_ASSIGN_TO_WORKFLOW = env("PLANNING_AUTO_ASSIGN_TO_WORKFLOW", True)
 
 # check for unfulfilled assignments when publishing a story (based on slugline)
 PLANNING_CHECK_FOR_ASSIGNMENT_ON_PUBLISH = env(
@@ -341,3 +336,12 @@ HIGHCHARTS_SERVER_RATE_LIMIT = env("HIGHCHARTS_SERVER_RATE_LIMIT", None)
 PLANNING_EVENT_LINK_METHOD = "many_secondary"
 
 PLANNING_PLANNING_ALL_DAY = True
+CONTENTAPI_HIDE_COVERAGE_ASSIGNEES = True
+ASSIGNMENT_MANUAL_REASSIGNMENT_ONLY = True
+ASSIGNMENT_LINK_DUPLICATE_CONTENT = True
+
+# manually created articles default values
+DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = 3
+DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES = 6
+DEFAULT_GENRE_VALUE_FOR_MANUAL_ARTICLES = None
+DEFAULT_CATEGORY_QCODES_FOR_AUTO_PUBLISHED_ARTICLES = None

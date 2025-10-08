@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 FIELDS = ("headline", "body_html")
 
 
-def auto_translate(item, **kwargs):
+async def auto_translate(item, **kwargs):
 
     try:
         translate = AutoTranslateItem()
-        translated_item = translate.auto_translate_item(item, **kwargs)
+        translated_item = await translate.auto_translate_item(item, **kwargs)
         # translated_item includes:
         #   original_headline
         #   original_text

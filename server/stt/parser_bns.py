@@ -27,7 +27,7 @@ class BNSNewsMLFeedParser(NewsMLTwoFeedParser):
     def can_parse(self, xml):
         return xml.tag.endswith("NewsML")
 
-    def parse(self, xml, provider=None):
+    async def parse(self, xml, provider=None):
 
         items = []
 

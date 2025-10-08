@@ -18,13 +18,15 @@ class VeikkausTextFeedParserTestCase(TestCase):
     fixture = "txt/pelitulos.Y_06.08.2022.txt"
     parser_class = VeikkausTextFeedParser
 
-    def setUp(self):
+    async def parse_source_content(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture_path = os.path.join(dirname, "fixtures", self.fixture)
         provider = {"name": "Test"}
-        with self.ctx:
+        async with self.ctx:
             parser = self.parser_class()
-            self.item = parser.parse(fixture_path, provider)[0]
+            parsed = await parser.parse(fixture_path, provider)
+            self.assertEqual(len(parsed), 1)
+            self.item = parsed[0]
 
     def test_core_metadata_fields(self):
         """Test headline, type, urgency, pubstatus, slugline, and description."""

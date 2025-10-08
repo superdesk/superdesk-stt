@@ -41,7 +41,7 @@ class AutoTranslateItem:
                 "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON"
             ) from e
         credentials = service_account.Credentials.from_service_account_info(info)
-        self.client = translate.TranslationServiceClient(credentials=credentials)
+        self.client = translate.TranslationServiceAsyncClient(credentials=credentials)
 
         project_id = os.getenv("GOOGLE_CLOUD_TRANSLATE_PROJECT_ID")
         if not project_id:
@@ -50,14 +50,14 @@ class AutoTranslateItem:
         self.parent = f"projects/{project_id}/locations/global"
         self.logger = logger
 
-    def translate_text(self, text, target_language="en-US"):
+    async def translate_text(self, text, target_language="en-US"):
         """
         Translates text (string or list) into the target language.
         Returns the translated string.
         """
         if isinstance(text, str):
             text = [text]
-        result = self.client.translate_text(
+        result = await self.client.translate_text(
             request={
                 "parent": self.parent,
                 "contents": text,
@@ -66,7 +66,7 @@ class AutoTranslateItem:
         )
         return result.translations[0].translated_text
 
-    def auto_translate_item(self, item, **kwargs):
+    async def auto_translate_item(self, item, **kwargs):
         """
         Auto translate an item dict by extracting body_html and headline,
         removing HTML tags, calling translate_text, and returning a summary dict.
@@ -74,9 +74,9 @@ class AutoTranslateItem:
         try:
             text_to_translate = item.get("body_html", "")
             headline = item.get("headline", "")
-            translated_headline_en = self.translate_text(headline, "en-US")
-            translated_text_en = self.translate_text(text_to_translate, "en-US")
-            translated_text_sv = self.translate_text(text_to_translate, "sv")
+            translated_headline_en = await self.translate_text(headline, "en-US")
+            translated_text_en = await self.translate_text(text_to_translate, "en-US")
+            translated_text_sv = await self.translate_text(text_to_translate, "sv")
 
             translated_item = {
                 "original_headline": headline,
