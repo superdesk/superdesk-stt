@@ -12,7 +12,7 @@
 import os
 from pathlib import Path
 
-from superdesk.default_settings import env, MODULES
+from superdesk.default_settings import env, MODULES, ELASTICSEARCH_SETTINGS
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -345,3 +345,9 @@ DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = 3
 DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES = 6
 DEFAULT_GENRE_VALUE_FOR_MANUAL_ARTICLES = None
 DEFAULT_CATEGORY_QCODES_FOR_AUTO_PUBLISHED_ARTICLES = None
+
+# avoid ascii folding to support finnish better
+# STT-1371
+ELASTICSEARCH_SETTINGS["settings"]["analysis"]["analyzer"]["html_field_analyzer"][
+    "filter"
+] = ["lowercase"]
