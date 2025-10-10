@@ -75,17 +75,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             ),
         },
         {
-            "id": "use_trs",
-            "type": "boolean",
-            "label": "Use incremental sync (trs)",
-            "required": True,
-            "default": True,
-            "description": (
-                "When enabled, add the 'trs' query param with the last-updated timestamp "
-                "to fetch only items changed since the previous run."
-            ),
-        },
-        {
             "id": "since_minutes",
             "type": "text",
             "label": "Fallback lookback minutes",
@@ -166,7 +155,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
           - page_size: int (default 50)
           - max_pages: int safety cap (default 200)
           - timeout: int per-request timeout (default 60)
-          - use_trs: bool (default True, 'trs' is RFC3339 timestamp in UTC)
           - since_minutes: int fallback lookback (default 1440)
         """
         url, api_key = self._get_config(provider)
@@ -178,36 +166,28 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         # safety cap to avoid runaway loops
         timeout = int(config.get("timeout", 60))
 
-        use_trs_config = config.get("use_trs", True)
-        if isinstance(use_trs_config, str):
-            use_trs = use_trs_config.strip().lower() in {"true", "1", "yes", "on"}
-        else:
-            use_trs = bool(use_trs_config)
         trs_value: str | None = None
-        if use_trs:
-            # Prefer last_updated from the update context, fallback to provider storage or lookback window
-            last_updated_str = None
-            if isinstance(update, dict):
-                last_updated_str = update.get("last_updated") or update.get(
-                    "last_update"
+        # Prefer last_updated from the update context, fallback to provider storage or lookback window
+        last_updated_str = None
+        if isinstance(update, dict):
+            last_updated_str = update.get("last_updated") or update.get("last_update")
+        # Parse if available
+        dt_from: datetime | None = None
+        if isinstance(last_updated_str, str):
+            try:
+                # Accept ISO-8601 with/without Z
+                dt_from = datetime.fromisoformat(
+                    last_updated_str.replace("Z", "+00:00")
                 )
-            # Parse if available
-            dt_from: datetime | None = None
-            if isinstance(last_updated_str, str):
-                try:
-                    # Accept ISO-8601 with/without Z
-                    dt_from = datetime.fromisoformat(
-                        last_updated_str.replace("Z", "+00:00")
-                    )
-                except Exception:
-                    dt_from = None
-            if dt_from is None:
-                # Fallback: now - since_minutes
-                minutes = int(config.get("since_minutes", 1440))
-                dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
-            # TT expects 'trs' as an RFC3339 timestamp in UTC with seconds precision
-            dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-            trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+            except Exception:
+                dt_from = None
+        if dt_from is None:
+            # Fallback: now - since_minutes
+            minutes = int(config.get("since_minutes", 1440))
+            dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
+        # TT expects 'trs' as an RFC3339 timestamp in UTC with seconds precision
+        dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
+        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         # Prepare base URL components and preserve existing query params
         parsed = urlparse(url)

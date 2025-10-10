@@ -377,8 +377,8 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_uses_trs_with_last_updated(self, mock_get):
-        """When use_trs is enabled and update contains last_updated, include trs in query."""
+    def test_fetch_data_adds_trs_with_last_updated(self, mock_get):
+        """When update contains last_updated, include trs in query."""
         # minimal 1-page flow
         mock_get.side_effect = [
             MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
@@ -389,7 +389,6 @@ class STTContentAPITestCase(unittest.TestCase):
             "config": {
                 "url": "https://api.example.com/contentapi/items",
                 "api_key": "MY_TOKEN",
-                "use_trs": True,
             }
         }
         update = {"last_updated": "2025-09-24T10:00:00Z"}
@@ -403,7 +402,7 @@ class STTContentAPITestCase(unittest.TestCase):
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_uses_trs_fallback_since_minutes(self, mock_get):
-        """When use_trs enabled but no last_updated, use now - since_minutes as trs."""
+        """When no last_updated, use now - since_minutes as trs."""
         # one page then empty
         mock_get.side_effect = [
             MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
@@ -414,7 +413,6 @@ class STTContentAPITestCase(unittest.TestCase):
             "config": {
                 "url": "https://api.example.com/contentapi/items",
                 "api_key": "MY_TOKEN",
-                "use_trs": True,
                 "since_minutes": "120",
             }
         }
@@ -455,27 +453,8 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual(15, call_args[1]["timeout"])
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_use_trs_boolean_coercion_from_text(self, mock_get):
-        """use_trs text values like 'true' should be treated as boolean True."""
-        mock_get.side_effect = [MockResponse({"hits": []})]
-        provider = {
-            "config": {
-                "url": "https://api.example.com/contentapi/items",
-                "api_key": "MY_TOKEN",
-                "use_trs": "true",
-            }
-        }
-        update = {"last_updated": "2025-09-24T10:00:00Z"}
-
-        _ = self.service._fetch_tt_data(provider, update)
-
-        call_args = mock_get.call_args
-        url = call_args[0][0]
-        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", url)
-
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_use_trs_disabled_no_param(self, mock_get):
-        """When use_trs is disabled, the trs param should not be present."""
+    def test_trs_enforced_even_when_legacy_config_disables(self, mock_get):
+        """Legacy configs with use_trs=False should still yield trs in query."""
         mock_get.side_effect = [MockResponse({"hits": []})]
         provider = {
             "config": {
@@ -490,7 +469,7 @@ class STTContentAPITestCase(unittest.TestCase):
 
         call_args = mock_get.call_args
         url = call_args[0][0]
-        self.assertNotIn("trs=", url)
+        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", url)
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_list_response(self, mock_get):
