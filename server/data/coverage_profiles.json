@@ -1,0 +1,830 @@
+[
+    {
+        "_id": "68db9965f7bdb22537301b67",
+        "name": "uutisteksti",
+        "content_type": "text",
+        "init_version": 2,
+        "editor": {
+            "add_coverage_to_workflow": {
+                "enabled": true,
+                "index": 0
+            },
+            "g2_content_type": {
+                "enabled": true,
+                "index": 1
+            },
+            "anpa_category": {
+                "enabled": true,
+                "index": 2
+            },
+            "scheduled": {
+                "enabled": true,
+                "index": 3
+            }
+        },
+        "schema": {
+            "add_coverage_to_workflow": {
+                "type": "boolean",
+                "required": false
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "contact_info": {
+                "type": "string",
+                "required": false
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "files": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "g2_content_type": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "genre": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "headline": {
+                "type": "string",
+                "required": false
+            },
+            "internal_note": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line",
+                "expandable": true
+            },
+            "keyword": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "language": {
+                "type": "string",
+                "required": false
+            },
+            "location": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "multiple_content": {
+                "type": "boolean",
+                "required": false,
+                "default_value": false,
+                "read_only": false
+            },
+            "news_coverage_status": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "no_content_linking": {
+                "type": "boolean",
+                "required": false
+            },
+            "priority": {
+                "type": "integer",
+                "required": false
+            },
+            "scheduled": {
+                "type": "datetime",
+                "required": false
+            },
+            "scheduled_updates": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "slugline": {
+                "type": "string",
+                "required": false
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        },
+                        "parent": {
+                            "nullable": true
+                        }
+                    }
+                }
+            },
+            "xmp_file": {
+                "type": "dict",
+                "required": false
+            }
+        }
+    },
+    {
+        "_id": "68db9970f7bdb22537301b68",
+        "name": "kuvauskeikka",
+        "content_type": "picture",
+        "init_version": 1,
+        "editor": {
+            "add_coverage_to_workflow": {
+                "enabled": true,
+                "index": 0
+            },
+            "g2_content_type": {
+                "enabled": true,
+                "index": 2
+            },
+            "genre": {
+                "enabled": false,
+                "index": 1
+            },
+            "slugline": {
+                "enabled": true,
+                "index": 22
+            },
+            "ednote": {
+                "enabled": false,
+                "index": 1
+            },
+            "internal_note": {
+                "enabled": true,
+                "index": 8
+            },
+            "news_coverage_status": {
+                "enabled": true,
+                "index": 3
+            },
+            "scheduled": {
+                "enabled": true,
+                "index": 5
+            },
+            "scheduled_updates": {
+                "enabled": false,
+                "index": 1
+            },
+            "multiple_content": {
+                "enabled": false,
+                "index": 10
+            },
+            "location": {
+                "enabled": false
+            },
+            "anpa_category": {
+                "enabled": false
+            },
+            "subject": {
+                "enabled": false
+            },
+            "contact_info": {
+                "enabled": false
+            },
+            "language": {
+                "enabled": false
+            },
+            "xmp_file": {
+                "enabled": false
+            },
+            "headline": {
+                "enabled": true,
+                "index": 1
+            },
+            "keyword": {
+                "enabled": false
+            },
+            "files": {
+                "enabled": false
+            },
+            "priority": {
+                "enabled": false
+            },
+            "no_content_linking": {
+                "enabled": false
+            },
+            "sttimagetype": {
+                "enabled": true,
+                "index": 4
+            },
+            "sttpicturewhatabout": {
+                "enabled": true,
+                "index": 6
+            },
+            "sttpicturewhatisphotographed": {
+                "enabled": true,
+                "index": 7
+            },
+            "sttdoesphotographerknow": {
+                "enabled": true,
+                "index": 9
+            },
+            "sttpictureregistrationok": {
+                "enabled": true,
+                "index": 10
+            },
+            "sttregistrationinfo": {
+                "enabled": true,
+                "index": 11
+            },
+            "sttpicturecategory": {
+                "enabled": true,
+                "index": 12
+            },
+            "sttpictureheadlinefi": {
+                "enabled": true,
+                "index": 13
+            },
+            "sttpicturecaptionfi": {
+                "enabled": true,
+                "index": 14
+            },
+            "sttpictureinstructionsfi": {
+                "enabled": true,
+                "index": 15
+            },
+            "sttpicturekeywordsfi": {
+                "enabled": true,
+                "index": 16
+            },
+            "sttpictureheadlineen": {
+                "enabled": true,
+                "index": 17
+            },
+            "sttpicturecaptionen": {
+                "enabled": true,
+                "index": 18
+            },
+            "sttpictureinstructionsen": {
+                "enabled": true,
+                "index": 19
+            },
+            "sttpicturekeywordsen": {
+                "enabled": true,
+                "index": 20
+            },
+            "sttpictureinvoiced": {
+                "enabled": true,
+                "index": 21
+            }
+        },
+        "schema": {
+            "add_coverage_to_workflow": {
+                "type": "boolean",
+                "required": false
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "contact_info": {
+                "type": "string",
+                "required": false
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "files": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "g2_content_type": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "genre": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "headline": {
+                "type": "string",
+                "required": false
+            },
+            "internal_note": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line",
+                "expandable": true
+            },
+            "keyword": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "language": {
+                "type": "string",
+                "required": false
+            },
+            "location": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "multiple_content": {
+                "type": "boolean",
+                "required": false,
+                "default_value": false,
+                "read_only": false
+            },
+            "news_coverage_status": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "no_content_linking": {
+                "type": "boolean",
+                "required": false
+            },
+            "priority": {
+                "type": "integer",
+                "required": false
+            },
+            "scheduled": {
+                "type": "datetime",
+                "required": true
+            },
+            "scheduled_updates": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "slugline": {
+                "type": "string",
+                "required": false
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        },
+                        "parent": {
+                            "nullable": true
+                        }
+                    }
+                }
+            },
+            "xmp_file": {
+                "type": "dict",
+                "required": false
+            },
+            "sttimagetype": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpicturewhatabout": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturewhatisphotographed": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttdoesphotographerknow": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpictureregistrationok": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttregistrationinfo": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecategory": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpictureheadlinefi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecaptionfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinstructionsfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturekeywordsfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureheadlineen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecaptionen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinstructionsen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturekeywordsen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinvoiced": {
+                "type": "custom_vocabulary",
+                "required": false
+            }
+        }
+    },
+    {
+        "_id": "68db995bf7bdb22537301b66",
+        "name": "kuvitus",
+        "content_type": "graphic",
+        "init_version": 1,
+        "editor": {
+            "add_coverage_to_workflow": {
+                "enabled": true,
+                "index": 0
+            },
+            "g2_content_type": {
+                "enabled": true,
+                "index": 2
+            },
+            "genre": {
+                "enabled": false,
+                "index": 1
+            },
+            "slugline": {
+                "enabled": true,
+                "index": 22
+            },
+            "ednote": {
+                "enabled": false,
+                "index": 1
+            },
+            "internal_note": {
+                "enabled": true,
+                "index": 8
+            },
+            "news_coverage_status": {
+                "enabled": true,
+                "index": 3
+            },
+            "scheduled": {
+                "enabled": true,
+                "index": 5
+            },
+            "scheduled_updates": {
+                "enabled": false,
+                "index": 1
+            },
+            "multiple_content": {
+                "enabled": false,
+                "index": 10
+            },
+            "location": {
+                "enabled": false
+            },
+            "anpa_category": {
+                "enabled": false
+            },
+            "subject": {
+                "enabled": false
+            },
+            "contact_info": {
+                "enabled": false
+            },
+            "language": {
+                "enabled": false
+            },
+            "xmp_file": {
+                "enabled": false
+            },
+            "headline": {
+                "enabled": true,
+                "index": 1
+            },
+            "keyword": {
+                "enabled": false
+            },
+            "files": {
+                "enabled": false
+            },
+            "priority": {
+                "enabled": false
+            },
+            "no_content_linking": {
+                "enabled": false
+            },
+            "sttimagetype": {
+                "enabled": true,
+                "index": 4
+            },
+            "sttpicturewhatabout": {
+                "enabled": true,
+                "index": 6
+            },
+            "sttpicturewhatisphotographed": {
+                "enabled": true,
+                "index": 7
+            },
+            "sttdoesphotographerknow": {
+                "enabled": true,
+                "index": 9
+            },
+            "sttpictureregistrationok": {
+                "enabled": true,
+                "index": 10
+            },
+            "sttregistrationinfo": {
+                "enabled": true,
+                "index": 11
+            },
+            "sttpicturecategory": {
+                "enabled": true,
+                "index": 12
+            },
+            "sttpictureheadlinefi": {
+                "enabled": true,
+                "index": 13
+            },
+            "sttpicturecaptionfi": {
+                "enabled": true,
+                "index": 14
+            },
+            "sttpictureinstructionsfi": {
+                "enabled": true,
+                "index": 15
+            },
+            "sttpicturekeywordsfi": {
+                "enabled": true,
+                "index": 16
+            },
+            "sttpictureheadlineen": {
+                "enabled": true,
+                "index": 17
+            },
+            "sttpicturecaptionen": {
+                "enabled": true,
+                "index": 18
+            },
+            "sttpictureinstructionsen": {
+                "enabled": true,
+                "index": 19
+            },
+            "sttpicturekeywordsen": {
+                "enabled": true,
+                "index": 20
+            },
+            "sttpictureinvoiced": {
+                "enabled": true,
+                "index": 21
+            }
+        },
+        "schema": {
+            "add_coverage_to_workflow": {
+                "type": "boolean",
+                "required": false
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "contact_info": {
+                "type": "string",
+                "required": false
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line"
+            },
+            "files": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "g2_content_type": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "genre": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "headline": {
+                "type": "string",
+                "required": false
+            },
+            "internal_note": {
+                "type": "string",
+                "required": false,
+                "field_type": "multi_line",
+                "expandable": true
+            },
+            "keyword": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "language": {
+                "type": "string",
+                "required": false
+            },
+            "location": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "multiple_content": {
+                "type": "boolean",
+                "required": false,
+                "default_value": false,
+                "read_only": false
+            },
+            "news_coverage_status": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "no_content_linking": {
+                "type": "boolean",
+                "required": false
+            },
+            "priority": {
+                "type": "integer",
+                "required": false
+            },
+            "scheduled": {
+                "type": "datetime",
+                "required": true
+            },
+            "scheduled_updates": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": null,
+                "schema": null
+            },
+            "slugline": {
+                "type": "string",
+                "required": false
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        },
+                        "parent": {
+                            "nullable": true
+                        }
+                    }
+                }
+            },
+            "xmp_file": {
+                "type": "dict",
+                "required": false
+            },
+            "sttimagetype": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpicturewhatabout": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturewhatisphotographed": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttdoesphotographerknow": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpictureregistrationok": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttregistrationinfo": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecategory": {
+                "type": "custom_vocabulary",
+                "required": false
+            },
+            "sttpictureheadlinefi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecaptionfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinstructionsfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturekeywordsfi": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureheadlineen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturecaptionen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinstructionsen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpicturekeywordsen": {
+                "type": "custom_text",
+                "required": false
+            },
+            "sttpictureinvoiced": {
+                "type": "custom_vocabulary",
+                "required": false
+            }
+        }
+    }
+]

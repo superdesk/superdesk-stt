@@ -18,13 +18,13 @@ class STTTTNINJSParseFeedParserTest(TestCase):
 
     fixture = "json/stt_ntb_ninjs_parse_test.json"
 
-    def parse_source_content(self):
+    async def parse_source_content(self):
         """Override to handle JSON files instead of XML."""
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, "fixtures", self.fixture)
-        with self.ctx:
+        async with self.ctx:
             self.parser = STTTTNINJSParseFeedParser()
-            self.items = self.parser.parse(fixture)
+            self.items = await self.parser.parse(fixture)
             if self.items:
                 self.item = self.items[0]
             else:
@@ -136,7 +136,7 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         assert "NorgesGruppen" in body_html
 
     @patch("stt.stt_ntb_ninjs_parse._load_cv")
-    def test_category_mapping_with_vocabulary(self, mock_load_cv):
+    async def test_category_mapping_with_vocabulary(self, mock_load_cv):
         """Test category mapping when vocabulary service is properly configured."""
 
         # Mock the vocabulary lookup to return proper vocabularies
@@ -183,9 +183,9 @@ class STTTTNINJSParseFeedParserTest(TestCase):
         # Parse the item with mocked vocabulary to test proper category mapping
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, "fixtures", self.fixture)
-        with self.ctx:
+        async with self.ctx:
             parser = STTTTNINJSParseFeedParser()
-            parsed_items = parser.parse(fixture)
+            parsed_items = await parser.parse(fixture)
             item = parsed_items[0] if parsed_items else {}
 
         # Expect exactly one mapped category entry

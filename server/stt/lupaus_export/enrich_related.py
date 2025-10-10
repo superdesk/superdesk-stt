@@ -1,5 +1,4 @@
 from typing import Dict, List, Any, Set
-from flask import current_app
 from superdesk import get_resource_service
 import logging
 
@@ -144,20 +143,7 @@ def _find_many(
             )
             pass
 
-    # 3) Eve data layer (no projection kwarg supported in your build)
-    try:
-        cursor = current_app.data.find(resource, req=None, lookup=lookup)
-        docs = list(cursor)
-        logger.info("Using Eve data layer (no projection)")
-        return _apply_projection_locally(docs, projection)
-    except Exception as e:
-        logger.exception(
-            "Error in _find_many Eve data layer (no projection) using service for %s (%s: %s).",
-            resource,
-            e.__class__.__name__,
-            e,
-        )
-        return []
+    return []
 
 
 def _get_planning_item_coverage_status_from_mongo(
@@ -247,15 +233,20 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
     The function looks for the 'categories' in the 'subject' field of the item,
     which is expected to be a list of dictionaries. Each dictionary may contain
     a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
+    a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     the corresponding 'name' value is returned.
 
+    If 'categories' is not found, an empty string is returned.
     If 'categories' is not found, an empty string is returned.
 
     Args:
         item: A dictionary representing an agenda item.
     Returns:
         The name of 'categories' if found, otherwise an empty string.
+        The name of 'categories' if found, otherwise an empty string.
     """
+    # categories is stored in subject like:
+    # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
     # categories is stored in subject like:
     # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
     if not item:
@@ -268,9 +259,12 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
 
 
 def get_numeric_value_from_priority(priority: str) -> str:
+def get_numeric_value_from_priority(priority: str) -> str:
     """
     Extracts the numeric value from a priority string.
+    Extracts the numeric value from a priority string.
 
+    The function assumes that the priority string is formatted as
     The function assumes that the priority string is formatted as
     'Some text (number)', where 'number' is the numeric
     value to be extracted. It looks for the last pair of parentheses
@@ -282,11 +276,16 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     Args:
         priority: A string representing the priority.
+        priority: A string representing the priority.
     Returns:
+        The numeric value extracted from the priority string, or an empty string if not found or not convertible.
         The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
     if not priority:
+    if not priority:
         return ""
+    if priority == "Vain tulokset":
+        return priority
     if priority == "Vain tulokset":
         return priority
     try:
@@ -294,8 +293,12 @@ def get_numeric_value_from_priority(priority: str) -> str:
         start = priority.rindex("(") + 1
         end = priority.rindex(")")
         number_str = priority[start:end].strip()
+        start = priority.rindex("(") + 1
+        end = priority.rindex(")")
+        number_str = priority[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
+        logger.error("Could not extract numeric value from priority: '%s'", priority)
         logger.error("Could not extract numeric value from priority: '%s'", priority)
         return ""
 

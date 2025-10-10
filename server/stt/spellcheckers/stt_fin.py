@@ -10,7 +10,9 @@
 
 import os
 import logging
-import requests
+
+import aiohttp
+
 from superdesk.errors import SuperdeskApiError
 from superdesk.text_checkers.spellcheckers import CAP_SPELLING
 from superdesk.text_checkers.spellcheckers.base import SpellcheckerBase
@@ -18,6 +20,9 @@ from superdesk.text_checkers.spellcheckers.base import SpellcheckerBase
 logger = logging.getLogger(__name__)
 OPT_API_KEY = "STT_FIN_API_KEY"
 OPT_API_URL_KEY = "STT_FIN_API_URL"
+
+CHECK_TIMEOUT = aiohttp.ClientTimeout(total=5, connect=3)
+SUGGEST_TIMEOUT = aiohttp.ClientTimeout(total=10, connect=3)
 
 
 class SttFin(SpellcheckerBase):
@@ -36,7 +41,13 @@ class SttFin(SpellcheckerBase):
         self.api_key = self.config.get(OPT_API_KEY, os.environ.get(OPT_API_KEY))
         self.api_url = self.config.get(OPT_API_URL_KEY, os.environ.get(OPT_API_URL_KEY))
 
-    def check(self, text, language=None):
+    async def check(self, text: str, language: str | None = None) -> dict:
+        async with aiohttp.ClientSession() as session:
+            return await self.perform_check(session, text, language)
+
+    async def perform_check(
+        self, session: aiohttp.ClientSession, text: str, language: str | None = None
+    ) -> dict:
         try:
             check_url = self.api_url.format(method="proof")
             data = {
@@ -49,24 +60,24 @@ class SttFin(SpellcheckerBase):
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            r = requests.post(
-                check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT
-            )
-            if r.status_code != 200:
-                logger.error("STT check failed status code: {}".format(r.status_code))
-                # get the error message from the response
-                try:
-                    error_message = r.json().get("message")
-                except Exception:
-                    error_message = r.text
-                logger.error("STT check failed: {}".format(error_message))
-                raise SuperdeskApiError.internalError(
-                    "Unexpected return code from {}: {}".format(
-                        self.name, error_message
+            async with session.post(
+                check_url, json=data, headers=headers, timeout=CHECK_TIMEOUT
+            ) as r:
+                data = await r.json()
+                if r.status != 200:
+                    logger.error("STT check failed status code: {}".format(r.status))
+                    # get the error message from the response
+                    try:
+                        error_message = data.get("message")
+                    except Exception:
+                        error_message = r.text
+                    logger.error("STT check failed: {}".format(error_message))
+                    raise SuperdeskApiError.internalError(
+                        "Unexpected return code from {}: {}".format(
+                            self.name, error_message
+                        )
                     )
-                )
 
-            data = r.json()
             # response json should be like
             """
             {
@@ -96,7 +107,7 @@ class SttFin(SpellcheckerBase):
                 ]
             }
             """
-            err_list = []
+            err_list: list[dict] = []
             check_data = {"errors": err_list}
             for err in data.get("errors", []):
                 ercorr_data = {
@@ -115,7 +126,13 @@ class SttFin(SpellcheckerBase):
             logger.error("STT check failed: {}".format(e))
             return {"errors": []}
 
-    def suggest(self, text, language=None):
+    async def suggest(self, text: str, language: str | None = None) -> dict:
+        async with aiohttp.ClientSession() as session:
+            return await self.perform_suggest(session, text, language)
+
+    async def perform_suggest(
+        self, session: aiohttp.ClientSession, text: str, language: str | None = None
+    ) -> dict:
         try:
             check_url = self.api_url.format(method="proof")
             data = {
@@ -128,14 +145,15 @@ class SttFin(SpellcheckerBase):
             }
             # Add API key to header "apiKey"
             headers = {"apiKey": self.api_key, "Content-Type": "application/json"}
-            r = requests.post(
-                check_url, json=data, headers=headers, timeout=self.CHECK_TIMEOUT
-            )
-            if r.status_code != 200:
-                raise SuperdeskApiError.internalError(
-                    "Unexpected return code from {}".format(self.name)
-                )
-            data = r.json()
+            async with session.post(
+                check_url, json=data, headers=headers, timeout=SUGGEST_TIMEOUT
+            ) as r:
+                if r.status != 200:
+                    raise SuperdeskApiError.internalError(
+                        "Unexpected return code from {}".format(self.name)
+                    )
+                data = await r.json()
+
             suggestions = []
             # NOTE: "errors" is a list of errors, each error has a list of suggestions
             for err in data.get("errors", []):

@@ -77,7 +77,6 @@ Feature: Ingest STT Planning items
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
-                    "label": "Planned",
                     "name": "coverage intended"
                 },
                 "planning": {
@@ -95,7 +94,6 @@ Feature: Ingest STT Planning items
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
-                    "label": "Planned",
                     "name": "coverage intended"
                 },
                 "planning": {
@@ -395,9 +393,7 @@ Feature: Ingest STT Planning items
                     "genre": [{"name": "P\u00e4\u00e4juttu", "qcode": "1"}],
                     "subject": [
                         {"name": "Politics", "qcode": "9", "scheme": "sttdepartment"},
-                        {"name": "Pika+", "qcode": "1", "scheme": "sttversion"},
-                        {"name": "Suomi", "qcode": "1", "scheme": "country"},
-                        {"name": "Eurooppa", "qcode": "150", "scheme": "world_region"}
+                        {"name": "Pika+", "qcode": "1", "scheme": "sttversion"}
                     ]
                 }
             }],
