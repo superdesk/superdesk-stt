@@ -231,22 +231,17 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
     Extracts the "scheme": "categories" value from an agenda item subjects.
 
     The function looks for the 'categories' in the 'subject' field of the item,
-    which is expected to be a list of dictionaries. Each dictionary may contain
-    a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
+    which is expected to be a list of dictionaries. Each dictionary may containa 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     the corresponding 'name' value is returned.
 
-    If 'categories' is not found, an empty string is returned.
     If 'categories' is not found, an empty string is returned.
 
     Args:
         item: A dictionary representing an agenda item.
     Returns:
         The name of 'categories' if found, otherwise an empty string.
-        The name of 'categories' if found, otherwise an empty string.
     """
-    # categories is stored in subject like:
-    # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
     # categories is stored in subject like:
     # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
     if not item:
@@ -259,12 +254,9 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
 
 
 def get_numeric_value_from_priority(priority: str) -> str:
-def get_numeric_value_from_priority(priority: str) -> str:
     """
     Extracts the numeric value from a priority string.
-    Extracts the numeric value from a priority string.
 
-    The function assumes that the priority string is formatted as
     The function assumes that the priority string is formatted as
     'Some text (number)', where 'number' is the numeric
     value to be extracted. It looks for the last pair of parentheses
@@ -276,12 +268,10 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     Args:
         priority: A string representing the priority.
-        priority: A string representing the priority.
     Returns:
         The numeric value extracted from the priority string, or an empty string if not found or not convertible.
-        The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
-    if not priority:
+
     if not priority:
         return ""
     if priority == "Vain tulokset":
@@ -293,12 +283,8 @@ def get_numeric_value_from_priority(priority: str) -> str:
         start = priority.rindex("(") + 1
         end = priority.rindex(")")
         number_str = priority[start:end].strip()
-        start = priority.rindex("(") + 1
-        end = priority.rindex(")")
-        number_str = priority[start:end].strip()
         return str(number_str.replace(" ", ""))
     except (ValueError, IndexError):
-        logger.error("Could not extract numeric value from priority: '%s'", priority)
         logger.error("Could not extract numeric value from priority: '%s'", priority)
         return ""
 
