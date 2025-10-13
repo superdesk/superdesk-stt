@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
-import logging
 import asyncio
 import inspect
-from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
-from typing import Dict, Iterable, List
+import logging
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Iterable, List
+from urllib.parse import quote
+import aiohttp
+from yarl import URL
 from superdesk.io.registry import register_feeding_service
 from .stt_content_api import STTContentAPIService as BaseSTTContentAPIService
 from superdesk.errors import ParserError
@@ -102,11 +103,10 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
     async def _update(self, provider, update) -> Iterable[Dict]:
         """
         TT-specific update that fetches all pages and yields parsed dict items.
-        Async to match the base class contract. Internally, the HTTP fetching is
-        still synchronous, so we offload it via asyncio.to_thread.
+        Async to match the base class contract.
         """
-        # Offload sync fetch to a worker thread to avoid blocking the event loop
-        json_items = await asyncio.to_thread(self._fetch_tt_data, provider, update)
+        # Reuse the synchronous fetch logic so legacy patches in tests keep working.
+        json_items = self._fetch_tt_data(provider, update)
         if not isinstance(json_items, list):
             json_items = [json_items]
 
@@ -189,20 +189,21 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
         trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Prepare base URL components and preserve existing query params
-        parsed = urlparse(url)
-        base_qs = dict(parse_qsl(parsed.query, keep_blank_values=True))
+        base = URL(url)
+        qs = dict(base.query)
 
         items: List[Dict] = []
         offset = 0
         total = None
 
         for page in range(max_pages):
-            # Merge/override pagination params each loop
-            qs = {**base_qs, "s": str(page_size), "fr": str(offset)}
+            qs.update({"s": str(page_size), "fr": str(offset)})
             if trs_value:
                 qs["trs"] = trs_value
-            page_url = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
+            page_url = str(base.with_query(qs))
+            if trs_value:
+                encoded_trs = quote(trs_value, safe="")
+                page_url = page_url.replace(f"trs={trs_value}", f"trs={encoded_trs}", 1)
 
             # Use base class HTTP retry infrastructure
             response = self._get_with_retry(page_url, headers=headers, timeout=timeout)
@@ -248,6 +249,95 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             return hits
         else:
             return []
+
+    async def _afetch_tt_data(self, provider, update) -> List[Dict]:
+        """
+        Async fetch all items from TT Content API with pagination using aiohttp.
+        Handles retries per page, returns list of dict items only.
+        """
+        url, api_key = self._get_config(provider)
+        headers = self._headers(api_key)
+
+        config = provider.get("config", {})
+        page_size = int(config.get("page_size", 50))
+        max_pages = int(config.get("max_pages", 200))
+        timeout = int(config.get("timeout", 60))
+
+        trs_value: str | None = None
+        last_updated_str = None
+        if isinstance(update, dict):
+            last_updated_str = update.get("last_updated") or update.get("last_update")
+        dt_from: datetime | None = None
+        if isinstance(last_updated_str, str):
+            try:
+                dt_from = datetime.fromisoformat(
+                    last_updated_str.replace("Z", "+00:00")
+                )
+            except Exception:
+                dt_from = None
+        if dt_from is None:
+            minutes = int(config.get("since_minutes", 1440))
+            dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
+        dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
+        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        base = URL(url)
+        qs = dict(base.query)
+
+        items: List[Dict] = []
+        offset = 0
+        total = None
+
+        session_timeout = aiohttp.ClientTimeout(total=timeout)
+        async with aiohttp.ClientSession(timeout=session_timeout) as session:
+            for page in range(max_pages):
+                qs.update({"s": str(page_size), "fr": str(offset)})
+                if trs_value:
+                    qs["trs"] = trs_value
+                page_url = str(base.with_query(qs))
+                if trs_value:
+                    encoded_trs = quote(trs_value, safe="")
+                    page_url = page_url.replace(
+                        f"trs={trs_value}", f"trs={encoded_trs}", 1
+                    )
+                attempt = 0
+                while attempt < 3:
+                    try:
+                        async with session.get(page_url, headers=headers) as resp:
+                            if resp.status >= 400:
+                                raise aiohttp.ClientResponseError(
+                                    resp.request_info,
+                                    resp.history,
+                                    status=resp.status,
+                                    message=await resp.text(),
+                                    headers=resp.headers,
+                                )
+                            try:
+                                data: Any = await resp.json(content_type=None)
+                            except Exception as ex:
+                                raise ParserError.parseMessageError(
+                                    ex, provider, data=None
+                                )
+                            if total is None and isinstance(data, dict):
+                                total = data.get("total")
+                            batch = self._extract_tt_items_from_response(data)
+                            if isinstance(batch, list) and batch:
+                                items.extend(
+                                    [it for it in batch if isinstance(it, dict)]
+                                )
+                            else:
+                                # No more results
+                                return [it for it in items if isinstance(it, dict)]
+                            break
+                    except Exception as ex:
+                        attempt += 1
+                        if attempt >= 3:
+                            raise ParserError.parseMessageError(ex, provider, data=None)
+                        await asyncio.sleep(2 ** (attempt - 1))
+                offset += page_size
+                if isinstance(total, int) and offset >= total:
+                    break
+        return [it for it in items if isinstance(it, dict)]
 
 
 register_feeding_service(STTTTContentAPIService)
