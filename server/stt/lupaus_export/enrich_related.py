@@ -146,13 +146,16 @@ def _find_many(
     return []
 
 
-def _get_planning_item_coverage_status_from_mongo(pl: Dict[str, Any]) -> Dict[str, Any]:
+def _get_planning_item_coverage_status_from_mongo(
+    pl: Dict[str, Any], item_type: str
+) -> Dict[str, Any]:
     """
     For some reason item.coverages is like coverages': ['Kuvauskeikka', 'Teksti']
     but we need "planning.coverages.news_coverage_status"-data from mongo by item _id
     Get the 'news_coverage_status' from the 'coverages' of a planning item.
     Args:
         pl: A dictionary representing a planning item.
+        item_type: The type of the planning item, e.g., 'teksti' / 'kuva'.
     Returns:
         The value of 'news_coverage_status' if found, otherwise an empty dictionary.
     """
@@ -165,16 +168,31 @@ def _get_planning_item_coverage_status_from_mongo(pl: Dict[str, Any]) -> Dict[st
     # skip if no id for some reason
     if not pl_id:
         return {}
-    pl_from_mongo = _find_many(
-        "planning",
-        # get only coverages that have "planning.g2_content_type" = "teksti"
-        {"_id": pl_id, "coverages.planning.g2_content_type": "teksti"},
-        projection={"coverages": 1, "_id": 0},
-    )
+    # if item_type is 'kuva', we need to get coverages where planning.g2_content_type = 'kuvauskeikka' or 'kuvitus'
+    if item_type == "kuva":
+        pl_from_mongo = _find_many(
+            "planning",
+            # get only coverages that have "planning.g2_content_type" = "kuvauskeikka" or "kuvitus"
+            {
+                "_id": pl_id,
+                "coverages.planning.g2_content_type": {
+                    "$in": ["kuvauskeikka", "kuvitus"]
+                },
+            },
+            projection={"coverages": 1, "_id": 0},
+        )
+    else:
+        pl_from_mongo = _find_many(
+            "planning",
+            # get only coverages that have "planning.g2_content_type" = "teksti"
+            {"_id": pl_id, "coverages.planning.g2_content_type": "teksti"},
+            projection={"coverages": 1, "_id": 0},
+        )
     if not pl_from_mongo:
         return {}
     if ("coverages" not in pl_from_mongo[0]) or (not pl_from_mongo[0]["coverages"]):
         return {}
+
     for cov in pl_from_mongo[0]["coverages"]:
         if "news_coverage_status" in cov and cov["news_coverage_status"]:
             return cov["news_coverage_status"]
@@ -213,7 +231,7 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
     Extracts the "scheme": "categories" value from an agenda item subjects.
 
     The function looks for the 'categories' in the 'subject' field of the item,
-    which is expected to be a list of dictionaries. Each dictionary may contain
+    which is expected to be a list of dictionaries. Each dictionary may containa 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     the corresponding 'name' value is returned.
 
@@ -253,8 +271,11 @@ def get_numeric_value_from_priority(priority: str) -> str:
     Returns:
         The numeric value extracted from the priority string, or an empty string if not found or not convertible.
     """
+
     if not priority:
         return ""
+    if priority == "Vain tulokset":
+        return priority
     if priority == "Vain tulokset":
         return priority
     try:
@@ -280,6 +301,7 @@ def _set_stt_fields(
     agendas: List[Dict[str, Any]],
     by_key: Dict[str, Dict[str, Any]],
     events: List[Dict[str, Any]],
+    item_type: str,
 ) -> List[Dict[str, Any]]:
     """
     Sets stt_priority and stt_priority_numeric fields on each planning item.
@@ -291,7 +313,9 @@ def _set_stt_fields(
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
-            news_coverage_status = _get_planning_item_coverage_status_from_mongo(pl)
+            news_coverage_status = _get_planning_item_coverage_status_from_mongo(
+                pl, item_type
+            )
             pl["news_coverage_status"] = news_coverage_status
             _set_priority_fields(pl)
             if not pl.get("stt_priority"):
@@ -361,16 +385,27 @@ def _get_items_with_highest_priority(
     return main_topic_items
 
 
-def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def enrich_planning_agendas(
+    agendas: List[Dict[str, Any]], item_type: str
+) -> List[Dict[str, Any]]:
     """
     Adds item.related_events_expanded = [event, ...]
     Each event has at least: _id, name, dates, location (resolved if IDs).
+    Also adds item.stt_priority and item.stt_priority_numeric fields.
+    Args:
+        agendas: A list of agenda dictionaries. Each agenda may include an "items"
+            list; each item may include a "related_events" list of mappings.
+        item_type: The type of the planning item, 'teksti' / 'kuva'.
+    Returns:
+        The input list of agendas, with each planning item enriched with
+        'related_events_expanded', 'stt_priority', and 'stt_priority_numeric' fields.
+        Items without a valid 'stt_priority' are excluded from the agendas.
     """
     ev_ids = _collect_event_ids(agendas)
     logger.info(f"Enriching agendas: found {len(ev_ids)} unique related event IDs")
     logger.info(f"Enriching agendas: event IDs: {ev_ids}")
     if not ev_ids:
-        _set_stt_fields(agendas, {}, [])
+        _set_stt_fields(agendas, {}, [], item_type)
         return agendas
 
     # Search events by _ids
@@ -386,7 +421,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
         },
     )
     if not events:
-        _set_stt_fields(agendas, {}, [])
+        _set_stt_fields(agendas, {}, [], item_type)
         return agendas
 
     # Map by both _id and guid for resilience
@@ -395,7 +430,7 @@ def enrich_planning_agendas(agendas: List[Dict[str, Any]]) -> List[Dict[str, Any
         if "_id" in e:
             by_key[str(e["_id"])] = e
     # Attach to each planning item
-    _set_stt_fields(agendas, by_key, events)
+    _set_stt_fields(agendas, by_key, events, item_type)
 
     # Sort related_events_expanded by start date
     for ag in agendas or []:
