@@ -287,6 +287,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         items: List[Dict] = []
         offset = 0
         total = None
+        no_more_results = False
 
         session_timeout = aiohttp.ClientTimeout(total=timeout)
         async with aiohttp.ClientSession(timeout=session_timeout) as session:
@@ -315,25 +316,40 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                             try:
                                 data: Any = await resp.json(content_type=None)
                             except Exception as ex:
+                                # Unexpected JSON error: abort pagination
                                 raise ParserError.parseMessageError(
                                     ex, provider, data=None
                                 )
+
                             if total is None and isinstance(data, dict):
                                 total = data.get("total")
+
                             batch = self._extract_tt_items_from_response(data)
                             if isinstance(batch, list) and batch:
                                 items.extend(
                                     [it for it in batch if isinstance(it, dict)]
                                 )
+                                # Successful fetch for this page -> break retry loop
+                                break
                             else:
-                                # No more results
-                                return [it for it in items if isinstance(it, dict)]
-                            break
-                    except Exception as ex:
+                                # No more results; stop paginating after current page
+                                no_more_results = True
+                                break
+
+                    except aiohttp.ClientResponseError as ex:
                         attempt += 1
                         if attempt >= 3:
+                            # Retries exhausted for HTTP error -> surface as parser error
                             raise ParserError.parseMessageError(ex, provider, data=None)
                         await asyncio.sleep(2 ** (attempt - 1))
+
+                    except Exception as ex:
+                        # Any other unexpected exception: abort immediately
+                        raise ParserError.parseMessageError(ex, provider, data=None)
+
+                if no_more_results:
+                    break
+
                 offset += page_size
                 if isinstance(total, int) and offset >= total:
                     break
