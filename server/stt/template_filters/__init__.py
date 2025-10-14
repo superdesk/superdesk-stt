@@ -62,8 +62,17 @@ def fi_ddmm(value: str) -> str:
     return f"{dt.day:02d}.{dt.month:02d}."
 
 
+def fi_which_weekday(value: str) -> str:
+    # "2025-10-14T00:00:00+0000" => "tiistaina 14.10."
+    dt = _to_helsinki(value)
+    if not dt:
+        return ""
+    return f"{_WEEKDAY_FI[dt.weekday()]}na {dt.day}.{dt.month}."
+
+
 def init_app(app):
     app.jinja_env.filters["fi_date"] = fi_date
     app.jinja_env.filters["fi_time"] = fi_time
     app.jinja_env.filters["fi_ddmm"] = fi_ddmm
     app.jinja_env.globals["fi_current_date"] = fi_current_date
+    app.jinja_env.filters["fi_which_weekday"] = fi_which_weekday
