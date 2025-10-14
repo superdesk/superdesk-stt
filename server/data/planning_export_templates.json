@@ -30,5 +30,15 @@
       "headline_template": "kuvalupaus_events_headline.html"
     },
     "label": "Kuvalupaus Template"
+  },
+  {
+    "_id": "merkkipaiva_list",
+    "init_version": 1,
+    "name": "merkkipaiva_list",
+    "type": "planning",
+    "data": {
+      "body_html_template": "merkkipaiva_template.html"
+    },
+    "label": "Merkkipäivä Template"
   }
 ]
