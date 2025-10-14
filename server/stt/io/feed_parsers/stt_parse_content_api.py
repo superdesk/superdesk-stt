@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import logging
 import hashlib
 import json
-import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+from urllib.parse import unquote, urlparse
 
 from dateutil import parser as dtparse
 from superdesk.io.feed_parsers import FeedParser
@@ -49,6 +49,44 @@ def _to_int_or_none(v: Any) -> Optional[int]:
         return int(v)  # type: ignore[arg-type]
     except (TypeError, ValueError):
         return None
+
+
+GUID_PREFIX = "urn:newsml:stt.fi:contentapi:"
+SOURCE_PREFIX = "urn:newsml:stt.fi:"
+
+
+def _guid_from_value(value: Any) -> Optional[str]:
+    """Return a normalized STT Content API GUID or None when value empty."""
+    if value is None:
+        return None
+    if isinstance(value, bytes):
+        candidate = value.decode("utf-8", errors="ignore").strip()
+    else:
+        candidate = str(value).strip()
+    if not candidate:
+        return None
+
+    if candidate.startswith(GUID_PREFIX):
+        return candidate
+
+    if candidate.startswith(SOURCE_PREFIX):
+        suffix = candidate[len(SOURCE_PREFIX) :].lstrip(":")
+        if not suffix:
+            suffix = hashlib.sha1(candidate.encode("utf-8")).hexdigest()
+        return f"{GUID_PREFIX}{suffix}"
+
+    if candidate.startswith(("http://", "https://")):
+        parsed = urlparse(candidate)
+        last_segment = parsed.path.rsplit("/", 1)[-1] or parsed.path.strip("/")
+        if last_segment:
+            decoded = unquote(last_segment)
+            guid = _guid_from_value(decoded)
+            if guid:
+                return guid
+        candidate = f"{parsed.netloc}{parsed.path}" or candidate
+
+    digest = hashlib.sha1(candidate.encode("utf-8")).hexdigest()
+    return f"{GUID_PREFIX}{digest}"
 
 
 class ContentAPIItemParser(FeedParser):
@@ -135,10 +173,6 @@ class ContentAPIItemParser(FeedParser):
         # Apply default fields and normalize headline/body
         self._apply_defaults(processed)
 
-        # Generate GUID if missing
-        if not processed.get("guid"):
-            processed["guid"] = self._ensure_guid(processed)
-
         # Normalize all known timestamp fields
         for tf in ("versioncreated", "firstcreated", "_updated", "_created"):
             if processed.get(tf):
@@ -181,7 +215,7 @@ class ContentAPIItemParser(FeedParser):
         if not headline and not body_html:
             logger.info(
                 "Skipping item without meaningful content: %s",
-                processed.get("guid", "unknown"),
+                processed.get("uri", "unknown"),
             )
             return None
 
@@ -204,27 +238,18 @@ class ContentAPIItemParser(FeedParser):
             item.get("headline") or item.get("name") or item.get("title") or "",
         )
         item.setdefault("body_html", item.get("body_html") or "")
-
-    def _ensure_guid(self, item: Dict[str, Any]) -> str:
-        uri = (
-            item.get("uri")
-            or item.get("guid")
-            or item.get("original_id")
-            or item.get("_id")
-        )
-        if isinstance(uri, (str, int)):
-            s = str(uri)
-            # If it's already a URN, preserve it
-            if s.startswith("urn:"):
-                return s
-            # Otherwise generate a new URN with our namespace
-            return f"urn:newsml:stt.fi:contentapi:{hashlib.sha256(s.encode('utf-8')).hexdigest()}"
-        try:
-            blob = json.dumps(item, ensure_ascii=False, sort_keys=True)
-            h = hashlib.sha256(blob.encode("utf-8")).hexdigest()
-            return f"urn:newsml:stt.fi:contentapi:{h}"
-        except Exception:
-            return f"urn:newsml:stt.fi:contentapi:{uuid.uuid4()}"
+        guid = _guid_from_value(item.get("guid"))
+        if not guid:
+            for key in ("uri", "original_id", "coverage_id", "_id", "id"):
+                guid = _guid_from_value(item.get(key))
+                if guid:
+                    break
+        if not guid:
+            serialized = json.dumps(
+                item, sort_keys=True, default=str, separators=(",", ":")
+            )
+            guid = _guid_from_value(serialized)
+        item["guid"] = guid
 
     def _normalize_timestamp(self, value: Any) -> Optional[datetime]:
         """Normalize timestamps to tz-aware datetime (UTC)."""
