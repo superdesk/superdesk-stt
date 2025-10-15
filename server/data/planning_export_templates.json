@@ -40,5 +40,16 @@
       "body_html_template": "merkkipaiva_template.html"
     },
     "label": "Merkkipäivä Template"
+  },
+  {
+    "_id": "kiirelisays_list",
+    "init_version": 1,
+    "name": "kiirelisays_list",
+    "type": "event",
+    "data": {
+      "body_html_template": "kiirelisays_template.html",
+      "headline_template": "kiirelisays_headline.html"
+    },
+    "label": "Kiirelisäys Template"
   }
 ]
