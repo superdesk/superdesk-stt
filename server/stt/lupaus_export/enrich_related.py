@@ -1,6 +1,7 @@
 from typing import Dict, List, Any, Set
-from superdesk import get_resource_service
 import logging
+
+from stt.helpers.mongo_helpers import find_many
 
 logger = logging.getLogger(__name__)
 
@@ -46,106 +47,6 @@ def _collect_event_ids(agendas: List[Dict[str, Any]]) -> List[str]:
     return list(ids)
 
 
-def _apply_projection_locally(
-    docs: List[Dict[str, Any]], projection: Dict[str, int] | None
-) -> List[Dict[str, Any]]:
-    """
-    Apply a MongoDB-like inclusion projection to a list of documents.
-
-    Given a list of dictionaries, return a new list where each document
-    contains only the fields whose entry in `projection` is truthy (e.g., 1 or True).
-    If `projection` is None or empty, the original list is returned unchanged.
-
-    Notes:
-    - Only inclusion projections are supported. Setting a field to 0/False has no effect
-        (the field is simply not included in the result).
-    - If '_id' is present in `projection` with a truthy value, it will be included;
-        otherwise it is omitted even if present in the input documents.
-    - Fields requested in `projection` that do not exist in a document are ignored.
-    - Input documents are not mutated; new, shallow dictionaries are created.
-
-    Parameters:
-            docs: List of input documents (dicts).
-            projection: Mapping of field names to inclusion flags (1/True to include, 0/False/absent to omit).
-
-    Returns:
-            A list of new documents containing only the projected fields. If `projection` is falsy,
-            the original `docs` list is returned as-is.
-
-    Examples:
-            >>> docs = [{'a': 1, 'b': 2, '_id': 'x'}, {'a': 3, 'c': 4}]
-            >>> _apply_projection_locally(docs, {'a': 1})
-            [{'a': 1}, {'a': 3}]
-            >>> _apply_projection_locally(docs, {'a': 1, '_id': 1})
-            [{'a': 1, '_id': 'x'}, {'a': 3}]
-            >>> _apply_projection_locally(docs, None) is docs
-            True
-    """
-    if not projection:
-        return docs
-    keep = {k for k, v in projection.items() if v}
-    # Always keep _id if requested implicitly
-    if "_id" in projection and projection["_id"]:
-        keep.add("_id")
-    return [{k: d.get(k) for k in keep if k in d} for d in docs]
-
-
-def _find_many(
-    resource: str, lookup: Dict[str, Any], projection: Dict[str, int] | None = None
-) -> List[Dict[str, Any]]:
-    """
-    Try service.get_from_mongo with various signatures; fall back to service.get;
-    and only if that fails, go to data layer without projection. If we can't push
-    'projection' to the DB, we'll trim the fields locally.
-    """
-    # Prefer resource service
-    try:
-        svc = get_resource_service(resource)
-    except Exception as e:
-        logger.exception(
-            "Error using service for %s (%s: %s).",
-            resource,
-            e.__class__.__name__,
-            e,
-        )
-        svc = None
-
-    # 1) service.get_from_mongo with (req=None, ...)
-    if svc and hasattr(svc, "get_from_mongo"):
-        try:
-            docs = list(svc.get_from_mongo(None, lookup=lookup, projection=projection))
-            if docs is not None:
-                return _apply_projection_locally(docs, projection)
-        except TypeError:
-            # Signature mismatch; fall through to other strategies
-            pass
-        except Exception as e:
-            logger.exception(
-                "Error in _find_many service.get_from_mongo with (req=None, ...) using service for %s (%s: %s).",
-                resource,
-                e.__class__.__name__,
-                e,
-            )
-            # Fall through to other strategies
-            pass
-
-    # 2) service.get (no projection)
-    if svc and hasattr(svc, "get"):
-        try:
-            docs = list(svc.get(None, lookup))
-            return _apply_projection_locally(docs, projection)
-        except Exception as e:
-            logger.exception(
-                "Error in _find_many service.get (no projection) using service for %s (%s: %s).",
-                resource,
-                e.__class__.__name__,
-                e,
-            )
-            pass
-
-    return []
-
-
 def _get_planning_item_coverage_status_from_mongo(
     pl: Dict[str, Any], item_type: str
 ) -> Dict[str, Any]:
@@ -170,7 +71,7 @@ def _get_planning_item_coverage_status_from_mongo(
         return {}
     # if item_type is 'kuva', we need to get coverages where planning.g2_content_type = 'kuvauskeikka' or 'kuvitus'
     if item_type == "kuva":
-        pl_from_mongo = _find_many(
+        pl_from_mongo = find_many(
             "planning",
             # get only coverages that have "planning.g2_content_type" = "kuvauskeikka" or "kuvitus"
             {
@@ -182,7 +83,7 @@ def _get_planning_item_coverage_status_from_mongo(
             projection={"coverages": 1, "_id": 0},
         )
     else:
-        pl_from_mongo = _find_many(
+        pl_from_mongo = find_many(
             "planning",
             # get only coverages that have "planning.g2_content_type" = "teksti"
             {"_id": pl_id, "coverages.planning.g2_content_type": "teksti"},
@@ -409,7 +310,7 @@ def enrich_planning_agendas(
         return agendas
 
     # Search events by _ids
-    events = _find_many(
+    events = find_many(
         "events",
         {"_id": {"$in": ev_ids}},
         projection={
