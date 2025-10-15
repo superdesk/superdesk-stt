@@ -1,0 +1,410 @@
+{
+    "hits": [
+        {
+            "uri": "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+            "associations": {
+                "a001": {
+                    "representationtype": "incomplete",
+                    "description_text": "Besökare på ett köpcentrum. Arkivbild. ",
+                    "mimetype": "image/jpeg",
+                    "renditions": {
+                        "r01": {
+                            "sizeinbytes": 434445,
+                            "usage": "Preview",
+                            "variant": "Normal",
+                            "width": 1024,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg",
+                            "height": 683
+                        },
+                        "r00": {
+                            "sizeinbytes": 14486162,
+                            "usage": "Hires",
+                            "variant": "Normal",
+                            "width": 5568,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalHires.jpg",
+                            "height": 3712
+                        },
+                        "r03": {
+                            "sizeinbytes": 40566,
+                            "usage": "Thumbnail",
+                            "variant": "Normal",
+                            "width": 256,
+                            "mimetype": "image/jpeg",
+                            "href": "https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg",
+                            "height": 171
+                        },
+                        "r02": {
+                            "sizeinbytes": 434445,
+                            "usage": "Preview",
+                            "variant": "Watermark",
+                            "width": 1024,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_WatermarkPreview.jpg",
+                            "height": 683
+                        }
+                    },
+                    "type": "picture",
+                    "byline": "Amir Nabizadeh/TT",
+                    "uri": "http://tt.se/media/image/sdlg3pTraNl8TI"
+                }
+            },
+            "altids": {
+                "originaltransmissionreference": "ae8053fa-9100-460d-9589-ee2a75535877"
+            },
+            "webprio": 2,
+            "body_text": "KI: Ekonomin lyfter nästa år\nEkonomi TT\nLågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  \nDet slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  \n– Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.\nEn försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. \n– Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.\nKI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. \n– Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  \nSänkt elskatt bidrar\nInflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.\n– Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. \nKI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).\n– Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.\nInga fler sänkningar\nEfter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. \nRättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. \nTobias Österberg/TT",
+            "subject": [
+                {
+                    "code": "04000000",
+                    "scheme": "http://tt.se/spec/subref/1.0/",
+                    "name": "Ekonomi, affärer och finans",
+                    "rel": "classifies"
+                }
+            ],
+            "bylines": [
+                {
+                    "affiliation": "TT",
+                    "byline": "Tobias Österberg/TT"
+                }
+            ],
+            "organisation": [
+                {
+                    "code": "8a88a345-cce6-4e10-92fc-86d070228b98",
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "Konjunkturinstitutet",
+                    "rel": "mentions"
+                },
+                {
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "KI",
+                    "rel": "mentions"
+                },
+                {
+                    "code": "1d92fe72-b564-479f-b159-3e6c539310b8",
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "Sveriges Riksbank",
+                    "rel": "mentions"
+                },
+                {
+                    "code": "58f2acd9-1c2e-48b8-a23d-6b703d9888bd",
+                    "scheme": "http://tt.se/spec/organisation/1.0/",
+                    "name": "Socialdemokraterna",
+                    "rel": "mentions"
+                }
+            ],
+            "language": "sv",
+            "body_richhtml5": "<html><head><title>KI: Ekonomin lyfter nästa år</title></head><body><article><section data-charcount=\"2065\"><h1>KI: Ekonomin lyfter nästa år</h1><div class=\"dat\"><span class=\"vignette\">Ekonomi</span><span class=\"source\">TT</span></div><div class=\"ingress\"><p>Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  </p><p>Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  </p><blockquote>Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.</blockquote></div><div class=\"bodytext\"><figure><img uri=\"sdlg3pTraNl8TI\" src=\"https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg\" alt=\"Besökare på ett köpcentrum. Arkivbild. \" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdlg3pTraNl8TI\" data-preview-src=\"https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg\"/><div class=\"byline\">Amir Nabizadeh/TT</div><figcaption>Besökare på ett köpcentrum. Arkivbild. </figcaption></figure><p>En försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. </p><blockquote>Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.</blockquote><p>KI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. </p><blockquote>Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  </blockquote><h2>Sänkt elskatt bidrar</h2><p>Inflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.</p><blockquote>Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. </blockquote><p>KI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).</p><blockquote>Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.</blockquote><h2>Inga fler sänkningar</h2><p>Efter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. </p><p>Rättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. </p></div><div class=\"byline\">Tobias Österberg/TT</div></section></article></body></html>",
+            "source": "TT",
+            "type": "text",
+            "versioncreated": "2025-09-24T08:16:02Z",
+            "body_html5": "<html><head><title>KI: Ekonomin lyfter nästa år</title></head><body><article><section data-charcount=\"2065\"><h1>KI: Ekonomin lyfter nästa år</h1><div class=\"dat\"><span class=\"vignette\">Ekonomi</span><span class=\"source\">TT</span></div><h4><p>Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.  </p><p>Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.  </p><blockquote>Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett balanserat konjunkturläge, säger prognoschefen Ylva Hedén Westerdahl.</blockquote></h4><div class=\"bodytext\"><p>En försiktig återhämtning börjar nu att synas inom den svenska ekonomin, enligt KI. Under 2026 förväntas bnp-tillväxten (kalenderkorrigerad) uppgå till 2,4 procent jämfört med 1,1 procent i år. </p><blockquote>Tillväxten blir god och det är främst inhemsk efterfrågan som bidrar, säger Ylva Hedén Westerdahl.</blockquote><p>KI bedömer samtidigt att hushållen nu ska börja konsumera igen i takt med stigande reallöner. Detta när sänkta skatter bidrar till att den reala disponibla inkomsten växer relativt snabbt, enligt KI. </p><blockquote>Sedan ett år tillbaka har hushållens konsumtion vuxit, om än i blygsam takt. Det är främst konjunkturkänsliga sällanköpsvaror som bidragit till den här uppgången, säger hon.  </blockquote><h2>Sänkt elskatt bidrar</h2><p>Inflationen beräknas falla tillbaka nästa år som effekt av sänkt matmoms och sänkt elskatt.</p><blockquote>Nästa år beräknas inflationen i genomsnitt bli 0,9 procent. Räknar man bort den sänkta matmomsen och den sänkta elskatten skulle i stället inflationen bli 1,6 procent, säger hon. </blockquote><p>KI varnar dock för en viss eftersläpning när de gäller återhämtningen på arbetsmarknaden. Arbetslösheten beräknas sjunka marginellt till 8,4 procent nästa år från 8,7 i år för att sedan minska rejält under 2027 (7,6 procent).</p><blockquote>Det dröjer ända till 2028 innan arbetslösheten är nere på sin jämviktsnivå. Att arbetsmarknaden släpar efter är dock ett relativt vanligt konjunkturmönster, Ylva Hedén Westerdahl.</blockquote><h2>Inga fler sänkningar</h2><p>Efter gårdagens räntesänkning meddelade Riksbanken att det var slutsänkt när det gäller styrräntan. Det är också KI:s bedömning. I stället ser man nu att Riksbanken under 2027 gradvis höjer styrräntan till 2,75 procent, till vill säga 1,0 procentenhet högre än nuvarande nivå. </p><p>Rättad version: I en tidigare version uppgavs felaktig uppgift om räntesänkning. </p></div><div class=\"byline\">Tobias Österberg/TT</div><figure><img uri=\"sdlg3pTraNl8TI\" src=\"https://thumbnail.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalThumbnail.jpg\" alt=\"Besökare på ett köpcentrum. Arkivbild. \" data-assoc-ref=\"a001\" data-uri=\"http://tt.se/media/image/sdlg3pTraNl8TI\" data-preview-src=\"https://beta.tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa/a001_NormalPreview.jpg\"/><div class=\"byline\">Amir Nabizadeh/TT</div><figcaption>Besökare på ett köpcentrum. Arkivbild. </figcaption></figure></section></article></body></html>",
+            "copyrightholder": "TT",
+            "datetime": "2025-09-24T08:16:02Z",
+            "slugline": "konjunkturläget-6-UV",
+            "newsvalue": 4,
+            "representationtype": "complete",
+            "urgency": 3,
+            "genre": [
+                {
+                    "code": "EKO",
+                    "scheme": "http://tt.se/spec/sector/1.0/",
+                    "name": "Ekonomi"
+                }
+            ],
+            "revisions": [
+                {
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget1-ae8053fa",
+                    "slug": "konjunkturläget-1",
+                    "versioncreated": "2025-09-24T07:03:35Z"
+                },
+                {
+                    "replacing": [
+                        "http://tt.se/media/text/250924-konjunkturlaget1-ae8053fa"
+                    ],
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget2uv-ae8053fa",
+                    "slug": "konjunkturläget-2-UV",
+                    "versioncreated": "2025-09-24T07:09:16Z"
+                },
+                {
+                    "replacing": [
+                        "http://tt.se/media/text/250924-konjunkturlaget2uv-ae8053fa"
+                    ],
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget3uv-ae8053fa",
+                    "slug": "konjunkturläget-3-UV",
+                    "versioncreated": "2025-09-24T07:23:25Z"
+                },
+                {
+                    "replacing": [
+                        "http://tt.se/media/text/250924-konjunkturlaget3uv-ae8053fa"
+                    ],
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget4uv-ae8053fa",
+                    "slug": "konjunkturläget-4-UV",
+                    "versioncreated": "2025-09-24T07:44:06Z"
+                },
+                {
+                    "replacing": [
+                        "http://tt.se/media/text/250924-konjunkturlaget4uv-ae8053fa"
+                    ],
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa",
+                    "slug": "konjunkturläget-5-UV",
+                    "versioncreated": "2025-09-24T07:56:21Z"
+                },
+                {
+                    "replacing": [
+                        "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa"
+                    ],
+                    "uri": "http://tt.se/media/text/250924-konjunkturlaget6uv-ae8053fa",
+                    "slug": "konjunkturläget-6-UV",
+                    "versioncreated": "2025-09-24T08:16:02Z"
+                }
+            ],
+            "sector": "EKO",
+            "byline": "Tobias Österberg/TT",
+            "headline": "KI: Ekonomin lyfter nästa år",
+            "slug": "konjunkturläget-6-UV",
+            "ednote": "Utförligare.",
+            "product": [
+                {
+                    "code": "TTEKO",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Ekonomi"
+                },
+                {
+                    "code": "TWEKO",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Webb ekonomi"
+                },
+                {
+                    "code": "TTEKO0",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Arkiv"
+                },
+                {
+                    "code": "TWEKO0",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Arkiv"
+                }
+            ],
+            "charcount": 2065,
+            "pubstatus": "usable",
+            "firstcreated": "2025-09-24T07:03:35Z",
+            "profile": "PUBL",
+            "description_text": "Lågkonjunkturen kommer inte vara över förrän 2027. Men nästa år blir ändå betydligt bättre.   Det slår Konjunkturinstitutet (KI) fast i en ny konjunkturrapport.   – Det kommer att dröja till 2027 innan vi kommer att befinna oss i ett...",
+            "replacing": [
+                "http://tt.se/media/text/250924-konjunkturlaget5uv-ae8053fa"
+            ],
+            "version": "1",
+            "description_usage": "Utförligare.",
+            "signals": {
+                "updatetype": "UV"
+            },
+            "person": [
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Ylva Hedén Westerdahl",
+                    "rel": "mentions"
+                }
+            ],
+            "originaltransmissionreference": "ae8053fa-9100-460d-9589-ee2a75535877",
+            "mimetype": "text/html",
+            "job": "89f761b9-d161-465c-9084-b780a9b01cdb",
+            "$standard": {
+                "schema": "https://tt.se/spec/ttninjs/ttninjs-schema_1.8.json",
+                "name": "TTNINJS",
+                "version": "1.8"
+            }
+        },
+        {
+            "uri": "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+            "associations": {
+                "a001": {
+                    "representationtype": "complete",
+                    "description_text": "",
+                    "renditions": {
+                        "r01": {
+                            "unit": "PX",
+                            "usage": "Hires",
+                            "variant": "Normal",
+                            "width": 8000,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalHires.jpg",
+                            "height": 4500
+                        },
+                        "r00": {
+                            "unit": "PX",
+                            "usage": "Thumbnail",
+                            "variant": "Normal",
+                            "width": 512,
+                            "mimetype": "image/jpeg",
+                            "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalThumbnail.jpg",
+                            "height": 288
+                        },
+                        "r03": {
+                            "unit": "PX",
+                            "usage": "Preview",
+                            "variant": "Watermark",
+                            "width": 1024,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_WatermarkPreview.jpg",
+                            "height": 576
+                        },
+                        "r02": {
+                            "unit": "PX",
+                            "usage": "Preview",
+                            "variant": "Cropped",
+                            "width": 1024,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedPreview.jpg",
+                            "height": 1024
+                        },
+                        "r05": {
+                            "unit": "PX",
+                            "usage": "Thumbnail",
+                            "variant": "Cropped",
+                            "width": 512,
+                            "mimetype": "image/jpeg",
+                            "href": "https://thumbnail.tt.se/media/text/250924-bookmarkpabo-4068424/a001_CroppedThumbnail.jpg",
+                            "height": 512
+                        },
+                        "r04": {
+                            "unit": "PX",
+                            "usage": "Preview",
+                            "variant": "Normal",
+                            "width": 1024,
+                            "mimetype": "image/jpeg",
+                            "href": "https://beta.tt.se/media/text/250924-bookmarkpabo-4068424/a001_NormalPreview.jpg",
+                            "height": 576
+                        }
+                    },
+                    "type": "picture",
+                    "uri": "http://tt.se/media/image/68847ef9304c48267feaaac57dda0fa6"
+                }
+            },
+            "altids": {
+                "originaltransmissionreference": "viatt4068424"
+            },
+            "body_text": "Årets program bjuder på något för alla.Mästaren på spänning, Pascal Engman, lanserar en helt ny serie på mässan – Klanenserien – och berättar hur samhällsfrågor och politik kan vävas in i spänningsromaner. En av årets mest hyllade författare, Katarina Wennstam, fortsätter succéserien Sekelskiftesmorden, och samtalar om kvinnor som vägrar låta sig tystas. Sofie Sarenbrant och Henrik Fexeus diskuterar konsten att skriva samtidsskildringar som samtidigt får pulsen att rusa. Anna Jinghede och Lena Ljungdahl diskuterar hur man gestaltar verkliga brott i fiktionens värld.Jenny Fagerlund och Carina Nunstedt delar med sig av sina bästa skrivtips, bland annat hur man väljer rätt miljö för sin berättelse. Och Lina Bengtsdotter pratar om något alla författare fruktar: skrivkrampen. Hur tar man sig vidare när orden fastnar?Dessutom intar Krigshistoriepodden scenen för att visa hur militärhistoria kan göras både underhållande och lättillgänglig.För de yngre besökarna väntar härliga möten med Lilla spöket Laban, Labolina och Lollo & Bernie – som dessutom bjuder på en riktigt härlig show i En liten talkshow.Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokglädje. Varmt välkomna att uppleva Bokmässan tillsammans med oss. Vi ses där!",
+            "subject": [
+                {
+                    "code": "20000013",
+                    "scheme": "http://tt.se/spec/subref/1.0/",
+                    "name": "Litteratur",
+                    "rel": "0.7849160432815552"
+                }
+            ],
+            "language": "sv",
+            "source": "ViaTT",
+            "body_richhtml5": "<html><body><article><section><h1>Bookmark p&#xE5; Bokm&#xE4;ssan 2025</h1><h4><p><p>Den 25 september sl&#xE5;r portarna upp till &#xE5;rets Bokm&#xE4;ssa och vi p&#xE5; Bookmark F&#xF6;rlag &#xE4;r sj&#xE4;lvklart p&#xE5; plats tillsammans med m&#xE5;nga av v&#xE5;ra f&#xF6;rfattare! Under fyra intensiva dagar fyller vi v&#xE5;r monter  <strong>B04:22 </strong> med b&#xF6;cker, signeringar och massor av m&#xF6;ten med er l&#xE4;sare. H&#xE4;r hittar du allt fr&#xE5;n sp&#xE4;nningsromaner och historia till sj&#xE4;lvbiografier, fackb&#xF6;cker och l&#xE4;supplevelser f&#xF6;r alla &#xE5;ldrar!</p></p></h4><div class=\"bodytext\"><p>&#xC5;rets program bjuder p&#xE5; n&#xE5;got f&#xF6;r alla.</p><p>M&#xE4;staren p&#xE5; sp&#xE4;nning, <strong>Pascal Engman, </strong>lanserar en helt ny serie p&#xE5; m&#xE4;ssan &#x2013; Klanenserien &#x2013; och ber&#xE4;ttar hur samh&#xE4;llsfr&#xE5;gor och politik kan v&#xE4;vas in i sp&#xE4;nningsromaner. En av &#xE5;rets mest hyllade f&#xF6;rfattare, <strong>Katarina Wennstam </strong>, forts&#xE4;tter succ&#xE9;serien Sekelskiftesmorden, och samtalar om kvinnor som v&#xE4;grar l&#xE5;ta sig tystas.<strong/></p><p> <strong>Sofie Sarenbrant </strong>och <strong>Henrik Fexeus </strong>diskuterar konsten att skriva samtidsskildringar som samtidigt f&#xE5;r pulsen att rusa. <strong>Anna Jinghede och Lena Ljungdahl </strong>diskuterar hur man gestaltar verkliga brott i fiktionens v&#xE4;rld.</p><p> <strong>Jenny Fagerlund </strong>och <strong>Carina Nunstedt </strong>delar med sig av sina b&#xE4;sta skrivtips, bland annat hur man v&#xE4;ljer r&#xE4;tt milj&#xF6; f&#xF6;r sin ber&#xE4;ttelse. Och <strong>Lina Bengtsdotter </strong>pratar om n&#xE5;got alla f&#xF6;rfattare fruktar: skrivkrampen. Hur tar man sig vidare n&#xE4;r orden fastnar?</p><p>Dessutom intar <strong>Krigshistoriepodden </strong>scenen f&#xF6;r att visa hur milit&#xE4;rhistoria kan g&#xF6;ras b&#xE5;de underh&#xE5;llande och l&#xE4;ttillg&#xE4;nglig.</p><p>F&#xF6;r de yngre bes&#xF6;karna v&#xE4;ntar h&#xE4;rliga m&#xF6;ten med <strong>Lilla sp&#xF6;ket Laban, Labolina </strong>och <strong>Lollo &amp; Bernie </strong>&#x2013; som dessutom bjuder p&#xE5; en riktigt h&#xE4;rlig show i <em>En liten talkshow </em>.</p><p>Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokgl&#xE4;dje. Varmt v&#xE4;lkomna att uppleva Bokm&#xE4;ssan tillsammans med oss. Vi ses d&#xE4;r!</p><p> <strong>Kontakta: </strong></p><p>Simon Brodding, , 0735054527, simon.brodding@bookmarkforlag.se</p><p>Melina Roy, , 076-146 89 46, melina.roy@bookmarkforlag.se</p><p> <strong>Fr&#xE5;n: </strong></p><p>Bookmark F&#xF6;rlag, Kungsgatan 58, 111 22, Stockholm (http://www.bookmarkforlag.se/)</p><p><p>Med h&#xE4;ngivenhet till v&#xE5;ra f&#xF6;rfattare och engagemang f&#xF6;r varje titel har Bookmark F&#xF6;rlag etablerat sig som ett av Sveriges ledande bokf&#xF6;rlag. V&#xE5;r ambition &#xE4;r att ge ut verkligt starka och unika titlar inom allt fr&#xE5;n sk&#xF6;n- och facklitteratur till barnb&#xF6;cker.</p></p></div></section></article></body></html>",
+            "type": "text",
+            "versioncreated": "2025-09-24T10:12:00+02:00",
+            "body_html5": "<html><body><article><section><h1>Bookmark p&#xE5; Bokm&#xE4;ssan 2025</h1><h4><p><p>Den 25 september sl&#xE5;r portarna upp till &#xE5;rets Bokm&#xE4;ssa och vi p&#xE5; Bookmark F&#xF6;rlag &#xE4;r sj&#xE4;lvklart p&#xE5; plats tillsammans med m&#xE5;nga av v&#xE5;ra f&#xF6;rfattare! Under fyra intensiva dagar fyller vi v&#xE5;r monter  <strong>B04:22 </strong> med b&#xF6;cker, signeringar och massor av m&#xF6;ten med er l&#xE4;sare. H&#xE4;r hittar du allt fr&#xE5;n sp&#xE4;nningsromaner och historia till sj&#xE4;lvbiografier, fackb&#xF6;cker och l&#xE4;upplevelser f&#xF6;r alla &#xE5;ldrar!</p></p></h4><div class=\"bodytext\"><p>&#xC5;rets program bjuder p&#xE5; n&#xE5;got f&#xF6;r alla.</p><p>M&#xE4;staren p&#xE5; sp&#xE4;nning, <strong>Pascal Engman, </strong>lanserar en helt ny serie p&#xE5; m&#xE4;ssan &#x2013; Klanenserien &#x2013; och ber&#xE4;ttar hur samh&#xE4;llsfr&#xE5;gor och politik kan v&#xE4;vas in i sp&#xE4;nningsromaner. En av &#xE5;rets mest hyllade f&#xF6;rfattare, <strong>Katarina Wennstam </strong>, forts&#xE4;tter succ&#xE9;serien Sekelskiftesmorden, och samtalar om kvinnor som v&#xE4;grar l&#xE5;ta sig tystas.<strong/></p><p> <strong>Sofie Sarenbrant </strong>och <strong>Henrik Fexeus </strong>diskuterar konsten att skriva samtidsskildringar som samtidigt f&#xE5;r pulsen att rusa. <strong>Anna Jinghede och Lena Ljungdahl </strong>diskuterar hur man gestaltar verkliga brott i fiktionens v&#xE4;rld.</p><p> <strong>Jenny Fagerlund </strong>och <strong>Carina Nunstedt </strong>delar med sig av sina b&#xE4;sta skrivtips, bland annat hur man v&#xE4;ljer r&#xE4;tt milj&#xF6; f&#xF6;r sin ber&#xE4;ttelse. Och <strong>Lina Bengtsdotter </strong>pratar om n&#xE5;got alla f&#xF6;rfattare fruktar: skrivkrampen. Hur tar man sig vidare n&#xE4;r orden fastnar?</p><p>Dessutom intar <strong>Krigshistoriepodden </strong>scenen f&#xF6;r att visa hur milit&#xE4;rhistoria kan g&#xF6;ras b&#xE5;de underh&#xE5;llande och l&#xE4;ttillg&#xE4;nglig.</p><p>F&#xF6;r de yngre bes&#xF6;karna v&#xE4;ntar h&#xE4;rliga m&#xF6;ten med <strong>Lilla sp&#xF6;ket Laban, Labolina </strong>och <strong>Lollo &amp; Bernie </strong>&#x2013; som dessutom bjuder p&#xE5; en riktigt h&#xE4;rlig show i <em>En liten talkshow </em>.</p><p>Vi ser fram emot fyra dagar fyllda av energi, inspiration och bokgl&#xE4;dje. Varmt v&#xE4;lkomna att uppleva Bokm&#xE4;ssan tillsammans med oss. Vi ses d&#xE4;r!</p><p> <strong>Kontakta: </strong></p><p>Simon Brodding, , 0735054527, simon.brodding@bookmarkforlag.se</p><p>Melina Roy, , 076-146 89 46, melina.roy@bookmarkforlag.se</p><p> <strong>Fr&#xE5;n: </strong></p><p>Bookmark F&#xF6;rlag, Kungsgatan 58, 111 22, Stockholm (http://www.bookmarkforlag.se/)</p><p><p>Med h&#xE4;ngivenhet till v&#xE5;ra f&#xF6;rfattare och engagemang f&#xF6;r varje titel har Bookmark F&#xF6;rlag etablerat sig som ett av Sveriges ledande bokf&#xF6;rlag. V&#xE5;r ambition &#xE4;r att ge ut verkligt starka och unika titlar inom allt fr&#xE5;n sk&#xF6;n- och facklitteratur till barnb&#xF6;cker.</p></p></div></section></article></body></html>",
+            "copyrightholder": "Bookmark Förlag",
+            "slugline": "bookmarkpåbokmässan2025",
+            "datetime": "2025-09-24T10:12:00+02:00",
+            "representationtype": "complete",
+            "urgency": 4,
+            "genre": [
+                {
+                    "code": "PRM",
+                    "scheme": "http://tt.se/spec/sector/1.0/",
+                    "genre": "Pressmeddelanden"
+                }
+            ],
+            "revisions": [
+                {
+                    "replacing": [],
+                    "uri": "http://tt.se/media/text/250924-bookmarkpabo-4068424",
+                    "slug": "bookmarkpåbokmässan2025",
+                    "versioncreated": "2025-09-24T10:12:00+02:00"
+                }
+            ],
+            "event": [],
+            "headline": "Bookmark på Bokmässan 2025",
+            "sector": "PRM",
+            "slug": "bookmarkpåbokmässan2025",
+            "product": [
+                {
+                    "code": "PRM",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Pressmeddelande"
+                },
+                {
+                    "code": "PRMVTT",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Pressm Via TT"
+                },
+                {
+                    "code": "PRM0",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Arkiv"
+                },
+                {
+                    "code": "PRMVTT0",
+                    "scheme": "http://tt.se/spec/product/1.0",
+                    "name": "Arkiv"
+                }
+            ],
+            "pubstatus": "usable",
+            "profile": "PUBL",
+            "description_text": "Den 25 september slår portarna upp till årets Bokmässa och vi på Bookmark Förlag är självklart på plats tillsammans med många av våra författare! Under fyra intensiva dagar fyller vi vår monter B04:22 med böcker, signeringar och massor av möten med er läsare. Här hittar du allt från spänningsromaner och historia till självbiografier, fackböcker och läsupplevelser för alla åldrar!",
+            "replacing": [],
+            "person": [
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Pascal Engman",
+                    "rel": "0.9998095631599426"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Sofie Sarenbrant",
+                    "rel": "0.9995262026786804"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Carina Nunstedt",
+                    "rel": "0.9998839497566223"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Jenny Fagerlund",
+                    "rel": "0.9998624920845032"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Lina Bengtsdotter",
+                    "rel": "0.9998586177825928"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Lena Ljungdahl",
+                    "rel": "0.9997861385345459"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Henrik Fexeus",
+                    "rel": "0.9997308850288391"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Anna Jinghede",
+                    "rel": "0.9994449615478516"
+                },
+                {
+                    "scheme": "http://tt.se/spec/person/1.0/",
+                    "name": "Katarina Wennstam",
+                    "rel": "0.9993661046028137"
+                }
+            ],
+            "originaltransmissionreference": "viatt4068424",
+            "mimetype": "text/html",
+            "$standard": {
+                "schema": "https://tt.se/spec/ttninjs/ttninjs-schema_1.3.json",
+                "name": "TTNINJS",
+                "version": "1.3"
+            }
+        }
+    ],
+    "total": 2
+}

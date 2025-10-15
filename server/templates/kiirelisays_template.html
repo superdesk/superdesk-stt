@@ -1,0 +1,35 @@
+{# ---------------------------------------- #
+   kiirelisys_template.html
+# ---------------------------------------- #}
+
+{% set formatted = format_kiirelisays_for_export(items) %}
+{#-- MAIN LOOP --#}
+{% for item in formatted.rows %}
+    {# event data and time + description #}
+    {% if item.dates %}
+        <p>{{ item.dates.start | fi_ddmm }}, klo {{ item.dates.start | fi_time }}. {{ item.definition_short }}</p>
+    {% endif %}
+
+    {# location #}
+    {% if item.location and item.location | count > 0 %}
+        {% for loc in item.location %}
+            <p>Paikka: {{ loc.name }}, {{ loc.address.line | join(', ') }} {{ loc.address.city }}</p>
+        {% endfor %}
+    {% endif %}
+    {# contacts #}
+    {% if item.contacts and item.contacts | count > 0 %}
+        <p>Lisätietoja:
+        {% for contact in item.contacts %}
+        {# collect all bits of information about the contact #}
+            {%- set bits = [] -%}
+            {%- if contact.job_title %}{% set _ = bits.append(contact.job_title) %} {% endif -%}
+            {%- if contact.first_name and contact.last_name %} {% set _ = bits.append(contact.first_name ~ ' ' ~ contact.last_name) %} {% endif -%}
+            {%- if contact.organization %}{% set _ = bits.append(contact.organization) %} {% endif -%}
+            {%- if contact.contact_phone and contact.contact_phone | count > 0 %}{% set _ = bits.append(contact.contact_phone | map(attribute='number') | join(', ')) %} {% endif -%}
+            {%- if contact.contact_email and contact.contact_email | count > 0 %}{% set _ = bits.append(contact.contact_email | join(', ')) %} {% endif -%}
+            {{ bits | join(', ') }}.
+            {% if not loop.last %}<br>{% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+{% endfor %}

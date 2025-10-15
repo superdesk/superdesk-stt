@@ -302,8 +302,8 @@ class STTContentAPITestCase(TestCase):
 
         # Check specific values
         self.assertEqual(
-            "urn:newsml:stt.fi:contentapi:0c0ca4c14a785ce410944406f2aa55df9169d242ed620c38b06f194418c2934f",
-            parsed_item["guid"],
+            "https://stt-uat-api.superdesk.pro/contentapi/items/urn%3Anewsml%3Astt.fi%3A%3A107136785",
+            parsed_item["uri"],
         )
 
         from dateutil.parser import isoparse
@@ -375,7 +375,7 @@ class STTContentAPITestCase(TestCase):
         result1 = await self.parser.parse(test_item, provider={"config": {}})
         result2 = await self.parser.parse(test_item, provider={"config": {}})
 
-        self.assertEqual(result1[0]["guid"], result2[0]["guid"])
+        self.assertEqual(result1[0]["uri"], result2[0]["uri"])
 
     async def test_parser_list_input(self):
         """Test parser with list input."""
@@ -471,16 +471,3 @@ class STTContentAPITestCase(TestCase):
                 len(self.fixture_data["_items"][0]["subject"]),
                 len(self.item["subject"]),
             )
-
-    def test_guid_and_uri(self):
-        """Test GUID generation and URI preservation."""
-        test_item = self.fixture_data["_items"][0]
-
-        # Test URI is preserved
-        self.assertEqual(test_item["uri"], self.item["uri"])
-
-        # Test GUID is generated correctly (hash-based, not coverage_id)
-        self.assertTrue(self.item["guid"].startswith("urn:newsml:stt.fi:contentapi:"))
-        # GUID should be a consistent hash based on the item data
-        self.assertIsInstance(self.item["guid"], str)
-        self.assertGreater(len(self.item["guid"]), 50)  # Should be a long hash

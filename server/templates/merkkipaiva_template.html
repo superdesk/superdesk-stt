@@ -1,0 +1,32 @@
+{# ---------------------------------------- #
+   merkkipaiva_template.html
+# ---------------------------------------- #}
+
+{% set formatted = format_merkkipaiva_for_export(items) %}
+
+{#-- Always default header text --#}
+<p>STT:n erillismaksullisessa merkkipäiväpalvelussa tällä viikolla:</p>
+{#-- MAIN LOOP --#}
+{% for item in formatted.rows %}
+    {# Collect all parts to a list and join at the end #}
+    {% set parts = [] %}
+    {# slugline ----------- #}
+    {% if item.slugline %}
+        {% set _ = parts.append(item.slugline) %}
+    {% endif %}
+
+    {# Planning date ------------------------- #}
+    {% if item.planning_date %}
+        {% set _ = parts.append("Juttu tulee " ~ (item.planning_date | fi_which_weekday)) %}
+    {% endif %}
+    {%- if parts %}<p>- {{- parts | join(' ') -}}</p>{% endif -%}
+    <p></p>   {# blank line at the end #}
+{% endfor %}
+
+{#-- Always default footer text --#}
+<p>Voitte katsoa tekstejä ja poimia ne helposti myös STT:n Mediapankista tunnuksella merkkipaivat@stt.fi ja salasanalla Merkkarit2025. Kuviin voimme toimittaa sähköpostilinkin.</p>
+<p>Juttupakettiin kuuluu vähintään runsaan 3 000 merkin haastattelu, noin 800 merkin CV-faktalaatikko ja viisi kuvaa Lehtikuvalta. Voitte ostaa haastattelun merkkipäiväpalvelun tuottajalta.</p>
+<p>tuottaja Tommi Peltoniemi</p>
+<p>09 69581 426</p>
+<p>050 598 4675</p>
+<p><a href="mailto:merkkipaivat@stt.fi">merkkipaivat@stt.fi</a></p>

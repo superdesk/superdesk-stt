@@ -1,9 +1,9 @@
 {# ---------------------------------------- #}
-{#   lupaus_events_template.html            #}
+{#   kuvalupaus_events_template.html            #}
 {# ---------------------------------------- #}
 
 {# Enrich agendas with related events (adds item.related_events_expanded) #}
-{% set agendas = enrich_planning_agendas(agendas, 'teksti') %}
+{% set agendas = enrich_planning_agendas(agendas, 'kuva') %}
 
 {% macro lupaus_location(location) -%}
     {%- set loc = location[0] if location and location[0] and location[0].address else None -%}
@@ -21,19 +21,6 @@
   {%- endfor -%}
 {%- endmacro %}
 
-{# macro to render STT priority text #}
-{% macro stt_priority_text(item) -%}
-  {%- set has_str = (item.stt_priority is defined) and (item.stt_priority | trim) -%}
-  {%- set has_num = (item.stt_priority_numeric is defined) and (item.stt_priority_numeric is not none) -%}
-  {%- if not has_str or not has_num -%}
-    {# empty output when not set #}
-  {%- elif item.stt_priority == 'Vain tulokset' -%}
-    {{- item.stt_priority -}}
-  {%- else -%}
-    Mittaversio korkeintaan {{ item.stt_priority_numeric }} merkkiä
-  {%- endif -%}
-{%- endmacro %}
-
 {# Macro to render a single planning item paragraph (reused for grouped & ungrouped) #}
 {% macro render_planning_item(item) -%}
   {%- set bits = [] -%}
@@ -47,9 +34,6 @@
       {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
     {%- endif -%}
   {%- endfor -%}
-  {# Call the priority macro #}
-  {%- set urg = stt_priority_text(item) -%}
-  {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
   {# Add coverages if available #}
   {%- if item.coverages is defined and item.coverages -%}
     {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
@@ -66,7 +50,10 @@
   {%- set bits = [] -%}
   {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
   {%- set category_str = render_planning_item_category(item) -%}
-  {%- if category_str %}{% set _ = bits.append(category_str) %}{% endif -%}
+  {%- if category_str %}
+  {# category uppercase #}
+    {% set _ = bits.append(category_str | upper) %}
+  {% endif -%}
   {%- if bits %}<p>- {{- bits | join(' ') -}}.</p>{% endif -%}
   <p></p>
 {%- endmacro %}
@@ -114,8 +101,6 @@
           {{ render_planning_item(item) }}
         {%- endfor -%}
       {%- endif -%}
-
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}
-

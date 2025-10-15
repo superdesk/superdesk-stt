@@ -1,0 +1,8 @@
+{% set first_start = (items
+  | selectattr('dates','defined')
+  | selectattr('dates.start','defined')
+  | map(attribute='dates.start') | list | sort | first) %}
+{% set first_name = (items
+  | selectattr('name','defined')
+  | map(attribute='name') | list | first) %}
+Kiirelisäys päivälistalle klo {{first_start|fi_time if first_start else ''}}: {{ first_name if first_name else '' }}
