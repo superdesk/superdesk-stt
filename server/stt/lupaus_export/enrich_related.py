@@ -73,14 +73,13 @@ def _get_planning_item_coverage_status_from_mongo(
     # skip if no id for some reason
     if not pl_id:
         return {}
-    # if item_type is 'kuva', we need to get coverages where planning.g2_content_type = 'kuvauskeikka' or 'kuvitus'
     if item_type == "kuva":
         pl_from_mongo = find_many(
             "planning",
-            # get only coverages that have "planning.g2_content_type" = "graphic"
+            # get only coverages that have "planning.g2_content_type" = "graphic" or "picture"
             {
                 "_id": pl_id,
-                "coverages.planning.g2_content_type": "graphic",
+                "coverages.planning.g2_content_type": {"$in": ["graphic", "picture"]},
             },
             projection={"coverages": 1, "_id": 0},
         )
