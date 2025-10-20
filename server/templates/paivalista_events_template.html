@@ -3,6 +3,7 @@
 # ---------------------------------------- #}
 
 {% set formatted = format_paivalista_for_export(items) %}
+{% set rows = formatted.rows | selectattr('dates','defined') | list %}
 
 {#-- A helper macro: replicates printPaivalistaLocation --#}
 {% macro paivalista_location(location) -%}
@@ -16,7 +17,7 @@
 
 {#-- MAIN LOOP — sort first, then print a <h3> when the day changes --#}
 {% set ns = namespace(cur='') %}
-{% for item in formatted.rows | selectattr('dates','defined') | sort(attribute='dates.start') %}
+{% for item in rows | sort(attribute='dates.start') %}
     {%- set day  = item.dates.start | fi_date %}
     {%- if ns.cur != day %}
         {%- set ns.cur = day %}
@@ -42,5 +43,5 @@
     {# Registration details (already HTML, keep it “safe”) ---------------- #}
     {{ item.registration_details | safe }}
 
-    <p></p>   {# blank line exactly like the TS version - kept for parity #}
+    <p></p>
 {% endfor %}
