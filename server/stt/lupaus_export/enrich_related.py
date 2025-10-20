@@ -37,10 +37,10 @@ def _collect_event_ids(agendas: List[Dict[str, Any]]) -> List[str]:
     ids: Set[str] = set()
     for ag in agendas or []:
         for pl in ag.get("items") or []:
-            for re in pl.get("related_events") or []:
+            for rel_event in pl.get("related_events") or []:
                 # tolerate various shapes
                 for key in ("_id", "event", "event_id", "guid"):
-                    val = re.get(key)
+                    val = rel_event.get(key)
                     if val:
                         ids.add(str(val))
                         break
@@ -51,9 +51,9 @@ def _get_planning_item_coverage_status_from_mongo(
     pl: Dict[str, Any], item_type: str
 ) -> Dict[str, Any]:
     """
-    For some reason item.coverages is like coverages': ['Kuvauskeikka', 'Teksti']
+    For some reason item.coverages might be like coverages': ['Kuvauskeikka', 'Kuvitus', 'Uutisteksti']
     but we need "planning.coverages.news_coverage_status"-data from mongo by item _id
-    Get the 'news_coverage_status' from the 'coverages' of a planning item.
+    Get the 'news_coverage_status' from the 'coverages' of a planning item if it does not exist in the item.
     Args:
         pl: A dictionary representing a planning item.
         item_type: The type of the planning item, e.g., 'teksti' / 'kuva'.
@@ -65,28 +65,29 @@ def _get_planning_item_coverage_status_from_mongo(
     # skip if no coverages
     if "coverages" not in pl or not pl["coverages"]:
         return {}
+    # Check if item already has news_coverage_status
+    for cov in pl["coverages"]:
+        if "news_coverage_status" in cov and cov["news_coverage_status"]:
+            return cov["news_coverage_status"]
     pl_id = pl.get("_id")
     # skip if no id for some reason
     if not pl_id:
         return {}
-    # if item_type is 'kuva', we need to get coverages where planning.g2_content_type = 'kuvauskeikka' or 'kuvitus'
     if item_type == "kuva":
         pl_from_mongo = find_many(
             "planning",
-            # get only coverages that have "planning.g2_content_type" = "kuvauskeikka" or "kuvitus"
+            # get only coverages that have "planning.g2_content_type" = "graphic" or "picture"
             {
                 "_id": pl_id,
-                "coverages.planning.g2_content_type": {
-                    "$in": ["kuvauskeikka", "kuvitus"]
-                },
+                "coverages.planning.g2_content_type": {"$in": ["graphic", "picture"]},
             },
             projection={"coverages": 1, "_id": 0},
         )
     else:
         pl_from_mongo = find_many(
             "planning",
-            # get only coverages that have "planning.g2_content_type" = "teksti"
-            {"_id": pl_id, "coverages.planning.g2_content_type": "teksti"},
+            # get only coverages that have "planning.g2_content_type" = "text"
+            {"_id": pl_id, "coverages.planning.g2_content_type": "text"},
             projection={"coverages": 1, "_id": 0},
         )
     if not pl_from_mongo:
@@ -109,6 +110,8 @@ def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
     a 'scheme' key. If a dictionary with 'scheme' equal to 'priority' is found,
     the corresponding 'name' value is returned.
 
+    Or it looks in 'priority' field as a numeric value and maps it to a string.
+
     If 'priority' is not found, an empty string is returned.
 
     Args:
@@ -124,17 +127,33 @@ def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
         for sub in item["subject"]:
             if sub.get("scheme") == "priority":
                 return sub.get("name", "")
+    if "priority" in item:
+        numeric_priority = item.get("priority", "")
+        # if numeric_priority is > 0, return customized priority with synthetic 'name'-field
+        if numeric_priority and numeric_priority > 0:
+            # 1 = Pääaihe (3300), 2 = Perus (2000), 3 = Perus+ (2700), 4 = Lyhyt (800), 5 = Vain tulokset
+            priority_map = {
+                1: "Pääaihe (3 300)",
+                2: "Perus (2 000)",
+                3: "Perus+ (2 700)",
+                4: "Lyhyt (800)",
+                5: "Vain tulokset",
+            }
+            return priority_map.get(numeric_priority, "")
+
     return ""
 
 
 def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
     """
-    Extracts the "scheme": "categories" value from an agenda item subjects.
+    Extracts the "scheme": "categories" value from an agenda item subjects or anpa_category.
 
     The function looks for the 'categories' in the 'subject' field of the item,
     which is expected to be a list of dictionaries. Each dictionary may containa 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     a 'scheme' key. If a dictionary with 'scheme' equal to 'categories' is found,
     the corresponding 'name' value is returned.
+
+    Or it looks in 'anpa_category' field.
 
     If 'categories' is not found, an empty string is returned.
 
@@ -145,11 +164,17 @@ def get_category_from_agenda_item(item: Dict[str, Any]) -> str:
     """
     # categories is stored in subject like:
     # subject: [{'scheme': 'categories', 'name': 'Kulttuuri', 'qcode': '4'}]
+    # or in anpa_category like:
+    # 'anpa_category': [{'name': 'Kulttuuri', 'qcode': '4'}]
     if not item:
         return ""
     if "subject" in item:
         for sub in item["subject"]:
             if sub.get("scheme") == "categories":
+                return sub.get("name", "")
+    if "anpa_category" in item:
+        for sub in item["anpa_category"]:
+            if sub:
                 return sub.get("name", "")
     return ""
 
@@ -228,8 +253,8 @@ def _set_stt_fields(
                 continue
             # Expand related events
             expanded: List[Dict[str, Any]] = []
-            for re in pl.get("related_events") or []:
-                key = re.get("_id")
+            for rel_event in pl.get("related_events") or []:
+                key = rel_event.get("_id")
                 ev = by_key.get(str(key)) if key else None
                 if ev:
                     expanded.append(ev)
@@ -318,7 +343,7 @@ def enrich_planning_agendas(
             "name": 1,
             "dates": 1,
             "location": 1,
-            "language": 1,
+            "subject": 1,
         },
     )
     if not events:

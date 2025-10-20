@@ -40,11 +40,20 @@
   {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
   {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
   {%- for ev in item.related_events_expanded or [] -%}
-    {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
-    {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
-    {%- if ev.location is iterable -%}
-      {%- set ev_loc = lupaus_location(ev.location) -%}
-      {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+    {%- set ev_subjects = ev.subject | default([]) -%}
+    {%- set is_competition = ev_subjects
+      | selectattr('scheme', 'equalto', 'event_type')
+      | selectattr('name', 'equalto', 'Kilpailut')
+      | list
+      | length > 0 -%}
+      {# Do not include event details if it is a competition #}
+    {%- if not is_competition -%}
+      {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
+      {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+      {%- if ev.location is iterable -%}
+        {%- set ev_loc = lupaus_location(ev.location) -%}
+        {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+      {%- endif -%}
     {%- endif -%}
   {%- endfor -%}
   {# Call the priority macro #}
@@ -71,6 +80,18 @@
   <p></p>
 {%- endmacro %}
 
+{# Actual rendering logic for the agenda items starts here #}
+
+{# ---------------------------------------- #}
+{#   HEADER TEXT FOR ALL REPORTS            #}
+{# ---------------------------------------- #}
+<p>Valmistumisajoista: Huomaattehan, että STT lähettää verkkokäyttöön sopivia, päivittyviä versioita päivän aiheista aina mahdollisimman pian uutistapahtuman käynnistyttyä. Listassa mainitut valmistumiskellonajat tarkoittavat myöhäisempää uutisversiota, joka sopii mm. printtikäyttöön. Osaan listan aiheista on merkitty myös pikaplus-version eli ensimmäisen pidemmän verkkoversion arvioitu valmistumisaika.</p>
+
+<p>Selitykset listassa yleisimmin käytettyihin STT:n uutisversioiden nimiin löytyvät listan lopusta.</p>
+<br />
+{# ---------------------------------------- #}
+{#   MAIN TEMPLATE BODY                    #}
+{# ---------------------------------------- #}
 {# One paragraph per agenda item; grouped by category if grouped_items present #}
 {%- for agenda in agendas or [] -%}
   {%- set main_topic_items = agenda.get('main_topic_items') -%}
@@ -118,4 +139,26 @@
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}
+<br />
+{# ---------------------------------------- #}
+{#   FOOTER TEXT FOR ALL REPORTS            #}
+{# ---------------------------------------- #}
 
+<p>Aamupika = Aamuyöstä/varhaisaamusta julkaistava lyhyt, ennakoiva uutisversio. Verkko- ja radiomuoto.</p>
+<p>Pika+ = Ensisijassa verkkokäyttöön tarkoitettu uutisversio.</p>
+<p>Mittaversio = Mittaan kirjoitettu uutisversio, jonka muotoilut sopivat printille. Versiotyyppinä pika+, joten sopii myös verkkokäyttöön.</p>
+<p>Ystävällisin terveisin,<br />
+Uutispäälliköt<br />
+Klo 6.30-14 Merja Könönen<br />
+Klo 13.30-21 Tapio Pellinen<br />
+p. 09 - 695 81 327<br />
+uutispaallikot@stt.fi
+</p>
+<p>Kuvatoimitus<br />
+p. 09 - 695 81 250<br />
+uutiskuva@stt.fi<br />
+</p>
+<p>Urheilutoimitus<br />
+p. 09-69581263<br />
+sport@stt.fi<br />
+</p>
