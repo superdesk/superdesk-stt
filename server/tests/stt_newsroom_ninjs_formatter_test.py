@@ -15,7 +15,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         }
         formatter = STTNewsroomNinjsFormatter()
         ninjs = await formatter._transform_to_ninjs(self.item, subscriber)
-        self.assertEqual(ninjs["source"], "STT, AFP")
+        self.assertEqual(ninjs["source"], "STT-AFP")
 
     async def test_source_formatting_no_sources_fallback(self):
         await self.parse_source_content()
@@ -43,4 +43,4 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         }
         formatter = STTNewsroomNinjsFormatter()
         ninjs = await formatter._transform_to_ninjs(self.item, subscriber)
-        self.assertEqual(ninjs["source"], "STT, AFP")
+        self.assertEqual(ninjs["source"], "STT-AFP")
