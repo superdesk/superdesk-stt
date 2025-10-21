@@ -62,10 +62,7 @@ def _enrich_item(item: Dict[str, Any]) -> Dict[str, Any]:
     related_items = _get_related_corrected_published_items(planning_id)
     if related_items:
         item["related_corrected_published_items"] = related_items
-        logger.error(
-            f"Enriched item {planning_id} with {len(related_items)} related corrected published items"
-        )
-        # if itm has "internal_coverages" field, we can remove it to reduce output size
+        # if item has "internal_coverages" field, we can remove it to reduce output size
         if "internal_coverages" in item:
             del item["internal_coverages"]
     return item
