@@ -3,10 +3,14 @@ Register custom Jinja filters – fi_current_date, fi_date, fi_time and fi_ddmm 
 available in every template rendered by Superdesk.
 """
 
-from dateutil import parser
-from datetime import datetime
-import pytz  # type: ignore
 import logging
+from datetime import datetime
+from html import unescape
+from typing import Any
+
+import pytz  # type: ignore
+from dateutil import parser
+from markupsafe import Markup
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +56,10 @@ def fi_time(value: str) -> str:
     dt = _to_helsinki(value)
     if not dt:
         return value or ""
-    return dt.strftime("%H:%M")
+    hour = dt.hour
+    minute = dt.minute
+    # return time like "9.05" or "14.30"
+    return f"{hour}.{minute:02d}"
 
 
 def fi_ddmm(value: str) -> str:
@@ -70,9 +77,51 @@ def fi_which_weekday(value: str) -> str:
     return f"{_WEEKDAY_FI[dt.weekday()]}na {dt.day}.{dt.month}."
 
 
+def stt_priority_to_text(priority: int) -> str:
+    # 1 = pääaihe
+    # 2 = perusjuttu
+    # 3 = perusjuttu
+    # 4 = lyhyt juttu
+    # 5 = tulokset
+    priority_map = {
+        1: "pääaihe",
+        2: "perusjuttu",
+        3: "perusjuttu",
+        4: "lyhyt juttu",
+        5: "tulokset",
+    }
+    return priority_map.get(priority, "")
+
+
+def html_unescape(value: Any) -> Markup:
+    if value is None:
+        return Markup("")
+    if isinstance(value, Markup):
+        return value
+    try:
+        return Markup(unescape(str(value)))
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        logger.warning("html_unescape failed: %s", exc)
+        return Markup(str(value))
+
+
+def count_body_html_characters(value: Any) -> int:
+    if value is None:
+        return 0
+    try:
+        text = unescape(str(value))
+        return len(text)
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        logger.warning("count_body_html_characters failed: %s", exc)
+        return 0
+
+
 def init_app(app):
     app.jinja_env.filters["fi_date"] = fi_date
     app.jinja_env.filters["fi_time"] = fi_time
     app.jinja_env.filters["fi_ddmm"] = fi_ddmm
     app.jinja_env.globals["fi_current_date"] = fi_current_date
     app.jinja_env.filters["fi_which_weekday"] = fi_which_weekday
+    app.jinja_env.filters["stt_priority_to_text"] = stt_priority_to_text
+    app.jinja_env.filters["html_unescape"] = html_unescape
+    app.jinja_env.filters["count_body_html_characters"] = count_body_html_characters
