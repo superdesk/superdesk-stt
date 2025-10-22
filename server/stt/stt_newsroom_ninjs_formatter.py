@@ -34,7 +34,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
             else:
                 sorted_sources = sorted(unique_sources, key=str.lower)
 
-            ninjs["source"] = ", ".join(sorted_sources)
+            ninjs["source"] = "-".join(sorted_sources)
         except Exception as e:
             logger.error(f"Error occurred when updating ninjs stt sources: {str(e)}")
 
