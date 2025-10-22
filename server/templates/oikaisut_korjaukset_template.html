@@ -1,0 +1,73 @@
+{# ---------------------------------------- #
+   oikaisut_korjaukset_template.html
+# ---------------------------------------- #}
+
+{% set filtered = enrich_oikaisut_korjaukset_for_export(items) %}
+
+{% macro maybe_get_genre_name(item) -%}
+    {%- set genres = item.genre | default([]) -%}
+    {%- for gen in genres -%}
+        {# ignore "Uutinen" genre #}
+        {%- if gen.name and gen.name != "Uutinen" -%}
+            {{ gen.name }}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro %}
+
+{% macro get_genre_name_from_anpa_category(item) -%}
+    {%- set anpa_cat = item.anpa_category -%}
+    {# anpa_category is array of objects #}
+    {%- if anpa_cat and anpa_cat[0].name -%}
+        {{ anpa_cat[0].name }}
+    {%- endif -%}
+{%- endmacro %}
+
+{# ------------------------------------------------------------------------- #
+    There is filtered.oikaisut and filtered.korjaukset fields in the output.
+    We loop them separately with own h3 headings.
+# ------------------------------------------------------------------------- #}
+
+<h3>Korjaukset</h3>
+{%- for item in filtered.korjaukset %}
+    {%- set first_parts = [] -%}
+    {%- if item.slugline %}{% set _ = first_parts.append(item.slugline) %}{% endif -%}
+    {%- if item.planning_date %}{% set _ = first_parts.append((item.planning_date | fi_ddmm)) %}{% endif -%}
+    {%- set anpa_genre_name = get_genre_name_from_anpa_category(item) -%}
+    {%- if anpa_genre_name %}{% set _ = first_parts.append(anpa_genre_name) %}{% endif -%}
+    {%- if item.priority %}{% set _ = first_parts.append(item.priority | stt_priority_to_text) %}{% endif -%}
+    <p>{{ first_parts | join(', ') }}</p>
+    {%- set second_parts = [] -%}
+    {%- set genre_name = maybe_get_genre_name(item) -%}
+    {%- if genre_name %}{% set _ = second_parts.append(genre_name) %}{% endif -%}
+    {%- if item.corrected_published_item.profile %}{% set _ = second_parts.append(item.corrected_published_item.profile) %}{% endif -%}
+    {%- if item.corrected_published_item.headline %}{% set _ = second_parts.append('"' ~ item.corrected_published_item.headline ~ '"') %}{% endif -%}
+    <p>– {{ second_parts | join(', ') }}.
+    {%- set ednote = item.corrected_published_item.ednote | trim if item.corrected_published_item.ednote else '' -%}
+    {%- if ednote %} {{ ednote if ednote.endswith('.') else ednote ~ '.' }}{% endif -%}
+        {% if item.corrected_published_item.firstpublished %}
+            Lähetetty klo {{ item.corrected_published_item.firstpublished | fi_time }}
+        {% endif %}
+        {% if item.corrected_published_item.body_html %}
+            , {{ item.corrected_published_item.body_html | count_body_html_characters }} merkkiä.
+        {% endif %}
+    </p>
+    <br />
+
+{% endfor %}
+
+<h3>Oikaisut</h3>
+{%- for item in filtered.oikaisut %}
+    {%- set first_parts = [] -%}
+    {%- if item.slugline %}{% set _ = first_parts.append(item.slugline) %}{% endif -%}
+    {%- if item.planning_date %}{% set _ = first_parts.append((item.planning_date | fi_ddmm)) %}{% endif -%}
+    {%- set anpa_genre_name = get_genre_name_from_anpa_category(item) -%}
+    {%- if anpa_genre_name %}{% set _ = first_parts.append(anpa_genre_name) %}{% endif -%}
+    {%- if item.priority %}{% set _ = first_parts.append(item.priority | stt_priority_to_text) %}{% endif -%}
+    <p>{{ first_parts | join(', ') }}</p>
+    {%- set second_parts = [] -%}
+    {%- if item.corrected_published_item.headline %}{% set _ = second_parts.append('"' ~ item.corrected_published_item.headline ~ '"') %}{% endif -%}
+    {%- if item.corrected_published_item.firstpublished %}{% set _ = second_parts.append('Lähetetty klo ' ~ item.corrected_published_item.firstpublished | fi_time) %}{% endif -%}
+    <p>– {{ second_parts | join(', ') }}.</p>
+    <p>{%- if item.corrected_published_item.body_html %} {{ item.corrected_published_item.body_html | html_unescape }}{% endif -%}</p>
+    <br />
+{% endfor %}
