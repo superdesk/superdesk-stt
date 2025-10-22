@@ -45,7 +45,6 @@ def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, A
                     "operation": 1,
                     "item_id": 1,
                     "firstpublished": 1,
-                    "profile": 1,
                 },
             )
             if items:
@@ -108,7 +107,7 @@ def enrich_oikaisut_korjaukset_for_export(
     items: List[Dict[str, Any]],
 ) -> Dict[str, List[Dict[str, Any]]]:
     """
-    Enrich and filters oikaisut_korjaukset items for export.
+    Enrich and filter oikaisut_korjaukset items for export.
     Always returns oikaisut and korjaukset arrays even if they are empty.
     Items include all planning items from certain time range.
     We need to put them into two separate arrays: oikaisut and korjaukset based on item meta data.
