@@ -51,5 +51,15 @@
       "headline_template": "kiirelisays_headline.html"
     },
     "label": "Kiirelisäys Template"
+  },
+  {
+    "_id": "oikaisut_korjaukset_list",
+    "init_version": 1,
+    "name": "oikaisut_korjaukset_list",
+    "type": "planning",
+    "data": {
+      "body_html_template": "oikaisut_korjaukset_template.html"
+    },
+    "label": "Oikaisut ja korjaukset Template"
   }
 ]

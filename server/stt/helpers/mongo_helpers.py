@@ -1,7 +1,5 @@
 """Shared helpers for querying Superdesk resources with optional projection support."""
 
-from __future__ import annotations
-
 import logging
 from typing import Any, Dict, List, Optional
 

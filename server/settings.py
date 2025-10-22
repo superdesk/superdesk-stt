@@ -145,6 +145,7 @@ INSTALLED_APPS = [
     "stt.lupaus_export",
     "stt.merkkipaiva_export",
     "stt.kiirelisays_export",
+    "stt.oikaisut_korjaukset_export",
     "stt.stt_tt_new_parse_ninjs",
     "stt.io.feed_parsers.stt_events_csv_parse",
     "stt.io.feeding_services.stt_http_with_since",

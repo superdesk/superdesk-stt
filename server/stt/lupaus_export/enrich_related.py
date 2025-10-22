@@ -2,6 +2,7 @@ from typing import Dict, List, Any, Set
 import logging
 
 from stt.helpers.mongo_helpers import find_many
+from stt.helpers.template_helpers import exclude_drafts
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +139,7 @@ def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
                 3: "Perus+ (2 700)",
                 4: "Lyhyt (800)",
                 5: "Vain tulokset",
+                6: "Vain tsekkaus",
             }
             return priority_map.get(numeric_priority, "")
 
@@ -200,8 +202,6 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     if not priority:
         return ""
-    if priority == "Vain tulokset":
-        return priority
     if priority == "Vain tulokset":
         return priority
     try:
@@ -327,6 +327,12 @@ def enrich_planning_agendas(
         'related_events_expanded', 'stt_priority', and 'stt_priority_numeric' fields.
         Items without a valid 'stt_priority' are excluded from the agendas.
     """
+    for ag in agendas:
+        # Exclude draft items
+        items = exclude_drafts(ag.get("items") or [])
+        ag["items"] = items
+
+    # Collect unique event IDs from all agendas
     ev_ids = _collect_event_ids(agendas)
     logger.info(f"Enriching agendas: found {len(ev_ids)} unique related event IDs")
     logger.info(f"Enriching agendas: event IDs: {ev_ids}")
