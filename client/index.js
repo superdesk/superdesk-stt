@@ -7,6 +7,10 @@ setTimeout(() => {
   startApp(
     [
       {
+        id: 'annotationsLibrary',
+        load: () => import('superdesk-core/scripts/extensions/annotationsLibrary'),
+      },
+      {
         id: 'planning-extension',
         load: () => import('superdesk-planning/client/planning-extension'),
         configuration: {
