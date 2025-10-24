@@ -14,12 +14,32 @@
                 "index": 1
             },
             "anpa_category": {
-                "enabled": true,
-                "index": 2
+                "enabled": false,
+                "index": 1
             },
             "scheduled": {
                 "enabled": true,
+                "index": 4
+            },
+            "countries": {
+                "enabled": false,
+                "index": 1
+            },
+            "slugline": {
+                "enabled": true,
+                "index": 5
+            },
+            "internal_note": {
+                "enabled": false,
+                "index": 1
+            },
+            "news_coverage_status": {
+                "enabled": true,
                 "index": 3
+            },
+            "multiple_content": {
+                "enabled": true,
+                "index": 2
             }
         },
         "schema": {
@@ -67,8 +87,12 @@
             "internal_note": {
                 "type": "string",
                 "required": false,
-                "field_type": "multi_line",
-                "expandable": true
+                "field_type": "editor_3",
+                "expandable": null,
+                "format_options": [
+                    "bold",
+                    "link"
+                ]
             },
             "keyword": {
                 "type": "list",
@@ -89,7 +113,7 @@
             "multiple_content": {
                 "type": "boolean",
                 "required": false,
-                "default_value": false,
+                "default_value": true,
                 "read_only": false
             },
             "news_coverage_status": {
@@ -148,6 +172,10 @@
             "xmp_file": {
                 "type": "dict",
                 "required": false
+            },
+            "countries": {
+                "type": null,
+                "required": null
             }
         }
     },
@@ -155,7 +183,7 @@
         "_id": "68db9970f7bdb22537301b68",
         "name": "kuvauskeikka",
         "content_type": "picture",
-        "init_version": 1,
+        "init_version": 2,
         "editor": {
             "add_coverage_to_workflow": {
                 "enabled": true,
@@ -171,7 +199,7 @@
             },
             "slugline": {
                 "enabled": true,
-                "index": 22
+                "index": 23
             },
             "ednote": {
                 "enabled": false,
@@ -179,7 +207,7 @@
             },
             "internal_note": {
                 "enabled": true,
-                "index": 8
+                "index": 9
             },
             "news_coverage_status": {
                 "enabled": true,
@@ -198,7 +226,8 @@
                 "index": 10
             },
             "location": {
-                "enabled": false
+                "enabled": true,
+                "index": 6
             },
             "anpa_category": {
                 "enabled": false
@@ -237,63 +266,63 @@
             },
             "sttpicturewhatabout": {
                 "enabled": true,
-                "index": 6
+                "index": 7
             },
             "sttpicturewhatisphotographed": {
                 "enabled": true,
-                "index": 7
+                "index": 8
             },
             "sttdoesphotographerknow": {
                 "enabled": true,
-                "index": 9
+                "index": 10
             },
             "sttpictureregistrationok": {
                 "enabled": true,
-                "index": 10
+                "index": 11
             },
             "sttregistrationinfo": {
                 "enabled": true,
-                "index": 11
+                "index": 12
             },
             "sttpicturecategory": {
                 "enabled": true,
-                "index": 12
+                "index": 13
             },
             "sttpictureheadlinefi": {
                 "enabled": true,
-                "index": 13
+                "index": 14
             },
             "sttpicturecaptionfi": {
                 "enabled": true,
-                "index": 14
+                "index": 15
             },
             "sttpictureinstructionsfi": {
                 "enabled": true,
-                "index": 15
+                "index": 16
             },
             "sttpicturekeywordsfi": {
                 "enabled": true,
-                "index": 16
+                "index": 17
             },
             "sttpictureheadlineen": {
                 "enabled": true,
-                "index": 17
+                "index": 18
             },
             "sttpicturecaptionen": {
                 "enabled": true,
-                "index": 18
+                "index": 19
             },
             "sttpictureinstructionsen": {
                 "enabled": true,
-                "index": 19
+                "index": 20
             },
             "sttpicturekeywordsen": {
                 "enabled": true,
-                "index": 20
+                "index": 21
             },
             "sttpictureinvoiced": {
                 "enabled": true,
-                "index": 21
+                "index": 22
             }
         },
         "schema": {
@@ -493,7 +522,7 @@
         "_id": "68db995bf7bdb22537301b66",
         "name": "kuvitus",
         "content_type": "graphic",
-        "init_version": 1,
+        "init_version": 2,
         "editor": {
             "add_coverage_to_workflow": {
                 "enabled": true,
@@ -509,7 +538,7 @@
             },
             "slugline": {
                 "enabled": true,
-                "index": 22
+                "index": 23
             },
             "ednote": {
                 "enabled": false,
@@ -517,7 +546,7 @@
             },
             "internal_note": {
                 "enabled": true,
-                "index": 8
+                "index": 9
             },
             "news_coverage_status": {
                 "enabled": true,
@@ -536,7 +565,8 @@
                 "index": 10
             },
             "location": {
-                "enabled": false
+                "enabled": true,
+                "index": 6
             },
             "anpa_category": {
                 "enabled": false
@@ -575,63 +605,63 @@
             },
             "sttpicturewhatabout": {
                 "enabled": true,
-                "index": 6
+                "index": 7
             },
             "sttpicturewhatisphotographed": {
                 "enabled": true,
-                "index": 7
+                "index": 8
             },
             "sttdoesphotographerknow": {
                 "enabled": true,
-                "index": 9
+                "index": 10
             },
             "sttpictureregistrationok": {
                 "enabled": true,
-                "index": 10
+                "index": 11
             },
             "sttregistrationinfo": {
                 "enabled": true,
-                "index": 11
+                "index": 12
             },
             "sttpicturecategory": {
                 "enabled": true,
-                "index": 12
+                "index": 13
             },
             "sttpictureheadlinefi": {
                 "enabled": true,
-                "index": 13
+                "index": 14
             },
             "sttpicturecaptionfi": {
                 "enabled": true,
-                "index": 14
+                "index": 15
             },
             "sttpictureinstructionsfi": {
                 "enabled": true,
-                "index": 15
+                "index": 16
             },
             "sttpicturekeywordsfi": {
                 "enabled": true,
-                "index": 16
+                "index": 17
             },
             "sttpictureheadlineen": {
                 "enabled": true,
-                "index": 17
+                "index": 18
             },
             "sttpicturecaptionen": {
                 "enabled": true,
-                "index": 18
+                "index": 19
             },
             "sttpictureinstructionsen": {
                 "enabled": true,
-                "index": 19
+                "index": 20
             },
             "sttpicturekeywordsen": {
                 "enabled": true,
-                "index": 20
+                "index": 21
             },
             "sttpictureinvoiced": {
                 "enabled": true,
-                "index": 21
+                "index": 22
             }
         },
         "schema": {

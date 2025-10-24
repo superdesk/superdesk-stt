@@ -167,10 +167,10 @@ CONTENT_EXPIRY_MINUTES = 43200
 SPIKE_EXPIRY_MINUTES = int(env("SPIKE_EXPIRY_MINUTES", 3 * 24 * 60))
 
 # Expire items 3 days after their scheduled date. Defaults to 0 = disabled
-PLANNING_EXPIRY_MINUTES = int(env("PLANNING_EXPIRY_MINUTES", 4320))
+PLANNING_EXPIRY_MINUTES = int(env("PLANNING_EXPIRY_MINUTES", 0))
 
 # Delete spiked events/plannings after their scheduled date. Defaults to 0 = disabled
-PLANNING_DELETE_SPIKED_MINUTES = int(env("PLANNING_DELETE_SPIKED_MINUTES", 1440))
+PLANNING_DELETE_SPIKED_MINUTES = int(env("PLANNING_DELETE_SPIKED_MINUTES", 0))
 
 #: The number of minutes before Publish Queue is purged
 PUBLISH_QUEUE_EXPIRY_MINUTES = int(env("PUBLISH_QUEUE_EXPIRY_MINUTES", 3 * 24 * 60))

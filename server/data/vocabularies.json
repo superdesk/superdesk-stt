@@ -107,7 +107,7 @@
         "display_name": "News Coverage Status",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "selection_type": "do not show",
         "items": [
             {
@@ -129,7 +129,7 @@
                 "label": "Ei"
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "qcode": "ncostat:onreq",
                 "name": "coverage upon request",
                 "label": "Vain tsekkaus"
@@ -139,6 +139,20 @@
     {
         "_id": "sttnewsroomnote",
         "field_type": null,
+        "type": "manageable",
+        "init_version": 2,
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "parent": {}
+        },
+        "service": {
+            "all": 1
+        },
+        "selection_type": "multi selection",
+        "display_name": "Versiotieto",
+        "description": "STT Newsroom Note",
+        "disable_entire_category_selection": false,
         "items": [
             {
                 "is_active": true,
@@ -165,19 +179,7 @@
                 "name": "Ei muita versioita",
                 "qcode": "nootherversions"
             }
-        ],
-        "type": "manageable",
-        "schema": {
-            "name": {},
-            "qcode": {},
-            "parent": {}
-        },
-        "service": {
-            "all": 1
-        },
-        "selection_type": "multi selection",
-        "display_name": "STT Newsroom Note",
-        "disable_entire_category_selection": false
+        ]
     },
     {
         "_id": "subscriber_types",
@@ -357,20 +359,20 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 1,
+        "init_version": 2,
         "items": [
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "High",
                 "qcode": 1
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "Medium",
                 "qcode": 2
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "Low",
                 "qcode": 3
             }
@@ -556,10 +558,11 @@
     {
         "_id": "priority",
         "unique_field": "qcode",
-        "display_name": "Priority",
+        "display_name": "Aiheen tärkeys",
+        "description": "Priority",
         "selection_type": "single selection",
         "type": "manageable",
-        "init_version": 1,
+        "init_version": 2,
         "disable_entire_category_selection": false,
         "tags": [
             {
@@ -594,14 +597,14 @@
             },
             {
                 "is_active": true,
-                "name": "Perus (2 700)",
+                "name": "Perus (2 000)",
                 "qcode": 2,
                 "color": "#dfa37c",
                 "short": "2"
             },
             {
                 "is_active": true,
-                "name": "Perus+ (2 000)",
+                "name": "Perus+ (2 700)",
                 "qcode": 3,
                 "color": "#0d27e7",
                 "short": "3"
@@ -619,16 +622,24 @@
                 "qcode": 5,
                 "color": "#5e5a5a",
                 "short": "5"
+            },
+            {
+                "is_active": true,
+                "name": "Vain tsekkaus",
+                "qcode": 6,
+                "color": "#ff80ff",
+                "short": "6"
             }
         ]
     },
     {
         "_id": "urgency",
-        "display_name": "Urgency",
+        "display_name": "Prio",
+        "description": "Urgency",
         "type": "manageable",
         "selection_type": "single selection",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "items": [
             {
                 "is_active": true,
@@ -746,7 +757,7 @@
         "description": "Department",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "selection_type": "single selection",
         "disable_entire_category_selection": false,
         "tags": [
@@ -755,11 +766,6 @@
             }
         ],
         "items": [
-            {
-                "is_active": true,
-                "name": "Business wire",
-                "qcode": "1"
-            },
             {
                 "is_active": false,
                 "name": "Holvi",
@@ -786,7 +792,7 @@
                 "qcode": "5"
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "Muuta",
                 "qcode": "6"
             },
@@ -836,14 +842,19 @@
                 "qcode": "22"
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "Viikon tärpit",
                 "qcode": "19"
             },
             {
-                "is_active": true,
+                "is_active": false,
                 "name": "Sähkeuutiset",
                 "qcode": "10"
+            },
+            {
+                "is_active": true,
+                "name": "Business wire",
+                "qcode": "1"
             }
         ],
         "schema": {
@@ -855,16 +866,17 @@
     },
     {
         "_id": "sttdoesphotographerknow",
+        "init_version": 2,
         "field_type": null,
         "items": [
             {
                 "is_active": true,
-                "name": "ei",
+                "name": "Ei",
                 "qcode": "no"
             },
             {
                 "is_active": true,
-                "name": "kyllä",
+                "name": "Kyllä",
                 "qcode": "yes"
             }
         ],
@@ -995,16 +1007,17 @@
     },
     {
         "_id": "sttpictureregistrationok",
+        "init_version": 2,
         "field_type": null,
         "items": [
             {
                 "is_active": true,
-                "name": "kyllä",
+                "name": "Kyllä",
                 "qcode": "yes"
             },
             {
                 "is_active": true,
-                "name": "ei",
+                "name": "Ei",
                 "qcode": "no"
             }
         ],
@@ -1029,16 +1042,17 @@
     },
     {
         "_id": "sttpictureinvoiced",
+        "init_version": 2,
         "field_type": null,
         "items": [
             {
                 "is_active": true,
-                "name": "kyllä",
+                "name": "Kyllä",
                 "qcode": "yes"
             },
             {
                 "is_active": true,
-                "name": "ei",
+                "name": "Ei",
                 "qcode": "no"
             }
         ],
@@ -1065,6 +1079,7 @@
         "_id": "stttopstory",
         "field_type": null,
         "type": "manageable",
+        "init_version": 2,
         "schema": {
             "name": {},
             "qcode": {}
@@ -1073,7 +1088,8 @@
             "all": 1
         },
         "selection_type": "single selection",
-        "display_name": "Top story?",
+        "display_name": "Kärkiuutinen",
+        "description": "Top story?",
         "tags": [
             {
                 "text": "STT"
@@ -1082,12 +1098,12 @@
         "items": [
             {
                 "is_active": true,
-                "name": "ei",
+                "name": "Ei",
                 "qcode": "no"
             },
             {
                 "is_active": true,
-                "name": "kyllä",
+                "name": "Kyllä",
                 "qcode": "yes"
             }
         ]
@@ -1215,9 +1231,10 @@
         },
         "unique_field": "qcode",
         "type": "manageable",
-        "display_name": "Genre",
+        "display_name": "Juttutyyppi",
         "description": "Genre",
         "schema_field": "genre",
+        "init_version": 2,
         "disable_entire_category_selection": false,
         "selection_type": "single selection",
         "items": [
@@ -1280,7 +1297,8 @@
     },
     {
         "_id": "locators",
-        "display_name": "Place",
+        "display_name": "Vaikutus- paikka",
+        "description": "Place",
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "multi selection",
@@ -1293,7 +1311,7 @@
             "all": 1
         },
         "dependent": 0,
-        "init_version": 1,
+        "init_version": 2,
         "items": [
             {
                 "name": "Suomi",
@@ -4749,7 +4767,7 @@
             "all": 1
         },
         "dependent": 0,
-        "init_version": 1,
+        "init_version": 2,
         "items": [
             {
                 "qcode": "ACE",
@@ -4763,13 +4781,13 @@
                 }
             },
             {
-                "qcode": "CLU",
-                "name": "CLU rikokset oikeuslaitos",
+                "qcode": "CLJ",
+                "name": "CLJ rikokset oikeuslaitos",
                 "is_active": true,
                 "translations": {
                     "name": {
-                        "fi": "CLU rikokset oikeuslaitos",
-                        "en": "CLU crime, law, justice"
+                        "fi": "CLJ rikokset oikeuslaitos",
+                        "en": "CLJ crime, law, justice"
                     }
                 }
             },
@@ -6337,14 +6355,15 @@
             "all": 1
         },
         "_id": "sttpublicednote",
-        "display_name": "Pub. note",
+        "display_name": "Julkaistavaa lisätietoa",
         "description": "editorial note for customers",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
             }
         ],
-        "helper_text": "editorial note for customers",
+        "helper_text": null,
         "unique_field": "qcode"
     },
     {
@@ -6383,8 +6402,9 @@
             "all": 1
         },
         "_id": "sttpictureheadlinefi",
-        "display_name": "Picture headline (fi)",
+        "display_name": "Headline",
         "description": "Picture headline (fi)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6406,8 +6426,9 @@
             "all": 1
         },
         "_id": "sttpictureheadlineen",
-        "display_name": "Picture headline (en)",
+        "display_name": "Headline (en)",
         "description": "Picture headline (en)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6429,8 +6450,9 @@
             "all": 1
         },
         "_id": "sttpicturecaptionfi",
-        "display_name": "Picture caption (fi)",
+        "display_name": "Kuvan kuvaus / caption ",
         "description": "Picture caption (fi)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6452,8 +6474,9 @@
             "all": 1
         },
         "_id": "sttpicturecaptionen",
-        "display_name": "Picture caption (en)",
+        "display_name": "Kuvan kuvaus / caption (en)",
         "description": "Picture caption (en)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6521,8 +6544,9 @@
             "all": 1
         },
         "_id": "sttpicturekeywordsfi",
-        "display_name": "Picture keywords (fi)",
+        "display_name": "Hakusanat / Visible keywords",
         "description": "Picture keywords (fi)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6544,8 +6568,9 @@
             "all": 1
         },
         "_id": "sttpicturekeywordsen",
-        "display_name": "Picture keywords (en)",
+        "display_name": "Hakusanat / Visible keywords (en)",
         "description": "Picture keywords (en)",
+        "init_version": 2,
         "tags": [
             {
                 "text": "STT"
@@ -6625,7 +6650,8 @@
     },
     {
         "_id": "topics",
-        "display_name": "Topics",
+        "display_name": "IPTC",
+        "description": "IPTC Media topics",
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "multi selection",
@@ -6641,7 +6667,7 @@
             "all": 1
         },
         "dependent": 0,
-        "init_version": 2,
+        "init_version": 3,
         "items": [
             {
                 "name": "Taide Kulttuuri Viihde Media",
@@ -10830,7 +10856,7 @@
                 }
             },
             {
-                "name": "Tietotekniikka",
+                "name": "Teknologiateollisuus Tietotekniikka",
                 "qcode": "20000225",
                 "parent": "20000209",
                 "is_active": true,
@@ -10838,7 +10864,7 @@
                 "wikidata": "Q179310",
                 "translations": {
                     "name": {
-                        "fi": "Tietotekniikka",
+                        "fi": "Teknologiateollisuus Tietotekniikka",
                         "en": "computing and information technology"
                     }
                 }
@@ -13798,7 +13824,7 @@
                 }
             },
             {
-                "name": "Juhtilaisuudet Seremoniat",
+                "name": "Juhlatilaisuudet Seremoniat",
                 "qcode": "20000501",
                 "parent": "08000000",
                 "is_active": true,
@@ -13806,7 +13832,7 @@
                 "wikidata": "Q2627975",
                 "translations": {
                     "name": {
-                        "fi": "Juhtilaisuudet Seremoniat",
+                        "fi": "Juhlatilaisuudet Seremoniat",
                         "en": "ceremony"
                     }
                 }

@@ -222,7 +222,7 @@
         "enabled": true,
         "is_used": false,
         "embeddable": true,
-        "init_version": 2,
+        "init_version": 3,
         "editor": {
             "slugline": {
                 "order": 5,
@@ -271,6 +271,7 @@
                 "order": 7,
                 "sdWidth": "full",
                 "formatOptions": [],
+                "maxSoftLength": 300,
                 "enabled": true,
                 "section": "content",
                 "required": true
@@ -303,7 +304,15 @@
             "sttpictureinvoiced": null,
             "stttopstory": null,
             "locators": null,
-            "sttsource": null,
+            "sttsource": {
+                "enabled": true,
+                "field_name": "Lähde",
+                "section": "header",
+                "required": true,
+                "readonly": false,
+                "sdWidth": "half",
+                "order": 1
+            },
             "sttsmscategory": null,
             "sttpictureservice": null,
             "sttpicturecategory": null,
@@ -488,7 +497,7 @@
         "enabled": true,
         "is_used": false,
         "embeddable": true,
-        "init_version": 2,
+        "init_version": 3,
         "editor": {
             "slugline": {
                 "order": 9,
@@ -549,13 +558,7 @@
             },
             "sms": null,
             "abstract": null,
-            "byline": {
-                "order": 11,
-                "enabled": true,
-                "sdWidth": "half",
-                "section": "content",
-                "required": false
-            },
+            "byline": null,
             "dateline": {
                 "order": 10,
                 "enabled": true,
@@ -590,7 +593,7 @@
             "attachments": null,
             "sttnewsroomnote": {
                 "enabled": true,
-                "field_name": "STT Newsroom Note",
+                "field_name": "Versiotieto",
                 "section": "header",
                 "required": false,
                 "readonly": false,
@@ -622,7 +625,7 @@
             "countries": null,
             "topics": {
                 "enabled": true,
-                "field_name": "Topics",
+                "field_name": "IPTC",
                 "section": "header",
                 "required": false,
                 "readonly": false,
@@ -631,7 +634,7 @@
             },
             "sttpublicednote": {
                 "enabled": true,
-                "field_name": "Pub. note",
+                "field_name": "Julkaistavaa lisätietoa",
                 "section": "header",
                 "required": false,
                 "readonly": false,
@@ -669,11 +672,7 @@
                 "required": true,
                 "nullable": false
             },
-            "byline": {
-                "type": "string",
-                "required": false,
-                "nullable": true
-            },
+            "byline": null,
             "company_codes": null,
             "dateline": {
                 "type": "dict",
@@ -816,6 +815,14 @@
             {
                 "widget_id": "packages",
                 "is_displayed": false
+            },
+            {
+                "widget_id": "macros",
+                "is_displayed": true
+            },
+            {
+                "widget_id": "attachments",
+                "is_displayed": true
             }
         ]
     },
@@ -828,7 +835,7 @@
         "enabled": true,
         "is_used": false,
         "embeddable": true,
-        "init_version": 2,
+        "init_version": 3,
         "editor": {
             "slugline": {
                 "order": 8,
@@ -900,6 +907,7 @@
             },
             "body_html": {
                 "order": 13,
+                "maxSoftLength": 5000,
                 "formatOptions": [
                     "bold",
                     "EDITOR_TAG_company",

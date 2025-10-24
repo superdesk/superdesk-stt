@@ -18,20 +18,20 @@ module.exports = function (grunt) {
     vocabulariesToExcludeAsFields: ['sttsubj'],
 
     authoring: {
-        customEditorTags: [
-            {
-                id: 'company',
-                icon: 'business',
-                label: 'Yritys',
-                borderColor: 'tag-color-2',
-            },
-            {
-                id: 'person',
-                icon: 'user',
-                label: 'Henkilö',
-                borderColor: 'tag-color-1',
-            },
-        ],
+      customEditorTags: [
+        {
+          id: 'company',
+          icon: 'business',
+          label: 'Yritys',
+          borderColor: 'tag-color-2',
+        },
+        {
+          id: 'person',
+          icon: 'user',
+          label: 'Henkilö',
+          borderColor: 'tag-color-1',
+        },
+      ],
     },
 
     /* landing page after login */
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
     },
 
     features: {
-      swimlane: { defaultNumberOfColumns: 4 },
+      swimlane: {defaultNumberOfColumns: 4},
       noTakes: true /* hide takes */,
       noMissingLink: true /* display of the missing link warning (based on slugline) */,
       hideCreatePackage: true /* hide packages */,
@@ -79,29 +79,29 @@ module.exports = function (grunt) {
 
     /* list of CVs which are searched */
     search_cvs: [
-      { id: "sttgenre", name: "STT genre", field: "subject", list: "sttgenre" },
-      {
-        id: "sttdepartment",
-        name: "Department",
-        field: "subject",
-        list: "sttdepartment",
-      },
-      { id: "sttsubj", name: "Subject", field: "subject", list: "sttsubj" },
+      {id: "categories", name: "Osasto", field: "anpa_category", list: "categories"},
+      {id: "topics", name: "IPTC", field: "subject", list: "topics"},
+      {id: "genre", name: "Juttutyyppi", field: "genre", list: "genre"},
+      {id: "locators", name: "Vaikutus- paikka", field: "place", list: "locators"},
+      {id: "stttopstory", name: "Kärkiuutinen", field: "subject", list: "stttopstory"},
+      {id: "sttsource", name: "Lähde", field: "subject", list: "sttsource"},
+      {id: "sttsmscategory", name: "SMS", field: "subject", list: "sttsmscategory"},
+      {id: "sttnewsroomnote", name: "Versiotieto", field: "subject", list: "sttnewsroomnote"},
     ],
     /* list of fields which are searched */
     search: {
       slugline: 1,
       headline: 1,
-      unique_name: 1,
+      unique_name: 0,
       story_text: 1,
-      byline: 0,
-      keywords: 1,
+      byline: 1,
+      keywords: 0,
       creator: 1,
       from_desk: 1,
       to_desk: 1,
       spike: 1,
       ingest_provider: 1,
-      marked_desks: 1,
+      marked_desks: 0,
       scheduled: 1,
     },
 
@@ -110,10 +110,10 @@ module.exports = function (grunt) {
       priority: ["urgency"],
       firstLine: [
         "slugline",
+        "update",
+        "headline",
         "highlights",
         "markedDesks",
-        "headline",
-        "wordcount",
         "associations",
         "publish_queue_errors",
         "versioncreated",
@@ -121,13 +121,12 @@ module.exports = function (grunt) {
       secondLine: [
         "profile",
         "state",
-        "update",
+        "updated",
+        "category",
         "scheduledDateTime",
         "embargo",
-        "takekey",
         "signal",
         "flags",
-        "updated",
         "provider",
         "desk",
         "fetchedDesk",
@@ -135,11 +134,11 @@ module.exports = function (grunt) {
       ],
       compactView: {
         firstLine: [
+          "headline",
+          "takekey",
           "slugline",
           "highlights",
           "markedDesks",
-          "headline",
-          "wordcount",
           "associations",
           "publish_queue_errors",
           "versioncreated",
@@ -152,7 +151,7 @@ module.exports = function (grunt) {
     monitoring: {
       scheduled: {
         sort: {
-          default: { field: "publish_schedule", order: "asc" },
+          default: {field: "publish_schedule", order: "asc"},
           allowed_fields_to_sort: ["publish_schedule"],
         },
       },
@@ -259,22 +258,16 @@ module.exports = function (grunt) {
       assignment_list_item: {
         firstLine: [
           {fieldId: 'slugline'},
-          {fieldId: 'description_text'},
+          {fieldId: 'headline'},
+          {fieldId: 'name'},
         ],
         secondLine: [
-          {fieldId: 'priority'},
-          {fieldId: 'state'},
+          {fieldId: 'due_date'},
           {fieldId: 'accepted'},
           {fieldId: 'content'},
           {fieldId: 'internal'},
-          {fieldId: 'headline'},
-          {fieldId: 'name'},
-          {fieldId: 'due_date'},
-          {fieldId: 'desk'},
-          {fieldId: 'genre'},
-          {fieldId: 'language'},
-          {fieldId: 'vocabulary', fieldOptions: {vocabularyId: 'sttsource'}},
-          {fieldId: 'anpa_category'},
+          {fieldId: 'vocabulary', fieldOptions: {vocabularyId: 'sttdoesphotographerknow'}},
+          {fieldId: 'vocabulary', fieldOptions: {vocabularyId: 'sttpictureregistrationok'}},
         ],
       },
     },
