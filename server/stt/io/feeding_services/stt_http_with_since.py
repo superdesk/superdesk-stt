@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import json
 import os
 import logging
@@ -54,7 +55,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
     # Parser is bound via registry to NinJS (see registration at bottom of file)
 
-    def _update(self, provider, update):
+    async def _update(self, provider, update):
         """Fetch and parse a provider update, yielding a single batch of NinJS items.
 
         This generator:
@@ -85,14 +86,14 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
                 "MISSING_AUTH_TOKEN",
                 "Auth token is required but not set in provider configuration.",
             )
-        parser = self.get_feed_parser(provider)
+        parser = await self.get_feed_parser(provider)
         items = []
         self.session = requests.Session()
         response = self.fetch(provider, update)
 
         # Parse by feeding one item at a time to the NinJS parser
         content = response.content or b""
-        items = self._parse_items_via_ninjs(parser, content, provider)
+        items = await self._parse_items_via_ninjs(parser, content, provider)
 
         if isinstance(items, list):
             yield items
@@ -168,7 +169,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
         # return the full Response so callers can access .content as needed
         return resp
 
-    def _parse_items_via_ninjs(self, parser, content: bytes, provider):
+    async def _parse_items_via_ninjs(self, parser, content: bytes, provider):
         """Pass a single item at a time to the NinJS parser.
 
         Supports the following top-level shapes:
@@ -195,7 +196,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
                 #   (Docker/overlayfs) to avoid stale size/content. Safe but optional for POSIX; drop if perf-critical.
                 f.flush()
                 os.fsync(f.fileno())
-                results = self._call_parser(parser, f.name, provider)
+                results = await self._call_parser(parser, f.name, provider)
             return results
 
         # Normalize to a list of item dicts
@@ -222,7 +223,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
                 # See notes above: ensure data is durably visible before the parser re-opens the path.
                 f.flush()
                 os.fsync(f.fileno())
-                parsed = self._call_parser(parser, f.name, provider)
+                parsed = await self._call_parser(parser, f.name, provider)
                 if isinstance(parsed, list):
                     results.extend(parsed)
                 elif parsed is not None:
@@ -230,12 +231,16 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
         return results
 
-    def _call_parser(self, parser, file_path, provider):
+    async def _call_parser(self, parser, file_path, provider):
         """Call parser.parse with a compatible signature."""
         try:
-            return parser.parse(file_path, provider)
+            result = parser.parse(file_path, provider)
         except TypeError:
-            return parser.parse(file_path)
+            result = parser.parse(file_path)
+
+        if inspect.isawaitable(result):
+            result = await result
+        return result
 
     def _normalize_dates_in_obj(self, obj: dict) -> dict:
         """Return a shallow copy of obj with key date fields normalized to UTC 'Z'.
