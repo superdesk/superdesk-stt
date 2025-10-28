@@ -247,7 +247,7 @@ STREET_MAP_URL = "https://www.google.fi/maps/?q="
 # MAX_MULTI_DAY_EVENT_DURATION = int(env('MAX_MULTI_DAY_EVENT_DURATION', 7))
 
 # enable event templates
-PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", "true")
+PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", True)
 
 # Template for export events as articles that overwrites default template
 # default: https://github.com/superdesk/superdesk-planning/blob/develop/server/planning/planning_export_templates.py
