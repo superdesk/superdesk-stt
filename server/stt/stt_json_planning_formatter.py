@@ -44,8 +44,69 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
                 }
             )
 
+    def exclude_internal_planning_fields(self, item):
+        if "internal_note" in item:
+            del item["internal_note"]
+        if "subject" in item:
+            item["subject"] = [
+                subj for subj in item["subject"] if subj.get("scheme") != "sttcheckedby"
+            ]
+
+    def exclude_internal_coverage_fields(self, item):
+        exclude_fields = [
+            "headline",
+            "location",
+            "sttpicturewhatabout",
+            "sttpicturewhatisphotographed",
+            "internal_note",
+            "sttdoesphotographerknow",
+            "sttpictureregistrationok",
+            "sttregistrationinfo",
+            "sttpicturecategory",
+            "sttpictureheadlinefi",
+            "sttpicturecaptionfi",
+            "sttpictureinstructionsfi",
+            "sttpicturekeywordsfi",
+            "sttpictureheadlineen",
+            "sttpicturecaptionen",
+            "sttpictureinstructionsen",
+            "sttpicturekeywordsen",
+            "sttpictureinvoiced",
+        ]
+
+        if "coverages" in item:
+            for coverage in item["coverages"]:
+                if "planning" in coverage:
+                    planning = coverage["planning"]
+                    # First remove direct attributes in the planning obj
+                    for field in exclude_fields:
+                        if field in planning:
+                            del planning[field]
+                    # Then filter out internal fields from the fields array
+                    if "fields" in planning:
+                        planning["fields"] = [
+                            f
+                            for f in planning["fields"]
+                            if f.get("field") not in exclude_fields
+                        ]
+
+    def map_agenda_output(self, item):
+        anpa_category = item.get("anpa_category", [])
+        agendas = []
+        for category in anpa_category:
+            agendas.append({"_id": category["name"], "name": category["name"]})
+
+        # Special case to inclide "Muut kuin urheilu" if there are non-sport categories
+        has_non_sport = any(category["name"] != "Urheilu" for category in anpa_category)
+        if has_non_sport:
+            agendas.append({"_id": "Muut kuin urheilu", "name": "Muut kuin urheilu"})
+        item["agendas"] = agendas
+
     async def _format_item(self, item, subscribers: list[dict] | None = None):
         await super()._format_item(item)
         self.update_stt_urgency(item)
+        self.exclude_internal_planning_fields(item)
+        self.exclude_internal_coverage_fields(item)
+        self.map_agenda_output(item)
 
         return item
