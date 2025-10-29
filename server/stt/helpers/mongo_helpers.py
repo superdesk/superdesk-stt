@@ -72,3 +72,180 @@ def find_many(
             )
 
     return []
+
+
+def get_published_items_with_sttnewsroomnote_by_planning_id(
+    planning_id: str,
+) -> List[Dict[str, Any]]:
+    """Return published items linked to *planning_id* via coverage assignments.
+    Return a list of published item documents that have a subject with scheme 'sttnewsroomnote'.
+
+    Executes the aggregation pipeline:
+
+        match planning -> compute sttimagetype from graphic coverage -> unwind coverages ->
+        convert assignment_id to ObjectId -> filter null assignments -> lookup published ->
+        unwind -> merge sttimagetype into the published document.
+
+    Any errors during aggregation are logged and result in an empty list.
+    """
+
+    try:
+        planning_service = get_resource_service("planning")
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.exception(
+            "Error using service for planning (%s: %s)",
+            exc.__class__.__name__,
+            exc,
+        )
+        return []
+
+    collection = getattr(planning_service, "collection", None)
+    if collection is None:
+        backend = getattr(planning_service, "backend", None)
+        if backend is not None:
+            collection = getattr(backend, "collection", None) or getattr(
+                backend, "_collection", None
+            )
+    if collection is None:
+        try:  # Last-resort: pull the collection directly from the app's Mongo driver
+            from flask import current_app
+
+            collection = current_app.data.driver.db["planning"]
+        except Exception as exc:  # pragma: no cover - defensive logging
+            logger.exception(
+                "Unable to access planning Mongo collection via service/driver (%s: %s)",
+                exc.__class__.__name__,
+                exc,
+            )
+            return []
+
+    pipeline = [
+        {"$match": {"_id": planning_id}},
+        {
+            # 1) Compute sttimagetype from the *graphic* coverage (once per planning doc)
+            "$set": {
+                "sttimagetype": {
+                    "$let": {
+                        "vars": {
+                            # first coverage where planning.g2_content_type == "graphic"
+                            "graphicCoverage": {
+                                "$first": {
+                                    "$filter": {
+                                        "input": "$coverages",
+                                        "as": "c",
+                                        "cond": {
+                                            "$eq": [
+                                                "$$c.planning.g2_content_type",
+                                                "graphic",
+                                            ]
+                                        },
+                                    }
+                                }
+                            },
+                            "subjects": {
+                                "$let": {
+                                    "vars": {
+                                        "gc": {
+                                            "$first": {
+                                                "$filter": {
+                                                    "input": "$coverages",
+                                                    "as": "c",
+                                                    "cond": {
+                                                        "$eq": [
+                                                            "$$c.planning.g2_content_type",
+                                                            "graphic",
+                                                        ]
+                                                    },
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "in": {"$ifNull": ["$$gc.planning.subject", []]},
+                                }
+                            },
+                        },
+                        "in": {
+                            "$let": {
+                                "vars": {
+                                    "match": {
+                                        "$first": {
+                                            "$filter": {
+                                                "input": "$$subjects",
+                                                "as": "s",
+                                                "cond": {
+                                                    "$eq": [
+                                                        "$$s.scheme",
+                                                        "sttimagetype",
+                                                    ]
+                                                },
+                                            }
+                                        }
+                                    }
+                                },
+                                "in": {
+                                    "$ifNull": [
+                                        "$$match.qcode",
+                                        {"$ifNull": ["$$match.name", ""]},
+                                    ]
+                                },
+                            }
+                        },
+                    }
+                }
+            }
+        },
+        # 2) Work per-coverage to find the one(s) that have assignment_id, and join to published
+        {"$unwind": "$coverages"},
+        {
+            # Convert assignment id (string) -> ObjectId
+            "$addFields": {
+                "assignment_id_obj": {
+                    "$convert": {
+                        "input": "$coverages.assigned_to.assignment_id",
+                        "to": "objectId",
+                        "onError": None,
+                        "onNull": None,
+                    }
+                }
+            }
+        },
+        # Only keep coverages where we do have a valid assignment id
+        {"$match": {"assignment_id_obj": {"$ne": None}}},
+        {
+            # 3) Lookup published with filters
+            "$lookup": {
+                "from": "published",
+                "let": {"aobj": "$assignment_id_obj"},
+                "pipeline": [
+                    {
+                        "$match": {
+                            "$expr": {"$eq": ["$assignment_id", "$$aobj"]},
+                            "state": "published",
+                            "subject": {"$elemMatch": {"scheme": "sttnewsroomnote"}},
+                        }
+                    }
+                ],
+                "as": "pub",
+            }
+        },
+        {"$unwind": "$pub"},
+        {
+            # 4) Merge the precomputed sttimagetype into each published doc
+            "$replaceRoot": {
+                "newRoot": {
+                    "$mergeObjects": ["$pub", {"sttimagetype": "$sttimagetype"}]
+                }
+            }
+        },
+    ]
+
+    try:
+        return list(collection.aggregate(pipeline))
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.exception(
+            "Error aggregating published items for planning %s (%s: %s)",
+            planning_id,
+            exc.__class__.__name__,
+            exc,
+        )
+        return []

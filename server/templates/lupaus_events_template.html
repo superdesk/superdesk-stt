@@ -38,32 +38,39 @@
 {% macro render_planning_item(item) -%}
   {%- set bits = [] -%}
   {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
-  {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
-  {%- for ev in item.related_events_expanded or [] -%}
-    {%- set ev_subjects = ev.subject | default([]) -%}
-    {%- set is_competition = ev_subjects
-      | selectattr('scheme', 'equalto', 'event_type')
-      | selectattr('name', 'equalto', 'Kilpailut')
-      | list
-      | length > 0 -%}
-      {# Do not include event details if it is a competition #}
-    {%- if not is_competition -%}
-      {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
-      {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
-      {%- if ev.location is iterable -%}
-        {%- set ev_loc = lupaus_location(ev.location) -%}
-        {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+  {%- if item.latest_published_item and item.latest_published_item._id -%}
+    {%- set pub_item = item.latest_published_item -%}
+    {%- if pub_item.headline %}{% set _ = bits.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
+    {%- if pub_item.body_html %}{% set _ = bits.append((pub_item.body_html | count_body_html_characters) ~ " merkkiä (lähetetty)") %}{% endif -%}
+    {%- if pub_item.sttimagetype %}{% set _ = bits.append('Kuvitus: ' ~ (pub_item.sttimagetype)) %}{% endif -%}
+  {%- else -%}
+    {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
+    {%- for ev in item.related_events_expanded or [] -%}
+      {%- set ev_subjects = ev.subject | default([]) -%}
+      {%- set is_competition = ev_subjects
+        | selectattr('scheme', 'equalto', 'event_type')
+        | selectattr('name', 'equalto', 'Kilpailut')
+        | list
+        | length > 0 -%}
+        {# Do not include event details if it is a competition #}
+      {%- if not is_competition -%}
+        {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
+        {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+        {%- if ev.location is iterable -%}
+          {%- set ev_loc = lupaus_location(ev.location) -%}
+          {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+        {%- endif -%}
       {%- endif -%}
-    {%- endif -%}
-  {%- endfor -%}
-  {# Call the priority macro #}
-  {%- set urg = stt_priority_text(item) -%}
-  {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
-  {# Add coverages if available #}
-  {%- if item.coverages is defined and item.coverages -%}
-    {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
-    {%- if cov_list | length > 0 -%}
-      {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+    {%- endfor -%}
+    {# Call the priority macro #}
+    {%- set urg = stt_priority_text(item) -%}
+    {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
+    {# Add coverages if available #}
+    {%- if item.coverages is defined and item.coverages -%}
+      {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
+      {%- if cov_list | length > 0 -%}
+        {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+      {%- endif -%}
     {%- endif -%}
   {%- endif -%}
   {%- if bits %}<p>- {{- bits | join(', ') -}}.</p>{% endif -%}
@@ -105,11 +112,14 @@
   {%- if grouped and grouped.items() | count > 0 -%}
     {%- for category, items in grouped.items() -%}
       <h2>{{ category | upper }}</h2>
-      {%- set coverage = namespace(intended=[], undecided=[], other=[]) -%}
+      {%- set coverage = namespace(intended=[], undecided=[], other=[], send=[]) -%}
       {%- for item in items -%}
         {%- set status = item.news_coverage_status or {} -%}
         {%- set status_name = (status.name or '') | lower -%}
-        {%- if status_name == 'coverage intended' -%}
+        {# If item has "latest_published_item", add it to coverage.send and skip the coverage status_name checks #}
+        {%- if item.latest_published_item and item.latest_published_item._id -%}
+          {%- set _ = coverage.send.append(item) -%}
+        {%- elif status_name == 'coverage intended' -%}
           {%- set _ = coverage.intended.append(item) -%}
         {%- elif status_name == 'coverage not decided yet' -%}
           {%- set _ = coverage.undecided.append(item) -%}
@@ -121,6 +131,13 @@
       {%- for item in coverage.intended -%}
         {{ render_planning_item(item) }}
       {%- endfor -%}
+
+      {%- if coverage.send -%}
+        <h3>LÄHETETYT</h3>
+        {%- for item in coverage.send -%}
+          {{ render_planning_item(item) }}
+        {%- endfor -%}
+      {%- endif -%}
 
       {%- if coverage.undecided -%}
         <h2>JOS AIHETTA</h2>

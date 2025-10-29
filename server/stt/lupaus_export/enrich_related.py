@@ -1,7 +1,10 @@
 from typing import Dict, List, Any, Set
 import logging
 
-from stt.helpers.mongo_helpers import find_many
+from stt.helpers.mongo_helpers import (
+    find_many,
+    get_published_items_with_sttnewsroomnote_by_planning_id,
+)
 from stt.helpers.template_helpers import exclude_drafts
 
 logger = logging.getLogger(__name__)
@@ -223,6 +226,39 @@ def _set_priority_fields(pl: Dict[str, Any]) -> None:
     pl["stt_priority_numeric"] = priority_numeric
 
 
+def _get_latest_published_item(
+    published_items: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """
+    Returns the latest published item from a list based on 'versioncreated'.
+    If the list is empty, returns an empty dictionary.
+    Args:
+        published_items: A list of published item dictionaries.
+    Returns:
+        The latest published item dictionary, or an empty dictionary if the list is empty.
+    """
+    if not published_items:
+        return {}
+    # first filter out items that do not have subject with scheme 'sttnewsroomnote' and qcode "nootherversions", "printformat" or "validforprint"
+    filtered_items = [
+        item
+        for item in published_items
+        if any(
+            sub.get("scheme") == "sttnewsroomnote"
+            and sub.get("qcode") in ["nootherversions", "printformat", "validforprint"]
+            for sub in item.get("subject", [])
+        )
+    ]
+    if not filtered_items:
+        return {}
+    # get latest item from filtered_items by versioncreated (datetime string)
+    latest_item = max(
+        filtered_items,
+        key=lambda item: item.get("versioncreated", ""),
+    )
+    return latest_item
+
+
 def _set_stt_fields(
     agendas: List[Dict[str, Any]],
     by_key: Dict[str, Dict[str, Any]],
@@ -243,6 +279,13 @@ def _set_stt_fields(
                 pl, item_type
             )
             pl["news_coverage_status"] = news_coverage_status
+            # try to get latest published item with sttnewsroomnote subject
+            published_related_items = (
+                get_published_items_with_sttnewsroomnote_by_planning_id(pl.get("_id"))
+            )
+            latest_published_item = _get_latest_published_item(published_related_items)
+            # attach latest published item to planning item
+            pl["latest_published_item"] = latest_published_item
             _set_priority_fields(pl)
             if not pl.get("stt_priority"):
                 continue  # exclude items without priority
