@@ -49,7 +49,9 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
             del item["internal_note"]
         if "subject" in item:
             item["subject"] = [
-                subject for subject in item["subject"] if subject.get("scheme") != "sttcheckedby"
+                subject
+                for subject in item["subject"]
+                if subject.get("scheme") != "sttcheckedby"
             ]
 
     def exclude_internal_coverage_fields(self, item):
