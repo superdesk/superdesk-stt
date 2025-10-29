@@ -14,10 +14,8 @@
 
 {# Macro to render a single planning item category from subject -> scheme = "categories" #}
 {% macro render_planning_item_category(item) -%}
-  {%- for sub in item.subject | default([]) -%}
-    {%- if sub.scheme == "categories" -%}
-      ({{ sub.name | upper }})
-    {%- endif -%}
+  {%- for sub in item.anpa_category | default([]) -%}
+    ({{ sub.name | upper }})
   {%- endfor -%}
 {%- endmacro %}
 
@@ -37,7 +35,15 @@
 {# Macro to render a single planning item paragraph (reused for grouped & ungrouped) #}
 {% macro render_planning_item(item) -%}
   {%- set bits = [] -%}
-  {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
+    {%- if item.slugline -%}
+      {%- set slug = item.slugline | trim -%}
+      {# Check if slug ends with a question mark or not and if not add a period to the end #}
+      {%- if slug.endswith('?') -%}
+        {% set _ = bits.append(slug) %}
+      {%- else -%}
+        {% set _ = bits.append(slug ~ '.') %}
+      {%- endif -%}
+    {%- endif -%}
   {%- if item.latest_published_item and item.latest_published_item._id -%}
     {%- set pub_item = item.latest_published_item -%}
     {%- if pub_item.headline %}{% set _ = bits.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
@@ -66,8 +72,8 @@
     {%- set urg = stt_priority_text(item) -%}
     {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
     {# Add coverages if available #}
-    {%- if item.coverages is defined and item.coverages -%}
-      {%- set cov_list = item.coverages if item.coverages is iterable else [item.coverages] -%}
+    {%- if item.sttimagetypes -%}
+      {%- set cov_list = item.sttimagetypes if item.sttimagetypes is iterable else [item.sttimagetypes] -%}
       {%- if cov_list | length > 0 -%}
         {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
       {%- endif -%}
@@ -80,10 +86,19 @@
 {# Macro to render a single main topic item paragraph #}
 {% macro render_main_topic_item(item) -%}
   {%- set bits = [] -%}
-  {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
+    {%- if item.slugline -%}
+      {%- set slug = item.slugline | trim -%}
+      {%- if slug.endswith('?') -%}
+        {% set _ = bits.append(slug) %}
+      {%- else -%}
+        {% set _ = bits.append(slug ~ '.') %}
+      {%- endif -%}
+    {%- endif -%}
   {%- set category_str = render_planning_item_category(item) -%}
-  {%- if category_str %}{% set _ = bits.append(category_str) %}{% endif -%}
-  {%- if bits %}<p>- {{- bits | join(' ') -}}.</p>{% endif -%}
+  {%- if category_str %}
+    {% set _ = bits.append(category_str) %}
+  {%- endif -%}
+  {%- if bits %}<p>- {{- bits | join(' ') -}}</p>{% endif -%}
   <p></p>
 {%- endmacro %}
 
@@ -112,13 +127,13 @@
   {%- if grouped and grouped.items() | count > 0 -%}
     {%- for category, items in grouped.items() -%}
       <h2>{{ category | upper }}</h2>
-      {%- set coverage = namespace(intended=[], undecided=[], other=[], send=[]) -%}
+      {%- set coverage = namespace(intended=[], undecided=[], other=[], sent=[]) -%}
       {%- for item in items -%}
         {%- set status = item.news_coverage_status or {} -%}
         {%- set status_name = (status.name or '') | lower -%}
-        {# If item has "latest_published_item", add it to coverage.send and skip the coverage status_name checks #}
+        {# If item has "latest_published_item", add it to coverage.sent and skip the coverage status_name checks #}
         {%- if item.latest_published_item and item.latest_published_item._id -%}
-          {%- set _ = coverage.send.append(item) -%}
+          {%- set _ = coverage.sent.append(item) -%}
         {%- elif status_name == 'coverage intended' -%}
           {%- set _ = coverage.intended.append(item) -%}
         {%- elif status_name == 'coverage not decided yet' -%}
@@ -132,9 +147,9 @@
         {{ render_planning_item(item) }}
       {%- endfor -%}
 
-      {%- if coverage.send -%}
+      {%- if coverage.sent -%}
         <h3>LÄHETETYT</h3>
-        {%- for item in coverage.send -%}
+        {%- for item in coverage.sent -%}
           {{ render_planning_item(item) }}
         {%- endfor -%}
       {%- endif -%}
@@ -166,8 +181,8 @@
 <p>Mittaversio = Mittaan kirjoitettu uutisversio, jonka muotoilut sopivat printille. Versiotyyppinä pika+, joten sopii myös verkkokäyttöön.</p>
 <p>Ystävällisin terveisin,<br />
 Uutispäälliköt<br />
-Klo 6.30-14 Merja Könönen<br />
-Klo 13.30-21 Tapio Pellinen<br />
+Klo 6.30-14<br />
+Klo 13.30-21<br />
 p. 09 - 695 81 327<br />
 uutispaallikot@stt.fi
 </p>
