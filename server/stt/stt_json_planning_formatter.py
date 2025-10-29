@@ -49,10 +49,13 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
             del item["internal_note"]
         if "subject" in item:
             item["subject"] = [
-                subj for subj in item["subject"] if subj.get("scheme") != "sttcheckedby"
+                subject for subject in item["subject"] if subject.get("scheme") != "sttcheckedby"
             ]
 
     def exclude_internal_coverage_fields(self, item):
+        if not item.get("coverages"):
+            return
+
         exclude_fields = [
             "headline",
             "location",
@@ -74,21 +77,23 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
             "sttpictureinvoiced",
         ]
 
-        if "coverages" in item:
-            for coverage in item["coverages"]:
-                if "planning" in coverage:
-                    planning = coverage["planning"]
-                    # First remove direct attributes in the planning obj
-                    for field in exclude_fields:
-                        if field in planning:
-                            del planning[field]
-                    # Then filter out internal fields from the fields array
-                    if "fields" in planning:
-                        planning["fields"] = [
-                            f
-                            for f in planning["fields"]
-                            if f.get("field") not in exclude_fields
-                        ]
+        for coverage in item["coverages"]:
+            planning = coverage.get("planning")
+            if not planning:
+                continue
+
+            # First remove direct attributes in the planning obj
+            for field in exclude_fields:
+                if field in planning:
+                    del planning[field]
+
+            # Then filter out internal fields from the fields array
+            if "fields" in planning:
+                planning["fields"] = [
+                    field
+                    for field in planning["fields"]
+                    if field.get("field") not in exclude_fields
+                ]
 
     def map_agenda_output(self, item):
         anpa_category = item.get("anpa_category", [])
