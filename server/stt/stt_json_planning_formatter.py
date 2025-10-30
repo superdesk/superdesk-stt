@@ -6,6 +6,44 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
     name = "STT JSON Planning"
     type = "stt_json_planning"
 
+    CATEGORY_QCODE_NHUB_MAP = {
+        "3": {
+            "name": "Kotimaa",
+            "agenda_id": "673f47881562ef05527e195a",
+            "calendar_qcode": "kotimaa",
+        },
+        "4": {
+            "name": "Kulttuuri",
+            "agenda_id": "673f478f2c95fe4cab8ee67e4",
+            "calendar_qcode": "kulttuuri",
+        },
+        "9": {
+            "name": "Politiikka",
+            "agenda_id": "673f47a1f16a90a38481291f",
+            "calendar_qcode": "politiikka",
+        },
+        "11": {
+            "name": "Talous",
+            "agenda_id": "673f47a914ae7505c4ba6138",
+            "calendar_qcode": "talous",
+        },
+        "14": {
+            "name": "Ulkomaat",
+            "agenda_id": "673f47b114ae7505c4ba613a",
+            "calendar_qcode": "ulkomaat",
+        },
+        "16": {
+            "name": "Urheilu",
+            "agenda_id": "673f47ba1562ef05527e195c",
+            "calendar_qcode": "urheilu",
+        },
+        "not_sports": {
+            "name": "Muut kuin urheilu",
+            "agenda_id": "673f47982c95fe4cab8ee67e",
+            "calendar_qcode": "muutkuinurheilu",
+        },
+    }
+
     def __init__(self):
         super().__init__()
         self.format_type = "stt_json_planning"
@@ -101,12 +139,29 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
         anpa_category = item.get("anpa_category", [])
         agendas = []
         for category in anpa_category:
-            agendas.append({"_id": category["name"], "name": category["name"]})
+            qcode = category.get("qcode")
+            if qcode in self.CATEGORY_QCODE_NHUB_MAP:
+                category_qcode_entry = self.CATEGORY_QCODE_NHUB_MAP[qcode]
+                agendas.append(
+                    {
+                        "_id": category_qcode_entry["agenda_id"],
+                        "name": category_qcode_entry["name"],
+                    }
+                )
+            else:
+                name = category.get("name", "")
+                sanitized = name.lower().replace(" ", "")
+                agendas.append({"_id": sanitized, "name": name})
 
-        # Special case to inclide "Muut kuin urheilu" if there are non-sport categories
-        has_non_sport = any(category["name"] != "Urheilu" for category in anpa_category)
+        has_non_sport = any(
+            category.get("name") != "Urheilu" for category in anpa_category
+        )
         if has_non_sport:
-            agendas.append({"_id": "Muut kuin urheilu", "name": "Muut kuin urheilu"})
+            not_sports = self.CATEGORY_QCODE_NHUB_MAP.get("not_sports")
+            if not_sports:
+                agendas.append(
+                    {"_id": not_sports["agenda_id"], "name": not_sports["name"]}
+                )
         item["agendas"] = agendas
 
     async def _format_item(self, item, subscribers: list[dict] | None = None):

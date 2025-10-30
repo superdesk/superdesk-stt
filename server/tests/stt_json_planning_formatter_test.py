@@ -109,9 +109,10 @@ class STTJsonPlanningFormatterTest(TestCase):
             formatter.map_agenda_output(item)
             expected_agendas = [
                 {
-                    "_id": "Julkishallinnon tiedotepalvelu",
+                    "_id": "julkishallinnontiedotepalvelu",
                     "name": "Julkishallinnon tiedotepalvelu",
                 },
-                {"_id": "Muut kuin urheilu", "name": "Muut kuin urheilu"},
+                {"_id": "673f47ba1562ef05527e195c", "name": "Urheilu"},
+                {"_id": "673f47982c95fe4cab8ee67e", "name": "Muut kuin urheilu"},
             ]
             self.assertEqual(item["agendas"], expected_agendas)

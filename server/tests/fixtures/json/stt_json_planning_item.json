@@ -11,6 +11,11 @@
       "name": "Julkishallinnon tiedotepalvelu",
       "qcode": "2",
       "scheme": null
+    },
+    {
+      "name": "Urheilu",
+      "qcode": "16",
+      "scheme": null
     }
   ],
   "coverages": [
