@@ -59,7 +59,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         extra = ninjs.get("extra", {})
         sttsubheadline = extra.get("sttsubheadline")
         profile = extra.get("content_profile_name", ninjs.get("profile"))
-        if not sttsubheadline: 
+        if not sttsubheadline:
             return
         if profile.lower() in ("pikaplus"):
             text = re.sub(r"<[^>]+>", "", sttsubheadline).strip()
@@ -90,6 +90,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
 
     async def _transform_to_ninjs(self, article, subscriber, recursive=True):
         ninjs = await super()._transform_to_ninjs(article, subscriber, recursive)
+
         self.update_stt_sources(ninjs)
         self.update_place(ninjs)
         self.update_subheadline(ninjs)
