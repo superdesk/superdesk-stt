@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from superdesk import get_resource_service
+from superdesk.core.app import get_current_async_app
 
 logger = logging.getLogger(__name__)
 
@@ -90,34 +91,15 @@ def get_published_items_with_sttnewsroomnote_by_planning_id(
     """
 
     try:
-        planning_service = get_resource_service("planning")
+        async_app = get_current_async_app()
+        collection = async_app.wsgi.data.get_mongo_collection("planning")
     except Exception as exc:  # pragma: no cover - defensive logging
         logger.exception(
-            "Error using service for planning (%s: %s)",
+            "Unable to access planning Mongo collection via service/driver (%s: %s)",
             exc.__class__.__name__,
             exc,
         )
         return []
-
-    collection = getattr(planning_service, "collection", None)
-    if collection is None:
-        backend = getattr(planning_service, "backend", None)
-        if backend is not None:
-            collection = getattr(backend, "collection", None) or getattr(
-                backend, "_collection", None
-            )
-    if collection is None:
-        try:  # Last-resort: pull the collection directly from the app's Mongo driver
-            from flask import current_app
-
-            collection = current_app.data.driver.db["planning"]
-        except Exception as exc:  # pragma: no cover - defensive logging
-            logger.exception(
-                "Unable to access planning Mongo collection via service/driver (%s: %s)",
-                exc.__class__.__name__,
-                exc,
-            )
-            return []
 
     pipeline = [
         {"$match": {"_id": planning_id}},
