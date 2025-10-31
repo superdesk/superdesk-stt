@@ -1,6 +1,7 @@
 import logging
 import re
 
+from superdesk import get_resource_service
 from superdesk.publish.formatters import NewsroomNinjsFormatter
 
 logger = logging.getLogger(__name__)
@@ -39,14 +40,8 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         except Exception as e:
             logger.error(f"Error occurred when updating stt sources: {str(e)}")
 
-    def update_place(self, ninjs):
-        locators = [place.get("code") for place in ninjs.get("place", [])]
-        if locators:
-            ninjs["locators"] = locators
-
     def update_body_from_content_profiles(self, ninjs):
-        extra = ninjs.get("extra", {})
-        profile = extra.get("content_profile_name", ninjs.get("profile"))
+        profile = ninjs.get("profile")
         if not profile:
             return
         if profile.lower() in ("viiva", "sms"):
@@ -58,10 +53,10 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
     def update_subheadline(self, ninjs):
         extra = ninjs.get("extra", {})
         sttsubheadline = extra.get("sttsubheadline")
-        profile = extra.get("content_profile_name", ninjs.get("profile"))
+        profile = ninjs.get("profile")
         if not sttsubheadline:
             return
-        if profile.lower() in ("pikaplus"):
+        if profile and profile.lower() in ("pikaplus"):
             text = re.sub(r"<[^>]+>", "", sttsubheadline).strip()
             if not text:
                 text = sttsubheadline.strip()
@@ -70,11 +65,21 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
             ninjs["body_html"] = header + (body or "")
 
     def update_sttversion(self, ninjs):
-        extra = ninjs.get("extra", {})
-        profile = extra.get("content_profile_name", ninjs.get("profile"))
+        profile = ninjs.get("profile")
         if not profile:
             return
-        versions = str(profile).strip()
+
+        vocabulary_items = get_resource_service("vocabularies").get_items("sttversion")
+
+        content_profile_name = None
+        for vocab_item in vocabulary_items:
+            if vocab_item.get("name", "").lower() == profile.lower():
+                content_profile_name = vocab_item.get("content_profile_name")
+                break
+
+        versions = str(
+            content_profile_name if content_profile_name is not None else profile
+        ).strip()
         ninjs["sttversion"] = versions
 
     def update_editorial_note(self, ninjs):
@@ -92,7 +97,6 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         ninjs = await super()._transform_to_ninjs(article, subscriber, recursive)
 
         self.update_stt_sources(ninjs)
-        self.update_place(ninjs)
         self.update_subheadline(ninjs)
         self.update_body_from_content_profiles(ninjs)
         self.update_sttversion(ninjs)

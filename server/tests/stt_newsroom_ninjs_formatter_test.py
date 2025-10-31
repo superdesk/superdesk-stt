@@ -42,14 +42,9 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         ninjs = await self.formatter._transform_to_ninjs(self.item, subscriber)
         self.assertEqual(ninjs["source"], "STT-AFP")
 
-    async def test_update_place_sets_locators(self):
-        ninjs = {"place": [{"code": "sttcountry:1"}, {"code": "sttcountry:2"}]}
-        self.formatter.update_place(ninjs)
-        self.assertEqual(ninjs.get("locators"), ["sttcountry:1", "sttcountry:2"])
-
     async def test_update_body_from_content_profiles(self):
         ninjs = {
-            "extra": {"content_profile_name": "viiva"},
+            "profile": "viiva",
             "headline": "Breaking News",
             "body_html": "",
         }
@@ -59,23 +54,23 @@ class STTNewsroomNinjsFormatterTest(TestCase):
     async def test_update_subheadline(self):
         ninjs = {
             "extra": {
-                "content_profile_name": "pikaplus",
                 "sttsubheadline": "<b>Subtitle</b>",
             },
+            "profile": "pikaplus",
             "body_html": "",
         }
         self.formatter.update_subheadline(ninjs)
         self.assertEqual(ninjs.get("body_html"), "<h2>Subtitle</h2>")
 
-    async def test_update_sttversion_from_profile(self):
-        ninjs = {"extra": {"content_profile_name": "viiva"}}
+    async def test_update_sttversion_from_cv_match(self):
+        ninjs = {"profile": "Viiva"}
         self.formatter.update_sttversion(ninjs)
         self.assertEqual(ninjs.get("sttversion"), "viiva")
 
-    async def test_update_sttversion_from_profile_fallback(self):
-        ninjs = {"profile": "v3"}
+    async def test_update_sttversion_fallback(self):
+        ninjs = {"profile": "unknown_profile"}
         self.formatter.update_sttversion(ninjs)
-        self.assertEqual(ninjs.get("sttversion"), "v3")
+        self.assertEqual(ninjs.get("sttversion"), "unknown_profile")
 
     async def test_update_editorial_note(self):
         ninjs = {
