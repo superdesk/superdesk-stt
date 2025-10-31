@@ -6,6 +6,7 @@ import unittest
 import requests
 from datetime import datetime, timezone
 from unittest.mock import patch
+from urllib.parse import parse_qs, urlsplit
 
 from stt.io.feeding_services.stt_tt_content_api import STTTTContentAPIService
 from stt.io.feed_parsers.stt_tt_parse_content_api import ContentAPITTItemParser
@@ -395,10 +396,11 @@ class STTContentAPITestCase(unittest.TestCase):
 
         _ = self.service._fetch_tt_data(provider, update)
 
-        # First call URL should contain trs param with the exact timestamp
+        # First call URL should contain trs param derived from the last_update date
         first_call_args = mock_get.call_args_list[0]
         first_url = first_call_args[0][0]
-        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", first_url)  # URL-encoded ':'
+        qs = parse_qs(urlsplit(first_url).query)
+        self.assertEqual(["2025-09-24"], qs.get("trs"))
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_uses_trs_fallback_since_minutes(self, mock_get):
@@ -429,10 +431,11 @@ class STTContentAPITestCase(unittest.TestCase):
 
             _ = self.service._fetch_tt_data(provider, update)
 
-        # Expected trs = 2025-09-25T10:00:00Z (12:00 - 120 minutes)
+        # Expected trs = 2025-09-25 (12:00 - 120 minutes truncated to date)
         first_call_args = mock_get.call_args_list[0]
         first_url = first_call_args[0][0]
-        self.assertIn("trs=2025-09-25T10%3A00%3A00Z", first_url)
+        qs = parse_qs(urlsplit(first_url).query)
+        self.assertEqual(["2025-09-25"], qs.get("trs"))
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_timeout_configurable(self, mock_get):
@@ -469,7 +472,8 @@ class STTContentAPITestCase(unittest.TestCase):
 
         call_args = mock_get.call_args
         url = call_args[0][0]
-        self.assertIn("trs=2025-09-24T10%3A00%3A00Z", url)
+        qs = parse_qs(urlsplit(url).query)
+        self.assertEqual(["2025-09-24"], qs.get("trs"))
 
     @patch.object(STTTTContentAPIService, "_get_with_retry")
     def test_fetch_data_list_response(self, mock_get):
@@ -576,11 +580,13 @@ class STTContentAPITestCase(unittest.TestCase):
 
             items = asyncio.run(self.service._update(provider, update))
 
-            # Should have processed all items
-            self.assertEqual(2, len(items))
+            # Should have processed all items and return a single batch
+            self.assertEqual(1, len(items))
+            parsed_batch = items[0]
+            self.assertEqual(2, len(parsed_batch))
 
             # Check that items were parsed correctly
-            for parsed_item in items:
+            for parsed_item in parsed_batch:
                 self.assertEqual("text", parsed_item["type"])
                 self.assertEqual("usable", parsed_item["pubstatus"])
 
@@ -715,7 +721,7 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertIn("bad json", str(args[0]))
         self.assertEqual(provider, args[1])
 
-    def test_update_flattens_parsed_items(self):
+    def test_update_returns_batch_of_parsed_items(self):
         provider = {
             "config": {
                 "url": "https://api.example.com/contentapi/items",
@@ -737,8 +743,10 @@ class STTContentAPITestCase(unittest.TestCase):
             ):
                 result = asyncio.run(self.service._update(provider, update={}))
 
-        self.assertEqual(2, len(result))
-        self.assertEqual([{"x": 1}, {"z": 3}], result)
+        self.assertEqual(1, len(result))
+        batch = result[0]
+        self.assertEqual(2, len(batch))
+        self.assertEqual([{"x": 1}, {"z": 3}], batch)
 
     @patch("superdesk.errors.ParserError.parseMessageError")
     def test_update_parser_exception_wrapped_in_parser_error(self, mock_parse_error):

@@ -143,7 +143,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
 
         # Final guard: ensure only dicts are returned (avoids filter_expired_items crash)
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
-        return parsed_items
+        return [parsed_items]
 
     def _fetch_tt_data(self, provider, update) -> List[Dict]:
         """
