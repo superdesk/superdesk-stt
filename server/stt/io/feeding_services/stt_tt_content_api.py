@@ -187,7 +187,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
         # TT expects 'trs' as an RFC3339 timestamp in UTC with seconds precision
         dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+        trs_value = dt_from.strftime("%Y-%m-%d")
 
         base = URL(url)
         qs = dict(base.query)
@@ -279,7 +279,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             minutes = int(config.get("since_minutes", 1440))
             dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
         dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+        trs_value = dt_from.strftime("%Y-%m-%d")
 
         base = URL(url)
         qs = dict(base.query)
