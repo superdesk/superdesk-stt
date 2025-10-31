@@ -34,23 +34,25 @@
 
 {# Macro to render a single planning item paragraph (reused for grouped & ungrouped) #}
 {% macro render_planning_item(item) -%}
-  {%- set bits = [] -%}
+  {%- set first_parts = [] -%}
+  {%- set second_parts = [] -%}
+  {%- set third_parts = [] -%}
     {%- if item.slugline -%}
       {%- set slug = item.slugline | trim -%}
       {# Check if slug ends with a question mark or not and if not add a period to the end #}
       {%- if slug.endswith('?') -%}
-        {% set _ = bits.append(slug) %}
+        {% set _ = first_parts.append(slug) %}
       {%- else -%}
-        {% set _ = bits.append(slug ~ '.') %}
+        {% set _ = first_parts.append(slug ~ '.') %}
       {%- endif -%}
     {%- endif -%}
   {%- if item.latest_published_item and item.latest_published_item._id -%}
     {%- set pub_item = item.latest_published_item -%}
-    {%- if pub_item.headline %}{% set _ = bits.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
-    {%- if pub_item.body_html %}{% set _ = bits.append((pub_item.body_html | count_body_html_characters) ~ " merkkiä (lähetetty)") %}{% endif -%}
-    {%- if pub_item.sttimagetype %}{% set _ = bits.append('Kuvitus: ' ~ (pub_item.sttimagetype)) %}{% endif -%}
+    {%- if pub_item.headline %}{% set _ = second_parts.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
+    {%- if pub_item.body_html %}{% set _ = second_parts.append((pub_item.body_html | count_body_html_characters) ~ " merkkiä (lähetetty)") %}{% endif -%}
+    {%- if pub_item.sttimagetype %}{% set _ = second_parts.append('Kuvitus: ' ~ (pub_item.sttimagetype)) %}{% endif -%}
   {%- else -%}
-    {%- if item.description_text %}{% set _ = bits.append(item.description_text) %}{% endif -%}
+    {%- if item.description_text %}{% set _ = second_parts.append(item.description_text) %}{% endif -%}
     {%- for ev in item.related_events_expanded or [] -%}
       {%- set ev_subjects = ev.subject | default([]) -%}
       {%- set is_competition = ev_subjects
@@ -60,27 +62,28 @@
         | length > 0 -%}
         {# Do not include event details if it is a competition #}
       {%- if not is_competition -%}
-        {%- if ev.name and ev.name != item.slugline %}{% set _ = bits.append(ev.name) %}{% endif -%}
-        {%- if ev.dates and ev.dates.start %}{% set _ = bits.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
+        {%- if ev.name and ev.name != item.slugline %}{% set _ = second_parts.append(ev.name) %}{% endif -%}
+        {%- if ev.dates and ev.dates.start %}{% set _ = second_parts.append('klo ' ~ (ev.dates.start | fi_time)) %}{% endif -%}
         {%- if ev.location is iterable -%}
           {%- set ev_loc = lupaus_location(ev.location) -%}
-          {%- if ev_loc %}{% set _ = bits.append(ev_loc) %}{% endif -%}
+          {%- if ev_loc %}{% set _ = second_parts.append(ev_loc) %}{% endif -%}
         {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
     {# Call the priority macro #}
     {%- set urg = stt_priority_text(item) -%}
-    {%- if urg %}{% set _ = bits.append(urg) %}{% endif -%}
+    {%- if urg %}{% set _ = third_parts.append(urg) %}{% endif -%}
     {# Add coverages if available #}
     {%- if item.sttimagetypes -%}
       {%- set cov_list = item.sttimagetypes if item.sttimagetypes is iterable else [item.sttimagetypes] -%}
       {%- if cov_list | length > 0 -%}
-        {%- set _ = bits.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+        {%- set _ = third_parts.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
       {%- endif -%}
     {%- endif -%}
   {%- endif -%}
-  {%- if bits %}<p>- {{- bits | join(', ') -}}.</p>{% endif -%}
-  <p></p>
+  {%- if first_parts %}
+    <p>- {{ first_parts | join(', ') }}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
+  {% endif -%}
 {%- endmacro %}
 
 {# Macro to render a single main topic item paragraph #}
@@ -99,7 +102,6 @@
     {% set _ = bits.append(category_str) %}
   {%- endif -%}
   {%- if bits %}<p>- {{- bits | join(' ') -}}</p>{% endif -%}
-  <p></p>
 {%- endmacro %}
 
 {# Actual rendering logic for the agenda items starts here #}
