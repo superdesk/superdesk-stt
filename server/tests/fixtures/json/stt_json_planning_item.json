@@ -1,0 +1,209 @@
+{
+  "_created": "2025-10-28T10:13:10+0000",
+  "_current_version": 1761646415259,
+  "_etag": "ffc01a2ef4fb0867b0d8541fb45a9809c5c57249",
+  "_id": "f2158efe-aaec-4e77-8ea3-5c9b53f218eb",
+  "_updated": "2025-10-28T10:13:35+0000",
+  "agendas": [],
+  "all_day": true,
+  "anpa_category": [
+    {
+      "name": "Julkishallinnon tiedotepalvelu",
+      "qcode": "2",
+      "scheme": null
+    },
+    {
+      "name": "Urheilu",
+      "qcode": "16",
+      "scheme": null
+    }
+  ],
+  "coverages": [
+    {
+      "add_coverage_to_workflow": true,
+      "assigned_desk": {
+        "name": "Default Desk"
+      },
+      "assigned_user": {
+        "display_name": "admin",
+        "first_name": "",
+        "last_name": ""
+      },
+      "coverage_id": "6b6a31b8-4f63-49f4-99cf-20f7a3c4fb7e",
+      "coverage_provider": null,
+      "deliveries": [],
+      "firstcreated": "2025-10-28T10:13:10+0000",
+      "news_coverage_status": {
+        "label": "Tehdään",
+        "name": "coverage intended",
+        "qcode": "ncostat:int"
+      },
+      "original_coverage_id": "6b6a31b8-4f63-49f4-99cf-20f7a3c4fb7e",
+      "planning": {
+        "anpa_category": [
+          {
+            "name": "Julkishallinnon tiedotepalvelu",
+            "qcode": "2",
+            "scheme": null
+          }
+        ],
+        "fields": [
+          {
+            "field": "sttpicturewhatabout",
+            "value": "Test what about"
+          },
+          {
+            "field": "sttpicturewhatisphotographed",
+            "value": "Test what is photographed"
+          },
+          {
+            "field": "sttregistrationinfo",
+            "value": "Test registration info"
+          },
+          {
+            "field": "sttpictureheadlinefi",
+            "value": "Test headline FI"
+          },
+          {
+            "field": "sttpicturecaptionfi",
+            "value": "Test caption FI"
+          },
+          {
+            "field": "sttpictureinstructionsfi",
+            "value": "Test instructions FI"
+          },
+          {
+            "field": "sttpicturekeywordsfi",
+            "value": "Test keywords FI"
+          },
+          {
+            "field": "sttpictureheadlineen",
+            "value": "Test headline EN"
+          },
+          {
+            "field": "sttpicturecaptionen",
+            "value": "Test caption EN"
+          },
+          {
+            "field": "sttpictureinstructionsen",
+            "value": "Test instructions EN"
+          },
+          {
+            "field": "sttpicturekeywordsen",
+            "value": "Test keywords EN"
+          }
+        ],
+        "g2_content_type": "picture",
+        "genre": [],
+        "headline": "Test Headline",
+        "internal_note": "Test Internal Note",
+        "language": "fi",
+        "location": [
+          {
+            "address": {
+              "city": "Test City",
+              "country": "Test Country",
+              "line": [
+                "Test Address"
+              ]
+            },
+            "details": "Test Details",
+            "name": "Test Location",
+            "qcode": "test-qcode"
+          }
+        ],
+        "multiple_content": false,
+        "priority": 1,
+        "scheduled": "2025-10-28T11:00:00+0000",
+        "slugline": "Test Slugline",
+        "subject": [
+          {
+            "name": "Test Image Type",
+            "qcode": "test-imagetype",
+            "scheme": "sttimagetype"
+          },
+          {
+            "name": "Ei",
+            "qcode": "no",
+            "scheme": "sttdoesphotographerknow"
+          },
+          {
+            "name": "Kyllä",
+            "qcode": "yes",
+            "scheme": "sttpictureregistrationok"
+          },
+          {
+            "name": "Test Category",
+            "qcode": "TEST",
+            "scheme": "sttpicturecategory"
+          },
+          {
+            "name": "Ei",
+            "qcode": "no",
+            "scheme": "sttpictureinvoiced"
+          }
+        ]
+      },
+      "profile": "68db9970f7bdb22537301b68",
+      "scheduled_updates": [],
+      "workflow_status": "assigned"
+    }
+  ],
+  "description_text": "Test Description",
+  "events": [],
+  "expired": false,
+  "firstcreated": "2025-10-28T10:13:10+0000",
+  "flags": {
+    "marked_for_not_publication": false,
+    "overide_auto_assign_to_workflow": false
+  },
+  "guid": "f2158efe-aaec-4e77-8ea3-5c9b53f218eb",
+  "headline": "Test Planning Headline",
+  "internal_note": "Test Planning Internal Note",
+  "item_class": "plinat:newscoverage",
+  "item_id": "f2158efe-aaec-4e77-8ea3-5c9b53f218eb",
+  "language": "fi",
+  "languages": [
+    "fi"
+  ],
+  "lock_action": "edit",
+  "lock_session": "69009183985c980a84842847",
+  "lock_time": "2025-10-28T10:13:32+0000",
+  "lock_user": "6900917d30291cb7d85a283e",
+  "original_creator": "6900917d30291cb7d85a283e",
+  "place": [],
+  "planning_date": "2025-10-28T00:00:00+0000",
+  "priority": 1,
+  "products": [
+    {
+      "code": "6900929452052e3573902b53",
+      "name": "All Planning"
+    }
+  ],
+  "pubstatus": "usable",
+  "slugline": "Test Slugline",
+  "state": "scheduled",
+  "state_reason": null,
+  "subject": [
+    {
+      "name": "Test Topic",
+      "parent": "20000550",
+      "qcode": "20000568",
+      "scheme": "topics"
+    },
+    {
+      "name": "US tarkastanut",
+      "qcode": "US tarkastanut",
+      "scheme": "sttcheckedby"
+    },
+    {
+      "name": "Pääaihe (3 300)",
+      "qcode": "stturgency-1",
+      "scheme": "stturgency"
+    }
+  ],
+  "type": "planning",
+  "version_creator": "6900917d30291cb7d85a283e",
+  "versioncreated": "2025-10-28T10:13:35+0000",
+  "versionposted": "2025-10-28T10:13:35+0000"
+}
