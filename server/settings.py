@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "stt.io.feeding_services.stt_http_with_since",
     "stt.io.feeding_services.stt_tt_content_api",
     "stt.io.feed_parsers.stt_tt_parse_content_api",
+    "stt.stt_json_event_formatter",
 ]
 
 MODULES.append("planning")
