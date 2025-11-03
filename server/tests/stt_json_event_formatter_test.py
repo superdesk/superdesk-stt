@@ -22,7 +22,7 @@ class STTJsonEventFormatterTest(TestCase):
             formatter.map_calendar_output(item)
 
             calendars = item["calendars"]
-            self.assertGreater(len(calendars), 0)
+            self.assertEqual(len(calendars), 2)
 
             # Should have Muut kuin urheilu for non-sport category
             has_non_sport_category = any(
