@@ -180,6 +180,120 @@ class STTPlanningMLParserTest(TestCase):
             dest["coverages"][0]["coverage_id"],
         )
 
+    async def test_stt_internal_planning_fields_690975(self):
+        """Test STT internal planning fields from 690975_timefix.xml"""
+        self.fixture = "690975_timefix.xml"
+        await self.parse_source_content()
+
+        # Test planning item internal note
+        self.assertEqual(
+            self.item["internal_note"],
+            "Anne ilmoitettu. Ilmoittautumiset viimeistään perjantaina 24.10. media@oph.fi. Teams-linkki lähetetään ilmoittautuneille ma 27.10.\n",
+        )
+
+        coverage_227301 = None
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"] == "ID_WORKREQUEST_227301":
+                coverage_227301 = coverage
+                break
+
+        self.assertIsNotNone(coverage_227301)
+
+        # Test STT internal coverage fields
+        planning = coverage_227301["planning"]
+        self.assertEqual(
+            planning["headline"],
+            "Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä",
+        )
+        self.assertEqual(planning["g2_content_type"], "picture")
+        self.assertEqual(planning["sttimagetype"], "sttimage:28")
+        self.assertEqual(planning["sttdoesphotographerknow"], "yes")
+
+        # Test coverage internal note
+        self.assertEqual(
+            coverage_227301["internal_note"],
+            "aarrggghhh tää on hankala.. lue juttu ja keksi jotain, tässä pari tyrkkyä -tt\n\n93775987,89568598,89568550,89568459\n\nKuinka hyvin ulkomaalaiset tutkinto-opiskelijat ovat työllistyneet? Opetushallituksen tilaisuudessa klo 10 aiheesta kerrotaan tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen. Toimittajana Anne Salomäki. Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä, klo 10. 3150 merkkiä. Kuvitus: Kuvituskuvaa arkistosta.",
+        )
+
+        # Test Finnish text fields
+        self.assertIn(
+            "Mediatilaisuus 28.10. klo 10–11:", planning["sttpicturewhatisphotographed"]
+        )
+        self.assertIn(
+            "Kuvituskuvaa arkistosta", planning.get("sttpicturewhatabout", "")
+        )
+
+    async def test_stt_internal_planning_fields_691631(self):
+        """Test STT internal planning fields from 691631_timefix.xml"""
+        self.fixture = "691631_timefix.xml"
+        await self.parse_source_content()
+
+        # Find coverages with STT internal fields
+        coverage_227572 = None
+        coverage_227573 = None
+
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"] == "ID_WORKREQUEST_227572":
+                coverage_227572 = coverage
+            elif coverage["coverage_id"] == "ID_WORKREQUEST_227573":
+                coverage_227573 = coverage
+
+        self.assertIsNotNone(coverage_227572)
+        planning_227572 = coverage_227572["planning"]
+        self.assertEqual(
+            planning_227572["headline"],
+            "Nvidia sijoittaa miljardi dollaria Nokian osakkeisiin",
+        )
+        self.assertEqual(planning_227572["g2_content_type"], "picture")
+        self.assertEqual(planning_227572["sttimagetype"], "sttimage:21")
+        self.assertEqual(planning_227572["sttdoesphotographerknow"], "yes")
+        self.assertEqual(
+            planning_227572["sttpicturewhatabout"], "ja kv. kuvaa arkistosta."
+        )
+
+        self.assertIsNotNone(coverage_227573)
+        planning_227573 = coverage_227573["planning"]
+        self.assertEqual(
+            planning_227573["headline"], "FREE-SEPPO // Nokia head office, Karakaari 7."
+        )
+        self.assertEqual(planning_227573["g2_content_type"], "picture")
+        self.assertEqual(planning_227573["sttimagetype"], "sttimage:20")
+        self.assertEqual(planning_227573["sttdoesphotographerknow"], "yes")
+        self.assertEqual(
+            planning_227573["sttpicturewhatabout"],
+            "arkistokuvaa ja kv. kuvaa arkistosta.",
+        )
+
+    async def test_stt_coverage_status_mapping(self):
+        """Test all STT workstatus mappings"""
+        test_cases = [
+            ("sttworkstatus:1", "ncostat:int", "coverage intended", "Kyllä"),
+            ("sttworkstatus:2", "ncostat:int", "coverage intended", "Kyllä"),
+            ("sttworkstatus:3", "ncostat:int", "coverage intended", "Kyllä"),
+            ("sttworkstatus:4", "ncostat:notint", "coverage not intended", "Ei"),
+            ("sttworkstatus:5", "ncostat:notdec", "coverage not decided yet", "Ei"),
+        ]
+
+        for stt_status, expected_qcode, expected_name, expected_label in test_cases:
+            with self.subTest(stt_status=stt_status):
+                parser = STTPlanningMLParser()
+
+                self.assertEqual(
+                    parser.get_coverage_status_name(expected_qcode), expected_name
+                )
+                self.assertEqual(
+                    parser.get_coverage_status_label(expected_qcode), expected_label
+                )
+
+    async def test_stt_photographer_awareness_mapping(self):
+        """Test photographer awareness mapping"""
+        self.fixture = "691631_timefix.xml"
+        await self.parse_source_content()
+
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"].startswith("ID_WORKREQUEST_"):
+                self.assertEqual(coverage["planning"]["sttdoesphotographerknow"], "yes")
+
 
 def is_placeholder_coverage(coverage):
     try:
