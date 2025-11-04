@@ -78,11 +78,23 @@ class STTJsonPlanningFormatterTest(TestCase):
             self.assertIn("internal_note", planning)
             self.assertIn("scheduled", planning)
             fields = planning["fields"]
+            subjects = planning["subject"]
             self.assertTrue(
                 any(field["field"] == "sttpicturewhatabout" for field in fields)
             )
             self.assertTrue(
                 any(field["field"] == "sttregistrationinfo" for field in fields)
+            )
+            self.assertTrue(
+                any(
+                    subj.get("scheme") == "sttdoesphotographerknow" for subj in subjects
+                )
+            )
+            self.assertTrue(
+                any(
+                    subj.get("scheme") == "sttpictureregistrationok"
+                    for subj in subjects
+                )
             )
 
             formatter.exclude_internal_coverage_fields(item)
@@ -92,11 +104,24 @@ class STTJsonPlanningFormatterTest(TestCase):
             self.assertNotIn("internal_note", planning)
             self.assertIn("scheduled", planning)
             fields_after = planning["fields"]
+            subjects_after = planning["subject"]
             self.assertFalse(
                 any(field["field"] == "sttpicturewhatabout" for field in fields_after)
             )
             self.assertFalse(
                 any(field["field"] == "sttregistrationinfo" for field in fields_after)
+            )
+            self.assertFalse(
+                any(
+                    subj.get("scheme") == "sttdoesphotographerknow"
+                    for subj in subjects_after
+                )
+            )
+            self.assertFalse(
+                any(
+                    subj.get("scheme") == "sttpictureregistrationok"
+                    for subj in subjects_after
+                )
             )
 
     async def test_map_agendas(self):

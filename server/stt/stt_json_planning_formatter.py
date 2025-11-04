@@ -135,6 +135,14 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
                     if field.get("field") not in exclude_fields
                 ]
 
+            # Then filter out internal fields from the subjects array
+            if "subject" in planning:
+                planning["subject"] = [
+                    field
+                    for field in planning["subject"]
+                    if field.get("scheme") not in exclude_fields
+                ]
+
     def map_agenda_output(self, item):
         anpa_category = item.get("anpa_category", [])
         agendas = []
