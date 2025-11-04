@@ -87,13 +87,14 @@ class STTJsonPlanningFormatterTest(TestCase):
             )
             self.assertTrue(
                 any(
-                    subj.get("scheme") == "sttdoesphotographerknow" for subj in subjects
+                    subject.get("scheme") == "sttdoesphotographerknow"
+                    for subject in subjects
                 )
             )
             self.assertTrue(
                 any(
-                    subj.get("scheme") == "sttpictureregistrationok"
-                    for subj in subjects
+                    subject.get("scheme") == "sttpictureregistrationok"
+                    for subject in subjects
                 )
             )
 
@@ -113,14 +114,14 @@ class STTJsonPlanningFormatterTest(TestCase):
             )
             self.assertFalse(
                 any(
-                    subj.get("scheme") == "sttdoesphotographerknow"
-                    for subj in subjects_after
+                    subject.get("scheme") == "sttdoesphotographerknow"
+                    for subject in subjects_after
                 )
             )
             self.assertFalse(
                 any(
-                    subj.get("scheme") == "sttpictureregistrationok"
-                    for subj in subjects_after
+                    subject.get("scheme") == "sttpictureregistrationok"
+                    for subject in subjects_after
                 )
             )
 
