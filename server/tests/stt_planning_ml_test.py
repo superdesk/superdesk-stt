@@ -208,9 +208,7 @@ class STTPlanningMLParserTest(TestCase):
             s for s in planning.get("subject", []) if s.get("scheme") == "sttimagetype"
         ]
         if picture_type_subjects:
-            self.assertEqual(
-                picture_type_subjects[0]["qcode"], "Kuvituskuvaa arkistosta"
-            )
+            self.assertEqual(picture_type_subjects[0]["qcode"], "sttimage:28")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects = [
@@ -268,7 +266,7 @@ class STTPlanningMLParserTest(TestCase):
             if s.get("scheme") == "sttimagetype"
         ]
         if picture_type_subjects_572:
-            self.assertEqual(picture_type_subjects_572[0]["qcode"], "Arkistokuvaa")
+            self.assertEqual(picture_type_subjects_572[0]["qcode"], "sttimage:21")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects_572 = [
@@ -301,7 +299,7 @@ class STTPlanningMLParserTest(TestCase):
             if s.get("scheme") == "sttimagetype"
         ]
         if picture_type_subjects_573:
-            self.assertEqual(picture_type_subjects_573[0]["qcode"], "Kuvaaja paikalla")
+            self.assertEqual(picture_type_subjects_573[0]["qcode"], "sttimage:20")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects_573 = [

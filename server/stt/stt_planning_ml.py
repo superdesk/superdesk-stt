@@ -267,16 +267,16 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         # Map STT numeric image type codes to new CV qcodes
         image_type_mapping = {
-            "sttimagetypename:20": "Kuvaaja paikalla",
-            "sttimagetypename:21": "Arkistokuvaa",
-            "sttimagetypename:22": "Handoutkuvaa",
-            "sttimagetypename:23": "Toimittajan kuvaa",
-            "sttimagetypename:24": "Kuvituskuvaa",
-            "sttimagetypename:25": "Kv. kuvaa",
-            "sttimagetypename:26": "Kv. kuvaa arkistosta",
-            "sttimagetypename:27": "Tuoretta kuvaa",
-            "sttimagetypename:28": "Kuvituskuvaa arkistosta",
-            "sttimagetypename:29": "Video",
+            "sttimagetypename:20": "sttimage:20",  # Kuvaaja paikalla
+            "sttimagetypename:21": "sttimage:21",  # Arkistokuvaa
+            "sttimagetypename:22": "sttimage:23",  # Handoutkuvaa
+            "sttimagetypename:23": "sttimage:30",  # Toimittajan kuvaa
+            "sttimagetypename:24": "sttimage:26",  # Kuvituskuvaa
+            "sttimagetypename:25": "sttimage:27",  # Kv. kuvaa
+            "sttimagetypename:26": "sttimage:29",  # Kv. kuvaa arkistosta
+            "sttimagetypename:27": "sttimage:71",  # Tuoretta kuvaa
+            "sttimagetypename:28": "sttimage:28",  # Kuvituskuvaa arkistosta
+            "sttimagetypename:29": "sttimage:70",  # Video
         }
 
         mapped_qcode = image_type_mapping.get(qcode)
