@@ -1,7 +1,10 @@
 from typing import Dict, List, Any, Set
 import logging
 
-from stt.helpers.mongo_helpers import find_many
+from stt.helpers.mongo_helpers import (
+    find_many,
+    get_published_items_with_sttnewsroomnote_by_planning_id,
+)
 from stt.helpers.template_helpers import exclude_drafts
 
 logger = logging.getLogger(__name__)
@@ -48,58 +51,111 @@ def _collect_event_ids(agendas: List[Dict[str, Any]]) -> List[str]:
     return list(ids)
 
 
-def _get_planning_item_coverage_status_from_mongo(
-    pl: Dict[str, Any], item_type: str
+def _get_planning_coverages_metadata(
+    pl: Dict[str, Any],
+    item_type: str,
+    imagetypes: bool = False,
 ) -> Dict[str, Any]:
+    """Return coverage metadata for a planning item, fetching from Mongo if needed.
+
+    When ``imagetypes`` is ``False`` (default) this
+    returns the first available ``news_coverage_status`` mapping from the item's
+    coverages. When ``imagetypes`` is ``True`` the function instead collects all
+    ``sttimagetype`` subject ``name`` values from the coverages and returns them as
+    ``{"imagetypes": [...]}``.
+
+    The function first inspects the in-memory planning item and only falls back to a
+    Mongo query when the desired information is missing locally.
     """
-    For some reason item.coverages might be like coverages': ['Kuvauskeikka', 'Kuvitus', 'Uutisteksti']
-    but we need "planning.coverages.news_coverage_status"-data from mongo by item _id
-    Get the 'news_coverage_status' from the 'coverages' of a planning item if it does not exist in the item.
-    Args:
-        pl: A dictionary representing a planning item.
-        item_type: The type of the planning item, e.g., 'teksti' / 'kuva'.
-    Returns:
-        The value of 'news_coverage_status' if found, otherwise an empty dictionary.
-    """
+
     if not pl:
         return {}
-    # skip if no coverages
-    if "coverages" not in pl or not pl["coverages"]:
-        return {}
-    # Check if item already has news_coverage_status
-    for cov in pl["coverages"]:
-        if "news_coverage_status" in cov and cov["news_coverage_status"]:
-            return cov["news_coverage_status"]
-    pl_id = pl.get("_id")
-    # skip if no id for some reason
-    if not pl_id:
-        return {}
-    if item_type == "kuva":
-        pl_from_mongo = find_many(
-            "planning",
-            # get only coverages that have "planning.g2_content_type" = "graphic" or "picture"
-            {
-                "_id": pl_id,
-                "coverages.planning.g2_content_type": {"$in": ["graphic", "picture"]},
-            },
-            projection={"coverages": 1, "_id": 0},
-        )
-    else:
-        pl_from_mongo = find_many(
-            "planning",
-            # get only coverages that have "planning.g2_content_type" = "text"
-            {"_id": pl_id, "coverages.planning.g2_content_type": "text"},
-            projection={"coverages": 1, "_id": 0},
-        )
-    if not pl_from_mongo:
-        return {}
-    if ("coverages" not in pl_from_mongo[0]) or (not pl_from_mongo[0]["coverages"]):
-        return {}
 
-    for cov in pl_from_mongo[0]["coverages"]:
-        if "news_coverage_status" in cov and cov["news_coverage_status"]:
-            return cov["news_coverage_status"]
+    coverages = [cov for cov in pl.get("coverages") or [] if isinstance(cov, dict)]
+
+    imagetypes_local: List[str] = []
+    if imagetypes:
+        imagetypes_local = _collect_imagetypes_from_coverages(coverages)
+        if imagetypes_local:
+            return {"imagetypes": imagetypes_local}
+    else:
+        status = _extract_news_coverage_status(coverages)
+        if status:
+            return status
+
+    pl_id = pl.get("_id")
+    if not pl_id:
+        return {"imagetypes": imagetypes_local} if imagetypes else {}
+
+    coverages_from_db = _load_coverages_from_mongo(pl_id, item_type)
+    if not coverages_from_db:
+        return {"imagetypes": imagetypes_local} if imagetypes else {}
+
+    if imagetypes:
+        image_coverage_types = _collect_imagetypes_from_coverages(coverages_from_db)
+        return {"imagetypes": image_coverage_types}
+
+    return _extract_news_coverage_status(coverages_from_db)
+
+
+def _extract_news_coverage_status(coverages: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Return the first non-empty ``news_coverage_status`` mapping from coverages."""
+
+    for cov in coverages:
+        status = cov.get("news_coverage_status")
+        if status:
+            return status
     return {}
+
+
+def _collect_imagetypes_from_coverages(coverages: List[Dict[str, Any]]) -> List[str]:
+    """Collect unique ``sttimagetype`` subject names from coverage planning data."""
+
+    seen: Set[str] = set()
+    imagetypes: List[str] = []
+    for cov in coverages:
+        planning = cov.get("planning")
+        if not isinstance(planning, dict):
+            continue
+        subjects = planning.get("subject")
+        if not isinstance(subjects, list):
+            continue
+        for sub in subjects:
+            if not isinstance(sub, dict) or sub.get("scheme") != "sttimagetype":
+                continue
+            name = sub.get("name") or sub.get("qcode")
+            if name and name not in seen:
+                seen.add(name)
+                imagetypes.append(name)
+    return imagetypes
+
+
+def _load_coverages_from_mongo(pl_id: str, item_type: str) -> List[Dict[str, Any]]:
+    """Fetch coverages for a planning item directly from Mongo using ``find_many``."""
+
+    if not pl_id:
+        return []
+
+    if item_type == "kuva":
+        lookup = {
+            "_id": pl_id,
+            "coverages.planning.g2_content_type": {"$in": ["graphic", "picture"]},
+        }
+    else:
+        lookup = {
+            "_id": pl_id,
+            "coverages.planning.g2_content_type": "text",
+        }
+
+    docs = find_many("planning", lookup, projection={"coverages": 1, "_id": 0})
+    if not docs:
+        return []
+
+    coverages = docs[0].get("coverages") if isinstance(docs[0], dict) else None
+    if not isinstance(coverages, list):
+        return []
+
+    return [cov for cov in coverages if isinstance(cov, dict)]
 
 
 def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
@@ -223,6 +279,39 @@ def _set_priority_fields(pl: Dict[str, Any]) -> None:
     pl["stt_priority_numeric"] = priority_numeric
 
 
+def _get_latest_published_item(
+    published_items: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """
+    Returns the latest published item from a list based on 'versioncreated'.
+    If the list is empty, returns an empty dictionary.
+    Args:
+        published_items: A list of published item dictionaries.
+    Returns:
+        The latest published item dictionary, or an empty dictionary if the list is empty.
+    """
+    if not published_items:
+        return {}
+    # first filter out items that do not have subject with scheme 'sttnewsroomnote' and qcode "nootherversions", "printformat" or "validforprint"
+    filtered_items = [
+        item
+        for item in published_items
+        if any(
+            sub.get("scheme") == "sttnewsroomnote"
+            and sub.get("qcode") in ["nootherversions", "printformat", "validforprint"]
+            for sub in item.get("subject", [])
+        )
+    ]
+    if not filtered_items:
+        return {}
+    # get latest item from filtered_items by versioncreated (datetime string)
+    latest_item = max(
+        filtered_items,
+        key=lambda item: item.get("versioncreated", ""),
+    )
+    return latest_item
+
+
 def _set_stt_fields(
     agendas: List[Dict[str, Any]],
     by_key: Dict[str, Dict[str, Any]],
@@ -239,10 +328,21 @@ def _set_stt_fields(
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
-            news_coverage_status = _get_planning_item_coverage_status_from_mongo(
-                pl, item_type
-            )
+            # get news_coverage_status for planning item
+            news_coverage_status = _get_planning_coverages_metadata(pl, item_type)
             pl["news_coverage_status"] = news_coverage_status
+            # get sttimagetypes for planning item (always use "kuva" as item_type to get image types)
+            item_imagetypes = _get_planning_coverages_metadata(
+                pl, "kuva", imagetypes=True
+            )
+            pl["sttimagetypes"] = item_imagetypes.get("imagetypes") or []
+            # try to get latest published item with sttnewsroomnote subject
+            published_related_items = (
+                get_published_items_with_sttnewsroomnote_by_planning_id(pl.get("_id"))
+            )
+            latest_published_item = _get_latest_published_item(published_related_items)
+            # attach latest published item to planning item
+            pl["latest_published_item"] = latest_published_item
             _set_priority_fields(pl)
             if not pl.get("stt_priority"):
                 continue  # exclude items without priority
@@ -292,6 +392,18 @@ def _group_agenda_items_by_category(
         if category_name not in categorized_items:
             categorized_items[category_name] = []
         categorized_items[category_name].append(pl)
+    # sort categories like: Kotimaa, Politiikka, Talous, Kulttuuri, Ulkomaat, Urheilu
+    sorted_categories = [
+        "Kotimaa",
+        "Politiikka",
+        "Talous",
+        "Kulttuuri",
+        "Ulkomaat",
+        "Urheilu",
+    ]
+    categorized_items = {
+        k: categorized_items[k] for k in sorted_categories if k in categorized_items
+    }
     return categorized_items
 
 
