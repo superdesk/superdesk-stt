@@ -92,7 +92,7 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(
             planning["scheduled"], datetime(2023, 5, 29, 0, 0, tzinfo=tzutc())
         )
-        self.assertEqual(planning["fields"], {})
+        self.assertEqual(planning["fields"], [])
         self.assertEqual(planning["subject"], [])
 
         # Check news_coverage_status structure
@@ -217,22 +217,24 @@ class STTPlanningMLParserTest(TestCase):
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
         if photo_awareness_subjects:
-            self.assertEqual(photo_awareness_subjects[0]["qcode"], "sttphotoaware:2")
+            self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
 
         # Test coverage internal note
-        actual_internal_note = coverage_227301.get("internal_note", "")
+        actual_internal_note = planning.get("internal_note", "")
         self.assertIn("aarrggghhh tää on hankala", actual_internal_note)
         self.assertIn("93775987,89568598,89568550,89568459", actual_internal_note)
 
-        # Test Finnish text fields in fields object
-        fields = planning.get("fields", {})
-        if "sttpicturewhatisphotographed" in fields:
+        # Test Finnish text fields in fields list
+        fields = planning.get("fields", [])
+        fields_dict = {field["field"]: field["value"] for field in fields}
+
+        if "sttpicturewhatisphotographed" in fields_dict:
             self.assertIn(
                 "Mediatilaisuus 28.10. klo 10–11:",
-                fields["sttpicturewhatisphotographed"],
+                fields_dict["sttpicturewhatisphotographed"],
             )
-        if "sttpicturewhatabout" in fields:
-            self.assertIn("Kuvituskuvaa arkistosta", fields["sttpicturewhatabout"])
+        if "sttpicturewhatabout" in fields_dict:
+            self.assertIn("Kuvituskuvaa arkistosta", fields_dict["sttpicturewhatabout"])
 
     async def test_stt_internal_planning_fields_691631(self):
         """Test STT internal planning fields from 691631_timefix.xml"""
@@ -273,15 +275,14 @@ class STTPlanningMLParserTest(TestCase):
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
         if photo_awareness_subjects_572:
-            self.assertEqual(
-                photo_awareness_subjects_572[0]["qcode"], "sttphotoaware:2"
-            )
+            self.assertEqual(photo_awareness_subjects_572[0]["qcode"], "yes")
 
         # Check Finnish text fields
-        fields_572 = planning_227572.get("fields", {})
-        if "sttpicturewhatabout" in fields_572:
+        fields_572 = planning_227572.get("fields", [])
+        fields_572_dict = {field["field"]: field["value"] for field in fields_572}
+        if "sttpicturewhatabout" in fields_572_dict:
             self.assertEqual(
-                fields_572["sttpicturewhatabout"], "ja kv. kuvaa arkistosta."
+                fields_572_dict["sttpicturewhatabout"], "ja kv. kuvaa arkistosta."
             )
 
         self.assertIsNotNone(coverage_227573)
@@ -307,15 +308,14 @@ class STTPlanningMLParserTest(TestCase):
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
         if photo_awareness_subjects_573:
-            self.assertEqual(
-                photo_awareness_subjects_573[0]["qcode"], "sttphotoaware:2"
-            )
+            self.assertEqual(photo_awareness_subjects_573[0]["qcode"], "yes")
 
         # Check Finnish text fields
-        fields_573 = planning_227573.get("fields", {})
-        if "sttpicturewhatabout" in fields_573:
+        fields_573 = planning_227573.get("fields", [])
+        fields_573_dict = {field["field"]: field["value"] for field in fields_573}
+        if "sttpicturewhatabout" in fields_573_dict:
             self.assertEqual(
-                fields_573["sttpicturewhatabout"],
+                fields_573_dict["sttpicturewhatabout"],
                 "arkistokuvaa ja kv. kuvaa arkistosta.",
             )
 
@@ -367,9 +367,7 @@ class STTPlanningMLParserTest(TestCase):
                     if s.get("scheme") == "sttdoesphotographerknow"
                 ]
                 if photo_awareness_subjects:
-                    self.assertEqual(
-                        photo_awareness_subjects[0]["qcode"], "sttphotoaware:2"
-                    )
+                    self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
 
 
 def is_placeholder_coverage(coverage):

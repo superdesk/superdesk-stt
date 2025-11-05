@@ -155,7 +155,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         # Initialize coverage structure with proper fields
         coverage.setdefault("planning", {})
-        coverage["planning"].setdefault("fields", {})
+        coverage["planning"].setdefault("fields", [])
         coverage["planning"].setdefault("subject", [])
 
         # Parse all fields efficiently in single iterations
@@ -176,13 +176,13 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             if qcode.startswith("sttworkstatus:"):
                 self.parse_coverage_status(subject_elt, coverage)
             elif qcode == "sttinternaltext":
-                coverage["internal_note"] = value_text
+                coverage["planning"]["internal_note"] = value_text
             elif qcode.startswith("sttimagetypename:"):
                 self.parse_picture_type(subject_elt, coverage)
             elif qcode.startswith("sttphotoaware:"):
                 self.parse_photographer_awareness(subject_elt, coverage)
             elif qcode == "sttentryinfo":
-                coverage["planning"]["fields"]["sttregistrationinfo"] = value_text
+                self.add_field_to_coverage(coverage, "sttregistrationinfo", value_text)
 
     def parse_non_subject_fields(self, planning_elt: Element, coverage: Dict[str, Any]):
         """Parse non-subject fields"""
@@ -208,6 +208,13 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         # Parse Finnish text fields
         self.parse_finnish_text_fields(planning_elt, coverage)
+
+    def add_field_to_coverage(
+        self, coverage: Dict[str, Any], field_name: str, value: str
+    ):
+        """Add a field to coverage.planning.fields list"""
+        if value:
+            coverage["planning"]["fields"].append({"field": field_name, "value": value})
 
     def parse_coverage_status(self, subject_elt: Element, coverage: Dict[str, Any]):
         """Parse coverage status from sttworkstatus subject using CV from DB"""
@@ -257,23 +264,28 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
     def parse_picture_type(self, subject_elt: Element, coverage: Dict[str, Any]):
         """Parse picture type from sttimagetypename subject"""
         qcode = subject_elt.get("qcode", "")
-        # Convert sttimagetypename:XX to sttimage:XX
-        picture_qcode = qcode.replace("sttimagetypename:", "sttimage:")
+        # Extract the numeric part from sttimagetypename:XX
+        image_type_code = qcode.replace("sttimagetypename:", "")
 
-        # Get picture type from vocabulary and store in planning.subject
-        picture_type = self.get_picture_type_from_vocabulary(picture_qcode)
+        # Get picture type from vocabulary using the name as qcode
+        picture_type = self.get_picture_type_from_vocabulary(image_type_code)
         if picture_type:
             coverage["planning"]["subject"].append(picture_type)
 
-    def get_picture_type_from_vocabulary(self, qcode: str) -> Optional[Dict[str, Any]]:
-        """Get picture type from sttimagetype vocabulary"""
+    def get_picture_type_from_vocabulary(
+        self, image_type_code: str
+    ) -> Optional[Dict[str, Any]]:
+        """Get picture type from sttimagetype vocabulary using the name as qcode"""
         try:
             vocab_service = get_resource_service("vocabularies")
             picture_type_vocab = vocab_service.find_one(req=None, _id="sttimagetype")
 
             if picture_type_vocab and "items" in picture_type_vocab:
                 for item in picture_type_vocab["items"]:
-                    if item.get("qcode") == qcode and item.get("is_active", True):
+                    # Match based on the numeric code from sttimagetypename:XX
+                    if item.get("qcode") == image_type_code and item.get(
+                        "is_active", True
+                    ):
                         return {
                             "qcode": item["qcode"],
                             "name": item.get("name", ""),
@@ -281,7 +293,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
                         }
         except Exception as e:
             logger.warning(
-                f"Failed to get picture type from vocabulary for {qcode}: {e}"
+                f"Failed to get picture type from vocabulary for code {image_type_code}: {e}"
             )
 
         return None
@@ -292,11 +304,16 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         """Parse photographer awareness from sttphotoaware subject"""
         qcode = subject_elt.get("qcode", "")
 
-        # Only store if photographer knows (sttphotoaware:2) or doesn't know (sttphotoaware:1)
-        # Don't store for sttphotoaware:0 (not set)
-        if qcode in ["sttphotoaware:1", "sttphotoaware:2"]:
+        # Map numeric values to "yes"/"no" qcodes
+        awareness_mapping = {
+            "sttphotoaware:2": "yes",  # Photographer knows
+            "sttphotoaware:1": "no",  # Photographer doesn't know
+        }
+
+        mapped_qcode = awareness_mapping.get(qcode)
+        if mapped_qcode:
             photographer_awareness = self.get_photographer_awareness_from_vocabulary(
-                qcode
+                mapped_qcode
             )
             if photographer_awareness:
                 coverage["planning"]["subject"].append(photographer_awareness)
@@ -347,19 +364,20 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         # Fallback: extract from internal_note if imagetype missing
         if not picture_what_about:
-            internal_note = coverage.get("internal_note", "")
+            internal_note = coverage.get("planning", {}).get("internal_note", "")
             match = re.search(r"Kuvitus[:\-]?\s*(.+)", internal_note)
             if match:
                 picture_what_about = match.group(1).strip()
 
-        # Store in planning.fields
         if picture_what_about:
-            coverage["planning"]["fields"]["sttpicturewhatabout"] = picture_what_about
+            self.add_field_to_coverage(
+                coverage, "sttpicturewhatabout", picture_what_about
+            )
 
         if picture_what_is_photographed:
-            coverage["planning"]["fields"][
-                "sttpicturewhatisphotographed"
-            ] = picture_what_is_photographed
+            self.add_field_to_coverage(
+                coverage, "sttpicturewhatisphotographed", picture_what_is_photographed
+            )
 
     async def _get_linked_event_id(self, news_coverage_item: Element) -> Optional[str]:
         planning = news_coverage_item.find(self.qname("planning"))
@@ -494,7 +512,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
                     "slugline": "",
                     "g2_content_type": "text",
                     "scheduled": item.get("planning_date"),
-                    "fields": {},
+                    "fields": [],
                     "subject": [],
                 },
                 "flags": {"placeholder": True},
