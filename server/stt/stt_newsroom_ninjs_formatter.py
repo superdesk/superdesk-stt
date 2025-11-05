@@ -72,15 +72,29 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         vocabulary_items = get_resource_service("vocabularies").get_items("sttversion")
 
         content_profile_name = None
+        qcode = None
         for vocab_item in vocabulary_items:
             if vocab_item.get("name", "").lower() == profile.lower():
                 content_profile_name = vocab_item.get("content_profile_name")
+                qcode = vocab_item.get("qcode")
                 break
 
-        versions = str(
+        version = str(
             content_profile_name if content_profile_name is not None else profile
         ).strip()
-        ninjs["sttversion"] = versions
+
+        if qcode and version:
+            if "subject" not in ninjs:
+                ninjs["subject"] = []
+
+            sttversion_exists = any(
+                subj.get("scheme") == "sttversion" for subj in ninjs["subject"]
+            )
+
+            if not sttversion_exists:
+                ninjs["subject"].append(
+                    {"name": version, "scheme": "sttversion", "code": qcode}
+                )
 
     def update_editorial_note(self, ninjs):
         name = None

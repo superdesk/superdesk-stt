@@ -65,12 +65,18 @@ class STTNewsroomNinjsFormatterTest(TestCase):
     async def test_update_sttversion_from_cv_match(self):
         ninjs = {"profile": "Viiva"}
         self.formatter.update_sttversion(ninjs)
-        self.assertEqual(ninjs.get("sttversion"), "viiva")
+        self.assertIn(
+            {"name": "viiva", "scheme": "sttversion", "code": "1"},
+            ninjs.get("subject", []),
+        )
 
     async def test_update_sttversion_fallback(self):
         ninjs = {"profile": "unknown_profile"}
         self.formatter.update_sttversion(ninjs)
-        self.assertEqual(ninjs.get("sttversion"), "unknown_profile")
+        self.assertNotIn(
+            {"name": "unknown_profile", "scheme": "sttversion"},
+            ninjs.get("subject", []),
+        )
 
     async def test_update_editorial_note(self):
         ninjs = {
