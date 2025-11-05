@@ -264,28 +264,36 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
     def parse_picture_type(self, subject_elt: Element, coverage: Dict[str, Any]):
         """Parse picture type from sttimagetypename subject"""
         qcode = subject_elt.get("qcode", "")
-        # Extract the numeric part from sttimagetypename:XX
-        image_type_code = qcode.replace("sttimagetypename:", "")
 
-        # Get picture type from vocabulary using the name as qcode
-        picture_type = self.get_picture_type_from_vocabulary(image_type_code)
-        if picture_type:
-            coverage["planning"]["subject"].append(picture_type)
+        # Map STT numeric image type codes to new CV qcodes
+        image_type_mapping = {
+            "sttimagetypename:20": "Kuvaaja paikalla",
+            "sttimagetypename:21": "Arkistokuvaa",
+            "sttimagetypename:22": "Handoutkuvaa",
+            "sttimagetypename:23": "Toimittajan kuvaa",
+            "sttimagetypename:24": "Kuvituskuvaa",
+            "sttimagetypename:25": "Kv. kuvaa",
+            "sttimagetypename:26": "Kv. kuvaa arkistosta",
+            "sttimagetypename:27": "Tuoretta kuvaa",
+            "sttimagetypename:28": "Kuvituskuvaa arkistosta",
+            "sttimagetypename:29": "Video",
+        }
 
-    def get_picture_type_from_vocabulary(
-        self, image_type_code: str
-    ) -> Optional[Dict[str, Any]]:
-        """Get picture type from sttimagetype vocabulary using the name as qcode"""
+        mapped_qcode = image_type_mapping.get(qcode)
+        if mapped_qcode:
+            picture_type = self.get_picture_type_from_vocabulary(mapped_qcode)
+            if picture_type:
+                coverage["planning"]["subject"].append(picture_type)
+
+    def get_picture_type_from_vocabulary(self, qcode: str) -> Optional[Dict[str, Any]]:
+        """Get picture type from sttimagetype vocabulary"""
         try:
             vocab_service = get_resource_service("vocabularies")
             picture_type_vocab = vocab_service.find_one(req=None, _id="sttimagetype")
 
             if picture_type_vocab and "items" in picture_type_vocab:
                 for item in picture_type_vocab["items"]:
-                    # Match based on the numeric code from sttimagetypename:XX
-                    if item.get("qcode") == image_type_code and item.get(
-                        "is_active", True
-                    ):
+                    if item.get("qcode") == qcode and item.get("is_active", True):
                         return {
                             "qcode": item["qcode"],
                             "name": item.get("name", ""),
@@ -293,7 +301,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
                         }
         except Exception as e:
             logger.warning(
-                f"Failed to get picture type from vocabulary for code {image_type_code}: {e}"
+                f"Failed to get picture type from vocabulary for {qcode}: {e}"
             )
 
         return None
