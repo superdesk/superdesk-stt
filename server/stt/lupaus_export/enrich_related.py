@@ -55,6 +55,7 @@ def _get_planning_coverages_metadata(
     pl: Dict[str, Any],
     item_type: str,
     imagetypes: bool = False,
+    sttpicturewhatabout: bool = False,
 ) -> Dict[str, Any]:
     """Return coverage metadata for a planning item, fetching from Mongo if needed.
 
@@ -63,6 +64,8 @@ def _get_planning_coverages_metadata(
     coverages. When ``imagetypes`` is ``True`` the function instead collects all
     ``sttimagetype`` subject ``name`` values from the coverages and returns them as
     ``{"imagetypes": [...]}``.
+    If ``sttpicturewhatabout`` is ``True``, the function returns the values from the
+    ``sttpicturewhatabout`` fields from coverages planning fields.
 
     The function first inspects the in-memory planning item and only falls back to a
     Mongo query when the desired information is missing locally.
@@ -74,42 +77,84 @@ def _get_planning_coverages_metadata(
     coverages = [cov for cov in pl.get("coverages") or [] if isinstance(cov, dict)]
 
     imagetypes_local: List[str] = []
-    if imagetypes:
+    sttpicturewhatabouts_local: List[str] = []
+
+    if sttpicturewhatabout:
+        sttpicturewhatabouts_local = _get_sttpicturewhatabouts_from_coverages(coverages)
+        if sttpicturewhatabouts_local:
+            return {"sttpicturewhatabout": sttpicturewhatabouts_local}
+
+    elif imagetypes:
         imagetypes_local = _collect_imagetypes_from_coverages(coverages)
         if imagetypes_local:
             return {"imagetypes": imagetypes_local}
-    else:
-        status = _extract_news_coverage_status(coverages)
+    elif not imagetypes and not sttpicturewhatabout:
+        status = _extract_news_coverage_status(coverages, item_type)
         if status:
             return status
 
     pl_id = pl.get("_id")
     if not pl_id:
-        return {"imagetypes": imagetypes_local} if imagetypes else {}
+        if sttpicturewhatabout:
+            return (
+                {"sttpicturewhatabout": sttpicturewhatabouts_local}
+                if sttpicturewhatabouts_local
+                else {}
+            )
+        elif imagetypes:
+            return {"imagetypes": imagetypes_local} if imagetypes_local else {}
+        return {}
 
     coverages_from_db = _load_coverages_from_mongo(pl_id, item_type)
     if not coverages_from_db:
         return {"imagetypes": imagetypes_local} if imagetypes else {}
 
+    if sttpicturewhatabout:
+        sttpicturewhatabouts_db = _get_sttpicturewhatabouts_from_coverages(
+            coverages_from_db
+        )
+        return {"sttpicturewhatabout": sttpicturewhatabouts_db}
     if imagetypes:
         image_coverage_types = _collect_imagetypes_from_coverages(coverages_from_db)
         return {"imagetypes": image_coverage_types}
 
-    return _extract_news_coverage_status(coverages_from_db)
+    return _extract_news_coverage_status(coverages_from_db, item_type)
 
 
-def _extract_news_coverage_status(coverages: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Return the first non-empty ``news_coverage_status`` mapping from coverages."""
+def _extract_news_coverage_status(
+    coverages: List[Dict[str, Any]], item_type: str
+) -> Dict[str, Any]:
+    """
+    Return the first non-empty ``news_coverage_status`` mapping from coverages.
+    Double check that g2_content_type matches item_type => 'teksti' == 'text'.
+    With 'kuva' (kuvalupaus) it does not matter because we include only items with "Tehdään" ("ncostat:int") status.
+    """
 
     for cov in coverages:
         status = cov.get("news_coverage_status")
+        planning = cov.get("planning")
+        if planning and isinstance(planning, dict):
+            g2_content_type = planning.get("g2_content_type")
+            if item_type == "teksti" and g2_content_type != "text":
+                continue
         if status:
+            """status is a dict like:
+                {
+                "label": "Ehkä",
+                "name": "coverage not decided yet",
+                "qcode": "ncostat:notdec"
+            }"""
             return status
     return {}
 
 
-def _collect_imagetypes_from_coverages(coverages: List[Dict[str, Any]]) -> List[str]:
-    """Collect unique ``sttimagetype`` subject names from coverage planning data."""
+def _collect_imagetypes_from_coverages(
+    coverages: List[Dict[str, Any]],
+) -> List[str]:
+    """
+    Collect unique ``sttimagetype`` subject names from coverage planning data.
+    Exclude if news_coverage_status qcode is not "ncostat:int"
+    """
 
     seen: Set[str] = set()
     imagetypes: List[str] = []
@@ -120,6 +165,10 @@ def _collect_imagetypes_from_coverages(coverages: List[Dict[str, Any]]) -> List[
         subjects = planning.get("subject")
         if not isinstance(subjects, list):
             continue
+        status = cov.get("news_coverage_status")
+        # exclude if news_coverage_status qcode is not "ncostat:int" ("Tehdään")
+        if status and status.get("qcode") != "ncostat:int":
+            continue
         for sub in subjects:
             if not isinstance(sub, dict) or sub.get("scheme") != "sttimagetype":
                 continue
@@ -128,6 +177,23 @@ def _collect_imagetypes_from_coverages(coverages: List[Dict[str, Any]]) -> List[
                 seen.add(name)
                 imagetypes.append(name)
     return imagetypes
+
+
+def _get_sttpicturewhatabouts_from_coverages(
+    coverages: List[Dict[str, Any]],
+) -> List[str]:
+    """sttpicturewhatabout is stored in coverage.planning.fields with field "sttpicturewhatabout" => get the value field value"""
+    sttpicturewhatabouts: List[str] = []
+    for cov in coverages:
+        planning = cov.get("planning")
+        if not isinstance(planning, dict):
+            continue
+        fields = planning.get("fields", [])
+        for field in fields:
+            field_name = field.get("field")
+            if field_name == "sttpicturewhatabout" and field.get("value"):
+                sttpicturewhatabouts.append(field.get("value", ""))
+    return sttpicturewhatabouts
 
 
 def _load_coverages_from_mongo(pl_id: str, item_type: str) -> List[Dict[str, Any]]:
@@ -188,11 +254,11 @@ def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
         numeric_priority = item.get("priority", "")
         # if numeric_priority is > 0, return customized priority with synthetic 'name'-field
         if numeric_priority and numeric_priority > 0:
-            # 1 = Pääaihe (3300), 2 = Perus (2000), 3 = Perus+ (2700), 4 = Lyhyt (800), 5 = Vain tulokset
+            # 1 = Pääaihe (3300), 2 = Perus+ (2700), 3 = Perus (2000), 4 = Lyhyt (800), 5 = Vain tulokset, 6 = Vain tsekkaus
             priority_map = {
                 1: "Pääaihe (3 300)",
-                2: "Perus (2 000)",
-                3: "Perus+ (2 700)",
+                2: "Perus+ (2 700)",
+                3: "Perus (2 000)",
                 4: "Lyhyt (800)",
                 5: "Vain tulokset",
                 6: "Vain tsekkaus",
@@ -271,10 +337,16 @@ def get_numeric_value_from_priority(priority: str) -> str:
         return ""
 
 
-def _set_priority_fields(pl: Dict[str, Any]) -> None:
+def _set_priority_fields(pl: Dict[str, Any], item_type: str) -> None:
     """Compute and set priority fields on a planning item in a single place."""
     priority = get_priority_from_agenda_item(pl)
     priority_numeric = get_numeric_value_from_priority(priority)
+    # if priority is "Vain tsekkaus", do not set the fields (so the item gets excluded)
+    if priority == "Vain tsekkaus":
+        return
+    # if item_type is "teksti" ("basic" lupaus) and priority is "Vain tulokset", do not set the fields (so the item gets excluded)
+    if item_type == "teksti" and priority == "Vain tulokset":
+        return
     pl["stt_priority"] = priority
     pl["stt_priority_numeric"] = priority_numeric
 
@@ -292,13 +364,13 @@ def _get_latest_published_item(
     """
     if not published_items:
         return {}
-    # first filter out items that do not have subject with scheme 'sttnewsroomnote' and qcode "nootherversions", "printformat" or "validforprint"
+    # first filter out items that do not have subject with scheme 'sttnewsroomnote' and qcode "nootherversions" or "printformat"
     filtered_items = [
         item
         for item in published_items
         if any(
             sub.get("scheme") == "sttnewsroomnote"
-            and sub.get("qcode") in ["nootherversions", "printformat", "validforprint"]
+            and sub.get("qcode") in ["nootherversions", "printformat"]
             for sub in item.get("subject", [])
         )
     ]
@@ -328,14 +400,27 @@ def _set_stt_fields(
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
-            # get news_coverage_status for planning item
+            # get news_coverage_status for planning item, note that for 'kuva' item_type the returned value is different
             news_coverage_status = _get_planning_coverages_metadata(pl, item_type)
+            if item_type == "teksti" and not news_coverage_status:
+                continue  # exclude items without news_coverage_status for 'teksti' items
             pl["news_coverage_status"] = news_coverage_status
-            # get sttimagetypes for planning item (always use "kuva" as item_type to get image types)
+            # get sttimagetypes for planning item (always use "kuva" as item_type to get image types from coverages)
             item_imagetypes = _get_planning_coverages_metadata(
                 pl, "kuva", imagetypes=True
             )
             pl["sttimagetypes"] = item_imagetypes.get("imagetypes") or []
+            # get sttpicturewhatabouts for planning item
+            item_sttpicturewhatabouts = _get_planning_coverages_metadata(
+                pl, item_type, sttpicturewhatabout=True
+            )
+            pl["sttpicturewhatabouts"] = (
+                item_sttpicturewhatabouts.get("sttpicturewhatabout") or []
+            )
+            if item_type == "kuva":
+                # if this is an "kuvalupaus" and sttimagetypes is empty, exclude the item
+                if not pl["sttimagetypes"]:
+                    continue
             # try to get latest published item with sttnewsroomnote subject
             published_related_items = (
                 get_published_items_with_sttnewsroomnote_by_planning_id(pl.get("_id"))
@@ -343,7 +428,7 @@ def _set_stt_fields(
             latest_published_item = _get_latest_published_item(published_related_items)
             # attach latest published item to planning item
             pl["latest_published_item"] = latest_published_item
-            _set_priority_fields(pl)
+            _set_priority_fields(pl, item_type)
             if not pl.get("stt_priority"):
                 continue  # exclude items without priority
             # if events is empty list, related_events_expanded will be empty

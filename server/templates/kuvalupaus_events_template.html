@@ -21,34 +21,26 @@
 
 {# Macro to render a single planning item paragraph (reused for grouped & ungrouped) #}
 {% macro render_planning_item(item) -%}
-  {%- set bits = [] -%}
-  {%- if item.slugline %}{% set _ = bits.append(item.slugline) %}{% endif -%}
+  {%- set first_parts = [] -%}
+  {%- if item.slugline %}{% set _ = first_parts.append(item.slugline) %}{% endif -%}
+  {# Add image types and picturewhatabouts to separate list so we can combine them later #}
+  {%- set second_parts = [] -%}
   {# Add coverages if available #}
   {%- if item.sttimagetypes -%}
     {%- set cov_list = item.sttimagetypes if item.sttimagetypes is iterable else [item.sttimagetypes] -%}
     {%- if cov_list | length > 0 -%}
-      {%- set _ = bits.append((cov_list | join(', '))) -%}
+      {%- set _ = second_parts.append((cov_list | join(', '))) -%}
     {%- endif -%}
-  {%- endif -%}
-  {%- if bits %}<p>{{- bits | join('. ') -}}.</p>{% endif -%}
-{%- endmacro %}
-
-{# Macro to render a single main topic item paragraph #}
-{% macro render_main_topic_item(item) -%}
-  {%- set bits = [] -%}
-    {%- if item.slugline -%}
-      {%- set slug = item.slugline | trim -%}
-      {%- if slug.endswith('?') -%}
-        {% set _ = bits.append(slug) %}
-      {%- else -%}
-        {% set _ = bits.append(slug ~ '.') %}
+    {%- if item.sttpicturewhatabouts -%}
+      {%- set whatabout_list = item.sttpicturewhatabouts if item.sttpicturewhatabouts is iterable else [item.sttpicturewhatabouts] -%}
+      {%- if whatabout_list | length > 0 -%}
+        {%- set _ = second_parts.append(whatabout_list | join(', ')) -%}
       {%- endif -%}
     {%- endif -%}
-  {%- set category_str = render_planning_item_category(item) -%}
-  {%- if category_str %}
-    {% set _ = bits.append(category_str) %}
   {%- endif -%}
-  {%- if bits %}<p>{{- bits | join(' ') -}}</p>{% endif -%}
+  {%- if first_parts %}
+    <p>{{- first_parts | join('. ') -}}. {% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}</p>
+  {%- endif -%}
 {%- endmacro %}
 
 {# One paragraph per agenda item; grouped by category if grouped_items present #}
@@ -57,36 +49,9 @@
   {%- if grouped and grouped.items() | count > 0 -%}
     {%- for category, items in grouped.items() -%}
       <h2>{{ category | upper }}</h2>
-      {%- set coverage = namespace(intended=[], undecided=[], other=[]) -%}
       {%- for item in items -%}
-        {%- set status = item.news_coverage_status or {} -%}
-        {%- set status_name = (status.name or '') | lower -%}
-        {%- if status_name == 'coverage intended' -%}
-          {%- set _ = coverage.intended.append(item) -%}
-        {%- elif status_name == 'coverage not decided yet' -%}
-          {%- set _ = coverage.undecided.append(item) -%}
-        {%- else -%}
-          {%- set _ = coverage.other.append(item) -%}
-        {%- endif -%}
-      {%- endfor -%}
-
-      {%- for item in coverage.intended -%}
         {{ render_planning_item(item) }}
       {%- endfor -%}
-
-      {%- if coverage.undecided -%}
-        <h2>JOS AIHETTA</h2>
-        {%- for item in coverage.undecided -%}
-          {{ render_planning_item(item) }}
-        {%- endfor -%}
-      {%- endif -%}
-
-      {%- if coverage.other -%}
-        <h2>EI</h2>
-        {%- for item in coverage.other -%}
-          {{ render_planning_item(item) }}
-        {%- endfor -%}
-      {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}

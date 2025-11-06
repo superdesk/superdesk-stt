@@ -79,10 +79,16 @@
       {%- if cov_list | length > 0 -%}
         {%- set _ = third_parts.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
       {%- endif -%}
+      {%- if item.sttpicturewhatabouts -%}
+        {%- set whatabout_list = item.sttpicturewhatabouts if item.sttpicturewhatabouts is iterable else [item.sttpicturewhatabouts] -%}
+        {%- if whatabout_list | length > 0 -%}
+          {%- set _ = third_parts.append(whatabout_list | join(', ')) -%}
+        {%- endif -%}
+      {%- endif -%}
     {%- endif -%}
   {%- endif -%}
   {%- if first_parts %}
-    <p>- {{ first_parts | join(', ') }}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
+    <p>&ndash;&nbsp; {{ first_parts | join(', ') }}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
   {% endif -%}
 {%- endmacro %}
 
@@ -101,7 +107,7 @@
   {%- if category_str %}
     {% set _ = bits.append(category_str) %}
   {%- endif -%}
-  {%- if bits %}<p>- {{- bits | join(' ') -}}</p>{% endif -%}
+  {%- if bits %}<p>&ndash;&nbsp; {{- bits | join(' ') -}}</p>{% endif -%}
 {%- endmacro %}
 
 {# Actual rendering logic for the agenda items starts here #}
