@@ -347,8 +347,17 @@ def _set_priority_fields(pl: Dict[str, Any], item_type: str) -> None:
     # if item_type is "teksti" ("basic" lupaus) and priority is "Vain tulokset", do not set the fields (so the item gets excluded)
     if item_type == "teksti" and priority == "Vain tulokset":
         return
+    sort_value = -1
+    if isinstance(priority_numeric, str):
+        numeric_str = priority_numeric.replace(" ", "")
+        if numeric_str.isdigit():
+            sort_value = int(numeric_str)
+    elif isinstance(priority_numeric, (int, float)):
+        sort_value = int(priority_numeric)
     pl["stt_priority"] = priority
     pl["stt_priority_numeric"] = priority_numeric
+    # add also a sortable numeric field
+    pl["stt_priority_numeric_sort"] = sort_value
 
 
 def _get_latest_published_item(
@@ -499,12 +508,9 @@ def _get_items_with_highest_priority(
     highest_priority = 3300
     main_topic_items = []
     for pl in ag.get("items") or []:
-        try:
-            priority_numeric = int(pl.get("stt_priority_numeric", "0"))
-            if priority_numeric == highest_priority:
-                main_topic_items.append(pl)
-        except ValueError:
-            continue
+        sort_value = pl.get("stt_priority_numeric_sort")
+        if sort_value == highest_priority:
+            main_topic_items.append(pl)
     return main_topic_items
 
 
