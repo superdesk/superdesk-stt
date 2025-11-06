@@ -138,18 +138,17 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                 # Slugline intentionally mirrors headline for desk workflow (STT-84)
                 "slugline": headline,
                 "body_html": body,
-                "source": source,  # Source = "STT"
+                "original_source": source,  # Source of the press release
                 "priority": 3,  # Priority fixed to 3
                 "language": sel_lang,
-                # anpa_category intentionally omitted for STT Info stock releases
-                "subject": [],
+                "anpa_category": [{"qcode": "12", "name": "Tiedotepalvelu"}],
+                "subject": [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}],
                 "type": "text",
                 "versioncreated": versioncreated,
                 "name": headline,  # Name = headline (XSLT equivalent)
                 "abstract": headline,  # Description = title/headline
                 "extra": {
                     "ntb_pub_name": source,
-                    "department": "Tiedotepalvelu",  # Department
                     "desk": "Kotimaa",  # Desk
                 },
             }
@@ -197,7 +196,7 @@ class STTInfoPorssi(NewsMLOneFeedParser):
             if not url.startswith("http"):
                 raise ValueError("Invalid url: {url}".format(url=url))
             p_elt = etree.SubElement(content_elt, "p")
-            p_elt.text = "Se saken i sin helhet: "
+            p_elt.text = "Lue koko juttu: "
             a_elt = etree.SubElement(p_elt, "a", attrib={"href": url})
             a_elt.text = url
 
