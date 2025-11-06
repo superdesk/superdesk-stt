@@ -938,52 +938,52 @@
             {
                 "is_active": true,
                 "name": "Kuvaaja paikalla",
-                "qcode": "Kuvaaja paikalla"
+                "qcode": "sttimage:20"
             },
             {
                 "is_active": true,
                 "name": "Arkistokuvaa",
-                "qcode": "Arkistokuvaa"
+                "qcode": "sttimage:21"
             },
             {
                 "is_active": true,
                 "name": "Handoutkuvaa",
-                "qcode": "Handoutkuvaa"
+                "qcode": "sttimage:23"
             },
             {
                 "is_active": true,
                 "name": "Toimittajan kuvaa",
-                "qcode": "Toimittajan kuvaa"
+                "qcode": "sttimage:30"
             },
             {
                 "is_active": true,
                 "name": "Kuvituskuvaa",
-                "qcode": "Kuvituskuvaa"
+                "qcode": "sttimage:26"
             },
             {
                 "is_active": true,
                 "name": "Kuvituskuvaa arkistosta",
-                "qcode": "Kuvituskuvaa arkistosta"
+                "qcode": "sttimage:28"
             },
             {
                 "is_active": true,
                 "name": "Kv. kuvaa",
-                "qcode": "Kv. kuvaa"
+                "qcode": "sttimage:27"
             },
             {
                 "is_active": true,
                 "name": "Kv. kuvaa arkistosta",
-                "qcode": "Kv. kuvaa arkistosta"
+                "qcode": "sttimage:29"
             },
             {
                 "is_active": true,
                 "name": "Tuoretta kuvaa",
-                "qcode": "Tuoretta kuvaa"
+                "qcode": "sttimage:71"
             },
             {
                 "is_active": true,
                 "name": "Video",
-                "qcode": "Video"
+                "qcode": "sttimage:70"
             }
         ],
         "type": "manageable",

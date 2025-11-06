@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.12/specification/NewsML-G2_2.12-spec-All-Power.xsd http://www.stt-lehtikuva.fi/NewsML http://www.stt-lehtikuva.fi/newsml/schema/STT-Lehtikuva_NewsML_G2.xsd" guid="urn:newsml:stt.fi:20251028:690975" version="1" standard="NewsML-G2" standardversion="2.12" conformance="power" xml:lang="fi">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_18.xml"/>
+<catalogRef href="http://www.stt-lehtikuva.fi/newsml/doc/stt-NewsCodesCatalog_1.xml"/>
+<itemMeta>
+<itemClass qcode="plinat:newscoverage"/>
+<provider literal="STT"/>
+<versionCreated>2025-10-28T16:19:39+02:00</versionCreated>
+<pubStatus qcode="stat:usable"/>
+<edNote role="sttdescription:additionalinfo">Opetushallituksen tilaisuudessa aiheesta kerrotaan tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen (2023).
+Tilaisuuden avaa Opetushallituksen kansainvälistyminen-päätoiminnon johtaja Minna Koutaniemi. Tilastoja esittelevät erityisasiantuntija Irma Garam ennakointi ja analyysi -yksiköstä ja kansainvälisen markkinoinnin eritysiasiantuntija Harri Lähdekorpi kansainvälistymispalveluista. Median kysymyksiin on vastaamassa myös opetusneuvos, yksikön päällikkö Maija Airas kansainvälisen korkeakouluyhteistyön yksiköstä.</edNote>
+<edNote role="sttdescription:private">Anne ilmoitettu. Ilmoittautumiset viimeistään perjantaina 24.10. media@oph.fi. Teams-linkki lähetetään ilmoittautuneille ma 27.10.
+</edNote>
+</itemMeta>
+<contentMeta>
+<urgency>1</urgency>
+<contentCreated>2025-10-21T09:44:42+02:00</contentCreated>
+<contentModified>2025-10-21T09:44:42+02:00</contentModified>
+<headline>Ulkomaalaisten tutkinto-opiskelijoiden työllistyminen Suomeen jatkaa tasaista kasvua</headline>
+<description role="drol:summary">Opetushallitus esitteli mediatilaisuudessa tuoreimpia tilastojaan vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistymisestä kolme vuotta valmistumisen jälkeen. Merkittävä osa valmistuneista ulkomaalaisista muuttaa Uudellemaalle, vaikka olisi opiskellut muissa maakunnissa. Toimittajana Anne Salomäki.</description>
+<subject qcode="stt-topics:690975">
+<related rel="sttrel:assigneddate" value="2025-10-28" valuedatatype="Date"/>
+</subject>
+<subject type="cpnat:department" qcode="sttdepartment:3">
+<name>Kotimaa</name>
+</subject>
+</contentMeta>
+<assert qcode="stt-topics:690975">
+<newsCoverageStatus qcode="ncostat:int"/>
+</assert>
+<newsCoverageSet>
+<newsCoverage id="ID_TEXT_122392923">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:text"/>
+<scheduled>2025-10-28T23:00:00+02:00</scheduled>
+<headline>Kuinka hyvin ulkomaalaiset tutkinto-opiskelijat ovat työllistyneet?</headline>
+<description>Opetushallituksen tilaisuudessa aiheesta kerrotaan tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen (2023).
+Tilaisuuden avaa Opetushallituksen kansainvälistyminen-päätoiminnon johtaja Minna Koutaniemi. Tilastoja esittelevät erityisasiantuntija Irma Garam ennakointi ja analyysi -yksiköstä ja kansainvälisen markkinoinnin eritysiasiantuntija Harri Lähdekorpi kansainvälistymispalveluista. Median kysymyksiin on vastaamassa myös opetusneuvos, yksikön päällikkö Maija Airas kansainvälisen korkeakouluyhteistyön yksiköstä.</description>
+<subject qcode="stt-topics:690975" type="cpnat:abstract"/>
+<genre qcode="sttgenre:1">
+<name>Pääjuttu</name>
+<narrower qcode="sttversion:3"/>
+<narrower qcode="sttversion:4"/>
+<narrower qcode="sttversion:5"/>
+<narrower qcode="sttversion:6"/>
+<related rel="sttrel:plannedlength" value="3150"/>
+</genre>
+</planning>
+<delivery>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273885">
+<modified>2025-10-28T14:53:22+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273456">
+<modified>2025-10-28T15:06:33+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273788">
+<modified>2025-10-28T14:30:12+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273892">
+<modified>2025-10-28T15:12:25+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273885">
+<modified>2025-10-28T15:08:03+02:00</modified>
+</deliveredItemRef>
+<deliveredItemRef guidref="urn:newsml:stt.fi:20251028:107273456">
+<modified>2025-10-28T14:34:24+02:00</modified>
+</deliveredItemRef>
+</delivery>
+</newsCoverage>
+<newsCoverage id="ID_EVENT_317811" modified="2025-10-23T15:24:50+02:00">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:text"/>
+<headline>Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä</headline>
+<description>Opetushallituksen tilaisuudessa aiheesta kerrotaan tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen (2023).
+Tilaisuuden avaa Opetushallituksen kansainvälistyminen-päätoiminnon johtaja Minna Koutaniemi. Tilastoja esittelevät erityisasiantuntija Irma Garam ennakointi ja analyysi -yksiköstä ja kansainvälisen markkinoinnin eritysiasiantuntija Harri Lähdekorpi kansainvälistymispalveluista. Median kysymyksiin on vastaamassa myös opetusneuvos, yksikön päällikkö Maija Airas kansainvälisen korkeakouluyhteistyön yksiköstä.</description>
+<subject type="cpnat:event" qcode="urn:newsml:stt.fi:20251028:317811">
+<name>Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä</name>
+</subject>
+</planning>
+</newsCoverage>
+<newsCoverage id="ID_WORKREQUEST_227301">
+<planning>
+<g2contentType>application/vnd.iptc.g2.newsitem+xml</g2contentType>
+<itemClass qcode="ninat:picture"/>
+<headline>Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä</headline>
+<subject type="ninat:text" qcode="sttphotoaware:2"/>
+<subject type="ninat:text" qcode="sttworkstatus:2">
+<value>Valmis, ei laskuteta</value>
+</subject>
+<subject type="ninat:text" qcode="sttworktype:2"/>
+<subject type="ninat:text" qcode="sttimagetypename:28">
+<value>Kuvituskuvaa arkistosta</value>
+</subject>
+<subject type="ninat:text" qcode="sttinternaltext">
+<value>aarrggghhh tää on hankala.. lue juttu ja keksi jotain, tässä pari tyrkkyä -tt
+
+93775987,89568598,89568550,89568459
+
+Kuinka hyvin ulkomaalaiset tutkinto-opiskelijat ovat työllistyneet? Opetushallituksen tilaisuudessa klo 10 aiheesta kerrotaan tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen. Toimittajana Anne Salomäki. Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä, klo 10. 3150 merkkiä. Kuvitus: Kuvituskuvaa arkistosta.</value>
+</subject>
+<subject type="ninat:text" qcode="sttentryinfo">
+<value/>
+</subject>
+<subject type="ninat:text" qcode="urn:newsml:stt.fi:20251028100000:227301">
+<definition role="sttdescription:imagetarget">Mediatilaisuus 28.10. klo 10–11: Ulkomaalaisten tutkinto-opiskelijoiden työllistyminen Suomeen
+20.10.2025 14:58:05 | Opetushallitus / Utbildningsstyrelsen | Kutsu
+Tervetuloa Opetushallituksen mediatilaisuuteen, jossa aiheena on ulkomaalaisten tutkinto-opiskelijoiden työllistyminen.
+Aika: tiistai 28.10.2025 klo 10–11
+Paikka: Teams (osallistumislinkki lähetetään ilmoittautuneille)
+Suomalaisista korkeakouluista valmistuu vuosittain tuhansia ulkomaan kansalaisia, jotka suorittavat koko tutkintonsa Suomessa. Kuinka suuri osa heistä jää Suomeen ja kuinka suuri osa löytää töitä omalta alaltaan? Entä miltä Suomen tilanne näyttää kansainvälisessä vertailussa? 
+
+Mediatilaisuudessa tutustumme aiheeseen tuoreimpien tilastojen kautta: Vuonna 2020 valmistuneiden ulkomaalaisten opiskelijoiden työllistyminen kolme vuotta valmistumisen jälkeen (2023).
+
+Tilaisuuden avaa Opetushallituksen kansainvälistyminen-päätoiminnon johtaja Minna Koutaniemi. Tilastoja esittelevät erityisasiantuntija Irma Garam ennakointi ja analyysi -yksiköstä ja kansainvälisen markkinoinnin eritysiasiantuntija Harri Lähdekorpi kansainvälistymispalveluista. Median kysymyksiin on vastaamassa myös opetusneuvos, yksikön päällikkö Maija Airas kansainvälisen korkeakouluyhteistyön yksiköstä.
+
+Ilmoittaudu viimeistään perjantaina 24.10.
+Tilaisuuteen ilmoittaudutaan sähköpostitse osoitteeseen media@oph.fi. Ilmoitathan viestissä nimesi, sähköpostiosoitteesi sekä edustamasi median.
+
+Lähetämme osallistumislinkin ilmoittautuneille maanantaina 27.10.
+
+Lähetämme tilaisuuden materiaalit ilmoittautuneille toimittajille sähköpostitse tilaisuuden jälkeen. Materiaalit julkaistaan myös Opetushallituksen verkkosivuilla.
+
+Lämpimästi tervetuloa!</definition>
+<stt:workstartdate>2025-10-28T10:00:00+02:00</stt:workstartdate>
+<stt:workenddate>2025-10-28T11:00:00+02:00</stt:workenddate>
+</subject>
+<dateline>Suomi</dateline>
+<genre qcode="sttimage:28">
+<name>Kuvituskuvaa arkistosta</name>
+</genre>
+</planning>
+</newsCoverage>
+</newsCoverageSet>
+</planningItem>

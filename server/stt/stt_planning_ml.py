@@ -1,5 +1,6 @@
 import pytz
 import logging
+import re
 
 from typing import Dict, Any, Optional, Set
 from xml.etree.ElementTree import Element
@@ -40,6 +41,9 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         "sttdepartment": "sttdepartment",
         "sttsubj": "sttsubj",
     }
+
+    # STT namespace for internal fields
+    NS = {"stt": "http://www.stt.fi/internal"}
 
     async def get_item_id(self, tree: Element) -> str:
         item_id = await super(STTPlanningMLParser, self).get_item_id(tree)
@@ -93,6 +97,9 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         item.setdefault("extra", {})["stt_topics"] = item["guid"].split(":")[-1]
 
+        # Parse planning item internal note
+        self.parse_planning_internal_note(tree, item)
+
         news_coverage_set = tree.find(self.qname("newsCoverageSet"))
         if news_coverage_set is not None:
             await self._create_temp_assignment_deliveries(
@@ -106,6 +113,14 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         if meta is not None:
             subjects = meta.findall(self.qname("subject"))
             self.parse_subjects(item, subjects)
+
+    def parse_planning_internal_note(self, tree: Element, item: Dict[str, Any]):
+        """Parse internal note for planning item from edNote with role sttdescription:private"""
+        ed_note = tree.find(
+            f'.//{self.qname("edNote")}[@role="sttdescription:private"]'
+        )
+        if ed_note is not None and ed_note.text:
+            item["internal_note"] = ed_note.text.strip()
 
     async def get_coverage_details(
         self, news_coverage_elt: Element, item: Planning, original: Optional[Planning]
@@ -124,7 +139,242 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             # Return ``None`` so this coverage isn't added to the Planning item
             return None
 
-        return await super().get_coverage_details(news_coverage_elt, item, original)
+        coverage = await super().get_coverage_details(news_coverage_elt, item, original)
+        if coverage is not None:
+            # Parse STT-specific fields for all coverages
+            self.parse_stt_coverage_fields(news_coverage_elt, coverage)
+        return coverage
+
+    def parse_stt_coverage_fields(
+        self, news_coverage_elt: Element, coverage: Dict[str, Any]
+    ):
+        """Parse STT-specific coverage fields from XML"""
+        planning_elt = news_coverage_elt.find(self.qname("planning"))
+        if planning_elt is None:
+            return
+
+        # Initialize coverage structure with proper fields
+        coverage.setdefault("planning", {})
+        coverage["planning"].setdefault("fields", [])
+        coverage["planning"].setdefault("subject", [])
+
+        # Parse all fields efficiently in single iterations
+        self.parse_all_subject_fields(planning_elt, coverage)
+        self.parse_non_subject_fields(planning_elt, coverage)
+
+    def parse_all_subject_fields(self, planning_elt: Element, coverage: Dict[str, Any]):
+        """Parse all subject fields in a single iteration"""
+        for subject_elt in planning_elt.findall(self.qname("subject")):
+            qcode = subject_elt.get("qcode", "")
+            value_elt = subject_elt.find(self.qname("value"))
+            value_text = (
+                value_elt.text.strip()
+                if value_elt is not None and value_elt.text
+                else ""
+            )
+
+            if qcode.startswith("sttworkstatus:"):
+                self.parse_coverage_status(subject_elt, coverage)
+            elif qcode == "sttinternaltext":
+                coverage["planning"]["internal_note"] = value_text
+            elif qcode.startswith("sttimagetypename:"):
+                self.parse_picture_type(subject_elt, coverage)
+            elif qcode.startswith("sttphotoaware:"):
+                self.parse_photographer_awareness(subject_elt, coverage)
+            elif qcode == "sttentryinfo":
+                self.add_field_to_coverage(coverage, "sttregistrationinfo", value_text)
+
+    def parse_non_subject_fields(self, planning_elt: Element, coverage: Dict[str, Any]):
+        """Parse non-subject fields"""
+        # Parse headline
+        headline_elt = planning_elt.find(self.qname("headline"))
+        if headline_elt is not None and headline_elt.text:
+            coverage["planning"]["headline"] = headline_elt.text.strip()
+
+        # Parse scheduled/due date
+        workstartdate_elt = planning_elt.find(
+            self.qname("workstartdate", ns=self.NS["stt"])
+        )
+        if workstartdate_elt is not None and workstartdate_elt.text:
+            try:
+                # Always use STT workstartdate when available
+                coverage["planning"]["scheduled"] = self.datetime(
+                    workstartdate_elt.text
+                )
+            except (ValueError, TypeError):
+                logger.warning(
+                    f"Failed to parse workstartdate: {workstartdate_elt.text}"
+                )
+
+        # Parse Finnish text fields
+        self.parse_finnish_text_fields(planning_elt, coverage)
+
+    def add_field_to_coverage(
+        self, coverage: Dict[str, Any], field_name: str, value: str
+    ):
+        """Add a field to coverage.planning.fields list"""
+        if value:
+            coverage["planning"]["fields"].append({"field": field_name, "value": value})
+
+    def parse_coverage_status(self, subject_elt: Element, coverage: Dict[str, Any]):
+        """Parse coverage status from sttworkstatus subject using CV from DB"""
+        qcode = subject_elt.get("qcode", "")
+
+        # Map STT internal workstatus to Superdesk coverage status
+        status_mapping = {
+            "sttworkstatus:1": "ncostat:int",
+            "sttworkstatus:2": "ncostat:int",
+            "sttworkstatus:3": "ncostat:int",
+            "sttworkstatus:4": "ncostat:notint",
+            "sttworkstatus:5": "ncostat:notdec",
+        }
+
+        mapped_status = status_mapping.get(qcode)
+        if mapped_status:
+            # Get coverage status from vocabulary
+            coverage_status = self.get_coverage_status_from_vocabulary(mapped_status)
+            if coverage_status:
+                coverage["news_coverage_status"] = coverage_status
+
+    def get_coverage_status_from_vocabulary(
+        self, qcode: str
+    ) -> Optional[Dict[str, Any]]:
+        """Get coverage status from newscoveragestatus vocabulary"""
+        try:
+            vocab_service = get_resource_service("vocabularies")
+            coverage_status_vocab = vocab_service.find_one(
+                req=None, _id="newscoveragestatus"
+            )
+
+            if coverage_status_vocab and "items" in coverage_status_vocab:
+                for item in coverage_status_vocab["items"]:
+                    if item.get("qcode") == qcode and item.get("is_active", True):
+                        return {
+                            "qcode": item["qcode"],
+                            "name": item.get("name", ""),
+                            "label": item.get("label", ""),  # Use label from vocabulary
+                        }
+        except Exception as e:
+            logger.warning(
+                f"Failed to get coverage status from vocabulary for {qcode}: {e}"
+            )
+
+        return None
+
+    def parse_picture_type(self, subject_elt: Element, coverage: Dict[str, Any]):
+        """Parse picture type from sttimagetypename subject"""
+        qcode = subject_elt.get("qcode", "")
+
+        # Direct mapping: sttimagetypename:XX -> sttimage:XX
+        if qcode.startswith("sttimagetypename:"):
+            numeric_code = qcode.split(":")[1]
+            mapped_qcode = f"sttimage:{numeric_code}"
+
+            picture_type = self.get_picture_type_from_vocabulary(mapped_qcode)
+            if picture_type:
+                coverage["planning"]["subject"].append(picture_type)
+
+    def get_picture_type_from_vocabulary(self, qcode: str) -> Optional[Dict[str, Any]]:
+        """Get picture type from sttimagetype vocabulary"""
+        try:
+            vocab_service = get_resource_service("vocabularies")
+            picture_type_vocab = vocab_service.find_one(req=None, _id="sttimagetype")
+
+            if picture_type_vocab and "items" in picture_type_vocab:
+                for item in picture_type_vocab["items"]:
+                    if item.get("qcode") == qcode and item.get("is_active", True):
+                        return {
+                            "qcode": item["qcode"],
+                            "name": item.get("name", ""),
+                            "scheme": "sttimagetype",
+                        }
+        except Exception as e:
+            logger.warning(
+                f"Failed to get picture type from vocabulary for {qcode}: {e}"
+            )
+
+        return None
+
+    def parse_photographer_awareness(
+        self, subject_elt: Element, coverage: Dict[str, Any]
+    ):
+        """Parse photographer awareness from sttphotoaware subject"""
+        qcode = subject_elt.get("qcode", "")
+
+        # Map numeric values to "yes"/"no" qcodes
+        awareness_mapping = {
+            "sttphotoaware:2": "yes",  # Photographer knows
+            "sttphotoaware:1": "no",  # Photographer doesn't know
+        }
+
+        mapped_qcode = awareness_mapping.get(qcode)
+        if mapped_qcode:
+            photographer_awareness = self.get_photographer_awareness_from_vocabulary(
+                mapped_qcode
+            )
+            if photographer_awareness:
+                coverage["planning"]["subject"].append(photographer_awareness)
+
+    def get_photographer_awareness_from_vocabulary(
+        self, qcode: str
+    ) -> Optional[Dict[str, Any]]:
+        """Get photographer awareness from sttdoesphotographerknow vocabulary"""
+        try:
+            vocab_service = get_resource_service("vocabularies")
+            awareness_vocab = vocab_service.find_one(
+                req=None, _id="sttdoesphotographerknow"
+            )
+
+            if awareness_vocab and "items" in awareness_vocab:
+                for item in awareness_vocab["items"]:
+                    if item.get("qcode") == qcode and item.get("is_active", True):
+                        return {
+                            "qcode": item["qcode"],
+                            "name": item.get("name", ""),
+                            "scheme": "sttdoesphotographerknow",
+                        }
+        except Exception as e:
+            logger.warning(
+                f"Failed to get photographer awareness from vocabulary for {qcode}: {e}"
+            )
+
+        return None
+
+    def parse_finnish_text_fields(
+        self, planning_elt: Element, coverage: Dict[str, Any]
+    ):
+        """Parse Finnish text fields from definition elements"""
+        picture_what_about = None
+        picture_what_is_photographed = None
+
+        for definition_elt in planning_elt.findall(self.qname("definition")):
+            role = definition_elt.get("role", "")
+            text = "".join(definition_elt.itertext()).strip()
+
+            if not text:
+                continue
+
+            if role == "sttdescription:imagetype":
+                picture_what_about = text
+            elif role == "sttdescription:imagetarget":
+                picture_what_is_photographed = text
+
+        # Fallback: extract from internal_note if imagetype missing
+        if not picture_what_about:
+            internal_note = coverage.get("planning", {}).get("internal_note", "")
+            match = re.search(r"Kuvitus[:\-]?\s*(.+)", internal_note)
+            if match:
+                picture_what_about = match.group(1).strip()
+
+        if picture_what_about:
+            self.add_field_to_coverage(
+                coverage, "sttpicturewhatabout", picture_what_about
+            )
+
+        if picture_what_is_photographed:
+            self.add_field_to_coverage(
+                coverage, "sttpicturewhatisphotographed", picture_what_is_photographed
+            )
 
     async def _get_linked_event_id(self, news_coverage_item: Element) -> Optional[str]:
         planning = news_coverage_item.find(self.qname("planning"))
@@ -251,19 +501,26 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             if get_coverage_type(coverage) == "text"
         ):
             # There are no text coverages for this item. Add a placeholder one now
-            item["coverages"].append(
-                {
-                    "coverage_id": f"placeholder_{item.get('guid')}",
-                    "workflow_status": "draft",
-                    "firstcreated": item.get("firstcreated"),
-                    "planning": {
-                        "slugline": "",
-                        "g2_content_type": "text",
-                        "scheduled": item.get("planning_date"),
-                    },
-                    "flags": {"placeholder": True},
-                }
-            )
+            placeholder_coverage = {
+                "coverage_id": f"placeholder_{item.get('guid')}",
+                "workflow_status": "draft",
+                "firstcreated": item.get("firstcreated"),
+                "planning": {
+                    "slugline": "",
+                    "g2_content_type": "text",
+                    "scheduled": item.get("planning_date"),
+                    "fields": [],
+                    "subject": [],
+                },
+                "flags": {"placeholder": True},
+            }
+
+            # Set default coverage status for placeholder using vocabulary
+            coverage_status = self.get_coverage_status_from_vocabulary("ncostat:notint")
+            if coverage_status:
+                placeholder_coverage["news_coverage_status"] = coverage_status
+
+            item["coverages"].append(placeholder_coverage)
 
         self.parse_news_coverage_status(tree, item)
 
