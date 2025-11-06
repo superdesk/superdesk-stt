@@ -73,10 +73,20 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
 
         content_profile_name = None
         qcode = None
+        profile_lower = profile.lower()
+
         for vocab_item in vocabulary_items:
-            if vocab_item.get("name", "").lower() == profile.lower():
+            vocab_name = vocab_item.get("name", "").lower()
+            vocab_cp_name = vocab_item.get("content_profile_name", "").lower()
+
+            if vocab_name == profile_lower or vocab_cp_name == profile_lower:
                 content_profile_name = vocab_item.get("content_profile_name")
                 qcode = vocab_item.get("qcode")
+
+                # Special case for backward consistency
+                if profile_lower in ("pikaplus", "pika+"):
+                    content_profile_name = "Pika+"
+
                 break
 
         version = (
