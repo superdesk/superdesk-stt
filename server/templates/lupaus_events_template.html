@@ -124,62 +124,73 @@
 {# ---------------------------------------- #}
 {# One paragraph per agenda item; grouped by category if grouped_items present #}
 {%- for agenda in agendas or [] -%}
-  {%- set main_topic_items = agenda.get('main_topic_items') -%}
-  {%- if main_topic_items and main_topic_items | count > 0 -%}
-    <h2>KÄRKIAIHEITAMME</h2>
-    {%- for item in main_topic_items -%}
-      {{ render_main_topic_item(item) }}
-    {%- endfor -%}
-  {%- endif -%}
   {%- set grouped = agenda.get('grouped_items') -%}
+  {%- set has_multiple_dates = agenda.get('has_multiple_dates') -%}
   {%- if grouped and grouped.items() | count > 0 -%}
-    {%- for category, items in grouped.items() -%}
-      <h2>{{ category | upper }}</h2>
-      {%- set coverage = namespace(intended=[], undecided=[], other=[], sent=[]) -%}
-      {%- for item in items -%}
-        {%- set status = item.news_coverage_status or {} -%}
-        {%- set status_name = (status.name or '') | lower -%}
-        {# If item has "latest_published_item", add it to coverage.sent and skip the coverage status_name checks #}
-        {%- if item.latest_published_item and item.latest_published_item._id -%}
-          {%- set _ = coverage.sent.append(item) -%}
-        {%- elif status_name == 'coverage intended' -%}
-          {%- set _ = coverage.intended.append(item) -%}
-        {%- elif status_name == 'coverage not decided yet' -%}
-          {%- set _ = coverage.undecided.append(item) -%}
-        {%- else -%}
-          {%- set _ = coverage.other.append(item) -%}
+    {%- for planning_date, categories in grouped.items() -%}
+      {%- if categories and categories.items() | count > 0 -%}
+        {%- if has_multiple_dates -%}
+          {%- if planning_date == 'Undated' -%}
+            <h2>{{ planning_date }}</h2>
+          {%- else -%}
+            <h2>{{ planning_date | fi_date(capitalized=True) }}</h2>
+          {%- endif -%}
         {%- endif -%}
-      {%- endfor -%}
+        {%- for category, items in categories.items() if items -%}
+          {%- if category == 'main_topic_items' -%}
+            <h2>KÄRKIAIHEITAMME</h2>
+            {%- for item in items -%}
+              {{ render_main_topic_item(item) }}
+            {%- endfor -%}
+          {%- else -%}
+            <h2>{{ category | upper }}</h2>
+            {%- set coverage = namespace(intended=[], undecided=[], other=[], sent=[]) -%}
+            {%- for item in items -%}
+              {%- set status = item.news_coverage_status or {} -%}
+              {%- set status_name = (status.name or '') | lower -%}
+              {# If item has "latest_published_item", add it to coverage.sent and skip the coverage status_name checks #}
+              {%- if item.latest_published_item and item.latest_published_item._id -%}
+                {%- set _ = coverage.sent.append(item) -%}
+              {%- elif status_name == 'coverage intended' -%}
+                {%- set _ = coverage.intended.append(item) -%}
+              {%- elif status_name == 'coverage not decided yet' -%}
+                {%- set _ = coverage.undecided.append(item) -%}
+              {%- else -%}
+                {%- set _ = coverage.other.append(item) -%}
+              {%- endif -%}
+            {%- endfor -%}
 
-      {%- set intended_items = coverage.intended | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
-      {%- for item in intended_items -%}
-        {{ render_planning_item(item) }}
-      {%- endfor -%}
+            {%- set intended_items = coverage.intended | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
+            {%- for item in intended_items -%}
+              {{ render_planning_item(item) }}
+            {%- endfor -%}
 
-      {%- set sent_items = coverage.sent | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
-      {%- if sent_items -%}
-        <h3>LÄHETETYT</h3>
-        {%- for item in sent_items -%}
-          {{ render_planning_item(item) }}
+            {%- set sent_items = coverage.sent | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
+            {%- if sent_items -%}
+              <h3>LÄHETETYT</h3>
+              {%- for item in sent_items -%}
+                {{ render_planning_item(item) }}
+              {%- endfor -%}
+            {%- endif -%}
+
+            {%- set undecided_items = coverage.undecided | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
+            {%- if undecided_items -%}
+              <h2>JOS AIHETTA</h2>
+              {%- for item in undecided_items -%}
+                {{ render_planning_item(item) }}
+              {%- endfor -%}
+            {%- endif -%}
+
+            {%- set other_items = coverage.other | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
+            {%- if other_items -%}
+              <h2>EI</h2>
+              {%- for item in other_items -%}
+                {{ render_planning_item(item) }}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endif -%}
         {%- endfor -%}
       {%- endif -%}
-
-      {%- set undecided_items = coverage.undecided | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
-      {%- if undecided_items -%}
-        <h2>JOS AIHETTA</h2>
-        {%- for item in undecided_items -%}
-          {{ render_planning_item(item) }}
-        {%- endfor -%}
-      {%- endif -%}
-
-      {%- set other_items = coverage.other | sort(attribute='stt_priority_numeric_sort', reverse=True) -%}
-      {%- if other_items -%}
-        <h2>EI</h2>
-        {%- for item in other_items -%}
-          {{ render_planning_item(item) }}
-        {%- endfor -%}
-      {%- endif -%}
-
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}

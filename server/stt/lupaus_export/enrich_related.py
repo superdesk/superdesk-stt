@@ -1,3 +1,4 @@
+import datetime
 from typing import Dict, List, Any, Set
 import logging
 
@@ -400,10 +401,25 @@ def _set_stt_fields(
     item_type: str,
 ) -> List[Dict[str, Any]]:
     """
-    Sets stt_priority and stt_priority_numeric fields on each planning item.
-    Filters out items without a valid stt_priority.
-    If events is empty, sets related_events_expanded to [].
-    Expands related_events to related_events_expanded using by_key mapping.
+    Enrich agendas with the metadata required by the Lupaus/Kuva exports.
+
+    For each planning item the function:
+    - attaches coverage metadata (``news_coverage_status``, ``sttimagetypes``,
+        ``sttpicturewhatabouts``) and the latest published item when available
+    - skips items that lack the coverage information or priority expected for
+        the given ``item_type``
+    - sets ``stt_priority``, ``stt_priority_numeric`` and
+        ``stt_priority_numeric_sort``
+        - expands related events into a chronologically sorted
+            ``related_events_expanded`` when event lookups are supplied
+
+    After processing, each agenda contains:
+    - ``grouped_items``: mapping planning dates to categories and their items
+    - ``has_multiple_dates``: flag indicating several planning dates are present
+    - ``main_topic_items``: items whose priority numeric equals the highest
+        configured value (3300)
+
+    Returns the filtered/enriched agendas list.
     """
 
     for ag in agendas or []:
@@ -445,60 +461,164 @@ def _set_stt_fields(
                 pl["related_events_expanded"] = []
                 new_items.append(pl)
                 continue
-            # Expand related events
+            # Expand related events and sort by start date (with fallback to end)
             expanded: List[Dict[str, Any]] = []
             for rel_event in pl.get("related_events") or []:
                 key = rel_event.get("_id")
                 ev = by_key.get(str(key)) if key else None
                 if ev:
                     expanded.append(ev)
+            expanded.sort(
+                key=lambda e: e.get("dates", {}).get("start")
+                or e.get("dates", {}).get("end")
+                or ""
+            )
             pl["related_events_expanded"] = expanded
             new_items.append(pl)
         ag["items"] = new_items
-        # group agenda items by category
-        grouped_agendas = _group_agenda_items_by_category(ag)
+        # group agenda items
+        grouped_agendas = _group_agenda_items(ag, item_type)
+        ag["has_multiple_dates"] = len(grouped_agendas) > 1
         # and attach to agenda
         ag["grouped_items"] = grouped_agendas
-        # get main topic items (highest priority)
-        main_topic_items = _get_items_with_highest_priority(ag)
-        ag["main_topic_items"] = main_topic_items
     return agendas
 
 
-def _group_agenda_items_by_category(
+def _group_agenda_items_by_planning_date(
     ag: Dict[str, Any],
 ) -> Dict[str, List[Dict[str, Any]]]:
     """
-    Groups agenda items by their category.
+    Groups agenda items by their planning date.
 
     Args:
         agendas: A list of agenda dictionaries. Each agenda may include an "items"
-            list; each item may include a "categories" field.
+            list; each item may include a "planning_date" field.
 
     Returns:
-        A dictionary where keys are categories and values are lists of agenda items
-        belonging to those categories. Items without a category are grouped under
-        the key 'Uncategorized'.
+        A dictionary where keys are planning dates and values are lists of agenda items
+        belonging to those planning dates. Items without a planning date are grouped under
+        the key 'Undated'.
     """
-    categorized_items: Dict[str, List[Dict[str, Any]]] = {}
+    dated_items: Dict[str, List[Dict[str, Any]]] = {}
     for pl in ag.get("items") or []:
-        category_name = get_category_from_agenda_item(pl) or "Uncategorized"
-        if category_name not in categorized_items:
-            categorized_items[category_name] = []
-        categorized_items[category_name].append(pl)
-    # sort categories like: Kotimaa, Politiikka, Talous, Kulttuuri, Ulkomaat, Urheilu
-    sorted_categories = [
-        "Kotimaa",
-        "Politiikka",
-        "Talous",
-        "Kulttuuri",
-        "Ulkomaat",
-        "Urheilu",
-    ]
-    categorized_items = {
-        k: categorized_items[k] for k in sorted_categories if k in categorized_items
+        planning_date_value = pl.get("planning_date")
+        planning_date = "Undated"
+
+        if isinstance(planning_date_value, datetime.datetime):
+            planning_date = planning_date_value.date().isoformat()
+        elif isinstance(planning_date_value, datetime.date):
+            planning_date = planning_date_value.isoformat()
+        elif isinstance(planning_date_value, str):
+            planning_date = planning_date_value
+            if "T" in planning_date:
+                planning_date = planning_date.split("T")[0]
+        # tolerate falsy values after normalization
+        if not planning_date:
+            planning_date = "Undated"
+        if planning_date not in dated_items:
+            dated_items[planning_date] = []
+        dated_items[planning_date].append(pl)
+    return dated_items
+
+
+def _select_main_topic_items_for_date(
+    date_items: List[Dict[str, Any]],
+    main_topic_items: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Return main-topic items that belong to the supplied date bucket.
+
+    Falls back to comparing ``_id`` values in case the objects referenced by
+    ``main_topic_items`` differ from the entries stored in ``date_items``.
+    """
+
+    if not main_topic_items or not date_items:
+        return []
+
+    selected: List[Dict[str, Any]] = []
+    date_item_ids = {
+        item.get("_id")
+        for item in date_items
+        if isinstance(item, dict) and item.get("_id")
     }
-    return categorized_items
+
+    for candidate in main_topic_items:
+        if candidate in date_items:
+            selected.append(candidate)
+            continue
+        candidate_id = candidate.get("_id") if isinstance(candidate, dict) else None
+        if candidate_id and candidate_id in date_item_ids:
+            selected.append(candidate)
+
+    return selected
+
+
+def _group_agenda_items(
+    ag: Dict[str, Any], item_type: str
+) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+    """
+    Groups agenda items first by planning date and then by category.
+    Add main_topic_items key for highest-priority items for each date if item_type is "teksti".
+
+    Args:
+        ag: A single agenda dictionary that already contains an "items" list.
+
+    Returns:
+        A nested dictionary of the form ``{date: {"Kotimaa": [items...]}, "Politiikka": [items...]}, main_topic_items: [items...]}``. Items without a
+        category are grouped under the key ``"Uncategorized"`` inside their respective date.
+    """
+    main_topic_items = _get_items_with_highest_priority(ag)
+    grouped_by_date: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
+    for date, items in _group_agenda_items_by_planning_date(ag).items():
+        logger.info(f"Grouping agenda items for date: {date}")
+        categories_for_date: Dict[str, List[Dict[str, Any]]] = {}
+        # Add main_topic_items key if item_type is "teksti" (kuvalupaus does not have main topics)
+        if item_type == "teksti":
+            # Check if the highest-priority items fall into this date bucket.
+            main_topic_items_for_date = _select_main_topic_items_for_date(
+                items, main_topic_items
+            )
+            if main_topic_items_for_date:
+                categories_for_date["main_topic_items"] = main_topic_items_for_date
+        for pl in items:
+            category_name = get_category_from_agenda_item(pl) or "Uncategorized"
+            categories_for_date.setdefault(category_name, []).append(pl)
+
+        # Preferred category ordering
+        preferred_order = [
+            "Kotimaa",
+            "Politiikka",
+            "Talous",
+            "Kulttuuri",
+            "Ulkomaat",
+            "Urheilu",
+        ]
+        ordered_categories: Dict[str, List[Dict[str, Any]]] = {}
+        remaining = dict(categories_for_date)
+        if "main_topic_items" in remaining:
+            ordered_categories["main_topic_items"] = remaining.pop("main_topic_items")
+        for category in preferred_order:
+            if category in remaining:
+                ordered_categories[category] = remaining.pop(category)
+        for category in sorted(remaining.keys()):
+            ordered_categories[category] = remaining[category]
+
+        grouped_by_date[date] = ordered_categories
+    # sort dates chronologically
+
+    def _sort_key(key: str) -> datetime.datetime:
+        try:
+            return datetime.datetime.fromisoformat(key)
+        except (ValueError, TypeError):
+            # place undated entries at the end while keeping sort stable
+            return datetime.datetime.max
+
+    grouped_by_date = dict(
+        sorted(
+            grouped_by_date.items(),
+            key=lambda item: _sort_key(item[0]),
+        )
+    )
+    return grouped_by_date
 
 
 def _get_items_with_highest_priority(
@@ -518,17 +638,24 @@ def enrich_planning_agendas(
     agendas: List[Dict[str, Any]], item_type: str
 ) -> List[Dict[str, Any]]:
     """
-    Adds item.related_events_expanded = [event, ...]
-    Each event has at least: _id, name, dates, location (resolved if IDs).
-    Also adds item.stt_priority and item.stt_priority_numeric fields.
+    Enrich every planning agenda with the data required by the Lupaus exports.
+
+    The function:
+    - drops draft agenda items
+    - looks up related events in bulk (when IDs are present)
+    - delegates to :func:`_set_stt_fields` to attach coverage metadata, priorities,
+      chronologically sorted ``related_events_expanded`` values, grouped items,
+      and main-topic selections
+
     Args:
-        agendas: A list of agenda dictionaries. Each agenda may include an "items"
-            list; each item may include a "related_events" list of mappings.
-        item_type: The type of the planning item, 'teksti' / 'kuva'.
+        agendas: Source agendas that may contain ``items`` and related event
+            references.
+        item_type: The Lupaus flavour (``"teksti"`` or ``"kuva"``) which
+            influences filtering rules.
+
     Returns:
-        The input list of agendas, with each planning item enriched with
-        'related_events_expanded', 'stt_priority', and 'stt_priority_numeric' fields.
-        Items without a valid 'stt_priority' are excluded from the agendas.
+        The same agenda list with each entry enriched in-place. Items that do
+        not meet the Lupaus requirements are filtered out of their agendas.
     """
     for ag in agendas:
         # Exclude draft items
@@ -566,14 +693,5 @@ def enrich_planning_agendas(
             by_key[str(e["_id"])] = e
     # Attach to each planning item
     _set_stt_fields(agendas, by_key, events, item_type)
-
-    # Sort related_events_expanded by start date
-    for ag in agendas or []:
-        for pl in ag.get("items") or []:
-            pl["related_events_expanded"].sort(
-                key=lambda e: e.get("dates", {}).get("start")
-                or e.get("dates", {}).get("end")
-                or ""
-            )
 
     return agendas
