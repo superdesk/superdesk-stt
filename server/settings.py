@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "stt.io.feeding_services.stt_http_with_since",
     "stt.io.feeding_services.stt_tt_content_api",
     "stt.io.feed_parsers.stt_tt_parse_content_api",
+    "stt.stt_json_event_formatter",
 ]
 
 MODULES.append("planning")
@@ -167,10 +168,10 @@ CONTENT_EXPIRY_MINUTES = 43200
 SPIKE_EXPIRY_MINUTES = int(env("SPIKE_EXPIRY_MINUTES", 3 * 24 * 60))
 
 # Expire items 3 days after their scheduled date. Defaults to 0 = disabled
-PLANNING_EXPIRY_MINUTES = int(env("PLANNING_EXPIRY_MINUTES", 4320))
+PLANNING_EXPIRY_MINUTES = int(env("PLANNING_EXPIRY_MINUTES", 0))
 
 # Delete spiked events/plannings after their scheduled date. Defaults to 0 = disabled
-PLANNING_DELETE_SPIKED_MINUTES = int(env("PLANNING_DELETE_SPIKED_MINUTES", 1440))
+PLANNING_DELETE_SPIKED_MINUTES = int(env("PLANNING_DELETE_SPIKED_MINUTES", 0))
 
 #: The number of minutes before Publish Queue is purged
 PUBLISH_QUEUE_EXPIRY_MINUTES = int(env("PUBLISH_QUEUE_EXPIRY_MINUTES", 3 * 24 * 60))
@@ -247,7 +248,7 @@ STREET_MAP_URL = "https://www.google.fi/maps/?q="
 # MAX_MULTI_DAY_EVENT_DURATION = int(env('MAX_MULTI_DAY_EVENT_DURATION', 7))
 
 # enable event templates
-PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", "true")
+PLANNING_EVENT_TEMPLATES_ENABLED = env("PLANNING_EVENT_TEMPLATES_ENABLED", True)
 
 # Template for export events as articles that overwrites default template
 # default: https://github.com/superdesk/superdesk-planning/blob/develop/server/planning/planning_export_templates.py

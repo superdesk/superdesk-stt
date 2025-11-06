@@ -1,0 +1,54 @@
+{
+  "_created": "2025-11-03T09:46:43+0000",
+  "_current_version": 1762163208921,
+  "_etag": "c5957e67cabc89d507f96fcb14ff0a92157b9431",
+  "_id": "58475490-83ca-4606-8fb4-fc41fad028b2",
+  "_planning_schedule": [{ "scheduled": "2025-11-03T00:00:00+0000" }],
+  "_time_to_be_confirmed": true,
+  "_updated": "2025-11-03T09:46:48+0000",
+  "actioned_date": null,
+  "anpa_category": [{ "name": "Kotimaa", "qcode": "3", "scheme": null }],
+  "dates": {
+    "all_day": true,
+    "end": "2025-11-03T00:00:00+0000",
+    "start": "2025-11-03T00:00:00+0000",
+    "tz": "Africa/Nairobi"
+  },
+  "definition_short": "Test Definition",
+  "event_contact_info": [],
+  "firstcreated": "2025-11-03T09:46:43+0000",
+  "firstpublished": "2025-11-03T09:46:48+0000",
+  "guid": "58475490-83ca-4606-8fb4-fc41fad028b2",
+  "item_id": "58475490-83ca-4606-8fb4-fc41fad028b2",
+  "language": "fi",
+  "languages": ["fi"],
+  "lock_action": "edit",
+  "lock_session": "69086a875fb7df4eac77495c",
+  "lock_time": "2025-11-03T09:46:43+0000",
+  "lock_user": "6900917d30291cb7d85a783e",
+  "name": "Test Name",
+  "occur_status": {
+    "label": "Tulossa",
+    "name": "Tulossa",
+    "qcode": "eocstat:eos5"
+  },
+  "original_creator": "6900917d30291cb7d85a783e",
+  "place": [],
+  "plans": [],
+  "products": [{ "code": "69086ae15fb7df4eac774961", "name": "All Event" }],
+  "pubstatus": "usable",
+  "registration_details": "vdsvsdv",
+  "state": "scheduled",
+  "state_reason": null,
+  "subject": [
+    { "name": "Mediatilaisuudet", "qcode": "type21", "scheme": "event_type" },
+    {
+      "name": "Ruoka ja juoma",
+      "parent": "20000550",
+      "qcode": "20000568",
+      "scheme": "topics"
+    }
+  ],
+  "type": "event",
+  "versioncreated": "2025-11-03T09:46:48+0000"
+}
