@@ -5,6 +5,7 @@ import inspect
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List
+from typing_extensions import override
 from urllib.parse import quote
 import aiohttp
 from yarl import URL
@@ -100,7 +101,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         },
     ]
 
-    async def _update(self, provider, update) -> Iterable[Dict]:
+    @override
+    async def _update(self, provider, update) -> Iterable[Iterable[Dict]]:
         """
         TT-specific update that fetches all pages and yields parsed dict items.
         Async to match the base class contract.
