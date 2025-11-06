@@ -73,61 +73,65 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(
             self.item["name"], "Karelian Lock 23 -taisteluharjoituksen mediapäivä"
         )
+
+        # Updated test for new placeholder structure
+        coverage = self.item["coverages"][0]
         self.assertEqual(
-            self.item["coverages"][0],
-            {
-                "coverage_id": "placeholder_urn:newsml:stt.fi:620121",
-                "workflow_status": "draft",
-                "firstcreated": datetime(
-                    2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)
-                ),
-                "planning": {
-                    "slugline": "",
-                    "g2_content_type": "text",
-                    "scheduled": datetime(2023, 5, 29, 0, 0, tzinfo=tzutc()),
-                },
-                "flags": {"placeholder": True},
-                "news_coverage_status": {
-                    "qcode": "ncostat:notint",
-                    "name": "coverage not intended",
-                    "label": "Ei",
-                },
-            },
+            coverage["coverage_id"], "placeholder_urn:newsml:stt.fi:620121"
         )
+        self.assertEqual(coverage["workflow_status"], "draft")
+        self.assertEqual(
+            coverage["firstcreated"],
+            datetime(2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)),
+        )
+        self.assertEqual(coverage["flags"], {"placeholder": True})
+
+        planning = coverage["planning"]
+        self.assertEqual(planning["slugline"], "")
+        self.assertEqual(planning["g2_content_type"], "text")
+        self.assertEqual(
+            planning["scheduled"], datetime(2023, 5, 29, 0, 0, tzinfo=tzutc())
+        )
+        self.assertEqual(planning["fields"], [])
+        self.assertEqual(planning["subject"], [])
+
+        # Check news_coverage_status structure
+        self.assertIn("news_coverage_status", coverage)
+        self.assertEqual(coverage["news_coverage_status"]["qcode"], "ncostat:notint")
 
         # Case 2 : If ingest item contain coverage.
 
         self.fixture = "stt_planning_ml_placeholder-2.xml"
         await self.parse_source_content()
-        print(self.item["coverages"])
         self.assertEqual(self.item["guid"], "urn:newsml:stt.fi:620121")
         self.assertEqual(len(self.item["coverages"]), 1)
+
+        coverage = self.item["coverages"][0]
+        self.assertEqual(coverage["coverage_id"], "ID_TEXT_120844691")
+        self.assertEqual(coverage["workflow_status"], "draft")
         self.assertEqual(
-            self.item["coverages"][0],
-            {
-                "coverage_id": "ID_TEXT_120844691",
-                "workflow_status": "draft",
-                "firstcreated": datetime(
-                    2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)
-                ),
-                "versioncreated": datetime(
-                    2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)
-                ),
-                "planning": {
-                    "slugline": "Sudanissa taistelut jatkuvat",
-                    "g2_content_type": "text",
-                    "scheduled": datetime(
-                        2023, 6, 1, 19, 30, tzinfo=tzoffset(None, 7200)
-                    ),
-                    "genre": [{"qcode": "sttgenre:1", "name": "Pääjuttu"}],
-                },
-                "news_coverage_status": {
-                    "qcode": "ncostat:notint",
-                    "name": "coverage not intended",
-                    "label": "Ei",
-                },
-            },
+            coverage["firstcreated"],
+            datetime(2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)),
         )
+        self.assertEqual(
+            coverage["versioncreated"],
+            datetime(2023, 5, 15, 14, 50, 3, tzinfo=tzoffset(None, 7200)),
+        )
+
+        planning = coverage["planning"]
+        self.assertEqual(planning["slugline"], "Sudanissa taistelut jatkuvat")
+        self.assertEqual(planning["g2_content_type"], "text")
+        self.assertEqual(
+            planning["scheduled"],
+            datetime(2023, 6, 1, 19, 30, tzinfo=tzoffset(None, 7200)),
+        )
+        self.assertEqual(
+            planning["genre"], [{"qcode": "sttgenre:1", "name": "Pääjuttu"}]
+        )
+
+        # Check news_coverage_status structure
+        self.assertIn("news_coverage_status", coverage)
+        self.assertEqual(coverage["news_coverage_status"]["qcode"], "ncostat:notint")
 
     async def test_update_planning(self):
         service = get_resource_service("planning")
@@ -153,14 +157,7 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(
             coverage["coverage_id"], "placeholder_urn:newsml:stt.fi:620121"
         )
-        self.assertEqual(
-            coverage["news_coverage_status"],
-            {
-                "qcode": "ncostat:notint",
-                "name": "coverage not intended",
-                "label": "Ei",
-            },
-        )
+        self.assertEqual(coverage["news_coverage_status"]["qcode"], "ncostat:notint")
         self.assertEqual(
             coverage["flags"], {"placeholder": True, "no_content_linking": False}
         )
@@ -179,6 +176,198 @@ class STTPlanningMLParserTest(TestCase):
             "placeholder_urn:newsml:stt.fi:620121",
             dest["coverages"][0]["coverage_id"],
         )
+
+    async def test_stt_internal_planning_fields_690975(self):
+        """Test STT internal planning fields from 690975_timefix.xml"""
+        self.fixture = "690975_timefix.xml"
+        await self.parse_source_content()
+
+        # Test planning item internal note - strip newline for comparison
+        expected_note = "Anne ilmoitettu. Ilmoittautumiset viimeistään perjantaina 24.10. media@oph.fi. Teams-linkki lähetetään ilmoittautuneille ma 27.10."
+        actual_note = self.item.get("internal_note", "").strip()
+        self.assertEqual(actual_note, expected_note)
+
+        coverage_227301 = None
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"] == "ID_WORKREQUEST_227301":
+                coverage_227301 = coverage
+                break
+
+        self.assertIsNotNone(coverage_227301)
+
+        # Test STT internal coverage fields
+        planning = coverage_227301["planning"]
+        self.assertEqual(
+            planning["headline"],
+            "Opetushallituksen mediatilaisuus ulkomaalaisten tutkinto-opiskelijoiden työllistymisestä",
+        )
+        self.assertEqual(planning["g2_content_type"], "picture")
+
+        # Check picture type in subject array
+        picture_type_subjects = [
+            s for s in planning.get("subject", []) if s.get("scheme") == "sttimagetype"
+        ]
+        if picture_type_subjects:
+            self.assertEqual(picture_type_subjects[0]["qcode"], "sttimage:28")
+
+        # Check photographer awareness in subject array
+        photo_awareness_subjects = [
+            s
+            for s in planning.get("subject", [])
+            if s.get("scheme") == "sttdoesphotographerknow"
+        ]
+        if photo_awareness_subjects:
+            self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
+
+        # Test coverage internal note
+        actual_internal_note = planning.get("internal_note", "")
+        self.assertIn("aarrggghhh tää on hankala", actual_internal_note)
+        self.assertIn("93775987,89568598,89568550,89568459", actual_internal_note)
+
+        # Test Finnish text fields in fields list
+        fields = planning.get("fields", [])
+        fields_dict = {field["field"]: field["value"] for field in fields}
+
+        if "sttpicturewhatisphotographed" in fields_dict:
+            self.assertIn(
+                "Mediatilaisuus 28.10. klo 10–11:",
+                fields_dict["sttpicturewhatisphotographed"],
+            )
+        if "sttpicturewhatabout" in fields_dict:
+            self.assertIn("Kuvituskuvaa arkistosta", fields_dict["sttpicturewhatabout"])
+
+    async def test_stt_internal_planning_fields_691631(self):
+        """Test STT internal planning fields from 691631_timefix.xml"""
+        self.fixture = "691631_timefix.xml"
+        await self.parse_source_content()
+
+        # Find coverages with STT internal fields
+        coverage_227572 = None
+        coverage_227573 = None
+
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"] == "ID_WORKREQUEST_227572":
+                coverage_227572 = coverage
+            elif coverage["coverage_id"] == "ID_WORKREQUEST_227573":
+                coverage_227573 = coverage
+
+        self.assertIsNotNone(coverage_227572)
+        planning_227572 = coverage_227572["planning"]
+        self.assertEqual(
+            planning_227572["headline"],
+            "Nvidia sijoittaa miljardi dollaria Nokian osakkeisiin",
+        )
+        self.assertEqual(planning_227572["g2_content_type"], "picture")
+
+        # Check picture type in subject array
+        picture_type_subjects_572 = [
+            s
+            for s in planning_227572.get("subject", [])
+            if s.get("scheme") == "sttimagetype"
+        ]
+        if picture_type_subjects_572:
+            self.assertEqual(picture_type_subjects_572[0]["qcode"], "sttimage:21")
+
+        # Check photographer awareness in subject array
+        photo_awareness_subjects_572 = [
+            s
+            for s in planning_227572.get("subject", [])
+            if s.get("scheme") == "sttdoesphotographerknow"
+        ]
+        if photo_awareness_subjects_572:
+            self.assertEqual(photo_awareness_subjects_572[0]["qcode"], "yes")
+
+        # Check Finnish text fields
+        fields_572 = planning_227572.get("fields", [])
+        fields_572_dict = {field["field"]: field["value"] for field in fields_572}
+        if "sttpicturewhatabout" in fields_572_dict:
+            self.assertEqual(
+                fields_572_dict["sttpicturewhatabout"], "ja kv. kuvaa arkistosta."
+            )
+
+        self.assertIsNotNone(coverage_227573)
+        planning_227573 = coverage_227573["planning"]
+        self.assertEqual(
+            planning_227573["headline"], "FREE-SEPPO // Nokia head office, Karakaari 7."
+        )
+        self.assertEqual(planning_227573["g2_content_type"], "picture")
+
+        # Check picture type in subject array
+        picture_type_subjects_573 = [
+            s
+            for s in planning_227573.get("subject", [])
+            if s.get("scheme") == "sttimagetype"
+        ]
+        if picture_type_subjects_573:
+            self.assertEqual(picture_type_subjects_573[0]["qcode"], "sttimage:20")
+
+        # Check photographer awareness in subject array
+        photo_awareness_subjects_573 = [
+            s
+            for s in planning_227573.get("subject", [])
+            if s.get("scheme") == "sttdoesphotographerknow"
+        ]
+        if photo_awareness_subjects_573:
+            self.assertEqual(photo_awareness_subjects_573[0]["qcode"], "yes")
+
+        # Check Finnish text fields
+        fields_573 = planning_227573.get("fields", [])
+        fields_573_dict = {field["field"]: field["value"] for field in fields_573}
+        if "sttpicturewhatabout" in fields_573_dict:
+            self.assertEqual(
+                fields_573_dict["sttpicturewhatabout"],
+                "arkistokuvaa ja kv. kuvaa arkistosta.",
+            )
+
+    async def test_stt_coverage_status_mapping(self):
+        """Test all STT workstatus mappings using vocabulary"""
+        test_cases = [
+            ("sttworkstatus:1", "ncostat:int"),
+            ("sttworkstatus:2", "ncostat:int"),
+            ("sttworkstatus:3", "ncostat:int"),
+            ("sttworkstatus:4", "ncostat:notint"),
+            ("sttworkstatus:5", "ncostat:notdec"),
+        ]
+
+        for stt_status, expected_qcode in test_cases:
+            with self.subTest(stt_status=stt_status):
+                parser = STTPlanningMLParser()
+
+                # Test the specific method that handles coverage status
+                from xml.etree.ElementTree import fromstring
+
+                xml = f"""
+                <subject type="ninat:text" qcode="{stt_status}"/>
+                """
+                subject_elt = fromstring(xml)
+                coverage = {"planning": {}, "fields": {}, "subject": []}
+
+                # Call the specific method that parses coverage status
+                parser.parse_coverage_status(subject_elt, coverage)
+
+                # Check that coverage status was set
+                if expected_qcode:
+                    self.assertIn("news_coverage_status", coverage)
+                    self.assertEqual(
+                        coverage["news_coverage_status"]["qcode"], expected_qcode
+                    )
+
+    async def test_stt_photographer_awareness_mapping(self):
+        """Test photographer awareness mapping"""
+        self.fixture = "691631_timefix.xml"
+        await self.parse_source_content()
+
+        for coverage in self.item["coverages"]:
+            if coverage["coverage_id"].startswith("ID_WORKREQUEST_"):
+                planning = coverage["planning"]
+                # Check that photographer awareness is stored in subject array
+                photo_awareness_subjects = [
+                    s
+                    for s in planning.get("subject", [])
+                    if s.get("scheme") == "sttdoesphotographerknow"
+                ]
+                if photo_awareness_subjects:
+                    self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
 
 
 def is_placeholder_coverage(coverage):

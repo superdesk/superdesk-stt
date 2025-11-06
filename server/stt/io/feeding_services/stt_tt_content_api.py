@@ -5,6 +5,7 @@ import inspect
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List
+from typing_extensions import override
 from urllib.parse import quote
 import aiohttp
 from yarl import URL
@@ -100,7 +101,8 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         },
     ]
 
-    async def _update(self, provider, update) -> Iterable[Dict]:
+    @override
+    async def _update(self, provider, update) -> Iterable[Iterable[Dict]]:
         """
         TT-specific update that fetches all pages and yields parsed dict items.
         Async to match the base class contract.
@@ -143,7 +145,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
 
         # Final guard: ensure only dicts are returned (avoids filter_expired_items crash)
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
-        return parsed_items
+        return [parsed_items]
 
     def _fetch_tt_data(self, provider, update) -> List[Dict]:
         """
@@ -187,7 +189,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
         # TT expects 'trs' as an RFC3339 timestamp in UTC with seconds precision
         dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+        trs_value = dt_from.strftime("%Y-%m-%d")
 
         base = URL(url)
         qs = dict(base.query)
@@ -279,7 +281,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             minutes = int(config.get("since_minutes", 1440))
             dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
         dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-        trs_value = dt_from.strftime("%Y-%m-%dT%H:%M:%SZ")
+        trs_value = dt_from.strftime("%Y-%m-%d")
 
         base = URL(url)
         qs = dict(base.query)

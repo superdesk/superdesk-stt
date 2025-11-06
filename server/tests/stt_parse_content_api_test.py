@@ -419,7 +419,7 @@ class STTContentAPITestCase(TestCase):
                 "feed_parser": "content_api_json",
             }
             update = {}
-            items = list(await self.service._update(provider, update))
+            items = list(await self.service._update(provider, update))[0]
             # Should have processed all items
             self.assertEqual(2, len(items))
             # Check that items were parsed correctly

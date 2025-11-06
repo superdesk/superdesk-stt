@@ -145,7 +145,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         response = self._get_with_retry(url, headers=headers, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
 
-    async def _update(self, provider, update) -> Iterable[Dict]:
+    async def _update(self, provider, update) -> Iterable[Iterable[Dict]]:
         """
         Fetch pages from the Content API, parse items with the configured parser,
         and return a flat list of parsed dicts.
@@ -193,7 +193,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
         # Final guard: ensure only dicts are returned (avoids filter_expired_items crash)
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
-        return parsed_items
+        return [parsed_items]
 
     def _fetch_data(self, provider, since_iso: str) -> List[Dict]:
         logger.debug("Fetching data from Content API ...")
