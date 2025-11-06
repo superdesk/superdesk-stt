@@ -66,7 +66,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         ninjs = {"profile": "Viiva"}
         self.formatter.update_sttversion(ninjs)
         self.assertIn(
-            {"name": "viiva", "scheme": "sttversion", "code": "1"},
+            {"name": "Viiva", "scheme": "sttversion", "code": "1"},
             ninjs.get("subject", []),
         )
 

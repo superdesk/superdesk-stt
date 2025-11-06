@@ -79,9 +79,11 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
                 qcode = vocab_item.get("qcode")
                 break
 
-        version = str(
-            content_profile_name if content_profile_name is not None else profile
-        ).strip()
+        version = (
+            str(content_profile_name if content_profile_name is not None else profile)
+            .strip()
+            .capitalize()
+        )
 
         if qcode and version:
             if "subject" not in ninjs:
