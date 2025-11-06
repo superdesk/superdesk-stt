@@ -425,7 +425,7 @@ def _set_stt_fields(
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
         for pl in ag.get("items") or []:
-            # get news_coverage_status for planning item, note that for 'kuva' item_type the returned value is different
+            # get news_coverage_status for planning item
             news_coverage_status = _get_planning_coverages_metadata(pl, item_type)
             if item_type == "teksti" and not news_coverage_status:
                 continue  # exclude items without news_coverage_status for 'teksti' items
@@ -435,6 +435,10 @@ def _set_stt_fields(
                 pl, "kuva", imagetypes=True
             )
             pl["sttimagetypes"] = item_imagetypes.get("imagetypes") or []
+            if item_type == "kuva":
+                # if this is an "kuvalupaus" and sttimagetypes is empty, exclude the item
+                if not pl["sttimagetypes"]:
+                    continue
             # get sttpicturewhatabouts for planning item
             item_sttpicturewhatabouts = _get_planning_coverages_metadata(
                 pl, item_type, sttpicturewhatabout=True
@@ -442,10 +446,6 @@ def _set_stt_fields(
             pl["sttpicturewhatabouts"] = (
                 item_sttpicturewhatabouts.get("sttpicturewhatabout") or []
             )
-            if item_type == "kuva":
-                # if this is an "kuvalupaus" and sttimagetypes is empty, exclude the item
-                if not pl["sttimagetypes"]:
-                    continue
             # try to get latest published item with sttnewsroomnote subject
             published_related_items = (
                 get_published_items_with_sttnewsroomnote_by_planning_id(pl.get("_id"))
