@@ -6,6 +6,25 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
     name = "STT JSON Planning"
     type = "stt_json_planning"
 
+    STT_PREFIX_INTERNAL_FIELDS = [
+        "sttcheckedby",
+        "sttpicturewhatabout",
+        "sttpicturewhatisphotographed",
+        "sttdoesphotographerknow",
+        "sttpictureregistrationok",
+        "sttregistrationinfo",
+        "sttpicturecategory",
+        "sttpictureheadlinefi",
+        "sttpicturecaptionfi",
+        "sttpictureinstructionsfi",
+        "sttpicturekeywordsfi",
+        "sttpictureheadlineen",
+        "sttpicturecaptionen",
+        "sttpictureinstructionsen",
+        "sttpicturekeywordsen",
+        "sttpictureinvoiced",
+    ]
+
     CATEGORY_QCODE_NHUB_MAP = {
         "3": {
             "name": "Kotimaa",
@@ -85,11 +104,13 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
     def exclude_internal_planning_fields(self, item):
         if "internal_note" in item:
             del item["internal_note"]
+
         if "subject" in item:
+            exclude_fields = self.STT_PREFIX_INTERNAL_FIELDS
             item["subject"] = [
                 subject
                 for subject in item["subject"]
-                if subject.get("scheme") != "sttcheckedby"
+                if subject.get("scheme") not in exclude_fields
             ]
 
     def exclude_internal_coverage_fields(self, item):
@@ -99,23 +120,8 @@ class STTJsonPlanningFormatter(JsonPlanningFormatter):
         exclude_fields = [
             "headline",
             "location",
-            "sttpicturewhatabout",
-            "sttpicturewhatisphotographed",
             "internal_note",
-            "sttdoesphotographerknow",
-            "sttpictureregistrationok",
-            "sttregistrationinfo",
-            "sttpicturecategory",
-            "sttpictureheadlinefi",
-            "sttpicturecaptionfi",
-            "sttpictureinstructionsfi",
-            "sttpicturekeywordsfi",
-            "sttpictureheadlineen",
-            "sttpicturecaptionen",
-            "sttpictureinstructionsen",
-            "sttpicturekeywordsen",
-            "sttpictureinvoiced",
-        ]
+        ] + self.STT_PREFIX_INTERNAL_FIELDS
 
         for coverage in item["coverages"]:
             planning = coverage.get("planning")

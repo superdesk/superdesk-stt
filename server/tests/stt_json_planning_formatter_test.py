@@ -49,6 +49,12 @@ class STTJsonPlanningFormatterTest(TestCase):
                     for subj in item.get("subject", [])
                 )
             )
+            self.assertTrue(
+                any(
+                    subj.get("scheme") == "sttdoesphotographerknow"
+                    for subj in item.get("subject", [])
+                )
+            )
 
             formatter.exclude_internal_planning_fields(item)
 
@@ -56,6 +62,12 @@ class STTJsonPlanningFormatterTest(TestCase):
             self.assertFalse(
                 any(
                     subj.get("scheme") == "sttcheckedby"
+                    for subj in item.get("subject", [])
+                )
+            )
+            self.assertFalse(
+                any(
+                    subj.get("scheme") == "sttdoesphotographerknow"
                     for subj in item.get("subject", [])
                 )
             )

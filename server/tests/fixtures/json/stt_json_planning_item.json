@@ -103,9 +103,7 @@
             "address": {
               "city": "Test City",
               "country": "Test Country",
-              "line": [
-                "Test Address"
-              ]
+              "line": ["Test Address"]
             },
             "details": "Test Details",
             "name": "Test Location",
@@ -163,9 +161,7 @@
   "item_class": "plinat:newscoverage",
   "item_id": "f2158efe-aaec-4e77-8ea3-5c9b53f218eb",
   "language": "fi",
-  "languages": [
-    "fi"
-  ],
+  "languages": ["fi"],
   "lock_action": "edit",
   "lock_session": "69009183985c980a84842847",
   "lock_time": "2025-10-28T10:13:32+0000",
@@ -200,6 +196,16 @@
       "name": "Pääaihe (3 300)",
       "qcode": "stturgency-1",
       "scheme": "stturgency"
+    },
+    {
+      "name": "Ei",
+      "qcode": "no",
+      "scheme": "sttdoesphotographerknow"
+    },
+    {
+      "name": "ACE taide viihde kulttuuri",
+      "qcode": "ACE",
+      "scheme": "sttpicturecategory"
     }
   ],
   "type": "planning",
