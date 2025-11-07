@@ -39,11 +39,14 @@ def _to_helsinki(value):
         return None  # graceful fallback
 
 
-def fi_date(value: str) -> str:
+def fi_date(value: str, capitalized: bool = False) -> str:
     dt = _to_helsinki(value)
     if not dt:
         return value or ""
-    return f"{_WEEKDAY_FI[dt.weekday()]} {dt.day}.{dt.month}."
+    weekday = _WEEKDAY_FI[dt.weekday()]
+    if capitalized:
+        weekday = weekday.capitalize()
+    return f"{weekday} {dt.day}.{dt.month}."
 
 
 def fi_current_date() -> str:
