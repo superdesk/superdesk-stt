@@ -19,7 +19,7 @@
     {% if item.planning_date %}
         {% set _ = parts.append("Juttu tulee " ~ (item.planning_date | fi_which_weekday)) %}
     {% endif %}
-    {%- if parts %}<p>- {{- parts | join(' ') -}}</p>{% endif -%}
+    {%- if parts %}<p>&ndash;&nbsp; {{- parts | join(' ') -}}</p>{% endif -%}
     <p></p>   {# blank line at the end #}
 {% endfor %}
 
