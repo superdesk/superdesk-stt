@@ -1,6 +1,5 @@
 import pytz
 import logging
-import re
 
 from typing import Dict, Any, Optional, Set
 from xml.etree.ElementTree import Element
@@ -169,7 +168,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             value_elt = subject_elt.find(self.qname("value"))
             value_text = (
                 value_elt.text.strip()
-                if value_elt is not None and value_elt.text
+                if value_elt is not None and value_elt.text is not None
                 else ""
             )
 
@@ -182,6 +181,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             elif qcode.startswith("sttphotoaware:"):
                 self.parse_photographer_awareness(subject_elt, coverage)
             elif qcode == "sttentryinfo":
+                # Handle Tiedot (ilmoittautuminen) field - map even if empty
                 self.add_field_to_coverage(coverage, "sttregistrationinfo", value_text)
 
     def parse_non_subject_fields(self, planning_elt: Element, coverage: Dict[str, Any]):
@@ -213,8 +213,10 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         self, coverage: Dict[str, Any], field_name: str, value: str
     ):
         """Add a field to coverage.planning.fields list"""
-        if value:
-            coverage["planning"]["fields"].append({"field": field_name, "value": value})
+        # Always add the field, even if value is empty
+        coverage["planning"]["fields"].append(
+            {"field": field_name, "value": value or ""}
+        )
 
     def parse_coverage_status(self, subject_elt: Element, coverage: Dict[str, Any]):
         """Parse coverage status from sttworkstatus subject using CV from DB"""
@@ -347,9 +349,10 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         picture_what_about = None
         picture_what_is_photographed = None
 
+        # Look for definition elements with specific roles
         for definition_elt in planning_elt.findall(self.qname("definition")):
             role = definition_elt.get("role", "")
-            text = "".join(definition_elt.itertext()).strip()
+            text = definition_elt.text.strip() if definition_elt.text else ""
 
             if not text:
                 continue
@@ -359,13 +362,27 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             elif role == "sttdescription:imagetarget":
                 picture_what_is_photographed = text
 
-        # Fallback: extract from internal_note if imagetype missing
-        if not picture_what_about:
-            internal_note = coverage.get("planning", {}).get("internal_note", "")
-            match = re.search(r"Kuvitus[:\-]?\s*(.+)", internal_note)
-            if match:
-                picture_what_about = match.group(1).strip()
+        # Also check for these values in subject elements with specific qcodes
+        for subject_elt in planning_elt.findall(self.qname("subject")):
+            qcode = subject_elt.get("qcode", "")
+            if qcode.startswith("urn:newsml:stt.fi:"):
+                # Check for definition elements within the subject
+                for definition_elt in subject_elt.findall(self.qname("definition")):
+                    role = definition_elt.get("role", "")
+                    text = definition_elt.text.strip() if definition_elt.text else ""
 
+                    if not text:
+                        continue
+
+                    if role == "sttdescription:imagetype" and not picture_what_about:
+                        picture_what_about = text
+                    elif (
+                        role == "sttdescription:imagetarget"
+                        and not picture_what_is_photographed
+                    ):
+                        picture_what_is_photographed = text
+
+        # Map the fields correctly according to the spreadsheet
         if picture_what_about:
             self.add_field_to_coverage(
                 coverage, "sttpicturewhatabout", picture_what_about

@@ -207,8 +207,9 @@ class STTPlanningMLParserTest(TestCase):
         picture_type_subjects = [
             s for s in planning.get("subject", []) if s.get("scheme") == "sttimagetype"
         ]
-        if picture_type_subjects:
-            self.assertEqual(picture_type_subjects[0]["qcode"], "sttimage:28")
+        self.assertEqual(len(picture_type_subjects), 1)
+        self.assertEqual(picture_type_subjects[0]["qcode"], "sttimage:28")
+        self.assertEqual(picture_type_subjects[0]["name"], "Kuvituskuvaa arkistosta")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects = [
@@ -216,8 +217,10 @@ class STTPlanningMLParserTest(TestCase):
             for s in planning.get("subject", [])
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
-        if photo_awareness_subjects:
-            self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
+        self.assertEqual(len(photo_awareness_subjects), 1)
+        self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
+        # Use the actual Finnish name from vocabulary
+        self.assertEqual(photo_awareness_subjects[0]["name"], "Kyllä")
 
         # Test coverage internal note
         actual_internal_note = planning.get("internal_note", "")
@@ -228,13 +231,20 @@ class STTPlanningMLParserTest(TestCase):
         fields = planning.get("fields", [])
         fields_dict = {field["field"]: field["value"] for field in fields}
 
+        # Test Tiedot field
+        self.assertIn("sttregistrationinfo", fields_dict)
+        self.assertEqual(fields_dict["sttregistrationinfo"], "")
+
         if "sttpicturewhatisphotographed" in fields_dict:
             self.assertIn(
                 "Mediatilaisuus 28.10. klo 10–11:",
                 fields_dict["sttpicturewhatisphotographed"],
             )
+
         if "sttpicturewhatabout" in fields_dict:
-            self.assertIn("Kuvituskuvaa arkistosta", fields_dict["sttpicturewhatabout"])
+            self.assertEqual(
+                fields_dict["sttpicturewhatabout"], "Kuvituskuvaa arkistosta"
+            )
 
     async def test_stt_internal_planning_fields_691631(self):
         """Test STT internal planning fields from 691631_timefix.xml"""
@@ -259,14 +269,14 @@ class STTPlanningMLParserTest(TestCase):
         )
         self.assertEqual(planning_227572["g2_content_type"], "picture")
 
-        # Check picture type in subject array
         picture_type_subjects_572 = [
             s
             for s in planning_227572.get("subject", [])
             if s.get("scheme") == "sttimagetype"
         ]
-        if picture_type_subjects_572:
-            self.assertEqual(picture_type_subjects_572[0]["qcode"], "sttimage:21")
+        self.assertEqual(len(picture_type_subjects_572), 1)
+        self.assertEqual(picture_type_subjects_572[0]["qcode"], "sttimage:21")
+        self.assertEqual(picture_type_subjects_572[0]["name"], "Arkistokuvaa")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects_572 = [
@@ -274,12 +284,19 @@ class STTPlanningMLParserTest(TestCase):
             for s in planning_227572.get("subject", [])
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
-        if photo_awareness_subjects_572:
-            self.assertEqual(photo_awareness_subjects_572[0]["qcode"], "yes")
+        self.assertEqual(len(photo_awareness_subjects_572), 1)
+        self.assertEqual(photo_awareness_subjects_572[0]["qcode"], "yes")
+        # Use the actual Finnish name from vocabulary
+        self.assertEqual(photo_awareness_subjects_572[0]["name"], "Kyllä")
 
         # Check Finnish text fields
         fields_572 = planning_227572.get("fields", [])
         fields_572_dict = {field["field"]: field["value"] for field in fields_572}
+
+        # Test Tiedot field
+        self.assertIn("sttregistrationinfo", fields_572_dict)
+        self.assertEqual(fields_572_dict["sttregistrationinfo"], "")
+
         if "sttpicturewhatabout" in fields_572_dict:
             self.assertEqual(
                 fields_572_dict["sttpicturewhatabout"], "ja kv. kuvaa arkistosta."
@@ -292,14 +309,14 @@ class STTPlanningMLParserTest(TestCase):
         )
         self.assertEqual(planning_227573["g2_content_type"], "picture")
 
-        # Check picture type in subject array
         picture_type_subjects_573 = [
             s
             for s in planning_227573.get("subject", [])
             if s.get("scheme") == "sttimagetype"
         ]
-        if picture_type_subjects_573:
-            self.assertEqual(picture_type_subjects_573[0]["qcode"], "sttimage:20")
+        self.assertEqual(len(picture_type_subjects_573), 1)
+        self.assertEqual(picture_type_subjects_573[0]["qcode"], "sttimage:20")
+        self.assertEqual(picture_type_subjects_573[0]["name"], "Kuvaaja paikalla")
 
         # Check photographer awareness in subject array
         photo_awareness_subjects_573 = [
@@ -307,17 +324,24 @@ class STTPlanningMLParserTest(TestCase):
             for s in planning_227573.get("subject", [])
             if s.get("scheme") == "sttdoesphotographerknow"
         ]
-        if photo_awareness_subjects_573:
-            self.assertEqual(photo_awareness_subjects_573[0]["qcode"], "yes")
+        self.assertEqual(len(photo_awareness_subjects_573), 1)
+        self.assertEqual(photo_awareness_subjects_573[0]["qcode"], "yes")
+        # Use the actual Finnish name from vocabulary
+        self.assertEqual(photo_awareness_subjects_573[0]["name"], "Kyllä")
 
         # Check Finnish text fields
         fields_573 = planning_227573.get("fields", [])
         fields_573_dict = {field["field"]: field["value"] for field in fields_573}
+
         if "sttpicturewhatabout" in fields_573_dict:
             self.assertEqual(
                 fields_573_dict["sttpicturewhatabout"],
                 "arkistokuvaa ja kv. kuvaa arkistosta.",
             )
+
+        # Test Tiedot field
+        self.assertIn("sttregistrationinfo", fields_573_dict)
+        self.assertEqual(fields_573_dict["sttregistrationinfo"], "")
 
     async def test_stt_coverage_status_mapping(self):
         """Test all STT workstatus mappings using vocabulary"""
@@ -366,8 +390,80 @@ class STTPlanningMLParserTest(TestCase):
                     for s in planning.get("subject", [])
                     if s.get("scheme") == "sttdoesphotographerknow"
                 ]
-                if photo_awareness_subjects:
-                    self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
+                self.assertEqual(len(photo_awareness_subjects), 1)
+                self.assertEqual(photo_awareness_subjects[0]["qcode"], "yes")
+                # Use the actual Finnish name from vocabulary
+                self.assertEqual(photo_awareness_subjects[0]["name"], "Kyllä")
+
+    async def test_stt_picture_type_direct_mapping(self):
+        """Test that picture type mapping uses direct numeric code mapping"""
+        parser = STTPlanningMLParser()
+
+        from xml.etree.ElementTree import fromstring
+
+        root_xml = """<?xml version="1.0" encoding="UTF-8"?><planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML"></planningItem>"""
+        parser.root = fromstring(root_xml)
+
+        # Test cases for direct mapping
+        test_cases = [
+            ("sttimagetypename:20", "sttimage:20"),  # Kuvaaja paikalla
+            ("sttimagetypename:21", "sttimage:21"),  # Arkistokuvaa
+            ("sttimagetypename:28", "sttimage:28"),  # Kuvituskuvaa arkistosta
+        ]
+
+        for input_qcode, expected_qcode in test_cases:
+            with self.subTest(input_qcode=input_qcode):
+                xml = f"""
+                <subject type="ninat:text" qcode="{input_qcode}">
+                    <value>Test</value>
+                </subject>
+                """
+                subject_elt = fromstring(xml)
+                coverage = {"planning": {"subject": []}}
+
+                parser.parse_picture_type(subject_elt, coverage)
+
+                # Check that the correct qcode was added to subject
+                picture_type_subjects = [
+                    s
+                    for s in coverage["planning"]["subject"]
+                    if s.get("scheme") == "sttimagetype"
+                ]
+                if picture_type_subjects:
+                    self.assertEqual(picture_type_subjects[0]["qcode"], expected_qcode)
+
+    async def test_stt_finnish_text_fields_mapping(self):
+        """Test that Finnish text fields are correctly mapped from definition elements"""
+        parser = STTPlanningMLParser()
+
+        from xml.etree.ElementTree import fromstring
+
+        root_xml = """<?xml version="1.0" encoding="UTF-8"?><planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML"></planningItem>"""
+        parser.root = fromstring(root_xml)
+
+        xml = """
+        <planning xmlns="http://iptc.org/std/nar/2006-10-01/">
+            <definition role="sttdescription:imagetype">Mitä kuvassa teksti</definition>
+            <definition role="sttdescription:imagetarget">Mitä kuvataan teksti</definition>
+        </planning>
+        """
+        planning_elt = fromstring(xml)
+        coverage = {"planning": {"fields": []}}
+
+        parser.parse_finnish_text_fields(planning_elt, coverage)
+
+        fields_dict = {
+            field["field"]: field["value"] for field in coverage["planning"]["fields"]
+        }
+
+        # Check that both fields are mapped correctly
+        self.assertIn("sttpicturewhatabout", fields_dict)
+        self.assertEqual(fields_dict["sttpicturewhatabout"], "Mitä kuvassa teksti")
+
+        self.assertIn("sttpicturewhatisphotographed", fields_dict)
+        self.assertEqual(
+            fields_dict["sttpicturewhatisphotographed"], "Mitä kuvataan teksti"
+        )
 
 
 def is_placeholder_coverage(coverage):
