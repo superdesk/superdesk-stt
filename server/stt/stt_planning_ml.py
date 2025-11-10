@@ -269,6 +269,10 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
     def parse_picture_type(self, subject_elt: Element, coverage: Dict[str, Any]):
         """Parse picture type from sttimagetypename subject"""
         qcode = subject_elt.get("qcode", "")
+        value_elt = subject_elt.find(self.qname("value"))
+        value_text = (
+            value_elt.text.strip() if value_elt is not None and value_elt.text else ""
+        )
 
         # Direct mapping: sttimagetypename:XX -> sttimage:XX
         if qcode.startswith("sttimagetypename:"):
@@ -278,6 +282,8 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             picture_type = self.get_picture_type_from_vocabulary(mapped_qcode)
             if picture_type:
                 coverage["planning"]["subject"].append(picture_type)
+            else:
+                self.add_field_to_coverage(coverage, "sttimagetype", value_text)
 
     def get_picture_type_from_vocabulary(self, qcode: str) -> Optional[Dict[str, Any]]:
         """Get picture type from sttimagetype vocabulary"""
@@ -367,23 +373,19 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
         # Also check for these values in subject elements with specific qcodes
         for subject_elt in planning_elt.findall(self.qname("subject")):
-            qcode = subject_elt.get("qcode", "")
-            if qcode.startswith("urn:newsml:stt.fi:"):
-                # Check for definition elements within the subject
-                for definition_elt in subject_elt.findall(self.qname("definition")):
-                    role = definition_elt.get("role", "")
-                    text = definition_elt.text.strip() if definition_elt.text else ""
+            for definition_elt in subject_elt.findall(self.qname("definition")):
+                role = definition_elt.get("role", "")
+                text = definition_elt.text.strip() if definition_elt.text else ""
+                if not text:
+                    continue
 
-                    if not text:
-                        continue
-
-                    if role == "sttdescription:imagetype" and not picture_what_about:
-                        picture_what_about = text
-                    elif (
-                        role == "sttdescription:imagetarget"
-                        and not picture_what_is_photographed
-                    ):
-                        picture_what_is_photographed = text
+                if role == "sttdescription:imagetype" and not picture_what_about:
+                    picture_what_about = text
+                elif (
+                    role == "sttdescription:imagetarget"
+                    and not picture_what_is_photographed
+                ):
+                    picture_what_is_photographed = text
 
         # Map the fields correctly according to the spreadsheet
         if picture_what_about:

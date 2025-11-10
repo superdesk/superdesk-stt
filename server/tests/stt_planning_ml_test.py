@@ -469,6 +469,54 @@ class STTPlanningMLParserTest(TestCase):
             fields_dict["sttpicturewhatisphotographed"], "Mitä kuvataan teksti"
         )
 
+    async def test_stt_picture_type_and_what_about_fallback(self):
+        """Verify fallback and Finnish field mappings for STT picture metadata."""
+        parser = STTPlanningMLParser()
+
+        from xml.etree.ElementTree import fromstring
+
+        root_xml = """<?xml version="1.0" encoding="UTF-8"?><planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML"></planningItem>"""
+        parser.root = fromstring(root_xml)
+
+        xml_subject = """
+        <subject xmlns="http://iptc.org/std/nar/2006-10-01/" qcode="sttimagetypename:99">
+            <value>Kuva arkistosta (fallback)</value>
+        </subject>
+        """
+        subject_elt = fromstring(xml_subject)
+        coverage = {"planning": {"subject": [], "fields": []}}
+
+        parser.parse_picture_type(subject_elt, coverage)
+
+        fields_dict = {
+            f["field"]: f["value"] for f in coverage["planning"].get("fields", [])
+        }
+        self.assertIn("sttimagetype", fields_dict)
+        self.assertEqual(fields_dict["sttimagetype"], "Kuva arkistosta (fallback)")
+
+        xml_planning = """
+        <planning xmlns="http://iptc.org/std/nar/2006-10-01/">
+            <definition role="sttdescription:imagetype">Root level kuvaus</definition>
+            <subject>
+                <definition role="sttdescription:imagetarget">Nested kuvauskohde</definition>
+            </subject>
+        </planning>
+        """
+        planning_elt = fromstring(xml_planning)
+        coverage2 = {"planning": {"fields": []}}
+
+        parser.parse_finnish_text_fields(planning_elt, coverage2)
+
+        fields_dict2 = {f["field"]: f["value"] for f in coverage2["planning"]["fields"]}
+
+        self.assertIn("sttpicturewhatabout", fields_dict2)
+        self.assertEqual(fields_dict2["sttpicturewhatabout"], "Root level kuvaus")
+
+        self.assertIn("sttpicturewhatisphotographed", fields_dict2)
+        self.assertEqual(
+            fields_dict2["sttpicturewhatisphotographed"], "Nested kuvauskohde"
+        )
+
 
 def is_placeholder_coverage(coverage):
     try:
