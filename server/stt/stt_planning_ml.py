@@ -70,6 +70,9 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             else self.set_placeholder_coverage(item, tree)
         )
         await self.set_extra_fields(tree, item, original)
+
+        item["all_day"] = True
+
         return item
 
     def datetime(self, value: str):

@@ -48,6 +48,10 @@ class STTPlanningMLParserTest(TestCase):
         assert mediatopics[0]["qcode"] == "11000000"
         assert mediatopics[0]["wikidata"] == "Q7163"
 
+    def test_planning_date(self):
+        assert self.item["planning_date"] == datetime(2022, 4, 2, 0, 0, tzinfo=tzutc())
+        assert self.item["all_day"]
+
     async def test_event_link(self):
         self.app.data.insert("events", [{"_id": "urn:newsml:stt.fi:259431"}])
         await self.parse_source_content()
