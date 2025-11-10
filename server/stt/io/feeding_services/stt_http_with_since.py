@@ -5,14 +5,71 @@ import os
 import logging
 import requests
 from tempfile import NamedTemporaryFile
+from typing import Any, Dict, List, Optional
+
 from superdesk.errors import IngestApiError
+from superdesk.io.feed_parsers.ninjs import NINJSFeedParser
 from superdesk.io.feeding_services.http_service import HTTPFeedingService
 from superdesk.io.registry import (
+    register_feed_parser,
     register_feeding_service,
     register_feeding_service_parser,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def strip_text(value: Optional[str]) -> str:
+    """Whitespace-trimmed helper that tolerates ``None`` inputs."""
+    return (value or "").strip()
+
+
+class STTSinceNINJSFeedParser(NINJSFeedParser):
+    """Custom NinJS parser that enriches results with STT-specific metadata."""
+
+    NAME = "stt_since_ninjs"
+    label = "STT Since NinJS Feed Parser"
+
+    def _transform_from_ninjs(self, ninjs: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalise the incoming NinJS payload and attach STT vocab mappings."""
+        item = super()._transform_from_ninjs(ninjs)
+        anpa_category = ninjs.get("anpa_category")
+        if isinstance(anpa_category, dict):
+            item["anpa_category"] = [anpa_category]
+        subject: List[Dict[str, Any]] = []
+        # Raw data "topics" should be valid as is
+        topics = ninjs.get("topics")
+        if topics:
+            subject.extend(topics)
+        # Raw data "sttsource" should be valid as is
+        stt_sources = ninjs.get("sttsource")
+        if stt_sources:
+            subject.extend(stt_sources)
+        # When subject is added with topics and sttsource => archive item will get that metadata from ingest
+        if subject:
+            item["subject"] = subject
+        return item
+
+    def datetime(self, value: Any):
+        """Parse ISO-8601 datetimes with optional colon offsets into UTC."""
+
+        if isinstance(value, datetime.datetime):
+            if value.tzinfo is None:
+                return value.replace(tzinfo=datetime.timezone.utc)
+            return value.astimezone(datetime.timezone.utc)
+
+        text = strip_text(value)
+        if not text:
+            return super().datetime(value)
+
+        try:
+            candidate = text.replace("Z", "+00:00")
+            parsed = datetime.datetime.fromisoformat(candidate)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+            return parsed.astimezone(datetime.timezone.utc)
+        except Exception:
+            return super().datetime(value)
 
 
 class STTWithSinceHTTPFeedingService(HTTPFeedingService):
@@ -178,28 +235,23 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
         - list of NinJS objects
         Falls back to writing the raw content to a temp file if JSON decoding fails.
         """
-        results = []
         try:
             data = json.loads(content)
         except Exception:
-            # Fallback: let parser.parse handle the raw file content by writing it to disk
-            # Since this runs inside Docker (Linux/POSIX), we can parse while the temp file is open
-            # and rely on automatic deletion when the context exits.
             with NamedTemporaryFile("wb", delete=True, suffix=".json") as f:
                 logger.warning(
                     "Falling back to raw file parsing due to JSON decode error"
                 )
                 f.write(content)
-                # Make sure the parser, which opens f.name immediately, sees the full contents:
-                # - flush(): push Python's buffer to the OS so size/data are visible to a new open()
-                # - fsync(): ask the OS to flush page cache + metadata; helpful on some FS/overlay layers
-                #   (Docker/overlayfs) to avoid stale size/content. Safe but optional for POSIX; drop if perf-critical.
                 f.flush()
                 os.fsync(f.fileno())
-                results = await self._call_parser(parser, f.name, provider)
-            return results
+                parsed = await self._call_parser(parser, f.name, provider)
+            if isinstance(parsed, list):
+                return parsed
+            if parsed is None:
+                return []
+            return [parsed]
 
-        # Normalize to a list of item dicts
         if isinstance(data, dict):
             items_list = data.get("items")
             if isinstance(items_list, list):
@@ -211,23 +263,19 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
         else:
             iterable = []
 
+        results: List[Dict[str, Any]] = []
         for obj in iterable:
             if not isinstance(obj, dict):
                 continue
-            # Normalize date fields to UTC 'Z' so ninjs parser can parse them
-            obj = self._normalize_dates_in_obj(obj)
-            # Ensure ninjs 'service' is present if only 'anpa_category' exists
-            obj = self._adapt_category_for_ninjs(obj)
             with NamedTemporaryFile("w", delete=True, suffix=".json") as f:
                 json.dump(obj, f)
-                # See notes above: ensure data is durably visible before the parser re-opens the path.
                 f.flush()
                 os.fsync(f.fileno())
                 parsed = await self._call_parser(parser, f.name, provider)
-                if isinstance(parsed, list):
-                    results.extend(parsed)
-                elif parsed is not None:
-                    results.append(parsed)
+            if isinstance(parsed, list):
+                results.extend(parsed)
+            elif parsed is not None:
+                results.append(parsed)
 
         return results
 
@@ -242,95 +290,15 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             result = await result
         return result
 
-    def _normalize_dates_in_obj(self, obj: dict) -> dict:
-        """Return a shallow copy of obj with key date fields normalized to UTC 'Z'.
+    async def get_feed_parser(self, provider):  # type: ignore[override]
+        """Always return a fresh STT-specific NinJS parser instance."""
 
-        The stock ninjs parser only accepts 'Z' or '+00:00' (and no fractional seconds).
-        This converts any ISO8601 with timezone offset to '%Y-%m-%dT%H:%M:%SZ'.
-        Also normalizes nested association items recursively.
-        """
-
-        def _to_utc_z(s: str) -> str:
-            try:
-                # Support 'Z' and explicit offsets like '+03:00'
-                s2 = s.replace("Z", "+00:00")
-                dt = datetime.datetime.fromisoformat(s2)
-                if dt.tzinfo is None:
-                    # Assume UTC if naive
-                    dt = dt.replace(tzinfo=datetime.timezone.utc)
-                dt_utc = dt.astimezone(datetime.timezone.utc)
-                return dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-            except Exception:
-                return s
-
-        out = dict(obj)
-        for key in ("versioncreated", "firstcreated", "embargoed"):
-            val = out.get(key)
-            if isinstance(val, str):
-                out[key] = _to_utc_z(val)
-
-        # Normalize associations recursively if present
-        assoc = out.get("associations")
-        if isinstance(assoc, dict):
-            new_assoc = {}
-            for k, v in assoc.items():
-                if isinstance(v, dict):
-                    new_assoc[k] = self._normalize_dates_in_obj(v)
-                else:
-                    new_assoc[k] = v
-            out["associations"] = new_assoc
-
-        return out
-
-    def _adapt_category_for_ninjs(self, obj: dict) -> dict:
-        """
-        Normalize category-related fields into the NINJS-compatible "service" structure.
-
-        This helper produces/normalizes a "service" field as a list of dictionaries
-        each containing at least a "code" key (and optionally "name" and "scheme"),
-        based on the following rules:
-
-        - If "anpa_category" exists and "service" does not:
-            - Accepts a string, a dict, or a list of strings/dicts.
-            - For dict elements, "code" is taken from "code" or "qcode"; "name" and "scheme"
-                are preserved if present.
-            - For string elements, a service entry is created as {"code": <string>}.
-            - Elements that do not yield a "code" are ignored.
-            - The resulting list is stored in "service". The original "anpa_category" is preserved.
-
-        A shallow copy of the input mapping is returned; the original is not modified.
-
-        Parameters:
-                obj (dict): Input mapping potentially containing "anpa_category" and/or "service".
-
-        Returns:
-                dict: A shallow copy of the input with "service" normalized to a list of
-                dictionaries with at least a "code" key. Other fields are left unchanged.
-        """
-        out = dict(obj)
-        if "anpa_category" in out and "service" not in out:
-            val = out.get("anpa_category")
-            svc: list = []
-            # Normalize val to a list of entries
-            if isinstance(val, list):
-                src = val
-            else:
-                src = [val]
-            for el in src:
-                if isinstance(el, dict):
-                    code = el.get("code") or el.get("qcode")
-                    if code is not None:
-                        entry = {"code": code}
-                        if el.get("name"):
-                            entry["name"] = el.get("name")
-                        if el.get("scheme"):
-                            entry["scheme"] = el.get("scheme")
-                        svc.append(entry)
-                elif isinstance(el, str):
-                    svc.append({"code": el})
-            out["service"] = svc
-        return out
+        return STTSinceNINJSFeedParser()
 
 
+# Bind the custom parser to the HTTP feeding service.
+register_feed_parser(STTSinceNINJSFeedParser.NAME, STTSinceNINJSFeedParser())
 register_feeding_service(STTWithSinceHTTPFeedingService)
-register_feeding_service_parser(STTWithSinceHTTPFeedingService.NAME, "ninjs")
+register_feeding_service_parser(
+    STTWithSinceHTTPFeedingService.NAME, STTSinceNINJSFeedParser.NAME
+)
