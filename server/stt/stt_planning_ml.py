@@ -368,9 +368,25 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             elif role == "sttdescription:imagetarget":
                 picture_what_is_photographed = text
 
-        # Also check for these values in subject elements with specific qcodes
+        # Check inside <subject> elements
         for subject_elt in planning_elt.findall(self.qname("subject")):
             for definition_elt in subject_elt.findall(self.qname("definition")):
+                role = definition_elt.get("role", "")
+                text = definition_elt.text.strip() if definition_elt.text else ""
+                if not text:
+                    continue
+
+                if role == "sttdescription:imagetype" and not picture_what_about:
+                    picture_what_about = text
+                elif (
+                    role == "sttdescription:imagetarget"
+                    and not picture_what_is_photographed
+                ):
+                    picture_what_is_photographed = text
+
+        # Check inside <genre> elements
+        for genre_elt in planning_elt.findall(self.qname("genre")):
+            for definition_elt in genre_elt.findall(self.qname("definition")):
                 role = definition_elt.get("role", "")
                 text = definition_elt.text.strip() if definition_elt.text else ""
                 if not text:
