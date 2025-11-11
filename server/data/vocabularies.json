@@ -933,7 +933,7 @@
     },
     {
         "_id": "sttimagetype",
-        "init_version": 1,
+        "init_version": 2,
         "field_type": "custom_vocabulary",
         "items": [
             {
