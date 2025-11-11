@@ -50,26 +50,41 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
                 body = ninjs.get("body_html", "")
                 ninjs["body_html"] = f"<p>{headline}</p>" + (body or "")
 
-    def update_subheadline(self, ninjs):
+    def update_subheadline(self, ninjs, article):
         extra = ninjs.get("extra", {})
         sttsubheadline = extra.get("sttsubheadline")
-        profile = ninjs.get("profile")
         if not sttsubheadline:
             return
-        if profile and profile.lower() in ("pikaplus"):
-            text = re.sub(r"<[^>]+>", "", sttsubheadline).strip()
-            if not text:
-                text = sttsubheadline.strip()
-            header = f"<h2>{text}</h2>"
-            body = ninjs.get("body_html", "")
-            ninjs["body_html"] = header + (body or "")
+
+        profile = (
+            article.get("profile")
+            and get_resource_service("content_types").find_one(
+                req=None, _id=article.get("profile")
+            )
+            or None
+        )
+        if (
+            profile
+            and profile.get("editor", {}).get("sttsubheadline", {}).get("enabled")
+            is not True
+        ):
+            return
+
+        text = re.sub(r"<[^>]+>", "", sttsubheadline).strip()
+        if not text:
+            text = sttsubheadline.strip()
+        header = f"<h2>{text}</h2>\n"
+        body = ninjs.get("body_html", "")
+        ninjs["body_html"] = header + (body or "")
 
     def update_sttversion(self, ninjs):
         profile = ninjs.get("profile")
         if not profile:
             return
 
-        vocabulary_items = get_resource_service("vocabularies").get_items("sttversion")
+        vocabulary_items = get_resource_service("vocabularies").get_items(
+            "sttversion", is_active=None
+        )
 
         content_profile_name = None
         qcode = None
@@ -77,7 +92,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
 
         for vocab_item in vocabulary_items:
             vocab_name = vocab_item.get("name", "").lower()
-            vocab_cp_name = vocab_item.get("content_profile_name", "").lower()
+            vocab_cp_name = (vocab_item.get("content_profile_name") or "").lower()
 
             if vocab_name == profile_lower or vocab_cp_name == profile_lower:
                 content_profile_name = vocab_item.get("content_profile_name")
@@ -96,8 +111,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         )
 
         if qcode and version:
-            if "subject" not in ninjs:
-                ninjs["subject"] = []
+            ninjs.setdefault("subject", [])
 
             sttversion_exists = any(
                 subj.get("scheme") == "sttversion" for subj in ninjs["subject"]
@@ -119,13 +133,23 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         ednote = ninjs.get("ednote", "")
         ninjs["ednote"] = f"{name}. {ednote}"
 
+    def filter_subjects(self, ninjs):
+        ninjs["subject"] = [
+            subj
+            for subj in ninjs.get("subject", [])
+            if subj.get("scheme") not in {"stttopstory", "sttsource"}
+        ]
+
     async def _transform_to_ninjs(self, article, subscriber, recursive=True):
         ninjs = await super()._transform_to_ninjs(article, subscriber, recursive)
 
         self.update_stt_sources(ninjs)
-        self.update_subheadline(ninjs)
+        self.update_subheadline(ninjs, article)
         self.update_body_from_content_profiles(ninjs)
         self.update_sttversion(ninjs)
         self.update_editorial_note(ninjs)
+        self.filter_subjects(ninjs)
+
+        ninjs.pop("slugline", None)
 
         return ninjs

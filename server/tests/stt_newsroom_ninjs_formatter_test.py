@@ -52,21 +52,46 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         self.assertEqual(ninjs.get("body_html"), "<p>Breaking News</p>")
 
     async def test_update_subheadline(self):
+        self.app.data.insert(
+            "content_types",
+            [
+                {
+                    "_id": "pikaplus",
+                    "editor": {"sttsubheadline": {"enabled": True}},
+                },
+                {
+                    "_id": "viiva",
+                    "editor": {"sttsubheadline": {"enabled": False}},
+                },
+            ],
+        )
+
         ninjs = {
             "extra": {
                 "sttsubheadline": "<b>Subtitle</b>",
             },
-            "profile": "pikaplus",
             "body_html": "",
         }
-        self.formatter.update_subheadline(ninjs)
-        self.assertEqual(ninjs.get("body_html"), "<h2>Subtitle</h2>")
+
+        article = {"profile": "viiva"}
+        self.formatter.update_subheadline(ninjs, article)
+        self.assertEqual(ninjs.get("body_html", "").strip(), "")
+
+        article = {"profile": "pikaplus"}
+        self.formatter.update_subheadline(ninjs, article)
+        self.assertEqual(ninjs.get("body_html", "").strip(), "<h2>Subtitle</h2>")
 
     async def test_update_sttversion_from_cv_match(self):
         ninjs = {"profile": "Viiva"}
         self.formatter.update_sttversion(ninjs)
         self.assertIn(
             {"name": "Viiva", "scheme": "sttversion", "code": "1"},
+            ninjs.get("subject", []),
+        )
+        ninjs = {"profile": "pikaplus"}
+        self.formatter.update_sttversion(ninjs)
+        self.assertIn(
+            {"name": "Pika+", "scheme": "sttversion", "code": "4"},
             ninjs.get("subject", []),
         )
 
@@ -85,3 +110,24 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         }
         self.formatter.update_editorial_note(ninjs)
         self.assertEqual(ninjs.get("ednote"), "Ei muita versioita. Base")
+
+    async def test_no_slugline(self):
+        article = {"slugline": "foo", "type": "text", "guid": "test"}
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        assert "slugline" not in ninjs
+
+    async def test_filter_subjects(self):
+        article = {
+            "type": "text",
+            "guid": "test",
+            "subject": [
+                {"name": "Test", "scheme": "sttversion"},
+                {"name": "Other", "scheme": "stttopstory"},
+                {"name": "Source", "scheme": "sttsource"},
+            ],
+        }
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        self.assertEqual(
+            [{"name": "Test", "scheme": "sttversion"}],
+            ninjs.get("subject", []),
+        )
