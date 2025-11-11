@@ -281,7 +281,14 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
 
             picture_type = self.get_picture_type_from_vocabulary(mapped_qcode)
             if picture_type:
+                picture_type["scheme"] = "sttimagetype"
+
                 coverage["planning"]["subject"].append(picture_type)
+
+                coverage["planning"].setdefault("genre", [])
+                coverage["planning"]["genre"].append(
+                    {"qcode": picture_type["qcode"], "name": picture_type["name"]}
+                )
             else:
                 self.add_field_to_coverage(coverage, "sttimagetype", value_text)
 
