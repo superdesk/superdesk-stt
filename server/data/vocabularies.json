@@ -933,8 +933,8 @@
     },
     {
         "_id": "sttimagetype",
-        "init_version": 2,
-        "field_type": "custom_vocabulary",
+        "init_version": 1,
+        "field_type": "null",
         "items": [
             {
                 "is_active": true,
