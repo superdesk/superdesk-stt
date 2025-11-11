@@ -513,6 +513,61 @@ class STTPlanningMLParserTest(TestCase):
             fields_dict2["sttpicturewhatisphotographed"], "Nested kuvauskohde"
         )
 
+    async def test_stt_picture_type_genre_population(self):
+        """When picture type is mapped from vocabulary, ensure planning.genre is populated"""
+        parser = STTPlanningMLParser()
+
+        from xml.etree.ElementTree import fromstring
+
+        root_xml = """<?xml version="1.0" encoding="UTF-8"?>
+        <planningItem xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:stt="http://www.stt-lehtikuva.fi/NewsML"></planningItem>"""
+        parser.root = fromstring(root_xml)
+
+        test_cases = [
+            ("sttimagetypename:20", "sttimage:20"),  # Kuvaaja paikalla
+            ("sttimagetypename:21", "sttimage:21"),  # Arkistokuvaa
+            ("sttimagetypename:28", "sttimage:28"),  # Kuvituskuvaa arkistosta
+        ]
+
+        for input_qcode, expected_qcode in test_cases:
+            with self.subTest(input_qcode=input_qcode):
+                xml = f"""
+                <subject type="ninat:text" qcode="{input_qcode}">
+                    <value>Test</value>
+                </subject>
+                """
+                subject_elt = fromstring(xml)
+                coverage = {
+                    "planning": {"subject": []}
+                }  # genre should be added by parser
+
+                parser.parse_picture_type(subject_elt, coverage)
+
+                # Verify subject entry
+                picture_type_subjects = [
+                    s
+                    for s in coverage["planning"]["subject"]
+                    if s.get("scheme") == "sttimagetype"
+                ]
+                self.assertTrue(
+                    picture_type_subjects, "Expected sttimagetype subject to be present"
+                )
+                self.assertEqual(picture_type_subjects[0]["qcode"], expected_qcode)
+
+                # Verify genre was populated and matches qcode
+                self.assertIn(
+                    "genre", coverage["planning"], "planning.genre should be present"
+                )
+                self.assertTrue(
+                    coverage["planning"]["genre"], "planning.genre should not be empty"
+                )
+                first_genre = coverage["planning"]["genre"][0]
+                self.assertEqual(first_genre["qcode"], expected_qcode)
+                # Name should be present and non-empty (vocab provides it)
+                self.assertTrue(
+                    first_genre.get("name"), "planning.genre[0].name should be set"
+                )
+
 
 def is_placeholder_coverage(coverage):
     try:
