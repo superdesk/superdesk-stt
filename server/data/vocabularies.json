@@ -933,6 +933,7 @@
     },
     {
         "_id": "sttimagetype",
+        "init_version": 1,
         "field_type": null,
         "items": [
             {
