@@ -558,6 +558,7 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
                 "firstcreated": item.get("firstcreated"),
                 "planning": {
                     "slugline": item.get("slugline", ""),
+                    "headline": item.get("slugline", ""),
                     "g2_content_type": "text",
                     "scheduled": item.get("planning_date"),
                     "fields": [],

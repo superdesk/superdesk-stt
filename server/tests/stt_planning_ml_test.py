@@ -95,13 +95,14 @@ class STTPlanningMLParserTest(TestCase):
 
         planning = coverage["planning"]
         self.assertEqual(planning["slugline"], self.item["slugline"])
+        self.assertEqual(planning["headline"], self.item["slugline"])
         self.assertEqual(planning["g2_content_type"], "text")
+        self.assertTrue(planning.get("multiple_content"))
         self.assertEqual(
             planning["scheduled"], datetime(2023, 5, 29, 0, 0, tzinfo=tzutc())
         )
         self.assertEqual(planning["fields"], [])
         self.assertEqual(planning["subject"], [])
-        self.assertTrue(planning.get("multiple_content"))
 
         # Check news_coverage_status structure
         self.assertIn("news_coverage_status", coverage)
