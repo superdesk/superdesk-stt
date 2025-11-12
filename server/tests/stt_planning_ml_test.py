@@ -32,6 +32,9 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(
             self.item["coverages"][0]["coverage_id"], "ID_WORKREQUEST_159799"
         )
+        for coverage in self.item["coverages"]:
+            if coverage["planning"]["g2_content_type"] == "text":
+                self.assertTrue(coverage["planning"]["multiple_content"])
 
     def test_department(self):
         category = self.item["anpa_category"][0]
@@ -91,13 +94,14 @@ class STTPlanningMLParserTest(TestCase):
         self.assertEqual(coverage["flags"], {"placeholder": True})
 
         planning = coverage["planning"]
-        self.assertEqual(planning["slugline"], "")
+        self.assertEqual(planning["slugline"], self.item["slugline"])
         self.assertEqual(planning["g2_content_type"], "text")
         self.assertEqual(
             planning["scheduled"], datetime(2023, 5, 29, 0, 0, tzinfo=tzutc())
         )
         self.assertEqual(planning["fields"], [])
         self.assertEqual(planning["subject"], [])
+        self.assertTrue(planning.get("multiple_content"))
 
         # Check news_coverage_status structure
         self.assertIn("news_coverage_status", coverage)
@@ -123,7 +127,8 @@ class STTPlanningMLParserTest(TestCase):
         )
 
         planning = coverage["planning"]
-        self.assertEqual(planning["slugline"], "Sudanissa taistelut jatkuvat")
+        self.assertEqual(planning["headline"], "Sudanissa taistelut jatkuvat")
+        self.assertEqual(planning["slugline"], self.item["slugline"])
         self.assertEqual(planning["g2_content_type"], "text")
         self.assertEqual(
             planning["scheduled"],

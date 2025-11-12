@@ -81,7 +81,8 @@ Feature: Ingest STT Planning items
                 },
                 "planning": {
                     "g2_content_type": "text",
-                    "slugline": "UKRAINA // Y\u00f6n seurantaa",
+                    "headline": "UKRAINA // Y\u00f6n seurantaa",
+                    "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
                     "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttgenre:1",
@@ -98,7 +99,7 @@ Feature: Ingest STT Planning items
                 },
                 "planning": {
                     "g2_content_type": "picture",
-                    "slugline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
+                    "headline": "Miten tilanne Ukrainan sodan ymp\u00e4rill\u00e4 ja Ukrainassa kehittyy?",
                     "scheduled": "2022-03-30T00:00:00+0000",
                     "genre": [{
                         "qcode": "sttimage:27",
