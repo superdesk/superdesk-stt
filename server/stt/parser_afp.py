@@ -12,6 +12,7 @@ from superdesk.io.feed_parsers.newsml_1_2 import NewsMLOneFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.utc import utcnow
 from pytz import utc
+from superdesk import etree
 import logging
 import re
 
@@ -69,7 +70,7 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
             else utcnow()
         )
 
-        item["subject"] = []
+        item["anpa_category"] = []
 
         # Get all possible department values from XML
         deps = xml.xpath("//SubjectMatter/@FormalName")
@@ -82,8 +83,6 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
 
                 match = re.search(p["pattern"], d)
 
-                # logger.warning("KOE: {} {} {} {}".format(p["pattern"], d, p["mappingid"], p["mappingstr"]))
-
                 # Check if we have a match
                 if match is not None:
 
@@ -91,25 +90,38 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
                     alreadyAdded = False
 
                     # Need to check if the match is already added or not. We can only add one copy of the match
-                    for sub in item["subject"]:
+                    for sub in item["anpa_category"]:
                         if sub["name"] == p["mappingstr"]:
                             alreadyAdded = True
 
                     # If match is not found add it to the subjects
                     if alreadyAdded is False:
-                        item["subject"].append(
+                        item["anpa_category"].append(
                             {
                                 "qcode": p["mappingid"],
                                 "name": p["mappingstr"],
-                                "scheme": "sttdepartment",
                             }
                         )
 
         # Check if there is not subjects found. Then use default value for it: Ulkomaat
-        if len(item["subject"]) == 0:
-            item["subject"].append(
-                {"qcode": "14", "name": "Ulkomaat", "scheme": "sttdepartment"}
+        if len(item["anpa_category"]) == 0:
+            item["anpa_category"].append(
+                {"qcode": "14", "name": "Ulkomaat"}
             )
+
+        # Headline fallback
+        if not item.get("headline") and item.get("body_html"):
+            first_line = item.get("body_html").strip().split("\n")[0]
+            parsed_headline = etree.parse_html(first_line, "html")
+            item["headline"] = (
+                etree.to_string(parsed_headline, method="text").strip().split("\n")[0]
+            )
+
+        # --- Always add AFP and STT as sources
+        item["subject"].append({"qcode": "AFP", "name": "AFP", "scheme": "sttsource"})
+        item["subject"].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
+        # --- Always add main genre
+        item["genre"].append({"qcode": "sttgenre:1", "name": "Uutinen"})
 
         return item
 
