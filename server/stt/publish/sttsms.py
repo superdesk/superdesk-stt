@@ -1,5 +1,5 @@
-
 """STTSMS for Loordi"""
+
 import logging
 import pytz
 import re
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class STTSMSFormatter(NewsMLG2Formatter):
-    """ STTSMS Formatter"""
+    """STTSMS Formatter"""
 
     ENCODING = "ISO-8859-1"
     # XML_ROOT = '<?xml version="1.0" encoding="{}"?>\n'.format(ENCODING)
@@ -34,14 +34,14 @@ class STTSMSFormatter(NewsMLG2Formatter):
         if "subject" in article and article["subject"] is not None:
             for subject in article["subject"]:
                 if "scheme" in subject:
-                    if subject["scheme"] == 'sttsmscategory':
+                    if subject["scheme"] == "sttsmscategory":
                         categoryStr += "PUSH " + subject["name"] + ", "
 
         # Remove unnecessary ", " from the end of string
         smsCategory.text = re.sub(r",\s*$", "", categoryStr)
 
     async def format(self, article, subscriber, codes=None):
-        """ Create article in STT SMS format (XML)
+        """Create article in STT SMS format (XML)
 
         :param dict article:
         :param dict subscriber:
@@ -62,27 +62,37 @@ class STTSMSFormatter(NewsMLG2Formatter):
             iddoc = SubElement(header, "iddoc")
             iddoc.text = article.get("guid", "")
             fk_yesno_3 = SubElement(header, "fk_yesno_3")
-            fk_yesno_3.text = 'Kyllä'
+            fk_yesno_3.text = "Kyllä"
 
             timeheaderupd = SubElement(header, "timeheaderupd")
-            timeheaderupd.text = article["versioncreated"].astimezone(pytz.timezone('Europe/Helsinki')).strftime("%Y%m%d%H%M%S")
+            timeheaderupd.text = (
+                article["versioncreated"]
+                .astimezone(pytz.timezone("Europe/Helsinki"))
+                .strftime("%Y%m%d%H%M%S")
+            )
             timelastedited = SubElement(header, "timelastedited")
-            timelastedited.text = article["firstcreated"].astimezone(pytz.timezone('Europe/Helsinki')).strftime("%Y%m%d%H%M%S")
+            timelastedited.text = (
+                article["firstcreated"]
+                .astimezone(pytz.timezone("Europe/Helsinki"))
+                .strftime("%Y%m%d%H%M%S")
+            )
             fk_yesno_7 = SubElement(header, "fk_yesno_7", attrib={})
-            fk_yesno_7.text = 'Kyllä'
+            fk_yesno_7.text = "Kyllä"
 
             self.format_smscategory(article, header)
 
             sms = SubElement(newsItem, "sms")
             sms.text = article.get("headline", "")
 
-            xmlStr = etree.tostring(newsItem, method='xml', pretty_print=True, encoding=self.ENCODING).decode(self.ENCODING)
+            xmlStr = etree.tostring(
+                newsItem, method="xml", pretty_print=True, encoding=self.ENCODING
+            ).decode(self.ENCODING)
 
             # Replace special Unicode characters as entities manually (ndhas, thinsp, tab, etc.)
-            xmlStr = xmlStr.replace('\u2013', '&ndash;')
-            xmlStr = xmlStr.replace('\t', '&tab;')
-            xmlStr = xmlStr.replace('\u2009', '&thinsp;')
-            xmlStr = xmlStr.replace('&amp;', '&amp;amp;')
+            xmlStr = xmlStr.replace("\u2013", "&ndash;")
+            xmlStr = xmlStr.replace("\t", "&tab;")
+            xmlStr = xmlStr.replace("\u2009", "&thinsp;")
+            xmlStr = xmlStr.replace("&amp;", "&amp;amp;")
 
             return [
                 (

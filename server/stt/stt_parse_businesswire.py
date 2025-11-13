@@ -56,9 +56,7 @@ class BusinessWireParser(NewsMLOneFeedParser):
         if dateline:
             txt = dateline.strip()
             if txt:
-                item["dateline"] = {
-                    "located": {"city": txt}
-                }
+                item["dateline"] = {"located": {"city": txt}}
 
         components = xml.findall("NewsItem/NewsComponent/NewsComponent/NewsComponent")
         for component in components:
@@ -129,7 +127,9 @@ class BusinessWireParser(NewsMLOneFeedParser):
 
         # Set source
         if "subject" in item and isinstance(item["subject"], list):
-            item["subject"].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
+            item["subject"].append(
+                {"qcode": "STT", "name": "STT", "scheme": "sttsource"}
+            )
         else:
             item["subject"] = [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}]
 

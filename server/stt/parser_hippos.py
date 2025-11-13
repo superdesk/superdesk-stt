@@ -133,13 +133,15 @@ class HipposParser(XMLFeedParser):
         )
 
         #  Make sure 'subject' is found in item, default values is empty list
-        if 'subject' not in item:
+        if "subject" not in item:
             # print('No subject found, create it!')
-            item.setdefault('subject', [])
+            item.setdefault("subject", [])
 
         # Always add Fintoto and STT as sources
-        item['subject'].append({"qcode": "Fintoto", "name": "Fintoto", "scheme": "sttsource"})
-        item['subject'].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
+        item["subject"].append(
+            {"qcode": "Fintoto", "name": "Fintoto", "scheme": "sttsource"}
+        )
+        item["subject"].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
 
         item["body_html"] = (
             "<p>"

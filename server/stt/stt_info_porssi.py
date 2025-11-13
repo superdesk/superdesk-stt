@@ -138,7 +138,7 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                 # Slugline intentionally mirrors headline for desk workflow (STT-84)
                 "slugline": headline,
                 "body_html": body,
-                "original_source": source,  # Source of the press release
+                "source": source,  # Source of the press release
                 "priority": 3,  # Priority fixed to 3
                 "language": sel_lang,
                 "anpa_category": [{"qcode": "12", "name": "Tiedotepalvelu"}],

@@ -8,46 +8,72 @@
 
 STT_EXCLUDE_METADATA_LIST = [
     {
-        'profile': 'viiva',
-        'excludeData': [
-            {'scheme': 'sttnewsroomnote'},
-            {'scheme': 'sttsmscategory'},
-            {'scheme': 'stttopstory'},
-            {'removeKeys': ['byline', 'ednote', 'sttpublicednote', 'sttsubheadline', 'extra>sttsubheadline', 'extra>sttpublicednote', 'body_html']}
-        ]
+        "profile": "viiva",
+        "excludeData": [
+            {"scheme": "sttnewsroomnote"},
+            {"scheme": "sttsmscategory"},
+            {"scheme": "stttopstory"},
+            {
+                "removeKeys": [
+                    "byline",
+                    "ednote",
+                    "sttpublicednote",
+                    "sttsubheadline",
+                    "extra>sttsubheadline",
+                    "extra>sttpublicednote",
+                    "body_html",
+                ]
+            },
+        ],
     },
     {
-        'profile': 'sms',
-        'excludeData': [
-            {'scheme': 'sttnewsroomnote'},
-            {'scheme': 'stttopstory'},
-            {'scheme': 'sttsource'},
-            {'scheme': 'topics'},
-            {'removeKeys': ['byline', 'ednote', 'slugline', 'headline', 'dateline', 'source', 'anpa_category', 'genre', 'sttpublicednote', 'sttsubheadline', 'extra>sttsubheadline', 'extra>sttpublicednote', 'body_html']}
-        ]
+        "profile": "sms",
+        "excludeData": [
+            {"scheme": "sttnewsroomnote"},
+            {"scheme": "stttopstory"},
+            {"scheme": "sttsource"},
+            {"scheme": "topics"},
+            {
+                "removeKeys": [
+                    "byline",
+                    "ednote",
+                    "slugline",
+                    "headline",
+                    "dateline",
+                    "source",
+                    "anpa_category",
+                    "genre",
+                    "sttpublicednote",
+                    "sttsubheadline",
+                    "extra>sttsubheadline",
+                    "extra>sttpublicednote",
+                    "body_html",
+                ]
+            },
+        ],
     },
     {
-        'profile': 'pika',
-        'excludeData': [
-            {'scheme': 'stttopstory'},
-            {'scheme': 'sttsmscategory'},
-            {'removeKeys': ['byline', 'sttsubheadline', 'extra>sttsubheadline']}
-        ]
+        "profile": "pika",
+        "excludeData": [
+            {"scheme": "stttopstory"},
+            {"scheme": "sttsmscategory"},
+            {"removeKeys": ["byline", "sttsubheadline", "extra>sttsubheadline"]},
+        ],
     },
     {
-        'profile': 'pikaplus',
-        'excludeData': [
-            {'scheme': 'stttopstory'},
-            {'scheme': 'sttsmscategory'},
-        ]
+        "profile": "pikaplus",
+        "excludeData": [
+            {"scheme": "stttopstory"},
+            {"scheme": "sttsmscategory"},
+        ],
     },
     {
-        'profile': 'nettiuutinen',
-        'excludeData': [
-            {'scheme': 'sttsmscategory'},
-            {'scheme': 'sttnewsroomnote'},
-            {'removeKeys': ['ednote']}
-        ]
+        "profile": "nettiuutinen",
+        "excludeData": [
+            {"scheme": "sttsmscategory"},
+            {"scheme": "sttnewsroomnote"},
+            {"removeKeys": ["ednote"]},
+        ],
     },
 ]
 
@@ -69,9 +95,11 @@ def cleanDict(data, key=None, qcode=None, scheme=None, removeKeys=None):
 
                 # Check for if it is to be removed
                 if (
-                    (key is not None and key in cleanedItem) or
-                    (qcode is not None and cleanedItem.get('qcode', None) == qcode) or
-                    (scheme is not None and cleanedItem.get('scheme', None) == scheme)
+                    (key is not None and key in cleanedItem)
+                    or (qcode is not None and cleanedItem.get("qcode", None) == qcode)
+                    or (
+                        scheme is not None and cleanedItem.get("scheme", None) == scheme
+                    )
                 ):
                     continue
 
@@ -117,13 +145,13 @@ def removeMetadata(article):
             match key:
 
                 # If profile is set change the currentProfile value to it
-                case 'profile':
+                case "profile":
                     currentProfile = value
 
                 # If list of unwanted metadata is defined remove them from the article dictionary
-                case 'excludeData':
+                case "excludeData":
 
-                    articleProfile = article.get('profile', None)
+                    articleProfile = article.get("profile", None)
 
                     # If profiles match we can proceed
                     if articleProfile and currentProfile == articleProfile:
@@ -132,9 +160,9 @@ def removeMetadata(article):
 
                             # Build params list dynamically
                             params = {
-                                'qcode': dict.get('qcode', ''),
-                                'scheme': dict.get('scheme', ''),
-                                'removeKeys': dict.get('removeKeys', '')
+                                "qcode": dict.get("qcode", ""),
+                                "scheme": dict.get("scheme", ""),
+                                "removeKeys": dict.get("removeKeys", ""),
                             }
 
                             cleanedArticle = cleanDict(cleanedArticle, **params)

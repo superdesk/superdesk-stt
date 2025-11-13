@@ -24,8 +24,8 @@ class STTInfoPorssiParserTestCase(TestCase):
             "dateline",
             "extra",
         ]
-        # for field in required_fields:
-        #    self.assertIn(field, self.item, f"Required field '{field}' is missing")
+        for field in required_fields:
+            self.assertIn(field, self.item, f"Required field '{field}' is missing")
 
     def test_guid_and_headline(self):
         """Test that GUID and headline are extracted correctly."""
@@ -58,6 +58,7 @@ class STTInfoPorssiParserTestCase(TestCase):
     def test_categories_present(self):
         """Test that subject field is present."""
         self.assertIn("subject", self.item)
+        self.assertEqual("Tiedotepalvelu", self.item["anpa_category"][0]["name"])
 
     def test_name_and_abstract_fields(self):
         """Test that name and abstract fields are set correctly."""
@@ -76,6 +77,5 @@ class STTInfoPorssiParserTestCase(TestCase):
         """Test that extra fields are set correctly."""
         self.assertIn("extra", self.item)
         extra = self.item["extra"]
-        # self.assertEqual(extra["ntb_pub_name"], "LapWall Oyj")
-        # self.assertEqual(extra["department"], "Tiedotepalvelu")
-        # self.assertEqual(extra["desk"], "Kotimaa")
+        self.assertEqual(extra["ntb_pub_name"], "LapWall Oyj")
+        self.assertEqual(extra["desk"], "Kotimaa")

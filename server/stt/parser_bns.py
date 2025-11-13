@@ -41,12 +41,12 @@ class BNSNewsMLFeedParser(NewsMLTwoFeedParser):
         item["body_html"] = ""
 
         # Make sure 'subject' is found in item, default valus is empty list
-        if 'subject' not in item:
-            item.setdefault('subject', [])
+        if "subject" not in item:
+            item.setdefault("subject", [])
 
         # Always add BNS and STT as sources
-        item['subject'].append({"qcode": "BNS", "name": "BNS", "scheme": "sttsource"})
-        item['subject'].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
+        item["subject"].append({"qcode": "BNS", "name": "BNS", "scheme": "sttsource"})
+        item["subject"].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
 
         # Get department value from XML
         dep = xml.xpath("/NewsML/NewsItem/NewsComponent/TopicSet/Topic/FormalName")[
@@ -58,14 +58,10 @@ class BNSNewsMLFeedParser(NewsMLTwoFeedParser):
 
         # If last character is B then departmen is talous
         if match is not None:
-            item["anpa_category"].append(
-                {"qcode": "11", "name": "Talous"}
-            )
+            item["anpa_category"].append({"qcode": "11", "name": "Talous"})
         # Otherwise all other values default to department ulkomaat
         else:
-            item["anpa_category"].append(
-                {"qcode": "14", "name": "Ulkomaat"}
-            )
+            item["anpa_category"].append({"qcode": "14", "name": "Ulkomaat"})
 
         # Get body paragraps
         paragraphs = xml.xpath(

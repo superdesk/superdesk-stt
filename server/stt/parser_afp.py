@@ -105,9 +105,7 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
 
         # Check if there is not subjects found. Then use default value for it: Ulkomaat
         if len(item["anpa_category"]) == 0:
-            item["anpa_category"].append(
-                {"qcode": "14", "name": "Ulkomaat"}
-            )
+            item["anpa_category"].append({"qcode": "14", "name": "Ulkomaat"})
 
         # Headline fallback
         if not item.get("headline") and item.get("body_html"):
