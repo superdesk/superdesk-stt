@@ -7,12 +7,11 @@
 module.exports = function (grunt) {
   return {
     /* enable modules */
-    apps: ["superdesk-planning", "superdesk.analytics", "stt"],
-    importApps: ["../index", "superdesk-planning", "superdesk-analytics"],
+    apps: ["superdesk-planning", "stt"],
+    importApps: ["../index", "superdesk-planning"],
     workspace: {
       planning: true,
       assignments: true,
-      analytics: true,
     },
 
     vocabulariesToExcludeAsFields: ['sttsubj'],

@@ -134,7 +134,6 @@ INSTALLED_APPS = [
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
     "planning",
-    "analytics",
     "apps.languages",
     "stt.spellcheckers.stt_fin",
     "stt.macros",
@@ -334,21 +333,6 @@ PLANNING_XMP_ASSIGNMENT_MAPPING = {
     },
     "atribute_key": "{http://ns.adobe.com/photoshop/1.0/}TransmissionReference",
 }
-
-# ANALYTICS MODULE
-
-# Highcharts Export Server - default settings
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true")
-
-ANALYTICS_ENABLE_ARCHIVE_STATS = env("ANALYTICS_ENABLE_ARCHIVE_STATS", "true")
-
-HIGHCHARTS_SERVER_HOST = env("HIGHCHARTS_SERVER_HOST", "localhost")
-HIGHCHARTS_SERVER_PORT = env("HIGHCHARTS_SERVER_PORT", "6060")
-HIGHCHARTS_SERVER_WORKERS = env("HIGHCHARTS_SERVER_WORKERS", None)
-HIGHCHARTS_SERVER_WORK_LIMIT = env("HIGHCHARTS_SERVER_WORK_LIMIT", None)
-HIGHCHARTS_SERVER_LOG_LEVEL = env("HIGHCHARTS_SERVER_LOG_LEVEL", None)
-HIGHCHARTS_SERVER_QUEUE_SIZE = env("HIGHCHARTS_SERVER_QUEUE_SIZE", None)
-HIGHCHARTS_SERVER_RATE_LIMIT = env("HIGHCHARTS_SERVER_RATE_LIMIT", None)
 
 PLANNING_EVENT_LINK_METHOD = "many_secondary"
 
