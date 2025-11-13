@@ -131,3 +131,20 @@ class STTNewsroomNinjsFormatterTest(TestCase):
             [{"name": "Test", "scheme": "sttversion"}],
             ninjs.get("subject", []),
         )
+
+    async def test_special_characters(self):
+        article = {
+            "type": "text",
+            "guid": "test",
+            "headline": "Test\u2013text with tab\tand thinsp\u2009and editorial---agreement¤.",
+            "body_html": "Test\u2013text with tab\tand thinsp\u2009and editorial---agreement¤.",
+        }
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        self.assertEqual(
+            "Test&#8211;text with tab&#9;and thinsp&#8201;and editorial&#8211;agreement&#8201;.",
+            ninjs.get("headline", ""),
+        )
+        self.assertEqual(
+            "Test&#8211;text with tab&#9;and thinsp&#8201;and editorial&#8211;agreement&#8201;.",
+            ninjs.get("body_html", ""),
+        )
