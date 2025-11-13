@@ -37,8 +37,8 @@ class STTInfoPorssiParserTestCase(TestCase):
 
     def test_source_and_priority(self):
         """Test that source and priority are set correctly."""
-        # self.assertEqual(self.item["source"], "LapWall Oyj")
-        # self.assertEqual(self.item["priority"], 3)
+        self.assertEqual(self.item["source"], "LapWall Oyj")
+        self.assertEqual(self.item["priority"], 3)
 
     def test_language_detected(self):
         """Test that language is detected correctly as Finnish."""
