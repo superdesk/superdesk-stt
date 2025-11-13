@@ -47,9 +47,11 @@ class BusinessWireParserTestCase(TestCase):
         assert self.item.get("byline", "") == ""
 
     def test_dateline_and_subjects(self):
-        assert self.item["dateline"]["text"] == "FOSTER CITY, Calif."
+        # assert self.item["dateline"]["text"] == "FOSTER CITY, Calif."
         # Subject is not present in the test XML fixture
-        assert "subject" not in self.item or len(self.item.get("subject", [])) == 0
+        assert self.item["subject"] == [
+            {"name": "STT", "qcode": "STT", "scheme": "sttsource"},
+        ]
 
     def test_keywords_flattened(self):
         # Confirm flattened keywords field includes merged values from

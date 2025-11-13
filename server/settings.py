@@ -159,6 +159,10 @@ INSTALLED_APPS = [
     "stt.io.feeding_services.stt_tt_content_api",
     "stt.io.feed_parsers.stt_tt_parse_content_api",
     "stt.stt_json_event_formatter",
+    "stt.publish.stt_newsml_g2",
+    "stt.publish.stt_newsml_g2_tabs",
+    "stt.publish.sttsms",
+    "stt.publish.events_desk-net",
 ]
 
 MODULES.append("planning")

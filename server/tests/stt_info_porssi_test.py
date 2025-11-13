@@ -58,6 +58,7 @@ class STTInfoPorssiParserTestCase(TestCase):
     def test_categories_present(self):
         """Test that subject field is present."""
         self.assertIn("subject", self.item)
+        self.assertEqual("Tiedotepalvelu", self.item["anpa_category"][0]["name"])
 
     def test_name_and_abstract_fields(self):
         """Test that name and abstract fields are set correctly."""
@@ -77,5 +78,4 @@ class STTInfoPorssiParserTestCase(TestCase):
         self.assertIn("extra", self.item)
         extra = self.item["extra"]
         self.assertEqual(extra["ntb_pub_name"], "LapWall Oyj")
-        self.assertEqual(extra["department"], "Tiedotepalvelu")
         self.assertEqual(extra["desk"], "Kotimaa")

@@ -143,13 +143,14 @@ class VeikkausTextFeedParser(FeedParser):
             "headline": headline,
             "body_html": body_html,
             "description_text": filename,
+            "anpa_category": [{"qcode": "8", "name": "Peliuutiset"}],
+            "subject": [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}],
             "original_source": "STT",
             "urgency": 4,
             "pubstatus": "usable",
             "versioncreated": datetime.now(timezone.utc),
             "extra": {
                 "veikkaus": {
-                    "department": "Peliuutiset",
                     "desk": "Kotimaa",
                     "filename": filename,
                 }

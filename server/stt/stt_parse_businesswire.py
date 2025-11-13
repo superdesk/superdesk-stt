@@ -56,7 +56,7 @@ class BusinessWireParser(NewsMLOneFeedParser):
         if dateline:
             txt = dateline.strip()
             if txt:
-                item["dateline"] = {"text": txt}
+                item["dateline"] = {"located": {"city": txt}}
 
         components = xml.findall("NewsItem/NewsComponent/NewsComponent/NewsComponent")
         for component in components:
@@ -121,6 +121,17 @@ class BusinessWireParser(NewsMLOneFeedParser):
                 subjects.append(subject_dict)
         if subjects:
             item["subject"] = subjects
+
+        # Set department (Osasto)
+        item["anpa_category"] = [{"qcode": "1", "name": "Business wire"}]
+
+        # Set source
+        if "subject" in item and isinstance(item["subject"], list):
+            item["subject"].append(
+                {"qcode": "STT", "name": "STT", "scheme": "sttsource"}
+            )
+        else:
+            item["subject"] = [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}]
 
     def parse_bw_metadata(self, item, xml):
         """Parse BusinessWire specific metadata"""
