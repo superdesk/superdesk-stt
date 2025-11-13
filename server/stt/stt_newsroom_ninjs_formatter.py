@@ -66,11 +66,15 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
             )
             or None
         )
-        if (
-            profile
-            and profile.get("editor", {}).get("sttsubheadline", {}).get("enabled")
-            is not True
-        ):
+
+        try:
+            subheadline_enabled = (
+                profile and profile["editor"]["sttsubheadline"]["enabled"]
+            )
+        except (KeyError, TypeError):
+            subheadline_enabled = False
+
+        if not subheadline_enabled:
             return
 
         text = re.sub(r"<[^>]+>", "", sttsubheadline).strip()
