@@ -61,7 +61,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
                 },
                 {
                     "_id": "viiva",
-                    "editor": {"sttsubheadline": {"enabled": False}},
+                    "editor": {"sttsubheadline": None},
                 },
             ],
         )
