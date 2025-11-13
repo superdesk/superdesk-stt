@@ -19,6 +19,8 @@ from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 
+from stt.publish.utils import replace_special_characters
+
 from .exclude_metadata import removeMetadata
 
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
@@ -686,14 +688,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 newsItem, method="xml", pretty_print=True, encoding=self.ENCODING
             ).decode(self.ENCODING)
 
-            # Replace special Unicode characters as entities manually (ndhas, thinsp, tab, etc.)
-            xmlStr = xmlStr.replace("\u2013", "&#8211;")
-            xmlStr = xmlStr.replace("\t", "&#9;")
-            xmlStr = xmlStr.replace("\u2009", "&#8201;")
-
-            # Replace STT editorial agreements
-            xmlStr = xmlStr.replace("---", "&#8211;")
-            xmlStr = xmlStr.replace("¤", "&#8201;")
+            xmlStr = replace_special_characters(xmlStr)
 
             return [
                 (
