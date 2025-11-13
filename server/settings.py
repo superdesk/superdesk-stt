@@ -12,7 +12,14 @@
 import os
 from pathlib import Path
 
-from superdesk.default_settings import env, MODULES, ELASTICSEARCH_SETTINGS
+from superdesk.default_settings import (
+    env,
+    MODULES,
+    ELASTICSEARCH_SETTINGS,
+    SAML_PATH,
+    CORE_APPS as _core_apps,
+    strtobool,
+)
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -357,3 +364,8 @@ DEFAULT_CATEGORY_QCODES_FOR_AUTO_PUBLISHED_ARTICLES = None
 ELASTICSEARCH_SETTINGS["settings"]["analysis"]["analyzer"]["html_field_analyzer"][
     "filter"
 ] = ["lowercase"]
+
+
+# disable db auth if saml is configured
+if SAML_PATH and os.path.exists(SAML_PATH) and not strtobool(env("SUPERDESK_AUTH", "")):
+    CORE_APPS = [app for app in _core_apps if app != "apps.auth.db"]
