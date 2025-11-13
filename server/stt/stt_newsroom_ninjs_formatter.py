@@ -4,7 +4,7 @@ import re
 from superdesk import get_resource_service
 from superdesk.publish.formatters import NewsroomNinjsFormatter
 
-from stt.publish.utils import replace_special_characters
+from stt.publish.utils import decode_special_characters, encode_special_characters
 
 
 logger = logging.getLogger(__name__)
@@ -159,9 +159,12 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
 
         ninjs.pop("slugline", None)
 
-        # replace special characters
-        for field in ["headline", "body_html"]:
-            if ninjs.get(field):
-                ninjs[field] = replace_special_characters(ninjs[field])
+        if ninjs.get("body_html"):
+            ninjs["body_html"] = encode_special_characters(ninjs["body_html"])
+
+        if ninjs.get("headline"):
+            ninjs["headline"] = decode_special_characters(
+                encode_special_characters(ninjs["headline"])
+            )
 
         return ninjs
