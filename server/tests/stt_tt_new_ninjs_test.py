@@ -43,6 +43,11 @@ class STTTTNEWNINJSFeedParserTest(TestCase):
             self.item["anpa_category"], [{"qcode": "14", "name": "Ulkomaat"}]
         )
 
+    def test_subject_qcodes(self):
+        for subject in self.item["subject"]:
+            assert subject["name"]
+            assert subject["qcode"]
+
     def test_body_html_and_byline(self):
         html = self.item.get("body_html", "")
         # Text items have body_html content
