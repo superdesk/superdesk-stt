@@ -19,7 +19,7 @@ from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 
-from stt.publish.utils import replace_special_characters
+from stt.publish.utils import encode_special_characters
 
 from .exclude_metadata import removeMetadata
 
@@ -688,7 +688,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 newsItem, method="xml", pretty_print=True, encoding=self.ENCODING
             ).decode(self.ENCODING)
 
-            xmlStr = replace_special_characters(xmlStr)
+            xmlStr = encode_special_characters(xmlStr)
 
             return [
                 (

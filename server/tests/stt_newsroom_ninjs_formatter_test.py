@@ -141,7 +141,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         }
         ninjs = await self.formatter._transform_to_ninjs(article, {})
         self.assertEqual(
-            "Test&#8211;text with tab&#9;and thinsp&#8201;and editorial&#8211;agreement&#8201;.",
+            "Test\u2013text with tab\tand thinsp\u2009and editorial\u2013agreement\u2009.",
             ninjs.get("headline", ""),
         )
         self.assertEqual(
