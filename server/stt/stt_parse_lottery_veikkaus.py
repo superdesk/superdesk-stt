@@ -131,7 +131,7 @@ class VeikkausTextFeedParser(FeedParser):
         text = match.group(1) if match else raw
 
         lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-        headline = next((ln.strip() for ln in lines if ln.strip()), "") or "Veikkaus"
+        headline = f"*** {(next((ln.strip() for ln in lines if ln.strip()), '') or 'Veikkaus')} ***"
         body_html = to_body_html(lines)
 
         filename = os.path.basename(file_path)
@@ -144,19 +144,20 @@ class VeikkausTextFeedParser(FeedParser):
             "body_html": body_html,
             "description_text": filename,
             "anpa_category": [{"qcode": "8", "name": "Peliuutiset"}],
-            "subject": [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}],
-            "original_source": "STT",
-            "urgency": 4,
-            "pubstatus": "usable",
+            "genre": [{"qcode": "sttgenre:1", "name": "Uutinen"}],
+            "subject": [
+                {"qcode": "STT", "name": "STT", "scheme": "sttsource"},
+                {"qcode": "Veikkaus", "name": "Veikkaus", "scheme": "sttsource"},
+            ],
+            "urgency": 3,
             "versioncreated": datetime.now(timezone.utc),
             "extra": {
                 "veikkaus": {
-                    "desk": "Kotimaa",
                     "filename": filename,
                 }
             },
             "slugline": "Veikkaus",
-            "keywords": ["Veikkaus", "lottery"],
+            # "keywords": ["Veikkaus", "lottery"],
         }
 
         return [item]
