@@ -263,6 +263,12 @@ class STTTTNEWNINJSFeedParser(NINJSFeedParser):
         if IGNORE_REMOTE_IMAGES:
             item.pop("associations", None)
 
+        if item.get("subject"):
+            # filter out subjects without qcode or name
+            item["subject"] = [
+                s for s in item["subject"] if s.get("qcode") and s.get("name")
+            ]
+
         return item
 
     # --------- Helpers ---------
