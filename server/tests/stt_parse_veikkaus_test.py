@@ -1,17 +1,17 @@
 # tests/stt_parse_veikkaus_test.py
 import logging
+
 # import os
 
 from tests import TestCase
+
 # from stt.stt_parse_lottery_veikkaus import (
 #    VeikkausTextFeedParser,
 #    to_body_html,
 #    fix_encoding_issues,
 # )
 
-from stt.stt_parse_lottery_veikkaus import (
-    VeikkausTextFeedParser
-)
+from stt.stt_parse_lottery_veikkaus import VeikkausTextFeedParser
 
 # from datetime import datetime
 
