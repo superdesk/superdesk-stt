@@ -9,6 +9,14 @@ from stt.publish.utils import decode_special_characters, encode_special_characte
 
 logger = logging.getLogger(__name__)
 
+FILTER_SUBJECT_SCHEMES = {
+    "stttopstory",
+    "sttsource",
+    "sttdepartment",
+    "sttsubject",
+    "sttdone1",
+}
+
 
 class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
     name = "STT Newsroom NINJS"
@@ -144,7 +152,7 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
         ninjs["subject"] = [
             subj
             for subj in ninjs.get("subject", [])
-            if subj.get("scheme") not in {"stttopstory", "sttsource"}
+            if subj.get("scheme") not in FILTER_SUBJECT_SCHEMES
         ]
 
     async def _transform_to_ninjs(self, article, subscriber, recursive=True):
