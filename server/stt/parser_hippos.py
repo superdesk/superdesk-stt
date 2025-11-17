@@ -122,6 +122,8 @@ class HipposParser(XMLFeedParser):
         item["uid"] = uid
         item["version"] = "1"
         item["headline"] = "Ravituloksia/" + locationStr
+        item["genre"] = [{"qcode": "sttgenre:13", "name": "Tulokset"}]
+        item["anpa_category"] = [{"qcode": "16", "name": "Urheilu"}]
         item["urgency"] = 3
         item["firstcreated"] = (
             utc.localize(item["firstcreated"]) if item.get("firstcreated") else utcnow()
@@ -137,10 +139,7 @@ class HipposParser(XMLFeedParser):
             # print('No subject found, create it!')
             item.setdefault("subject", [])
 
-        # Always add Fintoto and STT as sources
-        item["subject"].append(
-            {"qcode": "Fintoto", "name": "Fintoto", "scheme": "sttsource"}
-        )
+        # Always add STT as sources
         item["subject"].append({"qcode": "STT", "name": "STT", "scheme": "sttsource"})
 
         item["body_html"] = (
