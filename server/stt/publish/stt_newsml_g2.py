@@ -320,7 +320,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                     parentNode,
                     "subject",
                     attrib={
-                        "type": "cpnat: abstract",
+                        "type": "cpnat:abstract",
                         "qcode": "stttopstory:" + topStoryYesNo,
                     },
                 )

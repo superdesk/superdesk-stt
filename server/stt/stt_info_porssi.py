@@ -130,27 +130,20 @@ class STTInfoPorssi(NewsMLOneFeedParser):
                 if dtxt:
                     dateline_obj = {"text": dtxt}
 
-            headline = selected.findtext("NewsComponent/NewsLines/HeadLine") or ""
+            # add *** before and after headline
+            headline = f"*** {(selected.findtext('NewsComponent/NewsLines/HeadLine') or '')} ***"
 
             item = {
                 "guid": guid_value,
                 "headline": headline,
-                # Slugline intentionally mirrors headline for desk workflow (STT-84)
-                "slugline": headline,
                 "body_html": body,
-                "source": source,  # Source of the press release
+                "original_source": source,  # Source of the press release
                 "priority": 3,  # Priority fixed to 3
                 "language": sel_lang,
                 "anpa_category": [{"qcode": "12", "name": "Tiedotepalvelu"}],
                 "subject": [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}],
                 "type": "text",
                 "versioncreated": versioncreated,
-                "name": headline,  # Name = headline (XSLT equivalent)
-                "abstract": headline,  # Description = title/headline
-                "extra": {
-                    "ntb_pub_name": source,
-                    "desk": "Kotimaa",  # Desk
-                },
             }
             if dateline_obj is not None:
                 item["dateline"] = dateline_obj
