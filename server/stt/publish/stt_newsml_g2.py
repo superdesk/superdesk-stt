@@ -104,10 +104,14 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
             if assignment is not None:
                 if assignment.get("planning", None):
-                    coverageStatus = assignment.get("planning", "")[
-                        "news_coverage_status"
-                    ]["label"]
-                    coverageStatusCode = "-1"
+                    try:
+                        coverageStatus = assignment.get("planning", "")[
+                            "news_coverage_status"
+                        ]["label"]
+                        coverageStatusCode = "-1"
+                    except KeyError:
+                        coverageStatus = None
+                        coverageStatusCode = "-1"
 
                     match coverageStatus:
                         case "Tehdään":
