@@ -124,6 +124,9 @@ class STTNewsroomNinjsFormatterTest(TestCase):
                 {"name": "Test", "scheme": "sttversion"},
                 {"name": "Other", "scheme": "stttopstory"},
                 {"name": "Source", "scheme": "sttsource"},
+                {"name": "Source", "scheme": "sttdepartment"},
+                {"name": "Source", "scheme": "sttsubject"},
+                {"name": "Source", "scheme": "sttdone1"},
             ],
         }
         ninjs = await self.formatter._transform_to_ninjs(article, {})
