@@ -23,6 +23,7 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
             if item.get("place"):
                 self.parse_place(item)
             await self.set_extra_fields(item, xml)
+            self.fix_genre(item)
         return items
 
     def parse_inline_content(self, tree, item):
@@ -163,6 +164,14 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
         item["place"] = place_list
         for place in place_list:
             place["scheme"] = None
+
+    def fix_genre(self, item):
+        if item.get("genre"):
+            for genre in item["genre"]:
+                genre["qcode"] = "sttgenre:" + genre["qcode"]
+                genre["name"] = self.getVocabulary(
+                    "genre", genre["qcode"], genre["name"]
+                )
 
 
 register_feed_parser(STTParser.NAME, STTParser())
