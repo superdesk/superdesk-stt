@@ -118,9 +118,6 @@ SCHEMA = {
     }
 }  # type: dict[str, dict]
 
-# add missing item in CVs on ingest
-QCODE_MISSING_VOC = "create"
-
 INSTALLED_APPS = [
     "stt.parser",
     "stt.parser_bns",
