@@ -391,7 +391,7 @@ Feature: Ingest STT Planning items
                     "g2_content_type": "text",
                     "scheduled": "2017-12-25T09:16:43+0000",
                     "slugline": "Parliament passed the Alcohol Act and the government gained confidence*** TRANSLATED ***",
-                    "genre": [{"name": "P\u00e4\u00e4juttu", "qcode": "1"}],
+                    "genre": [{"name": "Uutinen", "qcode": "sttgenre:1"}],
                     "subject": [
                         {"name": "Politics", "qcode": "9", "scheme": "sttdepartment"},
                         {"name": "Pika+", "qcode": "1", "scheme": "sttversion"}

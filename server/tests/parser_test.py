@@ -58,6 +58,12 @@ class STTParserTestCase(TestCase):
         assert places[1]["qcode"] == "sttcountry:1"
         assert not places[1]["scheme"]
 
+    def test_genre(self):
+        genres = [g for g in self.item["genre"]]
+        assert len(genres) == 1
+        assert genres[0]["name"] == "Uutinen"
+        assert genres[0]["qcode"] == "sttgenre:1"
+
 
 class STTParserPRETestCase(TestCase):
     fixture = "stt_newsml_pre_test.xml"
