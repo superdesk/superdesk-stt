@@ -14,6 +14,7 @@ FILTER_SUBJECT_SCHEMES = {
     "sttsource",
     "sttdepartment",
     "sttsubject",
+    "sttsubj",
     "sttdone1",
 }
 

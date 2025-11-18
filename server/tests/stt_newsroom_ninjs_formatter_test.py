@@ -126,6 +126,7 @@ class STTNewsroomNinjsFormatterTest(TestCase):
                 {"name": "Source", "scheme": "sttsource"},
                 {"name": "Source", "scheme": "sttdepartment"},
                 {"name": "Source", "scheme": "sttsubject"},
+                {"name": "Koripallo", "scheme": "sttsubj"},
                 {"name": "Source", "scheme": "sttdone1"},
             ],
         }
