@@ -18,6 +18,7 @@ from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
+from datetime import datetime
 
 from stt.publish.utils import encode_special_characters
 
@@ -374,21 +375,33 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
         SubElement(itemMeta, "itemClass", attrib={"qcode": "ninat:text"})
         SubElement(itemMeta, "provider", attrib={"literal": "STT"})
-        SubElement(itemMeta, "versionCreated").text = (
-            article.get("versioncreated", None)
-            .astimezone(pytz.timezone("Europe/Helsinki"))
-            .strftime("%Y-%m-%dT%H:%M:%S")
-        )
-        SubElement(itemMeta, "firstCreated").text = (
-            article.get("firstcreated", None)
-            .astimezone(pytz.timezone("Europe/Helsinki"))
-            .strftime("%Y-%m-%dT%H:%M:%S")
-        )
+
+        versioncreated = article.get("versioncreated", None)
+
+        if versioncreated:
+            SubElement(itemMeta, "versionCreated").text = versioncreated.astimezone(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+        else:
+            SubElement(itemMeta, "versionCreated").text = datetime.now(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+
+        firstcreated = article.get("firstcreated", None)
+
+        if firstcreated:
+            SubElement(itemMeta, "firstCreated").text = firstcreated.astimezone(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+        else:
+            SubElement(itemMeta, "firstCreated").text = datetime.now(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
 
         # Embargo
         schedule = article.get("schedule_settings", None)
         if schedule:
-            if schedule.get("utc_embargo", None) is not None:
+            if schedule.get("utc_embargo", None):
                 SubElement(itemMeta, "embargoed").text = (
                     schedule.get("utc_embargo")
                     .astimezone(pytz.timezone("Europe/Helsinki"))
@@ -475,16 +488,29 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         contentMeta = SubElement(parentNode, "contentMeta")
 
         SubElement(contentMeta, "urgency").text = str(article.get("urgency", 5))
-        SubElement(contentMeta, "contentCreated").text = (
-            article.get("versioncreated", None)
-            .astimezone(pytz.timezone("Europe/Helsinki"))
-            .strftime("%Y-%m-%dT%H:%M:%S")
-        )
-        SubElement(contentMeta, "contentModified").text = (
-            article.get("firstcreated")
-            .astimezone(pytz.timezone("Europe/Helsinki"))
-            .strftime("%Y-%m-%dT%H:%M:%S")
-        )
+
+        versioncreated = article.get("versioncreated", None)
+
+        if versioncreated:
+            SubElement(contentMeta, "contentCreated").text = versioncreated.astimezone(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+        else:
+            SubElement(contentMeta, "contentCreated").text = datetime.now(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+
+        firstcreated = article.get("firstcreated", None)
+
+        if firstcreated:
+            SubElement(contentMeta, "contentModified").text = firstcreated.astimezone(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+        else:
+            SubElement(contentMeta, "contentModified").text = datetime.now(
+                pytz.timezone("Europe/Helsinki")
+            ).strftime("%Y-%m-%dT%H:%M:%S")
+
         SubElement(contentMeta, "altId", attrib={"type": "sttidtype:textid"}).text = (
             article.get("guid", "")
         )
