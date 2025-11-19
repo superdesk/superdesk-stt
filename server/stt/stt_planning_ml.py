@@ -70,6 +70,9 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             else self.set_placeholder_coverage(item, tree)
         )
         await self.set_extra_fields(tree, item, original)
+
+        item["all_day"] = True
+
         return item
 
     def datetime(self, value: str):
@@ -142,6 +145,8 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         if coverage is not None:
             # Parse STT-specific fields for all coverages
             self.parse_stt_coverage_fields(news_coverage_elt, coverage)
+            if item.get("slugline"):
+                coverage["planning"]["slugline"] = item.get("slugline")
         return coverage
 
     def parse_stt_coverage_fields(
@@ -160,6 +165,10 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
         # Parse all fields efficiently in single iterations
         self.parse_all_subject_fields(planning_elt, coverage)
         self.parse_non_subject_fields(planning_elt, coverage)
+
+        coverage["planning"]["multiple_content"] = (
+            coverage["planning"].get("g2_content_type") == "text"
+        )
 
     def parse_all_subject_fields(self, planning_elt: Element, coverage: Dict[str, Any]):
         """Parse all subject fields in a single iteration"""
@@ -548,11 +557,13 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
                 "workflow_status": "draft",
                 "firstcreated": item.get("firstcreated"),
                 "planning": {
-                    "slugline": "",
+                    "slugline": item.get("slugline", ""),
+                    "headline": item.get("slugline", ""),
                     "g2_content_type": "text",
                     "scheduled": item.get("planning_date"),
                     "fields": [],
                     "subject": [],
+                    "multiple_content": True,
                 },
                 "flags": {"placeholder": True},
             }

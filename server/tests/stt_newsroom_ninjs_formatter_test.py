@@ -52,25 +52,56 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         self.assertEqual(ninjs.get("body_html"), "<p>Breaking News</p>")
 
     async def test_update_subheadline(self):
+        self.app.data.insert(
+            "content_types",
+            [
+                {
+                    "_id": "pikaplus",
+                    "editor": {"sttsubheadline": {"enabled": True}},
+                },
+                {
+                    "_id": "viiva",
+                    "editor": {"sttsubheadline": None},
+                },
+            ],
+        )
+
         ninjs = {
             "extra": {
                 "sttsubheadline": "<b>Subtitle</b>",
             },
-            "profile": "pikaplus",
             "body_html": "",
         }
-        self.formatter.update_subheadline(ninjs)
-        self.assertEqual(ninjs.get("body_html"), "<h2>Subtitle</h2>")
+
+        article = {"profile": "viiva"}
+        self.formatter.update_subheadline(ninjs, article)
+        self.assertEqual(ninjs.get("body_html", "").strip(), "")
+
+        article = {"profile": "pikaplus"}
+        self.formatter.update_subheadline(ninjs, article)
+        self.assertEqual(ninjs.get("body_html", "").strip(), "<h2>Subtitle</h2>")
 
     async def test_update_sttversion_from_cv_match(self):
         ninjs = {"profile": "Viiva"}
         self.formatter.update_sttversion(ninjs)
-        self.assertEqual(ninjs.get("sttversion"), "viiva")
+        self.assertIn(
+            {"name": "Viiva", "scheme": "sttversion", "code": "1"},
+            ninjs.get("subject", []),
+        )
+        ninjs = {"profile": "pikaplus"}
+        self.formatter.update_sttversion(ninjs)
+        self.assertIn(
+            {"name": "Pika+", "scheme": "sttversion", "code": "4"},
+            ninjs.get("subject", []),
+        )
 
     async def test_update_sttversion_fallback(self):
         ninjs = {"profile": "unknown_profile"}
         self.formatter.update_sttversion(ninjs)
-        self.assertEqual(ninjs.get("sttversion"), "unknown_profile")
+        self.assertNotIn(
+            {"name": "unknown_profile", "scheme": "sttversion"},
+            ninjs.get("subject", []),
+        )
 
     async def test_update_editorial_note(self):
         ninjs = {
@@ -79,3 +110,44 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         }
         self.formatter.update_editorial_note(ninjs)
         self.assertEqual(ninjs.get("ednote"), "Ei muita versioita. Base")
+
+    async def test_no_slugline(self):
+        article = {"slugline": "foo", "type": "text", "guid": "test"}
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        assert "slugline" not in ninjs
+
+    async def test_filter_subjects(self):
+        article = {
+            "type": "text",
+            "guid": "test",
+            "subject": [
+                {"name": "Test", "scheme": "sttversion"},
+                {"name": "Other", "scheme": "stttopstory"},
+                {"name": "Source", "scheme": "sttsource"},
+                {"name": "Source", "scheme": "sttdepartment"},
+                {"name": "Source", "scheme": "sttsubject"},
+                {"name": "Source", "scheme": "sttdone1"},
+            ],
+        }
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        self.assertEqual(
+            [{"name": "Test", "scheme": "sttversion"}],
+            ninjs.get("subject", []),
+        )
+
+    async def test_special_characters(self):
+        article = {
+            "type": "text",
+            "guid": "test",
+            "headline": "Test\u2013text with tab\tand thinsp\u2009and editorial---agreement¤.",
+            "body_html": "Test\u2013text with tab\tand thinsp\u2009and editorial---agreement¤.",
+        }
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+        self.assertEqual(
+            "Test\u2013text with tab\tand thinsp\u2009and editorial\u2013agreement\u2009.",
+            ninjs.get("headline", ""),
+        )
+        self.assertEqual(
+            "Test&#8211;text with tab&#9;and thinsp&#8201;and editorial&#8211;agreement&#8201;.",
+            ninjs.get("body_html", ""),
+        )

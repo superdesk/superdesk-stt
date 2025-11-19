@@ -19,6 +19,9 @@ from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 from datetime import datetime
+
+from stt.publish.utils import encode_special_characters
+
 from .exclude_metadata import removeMetadata
 
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
@@ -102,10 +105,14 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
             if assignment is not None:
                 if assignment.get("planning", None):
-                    coverageStatus = assignment.get("planning", "")[
-                        "news_coverage_status"
-                    ]["label"]
-                    coverageStatusCode = "-1"
+                    try:
+                        coverageStatus = assignment.get("planning", "")[
+                            "news_coverage_status"
+                        ]["label"]
+                        coverageStatusCode = "-1"
+                    except KeyError:
+                        coverageStatus = None
+                        coverageStatusCode = "-1"
 
                     match coverageStatus:
                         case "Tehdään":
@@ -711,14 +718,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 newsItem, method="xml", pretty_print=True, encoding=self.ENCODING
             ).decode(self.ENCODING)
 
-            # Replace special Unicode characters as entities manually (ndhas, thinsp, tab, etc.)
-            xmlStr = xmlStr.replace("\u2013", "&#8211;")
-            xmlStr = xmlStr.replace("\t", "&#9;")
-            xmlStr = xmlStr.replace("\u2009", "&#8201;")
-
-            # Replace STT editorial agreements
-            xmlStr = xmlStr.replace("---", "&#8211;")
-            xmlStr = xmlStr.replace("¤", "&#8201;")
+            xmlStr = encode_special_characters(xmlStr)
 
             return [
                 (

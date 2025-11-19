@@ -6,6 +6,7 @@ import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
 
 import superdesk
+from superdesk.core import get_config
 from superdesk.core.utils import get_nested_value
 from superdesk.utils import ListCursor
 
@@ -63,8 +64,11 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     ) -> NewshubListCursor:
         logger.info(f"Query: {query}")
         logger.info(f"Params: {params}")
+        page_size = query.get("size", 25)
         api_params: dict = {
-            "page_size": query.get("size", 25),
+            "page_size": page_size,
+            "page": int(query.get("from", 0) / page_size) + 1,
+            "timezone": get_config(str, "DEFAULT_TIMEZONE"),
         }
         if params:
             dates = params.get("dates", {})
@@ -134,7 +138,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         # Add self.api_token as Bearer token
         session.headers.update({"Authorization": f"Bearer {self.api_token}"})
         async with session.get(
-            self.url(endpoint), params=params, timeout=TIMEOUT
+            self.url(endpoint),
+            params={key: val for key, val in params.items() if val is not None},
+            timeout=TIMEOUT,
         ) as resp:
             resp.raise_for_status()
             return await resp.json()
@@ -156,16 +162,14 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         return search_text or None
 
     def _get_period(self, period: str) -> dict[str, str]:
-        today = arrow.now(superdesk.app.config["DEFAULT_TIMEZONE"])
+        today = arrow.now(get_config(str, "DEFAULT_TIMEZONE"))
         datetime_delta = self.PERIODS.get(period)
         if not datetime_delta:
             logger.warning(f"Invalid period: {period}")
             return {}
 
         return {
-            "start_date": today.shift(**datetime_delta).format("YYYY-MM-DD")
-            + "T00:00:00",
-            "end_date": today.format("YYYY-MM-DD") + "T23:59:59",
+            "start_date": today.shift(**datetime_delta).format("YYYY-MM-DD"),
         }
 
     def _get_date(self, date: str, start: bool = False) -> str:

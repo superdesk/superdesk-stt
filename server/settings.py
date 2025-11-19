@@ -12,7 +12,14 @@
 import os
 from pathlib import Path
 
-from superdesk.default_settings import env, MODULES, ELASTICSEARCH_SETTINGS
+from superdesk.default_settings import (
+    env,
+    MODULES,
+    ELASTICSEARCH_SETTINGS,
+    SAML_PATH,
+    CORE_APPS as _core_apps,
+    strtobool,
+)
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -128,7 +135,6 @@ INSTALLED_APPS = [
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
     "planning",
-    "analytics",
     "apps.languages",
     "stt.spellcheckers.stt_fin",
     "stt.macros",
@@ -329,21 +335,6 @@ PLANNING_XMP_ASSIGNMENT_MAPPING = {
     "atribute_key": "{http://ns.adobe.com/photoshop/1.0/}TransmissionReference",
 }
 
-# ANALYTICS MODULE
-
-# Highcharts Export Server - default settings
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true")
-
-ANALYTICS_ENABLE_ARCHIVE_STATS = env("ANALYTICS_ENABLE_ARCHIVE_STATS", "true")
-
-HIGHCHARTS_SERVER_HOST = env("HIGHCHARTS_SERVER_HOST", "localhost")
-HIGHCHARTS_SERVER_PORT = env("HIGHCHARTS_SERVER_PORT", "6060")
-HIGHCHARTS_SERVER_WORKERS = env("HIGHCHARTS_SERVER_WORKERS", None)
-HIGHCHARTS_SERVER_WORK_LIMIT = env("HIGHCHARTS_SERVER_WORK_LIMIT", None)
-HIGHCHARTS_SERVER_LOG_LEVEL = env("HIGHCHARTS_SERVER_LOG_LEVEL", None)
-HIGHCHARTS_SERVER_QUEUE_SIZE = env("HIGHCHARTS_SERVER_QUEUE_SIZE", None)
-HIGHCHARTS_SERVER_RATE_LIMIT = env("HIGHCHARTS_SERVER_RATE_LIMIT", None)
-
 PLANNING_EVENT_LINK_METHOD = "many_secondary"
 
 PLANNING_PLANNING_ALL_DAY = True
@@ -362,3 +353,8 @@ DEFAULT_CATEGORY_QCODES_FOR_AUTO_PUBLISHED_ARTICLES = None
 ELASTICSEARCH_SETTINGS["settings"]["analysis"]["analyzer"]["html_field_analyzer"][
     "filter"
 ] = ["lowercase"]
+
+
+# disable db auth if saml is configured
+if SAML_PATH and os.path.exists(SAML_PATH) and not strtobool(env("SUPERDESK_AUTH", "")):
+    CORE_APPS = [app for app in _core_apps if app != "apps.auth.db"]
