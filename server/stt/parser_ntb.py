@@ -79,7 +79,7 @@ class NTBNewsMLFeedParser(NewsMLTwoFeedParser):
 
         # Concatenate all paragaphs into single string in body_html
         for p in paragraphs:
-            item["body_html"] = item["body_html"] + "<p>" + p.text + "</p>"
+            item["body_html"] = item["body_html"] + f"<p>{p.text or ''}</p>"
 
         items.append(item)
 
