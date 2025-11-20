@@ -212,7 +212,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                         genre,
                         "related",
                         attrib={
-                            "qcode": "sttrel: actuallength",
+                            "qcode": "sttrel:actuallength",
                             "value": str(characterCount),
                         },
                     )
@@ -564,28 +564,12 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
         self.format_creditline(article, contentMeta)
 
-    def format_contentSet(self, article, parentNode):
+    def format_contentSet_body(self, article, body):
+        """Format the body content. Can be overridden in subclasses.
 
-        contentSet = SubElement(parentNode, "contentSet")
-        inlineXML = SubElement(
-            contentSet, "inlineXML", attrib={"contenttype": "xhtml/xml"}
-        )
-        htmlTag = SubElement(inlineXML, "html")
-        body = SubElement(htmlTag, "body")
-        subheadline = ""
-
-        # Subheadline
-        extra = article.get("extra", None)
-
-        if extra:
-            if extra.get("sttsubheadline", None):
-                htmltree = html.fromstring(extra.get("sttsubheadline", ""))
-                subheadline = etree.Element("h2")
-
-                # Find the paragraph and get the content to H2
-                subheadline.text = htmltree.xpath("//p/text()")[0]
-                body.append(subheadline)
-
+        :param dict article: The article to format
+        :param Element body: The body element to append content to
+        """
         # Body
         if article.get("body_html", None):
 
@@ -637,6 +621,31 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             if article.get("profile", "") == "viiva":
                 SubElement(body, "p").text = article.get("headline", "")
 
+    def format_contentSet(self, article, parentNode):
+
+        contentSet = SubElement(parentNode, "contentSet")
+        inlineXML = SubElement(
+            contentSet, "inlineXML", attrib={"contenttype": "xhtml/xml"}
+        )
+        htmlTag = SubElement(inlineXML, "html")
+        body = SubElement(htmlTag, "body")
+        subheadline = ""
+
+        # Subheadline
+        extra = article.get("extra", None)
+
+        if extra:
+            if extra.get("sttsubheadline", None):
+                htmltree = html.fromstring(extra.get("sttsubheadline", ""))
+                subheadline = etree.Element("h2")
+
+                # Find the paragraph and get the content to H2
+                subheadline.text = htmltree.xpath("//p/text()")[0]
+                body.append(subheadline)
+
+        # Format body content (can be overridden in subclasses)
+        self.format_contentSet_body(article, body)
+
     def can_format(self, format_type, article):
         """Method check if the article can be formatted to NewsML G2 or not.
 
@@ -644,7 +653,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         :param dict article:
         :return: True if article can formatted else False
         """
-        return format_type == "sttnewsmlg2" and article.get(ITEM_TYPE) in {
+        return format_type == self.type and article.get(ITEM_TYPE) in {
             CONTENT_TYPE.TEXT,
             CONTENT_TYPE.PREFORMATTED,
             CONTENT_TYPE.COMPOSITE,
@@ -728,6 +737,6 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             ]
 
         except Exception as ex:
-            raise await FormatterError.newsmlG2FormatterError(
+            raise await FormatterError.newmsmlG2FormatterError(
                 ex, subscriber
             ).send_notifications()
