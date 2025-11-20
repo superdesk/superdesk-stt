@@ -142,12 +142,12 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
 
     def parse_content_meta(self, tree, item):
         super().parse_content_meta(tree, item)
-        if item.get("source"):
-            file_sources = item["source"].split("-")
-            cv_sources = self.get_cv_items("sttsource")
-            for cv_source in cv_sources:
-                if cv_source.get("qcode") in file_sources:
-                    item.setdefault("subject", []).append(cv_source)
+        source = item.get("source") or "STT"
+        file_sources = source.split("-")
+        cv_sources = self.get_cv_items("sttsource")
+        for cv_source in cv_sources:
+            if cv_source.get("qcode") in file_sources:
+                item.setdefault("subject", []).append(cv_source)
 
     def parse_place(self, item):
         place_list = []

@@ -42,7 +42,7 @@ class STTParserTestCase(TestCase):
         assert "11000000" in mediatopics
         assert "06000000" in mediatopics
 
-    def test_source(self):
+    def test_default_source(self):
         sources = [s for s in self.item["subject"] if s.get("scheme") == "sttsource"]
         assert len(sources) == 1
         assert sources[0]["name"] == "STT"
