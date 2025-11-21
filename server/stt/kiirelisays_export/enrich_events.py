@@ -28,7 +28,11 @@ def _find_contacts_for_event(event_id):
         },
         projection={"event_contact_info": 1, "_id": 0},
     )
-    return event_from_mongo[0]["event_contact_info"] if event_from_mongo else None
+    return (
+        event_from_mongo[0]["event_contact_info"]
+        if event_from_mongo and event_from_mongo[0].get("event_contact_info")
+        else None
+    )
 
 
 def row_has_contacts(row):
