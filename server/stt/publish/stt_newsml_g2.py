@@ -31,7 +31,7 @@ XSI_SCHEMALOCATION = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
 logger = logging.getLogger(__name__)
 
 
-def with_extension(filename, extension):
+def format_filename(filename, extension):
     """Helper function to add an extension to a filename.
 
     :param str filename: The filename to add the extension to
@@ -39,9 +39,10 @@ def with_extension(filename, extension):
     :return: The filename with the added extension
     :rtype: str
     """
+    filename = filename.replace(".jpeg", ".jpg")
     if not filename.endswith(extension):
         filename += extension
-    return filename
+    return filename.split("/")[-1]
 
 
 class STTNewsmLG2Formatter(NewsMLG2Formatter):
@@ -377,15 +378,15 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
                         match baseImage.get("mimetype", ""):
                             case "image/png":
-                                SubElement(link, "filename").text = with_extension(
+                                SubElement(link, "filename").text = format_filename(
                                     baseImage.get("media", ""), ".png"
                                 )
                             case "image/jpeg":
-                                SubElement(link, "filename").text = with_extension(
+                                SubElement(link, "filename").text = format_filename(
                                     baseImage.get("media", ""), ".jpg"
                                 )
                             case "image/jpg":
-                                SubElement(link, "filename").text = with_extension(
+                                SubElement(link, "filename").text = format_filename(
                                     baseImage.get("media", ""), ".jpg"
                                 )
 
