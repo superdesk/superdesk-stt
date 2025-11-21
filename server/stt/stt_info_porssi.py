@@ -42,7 +42,10 @@ class STTInfoPorssi(NewsMLOneFeedParser):
         }
 
     def can_parse(self, xml):
-        return xml.tag == "NewsML" and xml.get("Version", "") == "1.2"
+        return (
+            xml.tag == "NewsML"
+            or xml.tag == "{http://iptc.org/std/NewsML/2003-10-10/}NewsML"
+        ) and xml.get("Version", "") == "1.2"
 
     async def parse(self, xml, provider=None):
         try:
