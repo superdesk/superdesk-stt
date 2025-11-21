@@ -347,19 +347,27 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                     featureMedia.get("description_text", "")
                 )
 
-                match featureMedia.get("mimetype", ""):
-                    case "image/png":
-                        SubElement(link, "filename").text = (
-                            featureMedia.get("media", "") + ".png"
-                        )
-                    case "image/jpeg":
-                        SubElement(link, "filename").text = (
-                            featureMedia.get("media", "") + ".jpg"
-                        )
-                    case "image/jpg":
-                        SubElement(link, "filename").text = (
-                            featureMedia.get("media", "") + ".jpg"
-                        )
+                renditions = featureMedia.get("renditions", None)
+
+                if renditions:
+
+                    baseImage = renditions.get("baseImage", None)
+
+                    if baseImage:
+
+                        match baseImage.get("mimetype", ""):
+                            case "image/png":
+                                SubElement(link, "filename").text = (
+                                    baseImage.get("media", "") + ".png"
+                                )
+                            case "image/jpeg":
+                                SubElement(link, "filename").text = (
+                                    baseImage.get("media", "") + ".jpg"
+                                )
+                            case "image/jpg":
+                                SubElement(link, "filename").text = (
+                                    baseImage.get("media", "") + ".jpg"
+                                )
 
     # Format itemMeta
     def format_itemMeta(self, article, parentNode):
