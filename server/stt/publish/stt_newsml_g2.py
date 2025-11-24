@@ -360,7 +360,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                     "link",
                     attrib={
                         "rel": "seeAlso",
-                        "residref": featureMedia.get("media", ""),
+                        "residref": featureMedia.get("guid", ""),
                         "contenttype": featureMedia.get("mimetype", ""),
                     },
                 )
