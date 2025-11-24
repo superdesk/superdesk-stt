@@ -152,3 +152,29 @@ class STTNewsroomNinjsFormatterTest(TestCase):
             "Test&#8211;text with tab&#9;and thinsp&#8201;and editorial&#8211;agreement&#8201;.",
             ninjs.get("body_html", ""),
         )
+
+    async def test_place(self):
+        article = {
+            "type": "text",
+            "guid": "test",
+            "place": [
+                {
+                    "name": "Suomi",
+                    "qcode": "sttcountry:1",
+                },
+                {
+                    "name": "Alajärvi",
+                    "qcode": "sttcity:1",
+                },
+            ],
+        }
+
+        ninjs = await self.formatter._transform_to_ninjs(article, {})
+
+        self.assertIn(
+            {
+                "name": "Suomi",
+                "code": "sttcountry:1",
+            },
+            ninjs.get("place", []),
+        )

@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Dict, List
 
 from superdesk import get_resource_service
 from superdesk.publish.formatters import NewsroomNinjsFormatter
@@ -154,6 +155,13 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
             subj
             for subj in ninjs.get("subject", [])
             if subj.get("scheme") not in FILTER_SUBJECT_SCHEMES
+        ]
+
+    def _format_place(self, article) -> List[Dict]:
+        return [
+            {"name": place["name"], "code": place["qcode"]}
+            for place in article.get("place", [])
+            if place.get("qcode")
         ]
 
     async def _transform_to_ninjs(self, article, subscriber, recursive=True):
