@@ -18,6 +18,7 @@ from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
+from superdesk.media.renditions import get_rendition_file_name
 from datetime import datetime
 
 from stt.publish.utils import encode_special_characters
@@ -31,18 +32,10 @@ XSI_SCHEMALOCATION = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
 logger = logging.getLogger(__name__)
 
 
-def format_filename(filename, extension):
-    """Helper function to add an extension to a filename.
-
-    :param str filename: The filename to add the extension to
-    :param str extension: The extension to add
-    :return: The filename with the added extension
-    :rtype: str
-    """
+def format_filename(rendition) -> str:
+    filename = get_rendition_file_name(rendition)
     filename = filename.replace(".jpeg", ".jpg")
-    if not filename.endswith(extension):
-        filename += extension
-    return filename.split("/")[-1]
+    return filename
 
 
 class STTNewsmLG2Formatter(NewsMLG2Formatter):
@@ -369,26 +362,10 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 )
 
                 renditions = featureMedia.get("renditions", None)
-
                 if renditions:
-
-                    baseImage = renditions.get("baseImage", None)
-
-                    if baseImage:
-
-                        match baseImage.get("mimetype", ""):
-                            case "image/png":
-                                SubElement(link, "filename").text = format_filename(
-                                    baseImage.get("media", ""), ".png"
-                                )
-                            case "image/jpeg":
-                                SubElement(link, "filename").text = format_filename(
-                                    baseImage.get("media", ""), ".jpg"
-                                )
-                            case "image/jpg":
-                                SubElement(link, "filename").text = format_filename(
-                                    baseImage.get("media", ""), ".jpg"
-                                )
+                    original = renditions.get("original", None)
+                    if original:
+                        SubElement(link, "filename").text = format_filename(original)
 
     # Format itemMeta
     def format_itemMeta(self, article, parentNode):

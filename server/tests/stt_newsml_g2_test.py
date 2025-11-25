@@ -5,9 +5,11 @@ from stt.publish.stt_newsml_g2 import format_filename, STTNewsmLG2Formatter
 
 
 def test_format_filename():
-    assert "foo.jpg" == format_filename("foo.jpg", ".jpg")
-    assert "foo.jpg" == format_filename("foo", ".jpg")
-    assert "foo.jpg" == format_filename("test/foo.jpeg", ".jpg")
+    assert "foo.jpg" == format_filename({"media": "foo.jpg", "mimetype": "image/jpeg"})
+    assert "foo.jpg" == format_filename({"media": "foo.jpg", "mimetype": "image/jpeg"})
+    assert "test-foo.jpg" == format_filename(
+        {"media": "test/foo.jpeg", "mimetype": "image/jpeg"}
+    )
 
 
 class TestSTTNewsmLG2Formatter(TestCase):
@@ -23,8 +25,12 @@ class TestSTTNewsmLG2Formatter(TestCase):
                     "mimetype": "image/jpeg",
                     "description_text": "Info",
                     "renditions": {
+                        "original": {
+                            "media": "test/original.jpg",
+                            "mimetype": "image/jpeg",
+                        },
                         "baseImage": {
-                            "media": "test/image.jpg",
+                            "media": "test/baseimage.jpg",
                             "mimetype": "image/jpeg",
                         },
                     },
@@ -53,4 +59,4 @@ class TestSTTNewsmLG2Formatter(TestCase):
 
         filename = link.find("filename", namespaces=root.nsmap)
         assert filename is not None
-        assert filename.text == "image.jpg"
+        assert filename.text == "test-original.jpg"
