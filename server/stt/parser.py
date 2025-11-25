@@ -59,6 +59,10 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
         return content
 
     def _clean_body_html(self, body_elt):
+        """
+        This function retains the core’s cleaner behaviour while forcing <a> tags onto the allow-list
+        for html tags so ingesting doesn't ignore the hyperlinks
+        """
         if body_elt is None:
             return body_elt
 
