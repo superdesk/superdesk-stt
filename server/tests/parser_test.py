@@ -65,6 +65,24 @@ class STTParserTestCase(TestCase):
         assert genres[0]["qcode"] == "sttgenre:1"
 
 
+class STTParserHyperlinkTestCase(TestCase):
+    fixture = "stt_newsml_hyperlink.xml"
+    app_config = {
+        **TestCase.app_config,
+        "HTML_TAGS_WHITELIST": tuple(
+            tag for tag in TestCase.app_config["HTML_TAGS_WHITELIST"] if tag != "a"
+        ),
+    }
+
+    def test_preserve_anchor_href(self):
+        body_html = self.item["body_html"]
+        expected_link = (
+            '<a href="https://www.hs.fi/politiikka/art-2000011637243.html" '
+            'target="_blank">Helsingin Sanomat</a>'
+        )
+        self.assertIn(expected_link, body_html)
+
+
 class STTParserPRETestCase(TestCase):
     fixture = "stt_newsml_pre_test.xml"
 

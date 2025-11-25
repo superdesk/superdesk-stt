@@ -1,4 +1,5 @@
 from superdesk import etree as sd_etree
+from superdesk.core import get_app_config
 from superdesk.io.registry import register_feed_parser
 from superdesk.io.feed_parsers.stt_newsml import STTNewsMLFeedParser
 
@@ -29,7 +30,7 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
     def parse_inline_content(self, tree, item):
         html_elt = tree.find(self.qname("html"))
         body_elt = html_elt.find(self.qname("body"))
-        body_elt = sd_etree.clean_html(body_elt)
+        body_elt = self._clean_body_html(body_elt)
         # replace <pre> with <p>
         for pre in body_elt.findall(".//pre"):
             pre.tag = "p"
@@ -56,6 +57,28 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
             )
 
         return content
+
+    def _clean_body_html(self, body_elt):
+        if body_elt is None:
+            return body_elt
+
+        allow_tags = list(get_app_config("HTML_TAGS_WHITELIST"))
+        if "a" not in allow_tags:
+            allow_tags.append("a")
+
+        if not isinstance(body_elt, sd_etree.html.HtmlElement):
+            body_elt = sd_etree.html.fromstring(
+                sd_etree.etree.tostring(body_elt, encoding="unicode")
+            )
+
+        safe_attrs = set(sd_etree.html.defs.safe_attrs)
+        if "class" in safe_attrs:
+            safe_attrs.remove("class")
+
+        cleaner = sd_etree.html.clean.Cleaner(
+            allow_tags=allow_tags, remove_unknown_tags=False, safe_attrs=safe_attrs
+        )
+        return cleaner.clean_html(body_elt)
 
     async def set_extra_fields(self, item, xml):
         """Adds extra fields"""
