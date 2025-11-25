@@ -1,3 +1,4 @@
+from typing import Tuple, cast, Any
 from tests import TestCase
 
 
@@ -67,10 +68,13 @@ class STTParserTestCase(TestCase):
 
 class STTParserHyperlinkTestCase(TestCase):
     fixture = "stt_newsml_hyperlink.xml"
-    app_config = {
+    app_config: dict[str, Any] = {
         **TestCase.app_config,
-        "HTML_TAGS_WHITELIST": tuple(
-            tag for tag in TestCase.app_config["HTML_TAGS_WHITELIST"] if tag != "a"
+        "HTML_TAGS_WHITELIST": cast(
+            Tuple[str, ...],
+            tuple(
+                tag for tag in TestCase.app_config["HTML_TAGS_WHITELIST"] if tag != "a"
+            ),
         ),
     }
 
