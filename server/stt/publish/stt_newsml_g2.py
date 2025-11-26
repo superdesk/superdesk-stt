@@ -426,39 +426,35 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         for s in subjects:
             if s.get("scheme") == "sttnewsroomnote":
                 is_sttnewsroomnote = True
-                SubElement(
-                    itemMeta, "edNote", attrib={"role": "sttnewsroomnote"}
-                ).text = s.get("name", "")
-                newsroomnoteStr = s.get("name", "")
+                newsroomnoteStr += s.get("name", "") + ". "
 
         edNoteStr = ""
 
         # Private edNote
-        if "ednote" in article:
-            if is_sttnewsroomnote:
+        if is_sttnewsroomnote:
 
-                # Check if the last character of the note is period. If not add it and extra space
-                # This is a try to make sure that sttnewsroomnote and private note alway have '. ' in between them
-                match = re.search(r"([\. ]+$)", newsroomnoteStr)
-                if match:
-                    newsroomnoteStr = re.sub(r"([\. ]+$)", ". ", newsroomnoteStr)
-                else:
-                    newsroomnoteStr = newsroomnoteStr + ". "
+            SubElement(
+                itemMeta, "edNote", attrib={"role": "sttnewsroomnote"}
+            ).text = newsroomnoteStr
 
-                edNoteStr = newsroomnoteStr + article.get("ednote", "")
+            # Check if the last character of the note is period. If not add it and extra space
+            # This is a try to make sure that sttnewsroomnote and private note alway have '. ' in between them
+            match = re.search(r"([\. ]+$)", newsroomnoteStr)
+            if match:
+                newsroomnoteStr = re.sub(r"([\. ]+$)", ". ", newsroomnoteStr)
             else:
-                edNoteStr = article.get("ednote", "")
+                newsroomnoteStr = newsroomnoteStr + ". "
 
+            edNoteStr = newsroomnoteStr + article.get("ednote", "")
+            SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
+                edNoteStr
+            )   
+        else:
+            edNoteStr = article.get("ednote", "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
                 edNoteStr
             )
-
-        else:
-            if is_sttnewsroomnote:
-                SubElement(
-                    itemMeta, "edNote", attrib={"role": "sttnote:private"}
-                ).text = edNoteStr
-
+            
         # Public edNote - to all other profiles but 'nettiuutinen'
         if article.get("profile") != "nettiuutinen":
 
