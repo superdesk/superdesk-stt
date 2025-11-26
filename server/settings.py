@@ -196,7 +196,26 @@ AUDIT_EXPIRY_MINUTES = int(env("AUDIT_EXPIRY_MINUTES", 43200))
 #: The number records to be fetched for expiry.
 MAX_EXPIRY_QUERY_LIMIT = int(env("MAX_EXPIRY_QUERY_LIMIT", 1000))
 
-# HTML_TAGS_WHITELIST = ('h1', 'h2', 'h3', 'h4', 'h6', 'blockquote', 'figure', 'ul', 'ol', 'li', 'div', 'p', 'em', 'strong', 'i', 'b', 'a', 'pre')
+HTML_TAGS_WHITELIST = (
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h6",
+    "blockquote",
+    "figure",
+    "ul",
+    "ol",
+    "li",
+    "div",
+    "p",
+    "em",
+    "strong",
+    "i",
+    "b",
+    "a",
+    "pre",
+)
 
 # Disallowed characters for text fields (validation needs to be enabled in content profile)
 # DISALLOWED_CHARACTERS = ['!', '#', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
