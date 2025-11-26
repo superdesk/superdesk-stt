@@ -433,9 +433,9 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         # Private edNote
         if is_sttnewsroomnote:
 
-            SubElement(
-                itemMeta, "edNote", attrib={"role": "sttnewsroomnote"}
-            ).text = newsroomnoteStr
+            SubElement(itemMeta, "edNote", attrib={"role": "sttnewsroomnote"}).text = (
+                newsroomnoteStr
+            )
 
             # Check if the last character of the note is period. If not add it and extra space
             # This is a try to make sure that sttnewsroomnote and private note alway have '. ' in between them
@@ -448,13 +448,13 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             edNoteStr = newsroomnoteStr + article.get("ednote", "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
                 edNoteStr
-            )   
+            )
         else:
             edNoteStr = article.get("ednote", "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
                 edNoteStr
             )
-            
+
         # Public edNote - to all other profiles but 'nettiuutinen'
         if article.get("profile") != "nettiuutinen":
 
