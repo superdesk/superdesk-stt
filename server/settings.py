@@ -374,3 +374,7 @@ ELASTICSEARCH_SETTINGS["settings"]["analysis"]["analyzer"]["html_field_analyzer"
 # disable db auth if saml is configured
 if SAML_PATH and os.path.exists(SAML_PATH) and not strtobool(env("SUPERDESK_AUTH", "")):
     CORE_APPS = [app for app in _core_apps if app != "apps.auth.db"]
+
+# Exclude Desks in Planning json formatter
+PLANNING_JSON_EXCLUDE_ASSIGNEE_FIELDS = ["desk"]
+
