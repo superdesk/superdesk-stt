@@ -54,41 +54,29 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
     # Helpers: signal
     def format_signal(self, article, parentNode):
-
         state = article.get("state", None)
+        versionNumber = article.get("version", "")
 
-        if state:
-            match state:
-                case "corrected":
-                    if "original_id" in article:
-                        versionNumber = article.get("version", "")
-                        signal = SubElement(
-                            parentNode, "signal", attrib={"qcode": "sig:corrected"}
-                        )
-                        SubElement(
-                            signal,
-                            "link",
-                            attrib={
-                                "guidref": "urn:newsml:stt:fi::"
-                                + article.get("guid", ""),
-                                "version": str(versionNumber),
-                            },
-                        )
-                case _:
-                    if "rewrite_of" in article:
-                        versionNumber = article.get("version", "")
-                        signal = SubElement(
-                            parentNode, "signal", attrib={"qcode": "sig:update"}
-                        )
-                        SubElement(
-                            signal,
-                            "link",
-                            attrib={
-                                "guidref": "urn:newsml:stt:fi::"
-                                + article.get("guid", ""),
-                                "version": str(versionNumber),
-                            },
-                        )
+        if state == "corrected":
+            signal = SubElement(parentNode, "signal", attrib={"qcode": "sig:corrected"})
+            SubElement(
+                signal,
+                "link",
+                attrib={
+                    "guidref": "urn:newsml:stt:fi::" + article.get("guid", ""),
+                    "version": str(versionNumber),
+                },
+            )
+        elif article.get("rewrite_of"):
+            signal = SubElement(parentNode, "signal", attrib={"qcode": "sig:update"})
+            SubElement(
+                signal,
+                "link",
+                attrib={
+                    "guidref": "urn:newsml:stt:fi::" + article.get("rewrite_of"),
+                    "version": str(versionNumber),
+                },
+            )
 
     # Helpers: location
     def format_location(self, article, parentNode):
@@ -293,7 +281,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
     # Helpers: creditline
     def format_creditline(self, article, parentNode):
 
-        subjects = article.get("subject", None)
+        subjects = article.get("subject", [])
         numOfSources = sum(1 for s in subjects if s.get("scheme") == "sttsource")
 
         # If we only have one source
