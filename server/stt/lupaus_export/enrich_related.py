@@ -454,8 +454,8 @@ def _set_stt_fields(
             # attach latest published item to planning item
             pl["latest_published_item"] = latest_published_item
             _set_priority_fields(pl, item_type)
-            if not pl.get("stt_priority"):
-                continue  # exclude items without priority
+            if "stt_priority" not in pl:
+                continue  # exclude items without "stt_priority" key set (eg. "Vain tsekkaus" items)
             # if events is empty list, related_events_expanded will be empty
             if not events:
                 pl["related_events_expanded"] = []
