@@ -7,6 +7,11 @@ from apps.prepopulate.app_populate import AppPopulateCommand
 from stt.parser import STTParser
 
 
+def fixture(filename):
+    dirname = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(dirname, "fixtures", filename)
+
+
 class TestCase(CoreTestCase):
     fixture = None
     parser_class = STTParser
