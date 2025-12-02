@@ -1,5 +1,6 @@
-from tests import TestCase
 import lxml.etree as etree
+
+from tests import TestCase
 
 from stt.publish.stt_newsml_g2 import format_filename, STTNewsmLG2Formatter
 
@@ -97,3 +98,38 @@ class TestSTTNewsmLG2Formatter(TestCase):
         link = signal.find("link", namespaces=newsml.nsmap)
         assert link is not None
         assert link.get("guidref") == "urn:newsml:stt:fi::original"
+
+    async def test_ednote_error(self):
+        article = {
+            "type": "text",
+            "guid": "ednote-test",
+            "ednote": None,
+            "subject": [
+                {
+                    "name": "Mittaversio (printtiin)",
+                    "qcode": "printformat",
+                    "scheme": "sttnewsroomnote",
+                },
+            ],
+        }
+        newsml = await self.format_and_parse(article)
+        assert newsml is not None
+        item_meta = newsml.find("itemMeta", namespaces=newsml.nsmap)
+        ednotes = item_meta.findall("edNote", namespaces=newsml.nsmap)
+        assert 2 == len(ednotes)
+        assert ednotes[1].text == "Mittaversio (printtiin)."
+        assert ednotes[1].get("role") == "sttnote:private"
+
+    async def test_subheadline_error(self):
+        article = {
+            "type": "text",
+            "guid": "subheadline-test",
+            "extra": {"sttsubheadline": "<p><b>Subheadline.</b></p>"},
+            "body_html": "<p>Body</p>",
+        }
+        newsml = await self.format_and_parse(article)
+        assert newsml is not None
+        contentSet = etree.tostring(
+            newsml.find("contentSet", namespaces=newsml.nsmap), encoding="unicode"
+        )
+        assert "<h2>Subheadline.</h2>" in contentSet

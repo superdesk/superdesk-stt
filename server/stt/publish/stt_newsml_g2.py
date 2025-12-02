@@ -424,14 +424,14 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             else:
                 newsroomnoteStr = newsroomnoteStr + ". "
 
-            edNoteStr = newsroomnoteStr + article.get("ednote", "")
+            edNoteStr = newsroomnoteStr + (article.get("ednote") or "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
-                edNoteStr
+                edNoteStr.strip()
             )
         else:
             edNoteStr = article.get("ednote", "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
-                edNoteStr
+                edNoteStr.strip()
             )
 
         # Public edNote - to all other profiles but 'nettiuutinen'
@@ -623,8 +623,13 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 subheadline = etree.Element("h2")
 
                 # Find the paragraph and get the content to H2
-                subheadline.text = htmltree.xpath("//p/text()")[0]
-                body.append(subheadline)
+                try:
+                    subheadline_p = htmltree.xpath("//p")[0]
+                except IndexError:
+                    subheadline_p = None
+                if subheadline_p is not None and subheadline_p.text_content():
+                    subheadline.text = subheadline_p.text_content()
+                    body.append(subheadline)
 
         # Format body content (can be overridden in subclasses)
         self.format_contentSet_body(article, body)
