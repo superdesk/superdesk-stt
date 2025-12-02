@@ -53,7 +53,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
     }
 
     # Helpers: signal
-    def format_signal(self, article, parentNode):
+    def format_signal(self, article, parentNode, original):
         state = article.get("state", None)
         versionNumber = article.get("version", "")
 
@@ -63,7 +63,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 signal,
                 "link",
                 attrib={
-                    "guidref": "urn:newsml:stt:fi::" + article.get("guid", ""),
+                    "guidref": "urn:newsml:stt.fi::" + original.get("guid", ""),
                     "version": str(versionNumber),
                 },
             )
@@ -73,7 +73,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 signal,
                 "link",
                 attrib={
-                    "guidref": "urn:newsml:stt:fi::" + article.get("rewrite_of"),
+                    "guidref": "urn:newsml:stt.fi::" + original.get("guid", ""),
                     "version": str(versionNumber),
                 },
             )
@@ -356,7 +356,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                         SubElement(link, "filename").text = format_filename(original)
 
     # Format itemMeta
-    def format_itemMeta(self, article, parentNode):
+    def format_itemMeta(self, article, parentNode, original):
 
         itemMeta = SubElement(parentNode, "itemMeta")
 
@@ -450,7 +450,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                         ).text = element.text
 
         # Signals
-        self.format_signal(article, itemMeta)
+        self.format_signal(article, itemMeta, original)
 
         # Collect all links from the body into itemMeta
         tree = parse_html(article.get("body_html", ""), content="html")
@@ -657,17 +657,15 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         """
 
         try:
-
-            # print('Original:')
-            # print(article)
             article = removeMetadata(article)
+            original = self._get_original_article(article)
 
             pub_seq_num = await generate_sequence_number(subscriber)
 
             newsItem = etree.Element(
                 "newsItem",
                 attrib={
-                    "guid": "urn:newsml:stt.fi::" + article.get("guid", ""),
+                    "guid": "urn:newsml:stt.fi::" + original.get("guid", ""),
                     "version": str(article.get(VERSION, "")),
                     "standardversion": "2.12",
                     "conformance": "power",
@@ -702,7 +700,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 },
             )
 
-            self.format_itemMeta(article, newsItem)
+            self.format_itemMeta(article, newsItem, original)
             self.format_contentMeta(article, newsItem)
             self.format_contentSet(article, newsItem)
 
@@ -723,3 +721,22 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             raise await FormatterError.newmsmlG2FormatterError(
                 ex, subscriber
             ).send_notifications()
+
+    def _get_original_article(self, article):
+        """Get the original article for the given article by following the rewrite_of chain.
+        If the article is not a rewrite, return the article itself.
+
+        :param dict article: The article to get the original for
+        :return: The original article
+        :rtype: dict
+        """
+        for i in range(99):  # Prevent infinite loops
+            rewrite_of = article.get("rewrite_of", None)
+            if not rewrite_of:
+                return article
+            original_article = superdesk.get_resource_service("archive").find_one(
+                req=None, _id=rewrite_of
+            )
+            if not original_article:
+                return article
+            article = original_article
