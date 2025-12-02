@@ -185,6 +185,8 @@ class BusinessWireParser(NewsMLOneFeedParser):
     async def parse(self, xml, provider=None):
         """Override parse to return a list of items instead of a single item"""
         item = await super().parse(xml, provider)
+        if item.get("genre"):  # avoid non stt genre
+            item["genre"] = []
         return [item] if item else []
 
 

@@ -64,3 +64,6 @@ class BusinessWireParserTestCase(TestCase):
 
     def test_headline_component_role(self):
         assert self.item["headline"] == self.item["name"]
+
+    def test_genre(self):
+        assert self.item["genre"] == []
