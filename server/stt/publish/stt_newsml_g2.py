@@ -426,12 +426,12 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
             edNoteStr = newsroomnoteStr + (article.get("ednote") or "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
-                edNoteStr
+                edNoteStr.strip()
             )
         else:
             edNoteStr = article.get("ednote", "")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
-                edNoteStr
+                edNoteStr.strip()
             )
 
         # Public edNote - to all other profiles but 'nettiuutinen'

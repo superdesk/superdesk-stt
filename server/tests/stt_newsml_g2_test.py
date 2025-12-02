@@ -114,6 +114,11 @@ class TestSTTNewsmLG2Formatter(TestCase):
         }
         newsml = await self.format_and_parse(article)
         assert newsml is not None
+        item_meta = newsml.find("itemMeta", namespaces=newsml.nsmap)
+        ednotes = item_meta.findall("edNote", namespaces=newsml.nsmap)
+        assert 2 == len(ednotes)
+        assert ednotes[1].text == "Mittaversio (printtiin)."
+        assert ednotes[1].get("role") == "sttnote:private"
 
     async def test_subheadline_error(self):
         article = {
