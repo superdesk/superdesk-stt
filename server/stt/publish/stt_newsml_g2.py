@@ -486,7 +486,7 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         firstcreated = article.get("firstcreated", None)
 
         if firstcreated:
-            SubElement(contentMeta, "contentModified").text = firstcreated.astimezone(
+            SubElement(contentMeta, "contentModified").text = versioncreated.astimezone(
                 pytz.timezone("Europe/Helsinki")
             ).strftime("%Y-%m-%dT%H:%M:%S")
         else:
