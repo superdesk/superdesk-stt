@@ -120,6 +120,15 @@ class TestSTTNewsmLG2Formatter(TestCase):
         assert ednotes[1].text == "Mittaversio (printtiin)."
         assert ednotes[1].get("role") == "sttnote:private"
 
+    async def test_ednote_public(self):
+        article = {
+            "type": "text",
+            "guid": "ednote-test",
+            "ednote": None,
+        }
+        newsml = await self.format_and_parse(article)
+        assert newsml is not None
+
     async def test_subheadline_error(self):
         article = {
             "type": "text",
