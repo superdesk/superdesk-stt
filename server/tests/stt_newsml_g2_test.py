@@ -80,24 +80,38 @@ class TestSTTNewsmLG2Formatter(TestCase):
         assert signal.get("qcode") == "sig:corrected"
         link = signal.find("link", namespaces=newsml.nsmap)
         assert link is not None
-        assert link.get("guidref") == "urn:newsml:stt:fi::correction"
+        assert link.get("guidref") == "urn:newsml:stt.fi::correction"
         assert link.get("version") == "123"
 
     async def test_signal_update(self):
+        # with self.app.app_context():
+        self.app.data.insert(
+            "archive",
+            [
+                {"_id": "original", "type": "text", "guid": "original"},
+                {
+                    "_id": "update",
+                    "type": "text",
+                    "guid": "update",
+                    "rewrite_of": "original",
+                },
+            ],
+        )
         article = {
             "type": "text",
-            "guid": "update",
+            "guid": "another",
             "version": 123,
-            "rewrite_of": "original",
+            "rewrite_of": "update",
         }
         newsml = await self.format_and_parse(article)
+        assert newsml.get("guid") == "urn:newsml:stt.fi::original"
         item_meta = newsml.find("itemMeta", namespaces=newsml.nsmap)
         signal = item_meta.find("signal", namespaces=newsml.nsmap)
         assert signal is not None
         assert signal.get("qcode") == "sig:update"
         link = signal.find("link", namespaces=newsml.nsmap)
         assert link is not None
-        assert link.get("guidref") == "urn:newsml:stt:fi::original"
+        assert link.get("guidref") == "urn:newsml:stt.fi::original"
 
     async def test_ednote_error(self):
         article = {
