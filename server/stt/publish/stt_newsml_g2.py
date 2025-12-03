@@ -428,8 +428,8 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
                 edNoteStr.strip()
             )
-        else:
-            edNoteStr = article.get("ednote", "")
+        elif article.get("ednote"):
+            edNoteStr = article.get("ednote")
             SubElement(itemMeta, "edNote", attrib={"role": "sttnote:private"}).text = (
                 edNoteStr.strip()
             )
