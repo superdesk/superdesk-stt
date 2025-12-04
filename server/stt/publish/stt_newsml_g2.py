@@ -483,9 +483,9 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 pytz.timezone("Europe/Helsinki")
             ).strftime("%Y-%m-%dT%H:%M:%S")
 
-        firstcreated = article.get("firstcreated", None)
+        # firstcreated = article.get("firstcreated", None)
 
-        if firstcreated:
+        if versioncreated:
             SubElement(contentMeta, "contentModified").text = versioncreated.astimezone(
                 pytz.timezone("Europe/Helsinki")
             ).strftime("%Y-%m-%dT%H:%M:%S")
@@ -557,6 +557,16 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         if article.get("body_html", None):
 
             tree = parse_html(article.get("body_html", ""), content="html")
+
+            # Replace all h3 tags with <p><h3></h3></p> structure, to mimic Neo's old output
+            for h3 in tree.xpath("//h3"):
+                newElement = html.Element("p")
+                parent = h3.getparent()
+                index = parent.index(h3)
+                parent.remove(h3)
+
+                newElement.append(h3)
+                parent.insert(index, newElement)
 
             # Replace all company tags, ie. <span custom-editor-tag-id="EDITOR_TAG_company"> with <Company>
             for element in tree.xpath(
