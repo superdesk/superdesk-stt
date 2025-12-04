@@ -83,7 +83,8 @@ def get_published_items_with_sttnewsroomnote_by_planning_id(
 
     Executes the aggregation pipeline:
 
-        match planning -> compute sttimagetype from graphic coverage -> unwind coverages ->
+        match planning -> collect all sttimagetype names from picture/graphic coverages ->
+        combine them into a comma-separated sttimagetype string -> unwind coverages ->
         convert assignment_id to ObjectId -> filter null assignments -> lookup published ->
         unwind -> merge sttimagetype into the published document.
 
@@ -104,73 +105,69 @@ def get_published_items_with_sttnewsroomnote_by_planning_id(
     pipeline = [
         {"$match": {"_id": planning_id}},
         {
-            # 1) Compute sttimagetype from the *graphic* coverage (once per planning doc)
-            "$set": {
-                "sttimagetype": {
-                    "$let": {
-                        "vars": {
-                            # first coverage where planning.g2_content_type == "graphic"
-                            "graphicCoverage": {
-                                "$first": {
-                                    "$filter": {
-                                        "input": "$coverages",
-                                        "as": "c",
-                                        "cond": {
-                                            "$eq": [
-                                                "$$c.planning.g2_content_type",
-                                                "graphic",
-                                            ]
-                                        },
-                                    }
-                                }
-                            },
-                            "subjects": {
-                                "$let": {
-                                    "vars": {
-                                        "gc": {
-                                            "$first": {
-                                                "$filter": {
-                                                    "input": "$coverages",
-                                                    "as": "c",
-                                                    "cond": {
-                                                        "$eq": [
-                                                            "$$c.planning.g2_content_type",
-                                                            "graphic",
-                                                        ]
-                                                    },
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "in": {"$ifNull": ["$$gc.planning.subject", []]},
-                                }
-                            },
-                        },
-                        "in": {
-                            "$let": {
-                                "vars": {
-                                    "match": {
-                                        "$first": {
-                                            "$filter": {
-                                                "input": "$$subjects",
-                                                "as": "s",
-                                                "cond": {
-                                                    "$eq": [
-                                                        "$$s.scheme",
-                                                        "sttimagetype",
-                                                    ]
-                                                },
-                                            }
-                                        }
-                                    }
-                                },
-                                "in": {
-                                    "$ifNull": [
-                                        "$$match.qcode",
-                                        {"$ifNull": ["$$match.name", ""]},
-                                    ]
+            # 1) Collect all sttimagetype subject names from graphic coverages
+            "$addFields": {
+                "sttimagetypes": {
+                    "$map": {
+                        "input": {
+                            "$filter": {
+                                "input": "$coverages",
+                                "as": "c",
+                                "cond": {
+                                    "$in": [
+                                        "$$c.planning.g2_content_type",
+                                        ["graphic", "picture"],
+                                    ],
                                 },
                             }
+                        },
+                        "as": "graphic",
+                        "in": {
+                            "$map": {
+                                "input": {
+                                    "$filter": {
+                                        "input": {
+                                            "$ifNull": [
+                                                "$$graphic.planning.subject",
+                                                [],
+                                            ]
+                                        },
+                                        "as": "s",
+                                        "cond": {"$eq": ["$$s.scheme", "sttimagetype"]},
+                                    }
+                                },
+                                "as": "subject",
+                                "in": "$$subject.name",
+                            }
+                        },
+                    }
+                }
+            }
+        },
+        {
+            "$addFields": {
+                "sttimagetype": {
+                    "$reduce": {
+                        "input": {
+                            "$reduce": {
+                                "input": "$sttimagetypes",
+                                "initialValue": [],
+                                "in": {"$concatArrays": ["$$value", "$$this"]},
+                            }
+                        },
+                        "initialValue": "",
+                        "in": {
+                            "$cond": [
+                                {"$eq": ["$$value", ""]},
+                                {"$ifNull": ["$$this", ""]},
+                                {
+                                    "$cond": [
+                                        {"$eq": ["$$this", ""]},
+                                        "$$value",
+                                        {"$concat": ["$$value", ", ", "$$this"]},
+                                    ]
+                                },
+                            ]
                         },
                     }
                 }

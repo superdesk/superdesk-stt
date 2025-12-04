@@ -315,7 +315,7 @@ def get_numeric_value_from_priority(priority: str) -> str:
     can be converted to an integer, it is returned (as a string). If not, or if the
     expected format is not found, the function returns an empty string.
 
-    There's one exception: "Vain tulokset" and in that case we return "Vain tulokset"
+    There's two exceptions: "Vain tulokset" / "Vain tsekkaus" and in that case we return the priority string as is.
 
     Args:
         priority: A string representing the priority.
@@ -325,7 +325,7 @@ def get_numeric_value_from_priority(priority: str) -> str:
 
     if not priority:
         return ""
-    if priority == "Vain tulokset":
+    if priority == "Vain tulokset" or priority == "Vain tsekkaus":
         return priority
     try:
         # Find the last '(' and ')' and extract the content between them
