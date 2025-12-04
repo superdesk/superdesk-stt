@@ -28,6 +28,8 @@ def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, A
                         {"state": "corrected"},  # Korjaus
                         {"genre.qcode": "sttgenre:11"},  # Oikaisu
                     ],
+                    # Ignore all items with profile "nettiuutinen"
+                    "profile": {"$ne": "nettiuutinen"},
                 },
                 projection={
                     "anpa_category": 1,
