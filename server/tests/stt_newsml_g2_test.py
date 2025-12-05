@@ -1,6 +1,10 @@
 import lxml.etree as etree
 
+from stt.publish.stt_newsml_g2_tabs import STTNewsmLG2TabsFormatter
+from stt.publish.stt_newsml_g2_tabs_timezone import STTNewsmLG2TabsTimezoneFormatter
+from stt.publish.stt_newsml_g2_timezone import STTNewsmLG2TimezoneFormatter
 from tests import TestCase
+from datetime import datetime, timezone
 
 from stt.publish.stt_newsml_g2 import format_filename, STTNewsmLG2Formatter
 
@@ -13,17 +17,34 @@ def test_format_filename():
     )
 
 
-class TestSTTNewsmLG2Formatter(TestCase):
+class BaseFormatterTestCase(TestCase):
+    formatter: STTNewsmLG2Formatter
 
     async def format_and_parse(self, article):
-        formatter = STTNewsmLG2Formatter()
-        xml = await formatter.format(article, {})
+        xml = await self.formatter.format(article, {})
         assert xml[0][1]
         print("XML", xml[0][1])
 
         root = etree.fromstring(xml[0][1].encode("utf-8"))
         assert root
         return root
+
+
+class TestSTTNewsmLG2Formatter(BaseFormatterTestCase):
+    formatter = STTNewsmLG2Formatter()
+
+    async def test_datetime(self):
+        article = {
+            "type": "text",
+            "guid": "test-article",
+            "versioncreated": datetime(2025, 12, 5, 8, 30, tzinfo=timezone.utc),
+        }
+        newsml = await self.format_and_parse(article)
+        version_created = newsml.find("itemMeta", namespaces=newsml.nsmap).find(
+            "versionCreated", namespaces=newsml.nsmap
+        )
+        assert version_created is not None
+        assert version_created.text == "2025-12-05T10:30:00"
 
     async def test_picture_link(self):
         article = {
@@ -156,3 +177,41 @@ class TestSTTNewsmLG2Formatter(TestCase):
             newsml.find("contentSet", namespaces=newsml.nsmap), encoding="unicode"
         )
         assert "<h2>Subheadline.</h2>" in contentSet
+
+
+class TestSTTNewsmlG2TabsFormatter(BaseFormatterTestCase):
+    formatter = STTNewsmLG2TabsFormatter()
+
+    async def test_datetime(self):
+        article = {
+            "type": "text",
+            "guid": "test-article",
+            "versioncreated": datetime(2025, 12, 5, 8, 30, tzinfo=timezone.utc),
+        }
+        newsml = await self.format_and_parse(article)
+        version_created = newsml.find("itemMeta", namespaces=newsml.nsmap).find(
+            "versionCreated", namespaces=newsml.nsmap
+        )
+        assert version_created is not None
+        assert version_created.text == "2025-12-05T10:30:00"
+
+
+class TestSTTNewsmLG2TimezoneFormatter(BaseFormatterTestCase):
+    formatter = STTNewsmLG2TimezoneFormatter()
+
+    async def test_datetime(self):
+        article = {
+            "type": "text",
+            "guid": "test-article",
+            "versioncreated": datetime(2025, 12, 5, 8, 30, tzinfo=timezone.utc),
+        }
+        newsml = await self.format_and_parse(article)
+        version_created = newsml.find("itemMeta", namespaces=newsml.nsmap).find(
+            "versionCreated", namespaces=newsml.nsmap
+        )
+        assert version_created is not None
+        assert version_created.text == "2025-12-05T10:30:00+02:00"
+
+
+class TestSTTNewsmLG2TabsTimezoneFormatter(TestSTTNewsmLG2TimezoneFormatter):
+    formatter = STTNewsmLG2TabsTimezoneFormatter()

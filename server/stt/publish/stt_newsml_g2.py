@@ -19,7 +19,7 @@ from superdesk.errors import FormatterError
 from superdesk.publish_async.utils import generate_sequence_number
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 from superdesk.media.renditions import get_rendition_file_name
-from datetime import datetime
+from datetime import datetime, timezone
 
 from stt.publish.utils import encode_special_characters
 
@@ -355,6 +355,11 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                     if original:
                         SubElement(link, "filename").text = format_filename(original)
 
+    def format_datetime(self, dt: datetime) -> str:
+        return dt.astimezone(pytz.timezone("Europe/Helsinki")).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+
     # Format itemMeta
     def format_itemMeta(self, article, parentNode, original):
 
@@ -363,36 +368,20 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
         SubElement(itemMeta, "itemClass", attrib={"qcode": "ninat:text"})
         SubElement(itemMeta, "provider", attrib={"literal": "STT"})
 
-        versioncreated = article.get("versioncreated", None)
+        versioncreated = article.get("versioncreated") or datetime.now(timezone.utc)
+        SubElement(itemMeta, "versionCreated").text = self.format_datetime(
+            versioncreated
+        )
 
-        if versioncreated:
-            SubElement(itemMeta, "versionCreated").text = versioncreated.astimezone(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-        else:
-            SubElement(itemMeta, "versionCreated").text = datetime.now(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-
-        firstcreated = article.get("firstcreated", None)
-
-        if firstcreated:
-            SubElement(itemMeta, "firstCreated").text = firstcreated.astimezone(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-        else:
-            SubElement(itemMeta, "firstCreated").text = datetime.now(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
+        firstcreated = article.get("firstcreated") or versioncreated
+        SubElement(itemMeta, "firstCreated").text = self.format_datetime(firstcreated)
 
         # Embargo
         schedule = article.get("schedule_settings", None)
         if schedule:
             if schedule.get("utc_embargo", None):
-                SubElement(itemMeta, "embargoed").text = (
+                SubElement(itemMeta, "embargoed").text = self.format_datetime(
                     schedule.get("utc_embargo")
-                    .astimezone(pytz.timezone("Europe/Helsinki"))
-                    .strftime("%Y-%m-%dT%H:%M:%S")
                 )
 
         SubElement(itemMeta, "pubStatus", attrib={"qcode": "stat:usable"})
@@ -472,27 +461,13 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
         SubElement(contentMeta, "urgency").text = str(article.get("urgency", 5))
 
-        versioncreated = article.get("versioncreated", None)
-
-        if versioncreated:
-            SubElement(contentMeta, "contentCreated").text = versioncreated.astimezone(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-        else:
-            SubElement(contentMeta, "contentCreated").text = datetime.now(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-
-        # firstcreated = article.get("firstcreated", None)
-
-        if versioncreated:
-            SubElement(contentMeta, "contentModified").text = versioncreated.astimezone(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
-        else:
-            SubElement(contentMeta, "contentModified").text = datetime.now(
-                pytz.timezone("Europe/Helsinki")
-            ).strftime("%Y-%m-%dT%H:%M:%S")
+        versioncreated = article.get("versioncreated") or datetime.now(timezone.utc)
+        SubElement(contentMeta, "contentCreated").text = self.format_datetime(
+            versioncreated
+        )
+        SubElement(contentMeta, "contentModified").text = self.format_datetime(
+            versioncreated
+        )
 
         SubElement(contentMeta, "altId", attrib={"type": "sttidtype:textid"}).text = (
             article.get("guid", "")
@@ -755,3 +730,12 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             if not original_article:
                 return article
             article = original_article
+
+
+class ISODatetimeMixin:
+    """
+    Mixin class to format datetime in ISO 8601 format with timezone info.
+    """
+
+    def format_datetime(self, dt: datetime) -> str:
+        return dt.astimezone(pytz.timezone("Europe/Helsinki")).isoformat()
