@@ -157,7 +157,9 @@ INSTALLED_APPS = [
     "stt.io.feed_parsers.stt_tt_parse_content_api",
     "stt.stt_json_event_formatter",
     "stt.publish.stt_newsml_g2",
+    "stt.publish.stt_newsml_g2_timezone",
     "stt.publish.stt_newsml_g2_tabs",
+    "stt.publish.stt_newsml_g2_tabs_timezone",
     "stt.publish.sttsms",
     "stt.publish.events_desk-net",
 ]
