@@ -213,5 +213,5 @@ class TestSTTNewsmLG2TimezoneFormatter(BaseFormatterTestCase):
         assert version_created.text == "2025-12-05T10:30:00+02:00"
 
 
-class TestSTTNewsmLG2TableTimezoneFormatter(TestSTTNewsmLG2TimezoneFormatter):
+class TestSTTNewsmLG2TabsTimezoneFormatter(TestSTTNewsmLG2TimezoneFormatter):
     formatter = STTNewsmLG2TabsTimezoneFormatter()
