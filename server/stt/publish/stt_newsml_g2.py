@@ -732,6 +732,10 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             article = original_article
 
 
-class ISODatetimeMixing:
+class ISODatetimeMixin:
+    """
+    Mixin class to format datetime in ISO 8601 format with timezone info.
+    """
+
     def format_datetime(self, dt: datetime) -> str:
         return dt.astimezone(pytz.timezone("Europe/Helsinki")).isoformat()
