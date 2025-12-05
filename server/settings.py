@@ -224,6 +224,9 @@ HTML_TAGS_WHITELIST = (
 
 # AUTHORING CONFIG
 
+# set send_to tab as the default opened tab in authoring actions
+AUTHORING_ACTIONS_DEFAULT_TAB = "send_to"
+
 # allow non-desk members to duplicate content
 WORKFLOW_ALLOW_DUPLICATE_TO_NON_MEMBERS = True
 
