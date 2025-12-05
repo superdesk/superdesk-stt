@@ -37,17 +37,26 @@
   {%- set first_parts = [] -%}
   {%- set second_parts = [] -%}
   {%- set third_parts = [] -%}
-    {%- if item.slugline -%}
-      {%- set slug = item.slugline | trim -%}
-      {# Check if slug ends with a question mark or not and if not add a period to the end #}
-      {%- if slug.endswith('?') -%}
-        {% set _ = first_parts.append(slug) %}
-      {%- else -%}
-        {% set _ = first_parts.append(slug ~ '.') %}
-      {%- endif -%}
+  {%- set latest_published_item_description = "" -%}
+  {%- if item.slugline -%}
+    {%- set slug = item.slugline | trim -%}
+    {# Check if slug ends with a question mark or not and if not add a period to the end #}
+    {%- if slug.endswith('?') -%}
+      {% set _ = first_parts.append(slug) %}
+    {%- else -%}
+      {% set _ = first_parts.append(slug ~ '.') %}
     {%- endif -%}
+  {%- endif -%}
   {%- if item.latest_published_item and item.latest_published_item._id -%}
     {%- set pub_item = item.latest_published_item -%}
+    {# If this is published item, add item decription to latest_published_item_description variable so we can add it to the report output later #}
+    {%- if item.description_text %}
+      {%- if item.description_text.endswith('?') or item.description_text.endswith('.') or item.description_text.endswith('!') -%}
+        {% set latest_published_item_description = item.description_text %}
+      {%- else -%}
+        {% set latest_published_item_description = item.description_text + '.' %}
+      {%- endif -%}
+    {% endif -%}
     {%- if pub_item.headline %}{% set _ = second_parts.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
     {%- if pub_item.body_html %}{% set _ = second_parts.append((pub_item.body_html | count_body_html_characters) ~ " merkkiä (lähetetty)") %}{% endif -%}
     {%- if pub_item.sttimagetype %}{% set _ = second_parts.append('Kuvitus: ' ~ (pub_item.sttimagetype)) %}{% endif -%}
@@ -88,7 +97,7 @@
     {%- endif -%}
   {%- endif -%}
   {%- if first_parts %}
-    <p>&ndash;&nbsp; {{ first_parts | join(', ') }}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
+    <p>&ndash;&nbsp; {{ first_parts | join(', ') }}{% if latest_published_item_description %} {{ latest_published_item_description }}{% endif %}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
   {% endif -%}
 {%- endmacro %}
 

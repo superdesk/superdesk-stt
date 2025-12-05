@@ -7,50 +7,25 @@ class Formatted:
     rows: List[Dict[str, Any]]
 
 
+def include_only_mediatilaisuudet_items(
+    items: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    # include only items that have subject with "scheme": "event_type" and "qcode": "type21" ("Mediatilaisuudet")
+    filtered_items = []
+    for item in items:
+        subjects = item.get("subject", [])
+        for subject in subjects:
+            if (
+                subject.get("scheme") == "event_type"
+                and subject.get("qcode") == "type21"
+            ):
+                filtered_items.append(item)
+                break
+    return filtered_items
+
+
 def format_paivalista_for_export(items):
     rows = items or []
-    # TODO: sorting etc. if needed
-    # item keys are:
-    # ['type',
-    # 'occur_status',
-    # 'dates',
-    # 'calendars',
-    # 'state',
-    # 'language',
-    # 'languages',
-    # 'place',
-    # 'files',
-    # '_time_to_be_confirmed',
-    # 'slugline',
-    # 'name',
-    # 'definition_short',
-    # 'location',
-    # 'links',
-    # '_updated',
-    # '_created',
-    # 'guid',
-    # 'original_creator',
-    # 'firstcreated',
-    # 'versioncreated',
-    # '_planning_schedule',
-    # '_etag',
-    # 'lock_action',
-    # 'lock_user',
-    # 'lock_time',
-    # 'lock_session',
-    # 'state_reason',
-    # 'pubstatus',
-    # 'actioned_date',
-    # 'firstpublished',
-    # '_id',
-    # '_type',
-    # 'plannings',
-    # 'coverages',
-    # 'published_archive_items',
-    # 'assignees',
-    # 'text_assignees',
-    # 'contacts',
-    # 'description_text',
-    # 'schedule']
+    rows = include_only_mediatilaisuudet_items(rows)
 
     return {"rows": rows}
