@@ -10,6 +10,8 @@ from superdesk.errors import FormatterError
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 from superdesk.publish_async.utils import generate_sequence_number
 
+from stt.publish.utils import encode_special_characters
+
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 STT_FORMATVERSION = "{http://www.stt-lehtikuva.fi/NewsML}formatversion"
 XSI_SCHEMALOCATION = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
@@ -89,10 +91,14 @@ class STTSMSFormatter(NewsMLG2Formatter):
             ).decode(self.ENCODING)
 
             # Replace special Unicode characters as entities manually (ndhas, thinsp, tab, etc.)
+            # This has to be first becore encode_special_characters because of SMS CGW sender
             xmlStr = xmlStr.replace("\u2013", "&ndash;")
             xmlStr = xmlStr.replace("\t", "&tab;")
             xmlStr = xmlStr.replace("\u2009", "&thinsp;")
             xmlStr = xmlStr.replace("&amp;", "&amp;amp;")
+
+            # Handles STT's special ndash and thinsp notation
+            xmlStr = encode_special_characters(xmlStr)
 
             return [
                 (
