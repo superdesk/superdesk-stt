@@ -188,7 +188,7 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             logger.warning("No last updated, using now as since")
             since = datetime.datetime.now(datetime.timezone.utc)
         sep = "&" if "?" in base else "?"
-        return f"{base}{sep}since={since.isoformat().replace('+00:00','Z')}"
+        return f"{base}{sep}since={since.isoformat().replace('+00:00', 'Z')}"
 
     def fetch(self, provider, update):
         """
