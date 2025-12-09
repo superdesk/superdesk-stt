@@ -10,7 +10,7 @@ import pytz
 import re
 
 from lxml import etree, html
-from lxml.etree import SubElement, ParserError
+from lxml.etree import SubElement
 from superdesk.etree import parse_html
 from superdesk.resource_fields import VERSION
 from superdesk import text_utils
@@ -48,7 +48,7 @@ def get_text_from_html(html_content: str) -> str:
     try:
         tree = html.fromstring(html_content)
         return tree.text_content().strip()
-    except ParserError:
+    except Exception:
         return ""
 
 

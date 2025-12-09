@@ -179,6 +179,20 @@ class TestSTTNewsmLG2Formatter(BaseFormatterTestCase):
         assert ednotes[0].text == "Public ednote."
         assert ednotes[0].get("role") == "sttnote:public"
 
+    async def test_sttpublicednote_nettiuutinen(self):
+        article = {
+            "type": "text",
+            "guid": "ednote-test",
+            "extra": {"sttpublicednote": "<p>&nbsp;Public ednote.</p>"},
+            "body_html": "<p>Body</p>",
+            "profile": "nettiuutinen",
+        }
+        newsml = await self.format_and_parse(article)
+        assert newsml is not None
+        assert "Public ednote." in etree.tostring(
+            newsml.find("contentSet", namespaces=newsml.nsmap), encoding="unicode"
+        )
+
     async def test_subheadline_error(self):
         article = {
             "type": "text",
