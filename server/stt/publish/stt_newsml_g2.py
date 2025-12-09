@@ -10,7 +10,7 @@ import pytz
 import re
 
 from lxml import etree, html
-from lxml.etree import SubElement
+from lxml.etree import SubElement, ParserError
 from superdesk.etree import parse_html
 from superdesk.resource_fields import VERSION
 from superdesk import text_utils
@@ -36,6 +36,20 @@ def format_filename(rendition) -> str:
     filename = get_rendition_file_name(rendition)
     filename = filename.replace(".jpeg", ".jpg")
     return filename
+
+
+def get_text_from_html(html_content: str) -> str:
+    """Extract text content from HTML string.
+
+    :param str html_content: HTML content as string
+    :return: Extracted text content
+    :rtype: str
+    """
+    try:
+        tree = html.fromstring(html_content)
+        return tree.text_content().strip()
+    except ParserError:
+        return ""
 
 
 class STTNewsmLG2Formatter(NewsMLG2Formatter):
@@ -429,14 +443,12 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             extra = article.get("extra", {})
 
             if extra:
-                if "sttpublicednote" in extra:
+                if extra.get("sttpublicednote"):
                     # For some reason data is inside P tag
-                    parser = etree.XMLParser()
-                    if extra.get("sttpublicednote", None):
-                        element = etree.XML(extra.get("sttpublicednote", ""), parser)
-                        SubElement(
-                            itemMeta, "edNote", attrib={"role": "sttnote:public"}
-                        ).text = element.text
+                    ednote_text = get_text_from_html(extra.get("sttpublicednote"))
+                    SubElement(
+                        itemMeta, "edNote", attrib={"role": "sttnote:public"}
+                    ).text = ednote_text
 
         # Signals
         self.format_signal(article, itemMeta, original)
@@ -571,17 +583,11 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 extra = article.get("extra", {})
 
                 if extra:
-                    if "sttpublicednote" in extra:
+                    if extra.get("sttpublicednote"):
                         # For some reason data is inside P tag
-                        parser = etree.XMLParser()
-                        if extra.get("sttpublicednote", None):
-                            element = etree.XML(
-                                extra.get("sttpublicednote", ""), parser
-                            )
-
-                            p = html.Element("p")
-                            p.text = element.text
-                            body.append(p)
+                        p = html.Element("p")
+                        p.text = get_text_from_html(extra.get("sttpublicednote"))
+                        body.append(p)
 
         # If we don't have body, check if the profile is 'viiva'.
         else:
