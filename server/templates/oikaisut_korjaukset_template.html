@@ -41,16 +41,7 @@
     {%- if genre_name %}{% set _ = second_parts.append(genre_name) %}{% endif -%}
     {%- if item.corrected_published_item.profile %}{% set _ = second_parts.append(item.corrected_published_item.profile) %}{% endif -%}
     {%- if item.corrected_published_item.headline %}{% set _ = second_parts.append('"' ~ item.corrected_published_item.headline ~ '"') %}{% endif -%}
-    <p>– {{ second_parts | join(', ') }}.
-    {%- set ednote = item.corrected_published_item.ednote | trim if item.corrected_published_item.ednote else '' -%}
-    {%- if ednote %} {{ ednote if ednote.endswith('.') else ednote ~ '.' }}{% endif -%}
-        {% if item.corrected_published_item.firstpublished %}
-            Lähetetty klo {{ item.corrected_published_item.firstpublished | fi_time }}
-        {% endif %}
-        {% if item.corrected_published_item.body_html %}
-            , {{ item.corrected_published_item.body_html | count_body_html_characters }} merkkiä.
-        {% endif %}
-    </p>
+    <p>– {{ second_parts | join(', ') }}. {%- set ednote = item.corrected_published_item.ednote | trim if item.corrected_published_item.ednote else '' -%}{%- if ednote %} {{ ednote if ednote.endswith('.') else ednote ~ '.' }}{% endif -%}{% if item.corrected_published_item.firstpublished %} Lähetetty klo {{ item.corrected_published_item.firstpublished | fi_time }}{% endif %}{% if item.corrected_published_item.body_html %}, {{ item.corrected_published_item.body_html | count_body_html_characters }} merkkiä.{% endif %}</p>
     <br />
 
 {% endfor %}

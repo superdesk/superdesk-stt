@@ -7,6 +7,30 @@ from stt.helpers.template_helpers import exclude_drafts
 logger = logging.getLogger(__name__)
 
 
+def _is_oikaisu(item: Dict[str, Any]) -> bool:
+    """
+    Determine whether the provided item represents an "oikaisu" correction.
+
+    An item is considered an oikaisu if its "genre" field (which may be a dict
+    or a list of dicts) contains an entry with the qcode "sttgenre:11".
+
+    Args:
+        item: A dictionary representing the item metadata.
+
+    Returns:
+        True if the item is classified as an oikaisu; otherwise, False.
+    """
+    genre = item.get("genre")
+    if isinstance(genre, dict):
+        return genre.get("qcode") == "sttgenre:11"
+    if isinstance(genre, list):
+        return any(
+            isinstance(entry, dict) and entry.get("qcode") == "sttgenre:11"
+            for entry in genre
+        )
+    return False
+
+
 def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, Any]]:
     # first search from "delivery" collection by planning_id
     deliveries = find_many(
@@ -52,6 +76,13 @@ def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, A
             if items:
                 # add all found items to published_items
                 published_items.extend(items)
+
+    # If there is at least one oikaisu for this planning_id, ignore korjaus items.
+    if any(_is_oikaisu(item) for item in published_items):
+        published_items = [
+            item for item in published_items if item.get("state") != "corrected"
+        ]
+
     return published_items
 
 
