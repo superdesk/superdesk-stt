@@ -16,7 +16,6 @@ from datetime import datetime, timezone
 import chardet
 from superdesk.io.feed_parsers import FeedParser
 from superdesk.io.registry import register_feed_parser
-from superdesk.metadata.utils import generate_tag_from_url
 
 # Regex for legacy XML wrapper: <root><p> ... </p></root>
 XML_WRAP_RE = re.compile(r"^\s*<root>\s*<p>(.*)</p>\s*</root>\s*$", re.S)
@@ -87,14 +86,11 @@ def fix_encoding_issues(text: str) -> str:
 
 
 def to_body_html(lines: List[str]) -> str:
-    """Wrap all lines in a single paragraph and separate with `<br/>`.
-
-    Trailing blank lines are removed.
-    """
-    while lines and not lines[-1].strip():  # trim trailing blanks
+    """Wrap each line in its own <p>...</p> block."""
+    while lines and lines[-1] == "":
         lines.pop()
-    content = "<br/>\n".join(line.rstrip() for line in lines)
-    return f"<p>{content}</p>"
+
+    return "\n".join(f"<p>{line.rstrip()}</p>" for line in lines)
 
 
 class VeikkausTextFeedParser(FeedParser):
@@ -134,8 +130,10 @@ class VeikkausTextFeedParser(FeedParser):
         headline = f"*** {(next((ln.strip() for ln in lines if ln.strip()), '') or 'Veikkaus')} ***"
         body_html = to_body_html(lines)
 
-        filename = os.path.basename(file_path)
-        guid = generate_tag_from_url(filename, "urn")
+        # create unique guid as urn:filename_timestamp
+        filename = os.path.splitext(os.path.basename(file_path))[0]
+        timestamp = int(datetime.now(timezone.utc).timestamp())
+        guid = f"urn:{filename}_{timestamp}"
 
         item: Dict[str, Any] = {
             "guid": guid,
