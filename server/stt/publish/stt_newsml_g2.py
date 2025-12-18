@@ -54,11 +54,11 @@ def get_text_from_html(html_content: str) -> str:
 
 class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
-    ENCODING = "UTF-8"
-    XML_ROOT = '<?xml version="1.0" encoding="{}"?>\n'.format(ENCODING)
-
     type = "sttnewsmlg2"
     name = "STT NewsML G2"
+
+    ENCODING = "UTF-8"
+    XML_ROOT = '<?xml version="1.0" encoding="{}"?>\n'.format(ENCODING)
 
     _message_nsmap = {
         None: "http://iptc.org/std/nar/2006-10-01/",
@@ -658,10 +658,12 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
 
             pub_seq_num = await generate_sequence_number(subscriber)
 
+            guid_article = self._get_guid_article(article, original)
+
             newsItem = etree.Element(
                 "newsItem",
                 attrib={
-                    "guid": "urn:newsml:stt.fi::" + original.get("guid", ""),
+                    "guid": "urn:newsml:stt.fi::" + guid_article.get("guid", ""),
                     "version": str(article.get(VERSION, "")),
                     "standardversion": "2.12",
                     "conformance": "power",
@@ -718,6 +720,19 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
                 ex, subscriber
             ).send_notifications()
 
+    def _get_guid_article(self, article, original):
+        """Get the article to use for the guid.
+
+        By default, returns the original article (following rewrite chain).
+        Override via PrintMixin to use the current article instead.
+
+        :param dict article: The current article
+        :param dict original: The original article (following rewrite chain)
+        :return: The article to use for guid
+        :rtype: dict
+        """
+        return original
+
     def _get_original_article(self, article):
         """Get the original article for the given article by following the rewrite_of chain.
         If the article is not a rewrite, return the article itself.
@@ -738,7 +753,91 @@ class STTNewsmLG2Formatter(NewsMLG2Formatter):
             article = original_article
 
 
-class ISODatetimeMixin:
+class PrintMixin:
+    """Mixin to use the current article's guid.
+
+    This is used for print formatters where the guid should point to
+    the current article being formatted, not the original.
+    """
+
+    def _get_guid_article(self, article, original):
+        """Get the article to use for the guid.
+
+        Returns the current article being formatted.
+
+        :param dict article: The current article
+        :param dict original: The original article (following rewrite chain)
+        :return: The article to use for guid
+        :rtype: dict
+        """
+        return article
+
+
+class TabsMixin:
+    """Mixin to convert HTML tables to tab-separated text.
+
+    This mixin overrides format_contentSet_body to convert HTML table elements
+    into tab-separated values for tabulated output.
+    """
+
+    def format_contentSet_body(self, article, body):
+        """Override body formatting to convert HTML tables to tab-separated text.
+
+        :param dict article: The article to format
+        :param Element body: The body element to append content to
+        """
+        # Body
+        if article.get("body_html", None):
+
+            # Find all rows
+            rows = re.findall(
+                r"<tr.*?>(.*?)</tr>", article.get("body_html"), flags=re.DOTALL
+            )
+
+            lines = []
+            for row in rows:
+
+                # Find all <td> in a row
+                cells = re.findall(r"<td.*?>(.*?)</td>", row, flags=re.DOTALL)
+
+                cleanCells = []
+                for cell in cells:
+
+                    # Clean out unnecessary tags
+                    text = re.sub(r"<.*?>", "", cell).strip()
+
+                    # column has ndash in it
+                    if "–" in text:
+                        parts = re.split(r"–", text, maxsplit=1)
+                        cleanCells.append(parts[0] + "–")
+                        cleanCells.append(parts[1])
+                    else:
+                        cleanCells.append(text)
+
+                # Join with tab characters
+                lines.append("\t".join(cleanCells))
+
+            # Join rows with newlines
+            paragraph = "</p>\n<p>".join(lines)
+            replacement = f"<p>{paragraph}</p>"
+
+            # replace HTML table with tabbed text
+            bodyHtml = article.get("body_html", None)
+
+            if bodyHtml:
+                resultHTML = re.sub(
+                    "<table.*?>.*?</table>", replacement, bodyHtml, flags=re.DOTALL
+                )
+
+                # Update the article's body_html with the converted version
+                article = article.copy()
+                article["body_html"] = resultHTML
+
+        # Call parent class method to handle the rest of the formatting
+        super().format_contentSet_body(article, body)
+
+
+class TimezoneMixin:
     """
     Mixin class to format datetime in ISO 8601 format with timezone info.
     """
