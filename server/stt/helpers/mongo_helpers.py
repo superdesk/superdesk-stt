@@ -278,6 +278,7 @@ def get_published_items_by_planning_id_and_genre_qcodes(
             "operation": 1,
             "profile": 1,
             "state": 1,
+            "versioncreated": 1,
         }
 
     items = find_many(
