@@ -228,3 +228,68 @@ def get_published_items_with_sttnewsroomnote_by_planning_id(
             exc,
         )
         return []
+
+
+def get_published_items_by_planning_id_and_genre_qcodes(
+    planning_id: str,
+    genre_qcodes: List[str],
+    projection: Optional[Dict[str, int]] = None,
+) -> List[Dict[str, Any]]:
+    """Return published items linked to *planning_id* filtered by genre qcodes.
+
+    This follows the relation:
+
+        planning._id -> delivery.planning_id -> published.item_id (via delivery.item_id)
+
+    Only delivery rows with ``item_state == 'published'`` are considered.
+    The published query matches any item whose ``genre.qcode`` is one of
+    ``genre_qcodes``.
+    """
+
+    if not planning_id or not genre_qcodes:
+        return []
+
+    deliveries = find_many(
+        "delivery",
+        {"planning_id": planning_id, "item_state": "published"},
+        projection={"item_id": 1, "_id": 0},
+    )
+
+    item_ids_set = set()
+    for delivery in deliveries:
+        if not isinstance(delivery, dict):
+            continue
+        item_id = delivery.get("item_id")
+        if not item_id:
+            continue
+        item_ids_set.add(str(item_id))
+
+    item_ids = sorted(item_ids_set)
+    if not item_ids:
+        return []
+
+    if projection is None:
+        projection = {
+            "assignment_id": 1,
+            "firstpublished": 1,
+            "genre": 1,
+            "body_html": 1,
+            "item_id": 1,
+            "operation": 1,
+            "profile": 1,
+            "state": 1,
+        }
+
+    items = find_many(
+        "published",
+        {
+            "item_id": {"$in": item_ids},
+            "genre.qcode": {"$in": genre_qcodes},
+            "state": {"$in": ["published"]},
+        },
+        projection=projection,
+    )
+
+    # Stable ordering for exports/UI usage: newest first when the field exists.
+    items.sort(key=lambda item: (item or {}).get("versioncreated") or "", reverse=True)
+    return items

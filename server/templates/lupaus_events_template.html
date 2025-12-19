@@ -5,6 +5,16 @@
 {# Enrich agendas with related events (adds item.related_events_expanded) #}
 {% set agendas = enrich_planning_agendas(agendas, 'teksti') %}
 
+{# Macro to render fact_box_items "Faktalaatikko" / armpit_items "Kainalo" #}
+
+{% macro render_fact_box_armpit_items(items, type) -%}
+  {%- set parts = [] -%}
+  {%- for item in items -%}
+    {% set _ = parts.append(type ~ ", lähetetty klo " ~ (item.firstpublished | fi_time) ~ ", " ~ (item.body_html | count_body_html_characters) ~ " merkkiä") %}
+  {%- endfor -%}
+  {%- if parts %}{{ parts | join(' ') }}{% endif -%}
+{%- endmacro %}
+
 {% macro lupaus_location(location) -%}
     {%- set loc = location[0] if location and location[0] and location[0].address else None -%}
     {%- if loc -%}
@@ -37,6 +47,8 @@
   {%- set first_parts = [] -%}
   {%- set second_parts = [] -%}
   {%- set third_parts = [] -%}
+  {%- set fourth_parts = [] -%}
+  {%- set fifth_parts = [] -%}
   {%- set latest_published_item_description = "" -%}
   {%- if item.slugline -%}
     {%- set slug = item.slugline | trim -%}
@@ -82,22 +94,35 @@
     {# Call the priority macro #}
     {%- set urg = stt_priority_text(item) -%}
     {%- if urg %}{% set _ = third_parts.append(urg) %}{% endif -%}
+    {# Add fact_box / armpit if available #}
+    {%- if item.fact_box_items and item.fact_box_items | length > 0 -%}
+      {%- set fact_box_text = render_fact_box_armpit_items(item.fact_box_items, 'Faktalaatikko') -%}
+      {%- if fact_box_text %}{% set _ = fourth_parts.append(fact_box_text) %}{% endif -%}
+    {%- endif -%}
+    {%- if item.armpit_items and item.armpit_items | length > 0 -%}
+      {%- set armpit_text = render_fact_box_armpit_items(item.armpit_items, 'Kainalo') -%}
+      {%- if armpit_text %}{% set _ = fourth_parts.append(armpit_text) %}{% endif -%}
+    {%- endif -%}
     {# Add coverages if available #}
     {%- if item.sttimagetypes -%}
       {%- set cov_list = item.sttimagetypes if item.sttimagetypes is iterable else [item.sttimagetypes] -%}
       {%- if cov_list | length > 0 -%}
-        {%- set _ = third_parts.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
+        {%- set _ = fifth_parts.append('Kuvitus: ' ~ (cov_list | join(', '))) -%}
       {%- endif -%}
       {%- if item.sttpicturewhatabouts -%}
         {%- set whatabout_list = item.sttpicturewhatabouts if item.sttpicturewhatabouts is iterable else [item.sttpicturewhatabouts] -%}
         {%- if whatabout_list | length > 0 -%}
-          {%- set _ = third_parts.append(whatabout_list | join(', ')) -%}
+          {%- set _ = fifth_parts.append(whatabout_list | join(', ')) -%}
         {%- endif -%}
       {%- endif -%}
     {%- endif -%}
   {%- endif -%}
+  {%- set second_text = (second_parts | join(', ')) | trim -%}
+  {%- set third_text = (third_parts | join(', ')) | trim -%}
+  {%- set fourth_text = (fourth_parts | join('. ')) | trim -%}
+  {%- set fifth_text = (fifth_parts | join(', ')) | trim -%}
   {%- if first_parts %}
-    <p>&ndash;&nbsp; {{ first_parts | join(', ') }}{% if latest_published_item_description %} {{ latest_published_item_description }}{% endif %}{% if second_parts %} {{ second_parts | join(', ') }}.{% endif %}{% if third_parts %} {{ third_parts | join(', ') }}.{% endif %}</p>
+    <p>&ndash;&nbsp; {{ first_parts | join(', ') }}{% if latest_published_item_description %} {{ latest_published_item_description }}{% endif %}{% if second_text %} {{ second_text }}.{% endif %}{% if third_text %} {{ third_text }}.{% endif %}{% if fourth_text %} {{ fourth_text }}.{% endif %}{% if fifth_text %} {{ fifth_text }}.{% endif %}</p>
   {% endif -%}
 {%- endmacro %}
 
