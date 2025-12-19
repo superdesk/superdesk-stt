@@ -4,11 +4,28 @@ import logging
 
 from stt.helpers.mongo_helpers import (
     find_many,
+    get_published_items_by_planning_id_and_genre_qcodes,
     get_published_items_with_sttnewsroomnote_by_planning_id,
 )
 from stt.helpers.template_helpers import exclude_drafts
 
 logger = logging.getLogger(__name__)
+
+
+def _item_has_genre_qcode(item: Dict[str, Any], qcode: str) -> bool:
+    """Return True when item.genre contains a matching qcode.
+
+    Tolerates ``genre`` being either a dict or a list of dicts.
+    """
+
+    if not item or not qcode:
+        return False
+    genre = item.get("genre")
+    if isinstance(genre, dict):
+        return genre.get("qcode") == qcode
+    if isinstance(genre, list):
+        return any(isinstance(g, dict) and g.get("qcode") == qcode for g in genre)
+    return False
 
 
 def _collect_event_ids(agendas: List[Dict[str, Any]]) -> List[str]:
@@ -401,7 +418,7 @@ def _set_stt_fields(
     item_type: str,
 ) -> List[Dict[str, Any]]:
     """
-    Enrich agendas with the metadata required by the Lupaus/Kuva exports.
+    Enrich agendas with the metadata required by the Lupaus/Kuvalupaus exports.
 
     For each planning item the function:
     - attaches coverage metadata (``news_coverage_status``, ``sttimagetypes``,
@@ -421,6 +438,8 @@ def _set_stt_fields(
 
     Returns the filtered/enriched agendas list.
     """
+
+    genre_cache: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
 
     for ag in agendas or []:
         new_items: List[Dict[str, Any]] = []
@@ -453,6 +472,34 @@ def _set_stt_fields(
             latest_published_item = _get_latest_published_item(published_related_items)
             # attach latest published item to planning item
             pl["latest_published_item"] = latest_published_item
+
+            planning_id = pl.get("_id")
+            planning_id_str = str(planning_id) if planning_id else ""
+            cached = genre_cache.get(planning_id_str) if planning_id_str else None
+            if cached is None and planning_id_str:
+                genre_items = get_published_items_by_planning_id_and_genre_qcodes(
+                    planning_id_str, ["sttgenre:23", "sttgenre:2"]
+                )
+                cached = {
+                    "fact_box_items": [
+                        item
+                        for item in genre_items
+                        if _item_has_genre_qcode(item, "sttgenre:23")
+                    ],
+                    "armpit_items": [
+                        item
+                        for item in genre_items
+                        if _item_has_genre_qcode(item, "sttgenre:2")
+                    ],
+                }
+                genre_cache[planning_id_str] = cached
+
+            pl["fact_box_items"] = (
+                cached.get("fact_box_items", []) if cached is not None else []
+            )
+            pl["armpit_items"] = (
+                cached.get("armpit_items", []) if cached is not None else []
+            )
             _set_priority_fields(pl, item_type)
             if "stt_priority" not in pl:
                 continue  # exclude items without "stt_priority" key set (eg. "Vain tsekkaus" items)
@@ -638,7 +685,7 @@ def enrich_planning_agendas(
     agendas: List[Dict[str, Any]], item_type: str
 ) -> List[Dict[str, Any]]:
     """
-    Enrich every planning agenda with the data required by the Lupaus exports.
+    Enrich every planning agenda with the data required by the Lupaus / Kuvalupaus exports.
 
     The function:
     - drops draft agenda items
