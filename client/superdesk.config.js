@@ -52,6 +52,8 @@ module.exports = function (grunt) {
       dateformat: "DD.MM.YYYY",
     },
 
+    startingDay: 1, // Monday
+
     features: {
       swimlane: {defaultNumberOfColumns: 4},
       noTakes: true /* hide takes */,
@@ -155,8 +157,6 @@ module.exports = function (grunt) {
         },
       },
     },
-
-    startingDay: 1, // Monday
 
     /* display alternative labels for some stings */
     langOverride: {
