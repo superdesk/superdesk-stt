@@ -156,6 +156,8 @@ module.exports = function (grunt) {
       },
     },
 
+    startingDay: 1, // Monday
+
     /* display alternative labels for some stings */
     langOverride: {
       en: {
