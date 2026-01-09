@@ -7,7 +7,10 @@ from stt.helpers.mongo_helpers import (
     get_published_items_by_planning_id_and_genre_qcodes,
     get_published_items_with_sttnewsroomnote_by_planning_id,
 )
-from stt.helpers.template_helpers import exclude_drafts
+from stt.helpers.template_helpers import (
+    exclude_drafts,
+    exclude_merkkipaivapalvelu_items,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -707,6 +710,8 @@ def enrich_planning_agendas(
     for ag in agendas:
         # Exclude draft items
         items = exclude_drafts(ag.get("items") or [])
+        # Exclude Merkkipäiväpalvelu items (anpa_category.qcode == "5")
+        items = exclude_merkkipaivapalvelu_items(items)
         ag["items"] = items
 
     # Collect unique event IDs from all agendas
