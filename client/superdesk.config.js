@@ -180,7 +180,7 @@ module.exports = function (grunt) {
       },
     },
     planning: {
-      avatarInitialsDisplay: 'inline',
+      assignmentItemAvatarDisplayMode: 'inline',
       planning_list_item: {
         firstLine: [
           {
