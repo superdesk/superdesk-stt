@@ -119,18 +119,19 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
         # AdvisoryLine prefix (AFP NewsLines)
         # Only apply when body_html is already present and non-empty.
         body_html = item.get("body_html")
-        if body_html and str(body_html).strip():
+        if body_html and body_html.strip():
             advisory_nodes = xml.xpath(
                 '//*[local-name()="NewsLineType" and @FormalName="AdvisoryLine"]'
                 '/parent::*[local-name()="NewsLine"]'
                 '/*[local-name()="NewsLineText"]'
             )
             if advisory_nodes:
+                # NOTE: we only want the first AdvisoryLine if multiple are present.
                 advisory_text = (advisory_nodes[0].text or "").strip()
                 if advisory_text:
                     # --- Prefix the advisory line to body_html
-                    item["body_html"] = f"<p>{html.escape(advisory_text)}</p>\n" + str(
-                        body_html
+                    item["body_html"] = (
+                        f"<p>{html.escape(advisory_text)}</p>\n" + body_html
                     )
 
         # --- Always add AFP and STT as sources
