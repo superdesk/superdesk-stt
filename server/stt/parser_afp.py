@@ -15,6 +15,7 @@ from pytz import utc
 from superdesk import etree
 import logging
 import re
+import html
 
 logger = logging.getLogger(__name__)
 
@@ -114,6 +115,24 @@ class AFPNewsMLFeedParser(NewsMLOneFeedParser):
             item["headline"] = (
                 etree.to_string(parsed_headline, method="text").strip().split("\n")[0]
             )
+
+        # AdvisoryLine prefix (AFP NewsLines)
+        # Only apply when body_html is already present and non-empty.
+        body_html = item.get("body_html")
+        if body_html and body_html.strip():
+            advisory_nodes = xml.xpath(
+                '//*[local-name()="NewsLineType" and @FormalName="AdvisoryLine"]'
+                '/parent::*[local-name()="NewsLine"]'
+                '/*[local-name()="NewsLineText"]'
+            )
+            if advisory_nodes:
+                # NOTE: we only want the first AdvisoryLine if multiple are present.
+                advisory_text = (advisory_nodes[0].text or "").strip()
+                if advisory_text:
+                    # --- Prefix the advisory line to body_html
+                    item["body_html"] = (
+                        f"<p>{html.escape(advisory_text)}</p>\n" + body_html
+                    )
 
         # --- Always add AFP and STT as sources
         item["subject"].append({"qcode": "AFP", "name": "AFP", "scheme": "sttsource"})
