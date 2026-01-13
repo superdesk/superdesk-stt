@@ -1,3 +1,4 @@
+import os
 import lxml.etree as etree
 
 from tests import TestCase
@@ -18,10 +19,8 @@ class AFPNewsMLFeedParserTestCase(TestCase):
             return await parser.parse(xml_root, provider)
 
     async def parse_item_from_fixture(self, filename: str):
-        dirname = __import__("os").path.dirname(
-            __import__("os").path.realpath(__file__)
-        )
-        path = __import__("os").path.join(dirname, "fixtures", filename)
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(dirname, "fixtures", filename)
         with open(path, "rb") as f:
             xml_root = etree.parse(f).getroot()
         provider = {"name": "Test", "config": {}}
