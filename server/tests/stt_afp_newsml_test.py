@@ -19,7 +19,7 @@ class AFPNewsMLFeedParserTestCase(TestCase):
 
     async def test_prefixes_first_advisory_line_to_body_html(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
-<NewsML>
+      <NewsML Version="1.2">
   <NewsItem>
     <Identification>
       <NewsIdentifier>
@@ -45,21 +45,18 @@ class AFPNewsMLFeedParserTestCase(TestCase):
         </NewsLine>
       </NewsLines>
 
-      <NewsComponent>
-        <Role FormalName="Content"/>
-        <ContentItem>
-          <MediaType FormalName="Text"/>
-          <DataContent>
-            <nitf>
-              <body>
-                <body.content>
-                  <p>First para.</p>
-                </body.content>
-              </body>
-            </nitf>
-          </DataContent>
-        </ContentItem>
-      </NewsComponent>
+      <ContentItem>
+        <MediaType FormalName="Text"/>
+        <DataContent>
+          <nitf>
+            <body>
+              <body.content>
+                <p>First para.</p>
+              </body.content>
+            </body>
+          </nitf>
+        </DataContent>
+      </ContentItem>
     </NewsComponent>
   </NewsItem>
 </NewsML>
@@ -72,7 +69,7 @@ class AFPNewsMLFeedParserTestCase(TestCase):
 
     async def test_does_not_prefix_when_newslinetype_is_not_advisoryline(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
-<NewsML>
+      <NewsML Version="1.2">
   <NewsItem>
     <Identification>
       <NewsIdentifier>
@@ -98,21 +95,18 @@ class AFPNewsMLFeedParserTestCase(TestCase):
         </NewsLine>
       </NewsLines>
 
-      <NewsComponent>
-        <Role FormalName="Content"/>
-        <ContentItem>
-          <MediaType FormalName="Text"/>
-          <DataContent>
-            <nitf>
-              <body>
-                <body.content>
-                  <p>First para.</p>
-                </body.content>
-              </body>
-            </nitf>
-          </DataContent>
-        </ContentItem>
-      </NewsComponent>
+      <ContentItem>
+        <MediaType FormalName="Text"/>
+        <DataContent>
+          <nitf>
+            <body>
+              <body.content>
+                <p>First para.</p>
+              </body.content>
+            </body>
+          </nitf>
+        </DataContent>
+      </ContentItem>
     </NewsComponent>
   </NewsItem>
 </NewsML>
@@ -125,7 +119,7 @@ class AFPNewsMLFeedParserTestCase(TestCase):
 
     async def test_skips_when_body_html_missing_or_empty(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
-<NewsML>
+      <NewsML Version="1.2">
   <NewsItem>
     <Identification>
       <NewsIdentifier>
@@ -151,20 +145,17 @@ class AFPNewsMLFeedParserTestCase(TestCase):
         </NewsLine>
       </NewsLines>
 
-      <NewsComponent>
-        <Role FormalName="Content"/>
-        <ContentItem>
-          <MediaType FormalName="Text"/>
-          <DataContent>
-            <nitf>
-              <body>
-                <body.content>
-                </body.content>
-              </body>
-            </nitf>
-          </DataContent>
-        </ContentItem>
-      </NewsComponent>
+      <ContentItem>
+        <MediaType FormalName="Text"/>
+        <DataContent>
+          <nitf>
+            <body>
+              <body.content>
+              </body.content>
+            </body>
+          </nitf>
+        </DataContent>
+      </ContentItem>
     </NewsComponent>
   </NewsItem>
 </NewsML>
