@@ -1,6 +1,6 @@
 honcho
 python3-saml
-google-cloud-translate==3.23.0
+google-cloud-translate==3.24.0
 celery-redbeat
 
 git+https://github.com/superdesk/superdesk-core.git@release/3.2#egg=superdesk-core
