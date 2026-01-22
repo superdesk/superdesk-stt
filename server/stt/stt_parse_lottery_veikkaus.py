@@ -90,7 +90,13 @@ def to_body_html(lines: List[str]) -> str:
     while lines and lines[-1] == "":
         lines.pop()
 
-    return "\n".join(f"<p>{line.rstrip()}</p>" for line in lines)
+    content = "<br/>\n".join(line.rstrip() for line in lines)
+
+    # Remove unwanted characters:
+    # Replace \u2020 with thinspace (\u2009)
+    content = content.replace("\u2020", "\u2009")
+
+    return f"<p>{content}</p>"
 
 
 class VeikkausTextFeedParser(FeedParser):
