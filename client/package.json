@@ -10,8 +10,7 @@
         "start": "npx grunt server"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.19",
-        "lodash": "^4.17.19"
+        "@superdesk/build-tools": "^1.0.19"
     },
     "volta": {
         "node": "22.21.1"
