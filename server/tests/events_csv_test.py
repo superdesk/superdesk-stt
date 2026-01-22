@@ -1,7 +1,9 @@
 import os
+import asyncio
 from contextlib import contextmanager
 from unittest.mock import patch, MagicMock
 from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser
+from settings import DEFAULT_TIMEZONE
 
 
 # === Shared helpers for occurrence status tests ===
@@ -25,7 +27,7 @@ def write(tmp_path, filename, content):
 
 def parse_file(path):
     parser = EventsCSVFeedParser()
-    return parser.parse(path)
+    return asyncio.run(parser.parse(path))
 
 
 def create_csv_file(tmp_path, filename, headers, rows):
@@ -84,6 +86,7 @@ def parse_occur_status_csv(tmp_path, occurrence_status_value, vocab_items=None):
     if vocab_items is None:
         vocab_items = [
             {
+                "is_active": True,
                 "qcode": "eocstat:eos5",
                 "name": "Planned, occurs certainly",
                 "label": "Planned, occurs certainly",
@@ -118,10 +121,12 @@ def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
     assert_event_dates(ev, "2024-07-01T14:30:00", "America/New_York")
     assert ev["dates"]["start"].isoformat().endswith("-04:00")
 
-    # End time should be 1 hour after start time when no end time is provided
+    assert ev["dates"].get("all_day") is True
+
+    # Missing end time => all day event
     from datetime import timedelta
 
-    expected_end = ev["dates"]["start"] + timedelta(hours=1)
+    expected_end = ev["dates"]["start"] + timedelta(days=1)
     assert ev["dates"]["end"] == expected_end
 
 
@@ -261,6 +266,28 @@ def test_invalid_start_skips_and_invalid_end_falls_back(tmp_path):
     assert ev["dates"]["end"] == expected_end
 
 
+def test_default_timezone_applied_when_missing(tmp_path):
+    headers = ["Start Date", "Start Time", "Event Name"]
+    rows = [["2024-01-01", "12:00", "Default TZ"]]
+
+    items = parse_csv_content(tmp_path, headers, rows)
+    ev = assert_single_event_parsed(items, "Default TZ")
+
+    assert_event_dates(ev, "2024-01-01T12:00:00", DEFAULT_TIMEZONE)
+    assert ev["dates"]["start"].isoformat().endswith("+02:00")
+
+
+def test_locale_dayfirst_parsing(tmp_path):
+    headers = ["Start Date", "Start Time", "Event Name"]
+    rows = [["01/02/2026", "10:00", "Locale Date"]]
+
+    with patch("locale.getlocale", return_value=("fi_FI", "UTF-8")):
+        items = parse_csv_content(tmp_path, headers, rows)
+
+    ev = assert_single_event_parsed(items, "Locale Date")
+    assert_event_dates(ev, "2026-02-01T10:00:00")
+
+
 def test_preserves_existing_timezone_when_tz_hint_provided(tmp_path):
     headers = ["Start Date", "Event Name", "Timezone"]
     rows = [["2024-03-10 01:30 -05:00", "HasTZ", "Europe/Paris"]]
@@ -308,11 +335,13 @@ def test_build_occur_status_with_valid_qcode(tmp_path):
     """Test _build_occur_status with a valid qcode that matches vocabulary."""
     vocab_items = [
         {
+            "is_active": True,
             "qcode": "eocstat:eos5",
             "name": "Planned, occurs certainly",
             "label": "Planned, occurs certainly",
         },
         {
+            "is_active": True,
             "qcode": "eocstat:eos3",
             "name": "Planned, may not occur",
             "label": "Planned, may not occur",
@@ -369,6 +398,7 @@ def test_build_occur_status_case_insensitive_matching(tmp_path):
     with mock_eventoccurstatus(
         [
             {
+                "is_active": True,
                 "qcode": "eocstat:eos5",
                 "name": "Planned, occurs certainly",
                 "label": "Planned, occurs certainly",
@@ -379,3 +409,18 @@ def test_build_occur_status_case_insensitive_matching(tmp_path):
         assert len(items) == 2
         assert_eos5(items[0])
         assert_eos5(items[1])
+
+
+def test_build_occur_status_ignores_inactive_items(tmp_path):
+    vocab_items = [
+        {
+            "is_active": False,
+            "qcode": "eocstat:eos5",
+            "name": "Planned, occurs certainly",
+            "label": "Planned, occurs certainly",
+        }
+    ]
+
+    items = parse_occur_status_csv(tmp_path, "eocstat:eos5", vocab_items)
+    ev = assert_single_event_parsed(items, "Test Event")
+    assert_no_occur_status(ev)
