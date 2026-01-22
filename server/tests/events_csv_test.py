@@ -114,7 +114,8 @@ def test_parse_valid_row_builds_event_with_tz_and_end_default(tmp_path):
     headers = ["Start Date", "Start Time", "Event Name", "Timezone", "Slugline"]
     rows = [["2024-07-01", "14:30", "  Summer Fair  ", "America/New_York", "  slug  "]]
 
-    items = parse_csv_content(tmp_path, headers, rows)
+    with patch("locale.getlocale", return_value=("en_US", "UTF-8")):
+        items = parse_csv_content(tmp_path, headers, rows)
     ev = assert_single_event_parsed(items, "Summer Fair")
 
     assert ev["slugline"] == "slug"
@@ -235,7 +236,8 @@ def test_skips_row_when_required_fields_missing(tmp_path):
         ["2024-01-03", "Valid"],
     ]
 
-    items = parse_csv_content(tmp_path, headers, rows)
+    with patch("locale.getlocale", return_value=("en_US", "UTF-8")):
+        items = parse_csv_content(tmp_path, headers, rows)
     ev = assert_single_event_parsed(items, "Valid")
     assert_event_dates(ev, "2024-01-03")
 
@@ -254,7 +256,8 @@ def test_invalid_start_skips_and_invalid_end_falls_back(tmp_path):
         ["2024-02-03", "10:00", "nope", "12:00", "Good", "UTC"],
     ]
 
-    items = parse_csv_content(tmp_path, headers, rows)
+    with patch("locale.getlocale", return_value=("en_US", "UTF-8")):
+        items = parse_csv_content(tmp_path, headers, rows)
     ev = assert_single_event_parsed(items, "Good")
     assert_event_dates(ev, "2024-02-03T10:00:00", "UTC")
     assert ev["dates"]["start"].isoformat().endswith("+00:00")
@@ -292,7 +295,8 @@ def test_preserves_existing_timezone_when_tz_hint_provided(tmp_path):
     headers = ["Start Date", "Event Name", "Timezone"]
     rows = [["2024-03-10 01:30 -05:00", "HasTZ", "Europe/Paris"]]
 
-    items = parse_csv_content(tmp_path, headers, rows)
+    with patch("locale.getlocale", return_value=("en_US", "UTF-8")):
+        items = parse_csv_content(tmp_path, headers, rows)
     ev = assert_single_event_parsed(items, "HasTZ")
     assert_event_dates(ev, "2024-03-10T01:30:00", "Europe/Paris")
     assert ev["dates"]["start"].isoformat().endswith("-05:00")
