@@ -60,11 +60,18 @@ def _infer_dayfirst() -> bool:
     cannot be determined.
     """
     try:
-        loc = locale.getlocale(locale.LC_TIME)[0] or locale.getdefaultlocale()[0]
+        loc = locale.getlocale(locale.LC_TIME)[0]
     except Exception:
         loc = None
+
+    if not loc:
+        env_loc = os.environ.get("LC_TIME") or os.environ.get("LANG")
+        if env_loc:
+            loc = env_loc.split(".", 1)[0].split("@", 1)[0]
+
     if not loc:
         return False
+
     loc = loc.lower()
     return not loc.startswith("en_us")
 
@@ -403,6 +410,7 @@ class EventsCSVFeedParser(FeedParser):
                 end_dt, end_used_default_tz = None, False
 
             all_day = bool(_str2bool(r.get("all_day")))
+            # If the start or end time is missing, the field is treated as all day event
             if start_time_missing or end_time_missing:
                 all_day = True
 
