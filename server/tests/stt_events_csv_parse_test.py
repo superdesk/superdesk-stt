@@ -1,6 +1,7 @@
 import logging
 import os
 import tempfile
+import asyncio
 from datetime import datetime
 
 from tests import TestCase
@@ -21,7 +22,8 @@ class EventsCSVFeedParserTestCase(TestCase):
         provider = {"name": "Test"}
         async with self.ctx:
             parser = self.parser_class()
-            self.item = parser.parse(fixture, provider)[0]
+            items = await parser.parse(fixture, provider)
+            self.item = items[0]
 
     def test_headline_and_metadata(self):
         """Test that headline and metadata are extracted correctly."""
@@ -56,7 +58,7 @@ class TestNoEndTimeFlag(TestCase):
     def test_parse_dt_with_date_only(self):
         """Test what _parse_dt does with just a date string."""
         # Test parsing just a date
-        result = _parse_dt("2024-01-15", None, None)
+        result, _ = _parse_dt("2024-01-15", None, None)
 
         # Should be 00:00
         self.assertEqual(result.hour, 0)
@@ -74,7 +76,7 @@ class TestNoEndTimeFlag(TestCase):
 
         try:
             parser = self.parser_class()
-            items = parser.parse(temp_file, {"name": "Test"})
+            items = asyncio.run(parser.parse(temp_file, {"name": "Test"}))
             end = items[0]["dates"]["end"]
             self.assertEqual(end.hour, 16)
             self.assertEqual(end.minute, 45)
@@ -93,8 +95,10 @@ class TestNoEndTimeFlag(TestCase):
 
         try:
             parser = self.parser_class()
-            items = parser.parse(
-                temp_file, {"name": "Test", "config": {"no_end_time": True}}
+            items = asyncio.run(
+                parser.parse(
+                    temp_file, {"name": "Test", "config": {"no_end_time": True}}
+                )
             )
             end = items[0]["dates"]["end"]
             # Expect 15:30 (start at 14:30 + 1h fallback)
@@ -115,8 +119,10 @@ class TestNoEndTimeFlag(TestCase):
 
         try:
             parser = self.parser_class()
-            items = parser.parse(
-                temp_file, {"name": "Test", "config": {"no_end_time": True}}
+            items = asyncio.run(
+                parser.parse(
+                    temp_file, {"name": "Test", "config": {"no_end_time": True}}
+                )
             )
             end = items[0]["dates"]["end"]
             self.assertEqual(end.day, 16)  # January 16th
@@ -139,9 +145,11 @@ class TestNoEndTimeFlag(TestCase):
             parser = self.parser_class()
 
             # Test without config
-            items1 = parser.parse(temp_file, {"name": "Test"})
+            items1 = asyncio.run(parser.parse(temp_file, {"name": "Test"}))
             # Test with empty config
-            items2 = parser.parse(temp_file, {"name": "Test", "config": {}})
+            items2 = asyncio.run(
+                parser.parse(temp_file, {"name": "Test", "config": {}})
+            )
 
             # Both should behave the same (include time)
             self.assertEqual(items1[0]["dates"]["end"].hour, 16)

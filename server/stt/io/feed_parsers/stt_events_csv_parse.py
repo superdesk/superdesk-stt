@@ -5,6 +5,7 @@ import csv
 import io
 import os
 import re
+import locale
 import unicodedata
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
@@ -17,6 +18,7 @@ from superdesk.metadata.utils import generate_tag_from_url
 from superdesk import get_resource_service
 from bson import ObjectId
 import logging
+from settings import DEFAULT_TIMEZONE
 
 
 logger = logging.getLogger(__name__)
@@ -49,26 +51,62 @@ def _norm(text: Optional[str]) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+def _infer_dayfirst() -> bool:
+    """
+    Determine whether dates should be parsed with day-first ordering based on locale.
+
+    This checks the current LC_TIME locale (falling back to the default locale) and
+    returns True for non-``en_US`` locales, and False for ``en_US`` or when the locale
+    cannot be determined.
+    """
+    try:
+        loc = locale.getlocale(locale.LC_TIME)[0]
+    except Exception:
+        loc = None
+
+    if not loc:
+        env_loc = os.environ.get("LC_TIME") or os.environ.get("LANG")
+        if env_loc:
+            loc = env_loc.split(".", 1)[0].split("@", 1)[0]
+
+    if not loc:
+        return False
+
+    loc = loc.lower()
+    return not loc.startswith("en_us")
+
+
 def _parse_dt(
-    date_str: Optional[str], time_str: Optional[str], tz_name: Optional[str]
-) -> Optional[datetime]:
+    date_str: Optional[str],
+    time_str: Optional[str],
+    tz_name: Optional[str],
+    default_tz_name: Optional[str] = None,
+) -> tuple[Optional[datetime], bool]:
     """Parse flexible date/time strings. If tz_name provided and parsed value is
-    naive, apply that timezone. Returns datetime object or None on failure.
+    naive, apply that timezone. Returns (datetime, used_default_tz) or (None, False)
+    on failure.
     """
     date_str = _norm(date_str)
     time_str = _norm(time_str)
     if not date_str:
-        return None
+        return None, False
 
     candidate = date_str if not time_str else f"{date_str} {time_str}"
     try:
-        tzinfo = tz.gettz(tz_name) if tz_name else None
-        dt = dtparse.parse(candidate, dayfirst=False, yearfirst=False)
+        used_default_tz = False
+        tzinfo = (
+            tz.gettz(tz_name)
+            if tz_name
+            else (tz.gettz(default_tz_name) if default_tz_name else None)
+        )
+        dt = dtparse.parse(candidate, dayfirst=_infer_dayfirst(), yearfirst=False)
         if dt.tzinfo is None and tzinfo is not None:
             dt = dt.replace(tzinfo=tzinfo)
-        return dt
+            if not tz_name and default_tz_name:
+                used_default_tz = True
+        return dt, used_default_tz
     except Exception:
-        return None
+        return None, False
 
 
 def _split_csv_list(val: Optional[str]) -> List[str]:
@@ -186,6 +224,11 @@ def _build_occur_status(row: Dict[str, Any]) -> Optional[Dict[str, str]]:
 
     if not items:
         # No vocabulary available: do not fabricate anything
+        return None
+
+    # Filter only active items
+    items = [it for it in items if bool(it.get("is_active", True))]
+    if not items:
         return None
 
     lower = raw.lower()
@@ -319,7 +362,7 @@ class EventsCSVFeedParser(FeedParser):
             dialect = csv.excel
         return csv.DictReader(io.StringIO(text), dialect=dialect)
 
-    def parse(
+    async def parse(
         self, file_path: str, provider: Optional[dict] = None
     ) -> List[Dict[str, Any]]:  # noqa: D401
         """Parse CSV and return a list of Superdesk event items."""
@@ -345,21 +388,31 @@ class EventsCSVFeedParser(FeedParser):
                 continue
 
             # Datetimes
-            tz_name = r.get("timezone") or None
-            start_dt = _parse_dt(r.get("start_date"), r.get("start_time"), tz_name)
+            tz_name = _norm(r.get("timezone")) or None
+            start_time_missing = not _norm(r.get("start_time"))
+            end_time_missing = not _norm(r.get("end_time"))
+
+            start_dt, start_used_default_tz = _parse_dt(
+                r.get("start_date"), r.get("start_time"), tz_name, DEFAULT_TIMEZONE
+            )
             if not start_dt:
                 # Guard: parsing failed despite required columns
                 continue
 
             # Determine end date/time logic
             end_date = r.get("end_date") or r.get("start_date")
-            end_time = None if no_end_time else r.get("end_time")
+            end_time = None if (no_end_time or end_time_missing) else r.get("end_time")
             if r.get("end_date") or r.get("end_time"):
-                end_dt = _parse_dt(end_date, end_time, tz_name)
+                end_dt, end_used_default_tz = _parse_dt(
+                    end_date, end_time, tz_name, DEFAULT_TIMEZONE
+                )
             else:
-                end_dt = None
+                end_dt, end_used_default_tz = None, False
 
             all_day = bool(_str2bool(r.get("all_day")))
+            # If the start or end time is missing, the field is treated as all day event
+            if start_time_missing or end_time_missing:
+                all_day = True
 
             # Build dates ensuring END > START (required by planning.events validator)
             if end_dt and end_dt > start_dt:
@@ -380,6 +433,8 @@ class EventsCSVFeedParser(FeedParser):
                 dates["all_day"] = True
             if tz_name:
                 dates["tz"] = tz_name
+            elif start_used_default_tz or end_used_default_tz:
+                dates["tz"] = DEFAULT_TIMEZONE
 
             event: Dict[str, Any] = {
                 "guid": _gen_guid(file_path, row_index),
