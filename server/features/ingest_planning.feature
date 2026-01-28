@@ -73,7 +73,6 @@ Feature: Ingest STT Planning items
             }],
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
-                "assigned_to": "__empty__",
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
@@ -91,7 +90,6 @@ Feature: Ingest STT Planning items
                 }
             }, {
                 "coverage_id": "ID_WORKREQUEST_159700",
-                "assigned_to": "__empty__",
                 "workflow_status": "draft",
                 "news_coverage_status": {
                     "qcode": "ncostat:int",
@@ -190,7 +188,7 @@ Feature: Ingest STT Planning items
             "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
-                "assigned_to": "__empty__"
+                "assigned_to": "__no_value__"
             }],
             "extra": {
                 "stt_topics": "437036"
@@ -336,7 +334,7 @@ Feature: Ingest STT Planning items
         {"_items": [{
             "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
-                "assigned_to": "__empty__",
+                "assigned_to": "__no_value__",
                 "flags": {"placeholder": true}
             }]
         }]}
@@ -604,7 +602,7 @@ Feature: Ingest STT Planning items
             "_id": "urn:newsml:stt.fi:437036",
             "coverages": [{
                 "coverage_id": "ID_TEXT_120123822",
-                "assigned_to": "__empty__",
+                "assigned_to": "__no_value__",
                 "workflow_status": "draft"
             }]
         }]}
