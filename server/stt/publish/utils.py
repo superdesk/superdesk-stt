@@ -9,6 +9,10 @@ def encode_special_characters(html: str) -> str:
     html = html.replace("---", "&#8211;")
     html = html.replace("¤", "&#8201;")
 
+    # Replace mysterious non-breaking space and it's variants with normal space
+    html = html.replace("&nbsp;", " ")
+    html = html.replace("\xa0", " ")
+
     return html
 
 
