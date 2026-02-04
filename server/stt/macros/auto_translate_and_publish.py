@@ -52,8 +52,8 @@ async def auto_translate_and_publish(item, **kwargs):
         item["headline"] = get_headline_for_item(translated_item)
         html = get_body_html_for_item(translated_item, item)
         item["body_html"] = html
-        if item.get("_internal_destination"):
-            item.pop("_internal_destination", None)
+        internal_destination = kwargs.get("internal_destination")
+        if internal_destination:
             archive_service = get_resource_service("archive")
             extra_fields = [PUBLISH_SCHEDULE, SCHEDULE_SETTINGS]
             new_id = await archive_service.duplicate_item(
