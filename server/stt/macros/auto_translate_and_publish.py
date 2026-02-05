@@ -1,6 +1,12 @@
 from superdesk import get_resource_service
+from superdesk.errors import StopDuplication
 from superdesk.resource_fields import ID_FIELD
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import (
+    ITEM_STATE,
+    CONTENT_STATE,
+    PUBLISH_SCHEDULE,
+    SCHEDULE_SETTINGS,
+)
 from .helpers.auto_translate_item import AutoTranslateItem
 from .helpers.getters import get_headline_for_item, get_body_html_for_item
 
@@ -46,6 +52,20 @@ async def auto_translate_and_publish(item, **kwargs):
         item["headline"] = get_headline_for_item(translated_item)
         html = get_body_html_for_item(translated_item, item)
         item["body_html"] = html
+        internal_destination = kwargs.get("internal_destination")
+        if internal_destination:
+            archive_service = get_resource_service("archive")
+            extra_fields = [PUBLISH_SCHEDULE, SCHEDULE_SETTINGS]
+            new_id = await archive_service.duplicate_item(
+                item, state="routed", extra_fields=extra_fields
+            )
+            await get_resource_service("archive_publish").patch_async(
+                id=new_id,
+                updates={ITEM_STATE: CONTENT_STATE.PUBLISHED, "auto_publish": True},
+            )
+            raise StopDuplication()
+        if item.get(ITEM_STATE) == CONTENT_STATE.PUBLISHED:
+            return item
         return await auto_publish(item, **kwargs)
     except Exception as e:
         logger.error("Error during Auto Translate and Publish macro: %s", str(e))
