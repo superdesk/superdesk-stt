@@ -169,7 +169,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             return {}
 
         return {
-            "start_date": today.shift(**datetime_delta).format("YYYY-MM-DD"),
+            "start_date": today.shift(check_imaginary=True, **datetime_delta).format(
+                "YYYY-MM-DD"
+            ),
         }
 
     def _get_date(self, date: str, start: bool = False) -> str:
