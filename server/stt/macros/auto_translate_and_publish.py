@@ -67,8 +67,6 @@ async def auto_translate_and_publish(item, **kwargs):
         if item.get(ITEM_STATE) == CONTENT_STATE.PUBLISHED:
             return item
         return await auto_publish(item, **kwargs)
-    except StopDuplication:
-        raise
     except Exception as e:
         logger.error("Error during Auto Translate and Publish macro: %s", str(e))
         return item
