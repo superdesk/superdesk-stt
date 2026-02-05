@@ -5,16 +5,18 @@
 
 version: 2
 updates:
-  # develop branch - disable updates, we use next branch for development
-  #- package-ecosystem: "npm"
-    #directory: "/client"
-    #schedule:
-      #interval: "weekly"
+  # develop branch
+  - package-ecosystem: "npm"
+    directory: "/client"
+    target-branch: "develop"
+    schedule:
+      interval: "daily"
 
-  #- package-ecosystem: "pip"
-    #directory: "/server"
-    #schedule:
-      #interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/server"
+    target-branch: "develop"
+    schedule:
+      interval: "daily"
 
   # next branch
   - package-ecosystem: "npm"
