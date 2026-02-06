@@ -166,6 +166,7 @@ INSTALLED_APPS = [
     "stt.publish.stt_newsml_g2_print_tabs_timezone",
     "stt.publish.sttsms",
     "stt.publish.events_desk-net",
+    "stt.stt_datapankki_ninjs_formatter",
 ]
 
 MODULES.append("planning")
