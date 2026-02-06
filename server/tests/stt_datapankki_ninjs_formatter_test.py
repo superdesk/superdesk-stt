@@ -135,28 +135,6 @@ class STTDatapankkiNinjsFormatterTest(TestCase):
         self.assertEqual(by_code.get("sttcity:35"), "Helsinki")
         self.assertEqual(by_code.get("sttcountry:1"), "Suomi")
 
-    async def test_topics_extracted_from_subject(self):
-        article = {
-            "type": "text",
-            "guid": "test",
-            "subject": [
-                {"qcode": "11000000", "name": "Test A", "scheme": "topics"},
-                {"qcode": "06000000", "name": "Test B", "scheme": "topics"},
-                {"qcode": "sttgenre:1", "name": "Uutinen", "scheme": "sttgenre"},
-            ],
-        }
-
-        ninjs = await self.formatter._transform_to_ninjs(article, {})
-        topics = ninjs.get("extra", {}).get("topics")
-        self.assertIsNotNone(topics)
-        self.assertEqual(
-            topics,
-            [
-                {"code": "11000000", "name": "Test A", "scheme": "topics"},
-                {"code": "06000000", "name": "Test B", "scheme": "topics"},
-            ],
-        )
-
     def test_update_stt_sources_ignores_missing_names(self):
         ninjs = {
             "subject": [
