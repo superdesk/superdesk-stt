@@ -4,9 +4,9 @@
 #
 #    pip-compile requirements.in
 #
-aioboto3==15.5.0
+aioboto3==14.3.0
     # via superdesk-core
-aiobotocore[boto3]==2.25.1
+aiobotocore[boto3]==2.22.0
     # via aioboto3
 aiofiles==25.1.0
     # via
@@ -18,7 +18,7 @@ aiohttp==3.13.3
     # via
     #   aiobotocore
     #   elasticsearch
-aioitertools==0.13.0
+aioitertools==0.12.0
     # via aiobotocore
 aiosignal==1.4.0
     # via aiohttp
@@ -26,21 +26,21 @@ amqp==5.3.1
     # via kombu
 annotated-types==0.7.0
     # via pydantic
-arrow==1.4.0
+arrow==1.3.0
     # via
     #   eve-elastic
     #   superdesk-core
-asgiref==3.11.1
+asgiref==3.10.0
     # via superdesk-core
 attrs==25.4.0
     # via aiohttp
 authlib==1.4.1
     # via superdesk-core
-babel==2.18.0
+babel==2.17.0
     # via quart-babel
-bcrypt==5.0.0
+bcrypt==4.3.0
     # via superdesk-core
-billiard==4.2.4
+billiard==4.2.2
     # via celery
 blinker==1.9.0
     # via
@@ -50,28 +50,30 @@ blinker==1.9.0
     #   quart
     #   sentry-sdk
     #   superdesk-core
-boto3==1.40.61
+boto3==1.37.3
     # via
     #   aiobotocore
     #   superdesk-core
-botocore==1.40.61
+botocore==1.37.3
     # via
     #   aiobotocore
     #   boto3
     #   s3transfer
-cachetools==7.0.0
-    # via flask-oidc-ex
-celery[redis]==5.6.2
+cachetools==6.2.1
+    # via
+    #   flask-oidc-ex
+    #   google-auth
+celery[redis]==5.4.0
     # via
     #   celery-redbeat
     #   superdesk-core
 celery-redbeat==2.3.3
     # via -r requirements.in
-cerberus==1.3.8
+cerberus==1.3.7
     # via
     #   eve
     #   superdesk-core
-certifi==2026.1.4
+certifi==2025.10.5
     # via
     #   elastic-apm
     #   elasticsearch
@@ -87,7 +89,7 @@ charset-normalizer==3.4.4
     #   requests
 ciso8601==2.3.3
     # via eve-elastic
-click==8.3.1
+click==8.3.0
     # via
     #   celery
     #   click-didyoumean
@@ -103,10 +105,9 @@ click-repl==0.3.0
     # via celery
 croniter==6.0.0
     # via superdesk-core
-cryptography==46.0.4
+cryptography==46.0.5
     # via
     #   authlib
-    #   google-auth
     #   jwcrypto
 deepdiff==8.6.1
     # via superdesk-planning
@@ -114,11 +115,11 @@ dnspython==2.8.0
     # via pymongo
 draftjs-exporter[lxml]==5.1.0
     # via superdesk-core
-ecs-logging==2.3.0
+ecs-logging==2.2.0
     # via elastic-apm
-elastic-apm[flask]==6.25.0
+elastic-apm[flask]==6.24.0
     # via superdesk-core
-elasticsearch[async]==7.17.13
+elasticsearch[async]==7.17.12
     # via
     #   eve-elastic
     #   superdesk-core
@@ -143,34 +144,34 @@ frozenlist==1.8.0
     #   aiosignal
 future==1.0.0
     # via python-twitter
-google-api-core[grpc]==2.29.0
+google-api-core[grpc]==2.26.0
     # via
     #   google-cloud-core
     #   google-cloud-translate
-google-auth==2.48.0
+google-auth==2.41.1
     # via
     #   google-api-core
     #   google-cloud-core
     #   google-cloud-translate
-google-cloud-core==2.5.0
+google-cloud-core==2.4.3
     # via google-cloud-translate
 google-cloud-translate==3.24.0
     # via -r requirements.in
-googleapis-common-protos[grpc]==1.72.0
+googleapis-common-protos[grpc]==1.70.0
     # via
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
 grpc-google-iam-v1==0.14.3
     # via google-cloud-translate
-grpcio==1.76.0
+grpcio==1.75.1
     # via
     #   google-api-core
     #   google-cloud-translate
     #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
-grpcio-status==1.76.0
+grpcio-status==1.75.1
     # via google-api-core
 h11==0.16.0
     # via
@@ -186,13 +187,13 @@ honcho==2.0.0
     # via -r requirements.in
 hpack==4.1.0
     # via h2
-httplib2==0.31.2
+httplib2==0.31.0
     # via oauth2client
-hypercorn==0.18.0
+hypercorn==0.17.3
     # via quart
 hyperframe==6.1.0
     # via h2
-icalendar==5.0.14
+icalendar==5.0.13
     # via superdesk-planning
 idna==3.11
     # via
@@ -209,7 +210,7 @@ jinja2==3.1.6
     # via
     #   flask
     #   quart
-jmespath==1.1.0
+jmespath==1.0.1
     # via
     #   aiobotocore
     #   boto3
@@ -218,7 +219,7 @@ jwcrypto==1.5.6
     # via
     #   flask-oidc-ex
     #   python-jwt
-kombu[redis]==5.6.2
+kombu==5.5.4
     # via
     #   celery
     #   superdesk-core
@@ -242,7 +243,7 @@ markupsafe==3.0.3
     #   werkzeug
 motor==3.7.1
     # via superdesk-core
-multidict==6.7.1
+multidict==6.7.0
     # via
     #   aiobotocore
     #   aiohttp
@@ -253,9 +254,9 @@ oauthlib==3.3.1
     # via requests-oauthlib
 orderly-set==5.5.0
     # via deepdiff
-packaging==26.0
+packaging==25.0
     # via kombu
-pillow==12.0.0
+pillow==11.3.0
     # via
     #   reportlab
     #   superdesk-core
@@ -267,7 +268,7 @@ propcache==0.4.1
     # via
     #   aiohttp
     #   yarl
-proto-plus==1.27.1
+proto-plus==1.26.1
     # via
     #   google-api-core
     #   google-cloud-translate
@@ -289,22 +290,22 @@ pyasn1-modules==0.4.2
     # via
     #   google-auth
     #   oauth2client
-pycparser==3.0
+pycparser==2.23
     # via cffi
-pydantic==2.12.5
+pydantic==2.12.2
     # via superdesk-core
-pydantic-core==2.41.5
+pydantic-core==2.41.4
     # via pydantic
 pyjwt==2.10.1
     # via superdesk-core
 pymemcache==4.0.0
     # via superdesk-core
-pymongo==4.15.5
+pymongo==4.9.2
     # via
     #   eve
     #   motor
     #   superdesk-core
-pyparsing==3.3.2
+pyparsing==3.2.5
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
@@ -346,12 +347,12 @@ quart-flask-patch==0.3.0
     # via superdesk-core
 redis==5.2.1
     # via
+    #   celery
     #   celery-redbeat
-    #   kombu
     #   superdesk-core
-regex==2026.1.15
+regex==2024.11.6
     # via superdesk-core
-reportlab==4.4.9
+reportlab==4.4.4
     # via superdesk-core
 requests==2.32.5
     # via
@@ -365,9 +366,9 @@ rsa==4.9.1
     # via
     #   google-auth
     #   oauth2client
-s3transfer==0.14.0
+s3transfer==0.11.3
     # via boto3
-sentry-sdk[quart]==2.52.0
+sentry-sdk[quart]==2.42.0
     # via superdesk-core
 sgmllib3k==1.0.0
     # via feedparser
@@ -382,8 +383,10 @@ superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@develop
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
     # via -r requirements.in
-tenacity==9.1.3
+tenacity==9.1.2
     # via celery-redbeat
+types-python-dateutil==2.9.0.20251008
+    # via arrow
 types-pytz==2025.2.0.20251108
     # via quart-babel
 typing-extensions==4.15.0
@@ -396,17 +399,15 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-tzdata==2025.3
-    # via
-    #   arrow
-    #   kombu
-tzlocal==5.3.1
+tzdata==2025.2
     # via
     #   celery
-    #   superdesk-core
+    #   kombu
+tzlocal==5.3.1
+    # via superdesk-core
 unidecode==1.4.0
     # via superdesk-core
-urllib3==2.6.3
+urllib3==1.26.20
     # via
     #   botocore
     #   elastic-apm
@@ -419,9 +420,9 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.5.3
+wcwidth==0.2.14
     # via prompt-toolkit
-websockets==16.0
+websockets==15.0.1
     # via superdesk-core
 werkzeug==3.1.5
     # via
@@ -431,7 +432,7 @@ wrapt==1.17.3
     # via
     #   aiobotocore
     #   elastic-apm
-wsproto==1.3.2
+wsproto==1.2.0
     # via hypercorn
 xmlsec==1.3.14
     # via
