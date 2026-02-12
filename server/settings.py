@@ -386,3 +386,5 @@ if SAML_PATH and os.path.exists(SAML_PATH) and not strtobool(env("SUPERDESK_AUTH
 
 # Exclude Desks in Planning json formatter
 PLANNING_JSON_EXCLUDE_ASSIGNEE_FIELDS = ["desk"]
+
+ALLOW_UPDATING_EMBARGOED_ITEMS = True
