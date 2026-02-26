@@ -3,6 +3,7 @@ import os
 import tempfile
 import asyncio
 from datetime import datetime
+from unittest.mock import patch
 
 from tests import TestCase
 from stt.io.feed_parsers.stt_events_csv_parse import EventsCSVFeedParser, _parse_dt
@@ -82,6 +83,48 @@ class TestNoEndTimeFlag(TestCase):
             self.assertEqual(end.minute, 45)
         finally:
             os.unlink(temp_file)
+
+
+class TestEventsheet2Fixture(TestCase):
+    """Regression tests for eventsheet-2 fixture parsing."""
+
+    fixture = None
+    parse_source = False
+    parser_class = EventsCSVFeedParser
+
+    def test_parse_eventsheet_2_all_rows_and_timestamps(self):
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        fixture = os.path.join(dirname, "fixtures", "csv", "eventsheet-2.csv")
+
+        parser = self.parser_class()
+        # Patch service lookup so this test validates CSV parsing behavior without
+        # requiring app resource services (locations/contacts/vocabularies).
+        with patch(
+            "stt.io.feed_parsers.stt_events_csv_parse.get_resource_service"
+        ) as mock_service:
+            mock_service.return_value = None
+            items = asyncio.run(parser.parse(fixture, {"name": "Test"}))
+
+        # All data rows (excluding the format helper row) should be parsed.
+        self.assertEqual(len(items), 24)
+
+        by_name = {item["name"]: item for item in items}
+
+        # Missing end_time should produce an all-day event.
+        first = by_name["NHL: Detroit Red Wings - Winnipeg Jets"]
+        self.assertEqual(first["dates"]["start"].hour, 1)
+        self.assertEqual(first["dates"]["start"].minute, 30)
+        self.assertTrue(first["dates"].get("all_day", False))
+        self.assertEqual(
+            int((first["dates"]["end"] - first["dates"]["start"]).total_seconds()),
+            86400,
+        )
+
+        # DD/MM/YYYY should be parsed day-first for this fixture.
+        feb_event = by_name["NHL: St. Louis Blues - Vegas Golden Knights"]
+        self.assertEqual(feb_event["dates"]["start"].year, 2026)
+        self.assertEqual(feb_event["dates"]["start"].month, 2)
+        self.assertEqual(feb_event["dates"]["start"].day, 1)
 
     def test_flag_true_ignores_end_time_and_infers_from_start(self):
         """Test that no_end_time flag ignores time in end date."""
