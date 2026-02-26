@@ -180,7 +180,7 @@ LEGAL_ARCHIVE = True
 CONTENT_EXPIRY_MINUTES = 43200
 
 # expiry of spiked content. If unspecified, Desk expiry value is used
-SPIKE_EXPIRY_MINUTES = int(env("SPIKE_EXPIRY_MINUTES", 3 * 24 * 60))
+SPIKE_EXPIRY_MINUTES = int(env("SPIKE_EXPIRY_MINUTES", 30 * 24 * 60))
 
 # Expire items 3 days after their scheduled date. Defaults to 0 = disabled
 PLANNING_EXPIRY_MINUTES = int(env("PLANNING_EXPIRY_MINUTES", 0))
