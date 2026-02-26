@@ -81,6 +81,7 @@ def _parse_dt(
     time_str: Optional[str],
     tz_name: Optional[str],
     default_tz_name: Optional[str] = None,
+    dayfirst: Optional[bool] = None,
 ) -> tuple[Optional[datetime], bool]:
     """Parse flexible date/time strings. If tz_name provided and parsed value is
     naive, apply that timezone. Returns (datetime, used_default_tz) or (None, False)
@@ -99,7 +100,8 @@ def _parse_dt(
             if tz_name
             else (tz.gettz(default_tz_name) if default_tz_name else None)
         )
-        dt = dtparse.parse(candidate, dayfirst=_infer_dayfirst(), yearfirst=False)
+        parsed_dayfirst = _infer_dayfirst() if dayfirst is None else dayfirst
+        dt = dtparse.parse(candidate, dayfirst=parsed_dayfirst, yearfirst=False)
         if dt.tzinfo is None and tzinfo is not None:
             dt = dt.replace(tzinfo=tzinfo)
             if not tz_name and default_tz_name:
@@ -113,6 +115,21 @@ def _split_csv_list(val: Optional[str]) -> List[str]:
     if not val:
         return []
     return [x.strip() for x in re.split(r"[;,]", val) if x.strip()]
+
+
+def _parse_dayfirst_hint(value: Optional[str]) -> Optional[bool]:
+    """Detect explicit date ordering hints from template/header rows.
+
+    Supports common placeholders like "DD/MM/YYYY" and "MM/DD/YYYY".
+    """
+    token = _norm(value).lower().replace(" ", "")
+    if not token:
+        return None
+    if token in {"dd/mm/yyyy", "d/m/yyyy", "dd/mm/yy", "d/m/yy"}:
+        return True
+    if token in {"mm/dd/yyyy", "m/d/yyyy", "mm/dd/yy", "m/d/yy"}:
+        return False
+    return None
 
 
 # ---- Column aliases (case/space-insensitive) -------------------------------
@@ -372,6 +389,7 @@ class EventsCSVFeedParser(FeedParser):
 
         items: List[Dict[str, Any]] = []
         row_index = 1  # header line is 1; first data row will be 2
+        dayfirst_hint: Optional[bool] = None
 
         for raw_row in reader:
             row_index += 1
@@ -383,6 +401,9 @@ class EventsCSVFeedParser(FeedParser):
                     continue
                 r[_canon(k)] = v.strip() if isinstance(v, str) else v
 
+            if dayfirst_hint is None:
+                dayfirst_hint = _parse_dayfirst_hint(r.get("start_date"))
+
             # Required fields present?
             if not _norm(r.get("start_date", "")) or not _norm(r.get("name", "")):
                 continue
@@ -393,7 +414,11 @@ class EventsCSVFeedParser(FeedParser):
             end_time_missing = not _norm(r.get("end_time"))
 
             start_dt, start_used_default_tz = _parse_dt(
-                r.get("start_date"), r.get("start_time"), tz_name, DEFAULT_TIMEZONE
+                r.get("start_date"),
+                r.get("start_time"),
+                tz_name,
+                DEFAULT_TIMEZONE,
+                dayfirst=dayfirst_hint,
             )
             if not start_dt:
                 # Guard: parsing failed despite required columns
@@ -404,13 +429,17 @@ class EventsCSVFeedParser(FeedParser):
             end_time = None if (no_end_time or end_time_missing) else r.get("end_time")
             if r.get("end_date") or r.get("end_time"):
                 end_dt, end_used_default_tz = _parse_dt(
-                    end_date, end_time, tz_name, DEFAULT_TIMEZONE
+                    end_date,
+                    end_time,
+                    tz_name,
+                    DEFAULT_TIMEZONE,
+                    dayfirst=dayfirst_hint,
                 )
             else:
                 end_dt, end_used_default_tz = None, False
 
             all_day = bool(_str2bool(r.get("all_day")))
-            # If the start or end time is missing, the field is treated as all day event
+            # Missing start or end time implies all-day.
             if start_time_missing or end_time_missing:
                 all_day = True
 
