@@ -73,6 +73,7 @@ module.exports = function (grunt) {
         sendAndDuplicate: {
           deskName: 'Deski',
           stageName: 'Incoming Stage',
+          preserveEmbargoAndSchedule: true,
         },
       },
       confirmDueDate: true /* confirm due date */,

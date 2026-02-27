@@ -8,10 +8,10 @@ const getCoverageScore = (item) => {
         return -1;
     }
 
-    const coveragesByStatus = groupBy(allCoverages, (c) => c.news_coverage_status.qcode);
+    const coveragesByStatus = groupBy(textCoverages, (c) => c.news_coverage_status.qcode);
 
     const hasPlanned = (coveragesByStatus['ncostat:int'] ?? []).length > 0;
-    const hasCompleted = allCoverages.some((c) => c.assigned_to?.state === 'completed');
+    const hasCompleted = textCoverages.some((c) => c.assigned_to?.state === 'completed');
 
     // move down coverages that have been completed, but news_coverage_status is still set to planned
     if (hasPlanned && !hasCompleted) {
