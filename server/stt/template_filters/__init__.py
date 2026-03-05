@@ -4,6 +4,7 @@ available in every template rendered by Superdesk.
 """
 
 import logging
+import re
 from datetime import datetime
 from html import unescape
 from typing import Any
@@ -112,7 +113,21 @@ def count_body_html_characters(value: Any) -> int:
     if value is None:
         return 0
     try:
-        text = unescape(str(value))
+        text = str(value).strip()
+
+        # equivalent to client-side cleanHtml
+        text = re.sub(r"<!-- EMBED START [\s\S]+?<!-- EMBED END .*?-->", "", text)
+        text = re.sub(r"(?i)<br[^>]*>", "&nbsp;", text)
+        text = re.sub(r"</?[^>]+></?[^>]+>", " ", text)
+        text = re.sub(r"</?[^>]+>", "", text)
+        text = text.strip().replace("&nbsp;", " ")
+
+        # additional JS equivalent `input = input.replace(/\r?\n|\r/g, '');`
+        text = re.sub(r"\r?\n|\r", "", text)
+
+        # unescape HTML entities before counting, as the visible text shouldn't count HTML entities verbatim
+        text = unescape(text)
+
         return len(text)
     except Exception as exc:  # pragma: no cover - defensive fallback
         logger.warning("count_body_html_characters failed: %s", exc)
