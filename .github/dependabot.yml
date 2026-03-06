@@ -5,12 +5,28 @@
 
 version: 2
 updates:
+  # develop branch
   - package-ecosystem: "npm"
     directory: "/client"
+    target-branch: "develop"
     schedule:
       interval: "daily"
 
   - package-ecosystem: "pip"
     directory: "/server"
+    target-branch: "develop"
+    schedule:
+      interval: "daily"
+
+  # next branch
+  - package-ecosystem: "npm"
+    directory: "/client"
+    target-branch: "next"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip"
+    directory: "/server"
+    target-branch: "next"
     schedule:
       interval: "daily"
