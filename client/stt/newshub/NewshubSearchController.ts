@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 interface Subject {
   id?: string;
   name: string;
@@ -88,13 +86,3 @@ export default class NewshubSearchController {
     return vocabulary || null;
   }
 }
-NewshubSearchController.$inject = [
-  '$scope',
-  '$rootScope',
-  'vocabularies',
-  'api',
-  'desks',
-  'content',
-  'metadata',
-  'preferencesService',
-];

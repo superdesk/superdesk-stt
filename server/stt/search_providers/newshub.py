@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import arrow
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
+from dateutil import parser as dtparse
 
 import superdesk
 from superdesk.core import get_config
@@ -83,18 +84,48 @@ class NewshubSearchProvider(superdesk.SearchProvider):
 
         return guid
 
+    def _normalize_timestamp(self, value) -> datetime | None:
+        if not value:
+            return None
+
+        if isinstance(value, datetime):
+            if value.tzinfo is None:
+                return value.replace(tzinfo=timezone.utc)
+            return value.astimezone(timezone.utc)
+
+        try:
+            parsed = dtparse.parse(str(value))
+        except (TypeError, ValueError, OverflowError) as exc:
+            logger.warning("Failed to parse timestamp %r: %s", value, exc)
+            return None
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+
+        return parsed.astimezone(timezone.utc)
+
+    def _escape_query_phrase(self, value: str) -> str:
+        return value.replace("\\", "\\\\").replace('"', '\\"')
+
     def extend_data_item(self, item: dict) -> dict:
         # Shape results like a regular external text item so the search UI can
         # resolve actions and preview behavior consistently.
         now = datetime.now(timezone.utc)
+        firstcreated = self._normalize_timestamp(item.get("firstcreated"))
+        versioncreated = self._normalize_timestamp(item.get("versioncreated"))
+
+        if firstcreated is None:
+            firstcreated = versioncreated or now
+        if versioncreated is None:
+            versioncreated = firstcreated or now
 
         item["_type"] = "externalsource"
         item["type"] = "text"
         item["mimetype"] = "application/superdesk.item.text"
         item.setdefault("state", "published")
         item.setdefault("pubstatus", "usable")
-        item.setdefault("firstcreated", item.get("versioncreated") or now)
-        item.setdefault("versioncreated", item.get("firstcreated") or now)
+        item["firstcreated"] = firstcreated
+        item["versioncreated"] = versioncreated
         item["_fetchable"] = True
         item["search_provider"] = self.provider.get("search_provider", "newshub")
         item["fetch_endpoint"] = "search_providers_proxy"
@@ -226,7 +257,8 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         if byline:
             byline = byline.strip()
             if byline and not str(search_text).startswith('_id:"'):
-                search_text = f"{search_text} {byline}".strip()
+                safe_byline = self._escape_query_phrase(byline)
+                search_text = f'{search_text} "{safe_byline}"'.strip()
 
         return search_text or None
 
