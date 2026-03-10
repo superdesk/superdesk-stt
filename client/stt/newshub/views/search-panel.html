@@ -6,30 +6,44 @@
             <option ng-repeat="period in searchPanel.periods" value="{{ period.id }}">{{ period.name }}</option>
         </select>
     </div>
-    <!-- add subjects -->
-    <!-- <div class="field">
-        <label class="search-label" translate>{{:: 'Subjects' | translate}}</label>
-        <select ng-model="searchPanel.params.subject">
-            <option ng-repeat="subject in searchPanel.subjects.items" value="{{ subject.qcode }}">{{ subject.name }}</option>
+
+    <div class="field">
+        <label class="search-label" translate>{{:: 'Osasto' | translate}}</label>
+        <select ng-model="params.categories">
+            <option value=""></option>
+            <option ng-repeat="item in searchPanel.categories.items" value="{{ item.qcode }}">{{ item.name }}</option>
         </select>
-    </div> -->
-    <!-- <div class="form__row" ng-repeat="cv in searchPanel.cvs track by cv._id">
-        <label class="form-label form__row-label" for="search-{{cv.display_name}}">
-            {{cv.display_name | translate}}
-        </label>
-        <div id="search-{{cv.display_name}}">
-            <div id="{{cv.display_name}}" sd-meta-terms
-                ng-model="searchPanel.params[cv._id]"
-                data-item="selecteditems"
-                data-field="{{cv._id}}"
-                data-unique="qcode"
-                data-list="cv.items"
-                data-reload-list="true"
-                data-header="true"
-                data-change="itemSearch(selecteditems, cv._id)"
-                ></div>
-        </div>
-    </div> -->
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>{{:: 'Juttutyyppi' | translate}}</label>
+        <select ng-model="params.genre">
+            <option value=""></option>
+            <option ng-repeat="item in searchPanel.genre.items" value="{{ item.qcode }}">{{ item.name }}</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>{{:: 'Versiotyyppi' | translate}}</label>
+        <select ng-model="params.sttversion">
+            <option value=""></option>
+            <option ng-repeat="item in searchPanel.sttversions.items" value="{{ item.qcode }}">{{ item.name }}</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>{{:: 'Prio' | translate}}</label>
+        <select ng-model="params.urgency">
+            <option value=""></option>
+            <option ng-repeat="item in searchPanel.urgency.items" value="{{ item.qcode }}">{{ item.name }}</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>{{:: 'Tekijä' | translate}}</label>
+        <input type="text" ng-model="params.byline" />
+    </div>
+
     <div class="form__row form__row--flex form__row--small-padding">
         <div class="form__row-item">
             <label class="form-label" translate>{{:: 'From' | translate}}</label>
