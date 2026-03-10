@@ -11,6 +11,7 @@ from typing import Any
 import pytz  # type: ignore
 from dateutil import parser
 from markupsafe import Markup
+from superdesk import text_utils
 
 logger = logging.getLogger(__name__)
 
@@ -108,17 +109,6 @@ def html_unescape(value: Any) -> Markup:
         return Markup(str(value))
 
 
-def count_body_html_characters(value: Any) -> int:
-    if value is None:
-        return 0
-    try:
-        text = unescape(str(value))
-        return len(text)
-    except Exception as exc:  # pragma: no cover - defensive fallback
-        logger.warning("count_body_html_characters failed: %s", exc)
-        return 0
-
-
 def init_app(app):
     app.jinja_env.filters["fi_date"] = fi_date
     app.jinja_env.filters["fi_time"] = fi_time
@@ -127,4 +117,4 @@ def init_app(app):
     app.jinja_env.filters["fi_which_weekday"] = fi_which_weekday
     app.jinja_env.filters["stt_priority_to_text"] = stt_priority_to_text
     app.jinja_env.filters["html_unescape"] = html_unescape
-    app.jinja_env.filters["count_body_html_characters"] = count_body_html_characters
+    app.jinja_env.filters["get_char_count"] = text_utils.get_char_count

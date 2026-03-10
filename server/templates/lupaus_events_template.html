@@ -10,7 +10,7 @@
 {% macro render_fact_box_armpit_items(items, type) -%}
   {%- set parts = [] -%}
   {%- for item in items -%}
-    {% set _ = parts.append(type ~ ", lähetetty klo " ~ (item.firstpublished | fi_time) ~ ", " ~ (item.body_html | count_body_html_characters) ~ " merkkiä") %}
+    {% set _ = parts.append(type ~ ", lähetetty klo " ~ (item.firstpublished | fi_time) ~ ", " ~ (item.body_html | get_char_count) ~ " merkkiä") %}
   {%- endfor -%}
   {%- if parts %}{{ parts | join(' ') }}{% endif -%}
 {%- endmacro %}
@@ -70,7 +70,7 @@
       {%- endif -%}
     {% endif -%}
     {%- if pub_item.headline %}{% set _ = second_parts.append('"' ~ pub_item.headline ~ '"') %}{% endif -%}
-    {%- if pub_item.body_html %}{% set _ = second_parts.append((pub_item.body_html | count_body_html_characters) ~ " merkkiä (lähetetty)") %}{% endif -%}
+    {%- if pub_item.body_html %}{% set _ = second_parts.append((pub_item.body_html | get_char_count) ~ " merkkiä (lähetetty)") %}{% endif -%}
     {%- if pub_item.sttimagetype %}{% set _ = second_parts.append('Kuvitus: ' ~ (pub_item.sttimagetype)) %}{% endif -%}
   {%- else -%}
     {%- if item.description_text %}{% set _ = second_parts.append(item.description_text) %}{% endif -%}
