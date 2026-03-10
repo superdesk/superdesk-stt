@@ -1,9 +1,11 @@
 from urllib.parse import urljoin
 import logging
+from datetime import datetime, timezone
 
 import arrow
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
+from dateutil import parser as dtparse
 
 import superdesk
 from superdesk.core import get_config
@@ -27,7 +29,7 @@ class NewshubListCursor(ListCursor):
 class NewshubSearchProvider(superdesk.SearchProvider):
     label = "Newshub"
     # TODO: set the base_url to the production URL when ready
-    base_url = "https://stt-uat.newshub.pro/newsapi/v1/"
+    base_url = "https://stt-next.newshub.pro/newsapi/v1/"
     api_token = None
     search_endpoint = "news/search"
     items_field = "_items"
@@ -38,6 +40,28 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         "month": {"months": -1},
         "year": {"years": -1},
     }
+    INCLUDE_FIELDS = ",".join(
+        [
+            "type",
+            "urgency",
+            "priority",
+            "language",
+            "description_html",
+            "located",
+            "keywords",
+            "source",
+            "subject",
+            "place",
+            "wordcount",
+            "charcount",
+            "body_html",
+            "readtime",
+            "profile",
+            "service",
+            "genre",
+            "headline",
+        ]
+    )
 
     def __init__(self, provider):
         logger.info(f"Newshub search provider: init {provider}")
@@ -48,9 +72,68 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     def url(self, resource):
         return urljoin(self.base_url, resource.lstrip("/"))
 
+    def _get_fetch_guid(self, item: dict) -> str | None:
+        guid = item.get("guid") or item.get("_id")
+
+        if guid is None:
+            return None
+
+        guid = str(guid)
+        if guid.startswith("urn:newsml:stt.fi::"):
+            return guid.split("::", 1)[1]
+
+        return guid
+
+    def _normalize_timestamp(self, value) -> datetime | None:
+        if not value:
+            return None
+
+        if isinstance(value, datetime):
+            if value.tzinfo is None:
+                return value.replace(tzinfo=timezone.utc)
+            return value.astimezone(timezone.utc)
+
+        try:
+            parsed = dtparse.parse(str(value))
+        except (TypeError, ValueError, OverflowError) as exc:
+            logger.warning("Failed to parse timestamp %r: %s", value, exc)
+            return None
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+
+        return parsed.astimezone(timezone.utc)
+
+    def _escape_query_phrase(self, value: str) -> str:
+        return value.replace("\\", "\\\\").replace('"', '\\"')
+
     def extend_data_item(self, item: dict) -> dict:
-        # add "_fetchable": True, to the item
+        # Shape results like a regular external text item so the search UI can
+        # resolve actions and preview behavior consistently.
+        now = datetime.now(timezone.utc)
+        firstcreated = self._normalize_timestamp(item.get("firstcreated"))
+        versioncreated = self._normalize_timestamp(item.get("versioncreated"))
+
+        if firstcreated is None:
+            firstcreated = versioncreated or now
+        if versioncreated is None:
+            versioncreated = firstcreated or now
+
+        item["_type"] = "externalsource"
+        item["type"] = "text"
+        item["mimetype"] = "application/superdesk.item.text"
+        item.setdefault("state", "published")
+        item.setdefault("pubstatus", "usable")
+        item["firstcreated"] = firstcreated
+        item["versioncreated"] = versioncreated
         item["_fetchable"] = True
+        item["search_provider"] = self.provider.get("search_provider", "newshub")
+        item["fetch_endpoint"] = "search_providers_proxy"
+
+        fetch_guid = self._get_fetch_guid(item)
+        if fetch_guid:
+            item.setdefault("guid", fetch_guid)
+
         return item
 
     async def find_async(
@@ -69,6 +152,7 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             "page_size": page_size,
             "page": int(query.get("from", 0) / page_size) + 1,
             "timezone": get_config(str, "DEFAULT_TIMEZONE"),
+            "include_fields": self.INCLUDE_FIELDS,
         }
         if params:
             dates = params.get("dates", {})
@@ -86,10 +170,14 @@ class NewshubSearchProvider(superdesk.SearchProvider):
                 api_params["urgency"] = params["urgency"]
             if params.get("genre"):
                 api_params["genre"] = params["genre"]
-            if params.get("subject"):
-                api_params["subject"] = params["subject"]
+            if params.get("categories"):
+                api_params["service"] = params["categories"]
+            if params.get("sttversion") or params.get("subject"):
+                api_params["subject"] = params.get("sttversion") or params.get(
+                    "subject"
+                )
 
-        api_params["q"] = self.get_search_text(query)
+        api_params["q"] = self.get_search_text(query, params)
 
         logger.info(f"API params: {api_params}")
 
@@ -118,19 +206,24 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         self, session: aiohttp.ClientSession, item_id: str
     ) -> dict | None:
         logger.info(f"Fetch item: {item_id}")
+        search_id = item_id
+        if not str(search_id).startswith("urn:"):
+            search_id = f"urn:newsml:stt.fi::{item_id}"
+
         api_params = {
-            # this should be like _id:"urn:newsml:stt.fi::106858998"
-            "q": f'_id:"urn:newsml:stt.fi::{item_id}"',
+            "q": f'_id:"{search_id}"',
+            "include_fields": self.INCLUDE_FIELDS,
         }
         try:
             data = await self.api_get(session, self.search_endpoint, api_params)
-            if not data:
+            items = data.get(self.items_field, []) if data else []
+            if not items:
                 logger.warning("No item found.")
                 return None
         except ClientResponseError as e:
             logger.error(f"Request failed: {e}")
             return None
-        return self.extend_data_item(data)
+        return self.extend_data_item(items[0])
 
     async def api_get(
         self, session: aiohttp.ClientSession, endpoint: str, params: dict
@@ -145,7 +238,7 @@ class NewshubSearchProvider(superdesk.SearchProvider):
             resp.raise_for_status()
             return await resp.json()
 
-    def get_search_text(self, query: dict) -> str | None:
+    def get_search_text(self, query: dict, params: dict | None = None) -> str | None:
         try:
             search_text = query["query"]["filtered"]["query"]["query_string"]["query"]
         except KeyError:
@@ -159,6 +252,14 @@ class NewshubSearchProvider(superdesk.SearchProvider):
                         break
         except KeyError:
             pass
+
+        byline = (params or {}).get("byline")
+        if byline:
+            byline = byline.strip()
+            if byline and not str(search_text).startswith('_id:"'):
+                safe_byline = self._escape_query_phrase(byline)
+                search_text = f'{search_text} "{safe_byline}"'.strip()
+
         return search_text or None
 
     def _get_period(self, period: str) -> dict[str, str]:
