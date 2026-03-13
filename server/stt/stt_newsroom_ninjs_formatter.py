@@ -140,15 +140,22 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
                 )
 
     def update_editorial_note(self, ninjs):
-        name = None
+        newsroom_note = None
         for subject in ninjs.get("subject", []):
             if subject.get("scheme") == "sttnewsroomnote":
-                name = subject.get("name")
+                newsroom_note = subject.get("name")
                 break
-        if not name:
+
+        public_ednote = re.sub(
+            r"<[^>]+>", "", ninjs.get("extra", {}).get("sttpublicednote", "") or ""
+        ).strip()
+
+        if not newsroom_note and not public_ednote:
             return
+
         ednote = ninjs.get("ednote", "")
-        ninjs["ednote"] = f"{name}. {ednote}"
+        parts = [p for p in [public_ednote, newsroom_note, ednote] if p]
+        ninjs["ednote"] = " / ".join(parts)
 
     def filter_subjects(self, ninjs):
         ninjs["subject"] = [
