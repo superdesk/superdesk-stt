@@ -389,3 +389,7 @@ if SAML_PATH and os.path.exists(SAML_PATH) and not strtobool(env("SUPERDESK_AUTH
 PLANNING_JSON_EXCLUDE_ASSIGNEE_FIELDS = ["desk"]
 
 ALLOW_UPDATING_EMBARGOED_ITEMS = True
+
+# Retain coverage status and assignee details when duplicating planning items
+PLANNING_DUPLICATE_RETAIN_COVERAGE_STATUS = True
+PLANNING_DUPLICATE_RETAIN_ASSIGNEE_DETAILS = True
