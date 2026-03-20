@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd">
+  <header>
+    <sent>2026-02-17T11:12:29+00:00</sent>
+    <sender>ntb.no</sender>
+    <transmitId>6969</transmitId>
+    <priority>5</priority>
+    <origin>NTB</origin>
+  </header>
+  <itemSet>
+    <newsItem standard="NewsML-G2" standardversion="2.18" guid="000ad412-7526-4472-8978-7aad3c19f2be" version="7" xml:lang="nb-NO" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml"></catalogRef>
+      <rightsInfo>
+        <copyrightHolder>
+          <name>Sourcefabric</name>
+        </copyrightHolder>
+        <copyrightNotice></copyrightNotice>
+        <usageTerms></usageTerms>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="ninat:text"></itemClass>
+        <provider>
+          <name>ntb.no</name>
+        </provider>
+        <versionCreated>2026-02-17T11:12:20+00:00</versionCreated>
+        <firstCreated>2026-02-17T10:54:40+00:00</firstCreated>
+        <pubStatus qcode="stat:usable"></pubStatus>
+        <edNote>Utvidet og oppdatert.</edNote>
+        <signal qcode="sig:update"></signal>
+      </itemMeta>
+      <contentMeta>
+        <urgency>5</urgency>
+        <contentCreated>2026-02-17T10:54:40+00:00</contentCreated>
+        <contentModified>2026-02-17T11:12:20+00:00</contentModified>
+        <creator>
+          <name>NTB-Reuters</name>
+        </creator>
+        <located type="cpnat:abstract" qcode="loctyp:City">
+          <name>Moskva</name>
+        </located>
+        <dateline>MOSKVA, Feb 17 NTB -</dateline>
+        <subject type="cpnat:abstract" qcode="subj:Utenriks">
+          <name xml:lang="nb-NO">Utenriks</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="subj:20000062">
+          <name xml:lang="nb-NO">krig</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="subj:20000056">
+          <name xml:lang="nb-NO">væpnet konflikt</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="subj:16000000">
+          <name xml:lang="nb-NO">konflikt, krig og fred</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="subj:16009000">
+          <name xml:lang="nb-NO">Krig</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="subj:16000000">
+          <name xml:lang="nb-NO">Krig og konflikter</name>
+        </subject>
+        <genre qcode="Nyheter">
+          <name xml:lang="nb-NO">Nyheter</name>
+        </genre>
+        <slugline>ukr-russisk-raffineri</slugline>
+        <headline>Ukraina bekrefter angrep mot russisk oljeraffineri</headline>
+        <subject type="cpnat:abstract" qcode="cat:n">
+          <name xml:lang="nb-NO">Nyhetstjenesten</name>
+        </subject>
+        <subject type="cpnat:abstract" qcode="cat:e">
+          <name xml:lang="nb-NO">SisteNytt</name>
+        </subject>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/nitf+xml">
+          <nitf version="-//IPTC//DTD NITF 3.6//EN">
+            <head>
+              <title>Ukraina bekrefter angrep mot russisk oljeraffineri</title>
+              <tobject tobject.type="news">
+                <tobject.property tobject.property.type="Nyheter"></tobject.property>
+                <tobject.subject tobject.subject.refnum="Utenriks"></tobject.subject>
+                <tobject.subject tobject.subject.refnum="20000062"></tobject.subject>
+                <tobject.subject tobject.subject.refnum="20000056"></tobject.subject>
+                <tobject.subject tobject.subject.refnum="16000000"></tobject.subject>
+                <tobject.subject tobject.subject.refnum="16009000"></tobject.subject>
+                <tobject.subject tobject.subject.refnum="16000000"></tobject.subject>
+              </tobject>
+              <docdata management-status="usable">
+                <date.expire norm="2026-05-18 11:12:20+00:00"></date.expire>
+                <urgency ed-urg="5"></urgency>
+                <date.issue norm="2026-02-17 10:54:40+00:00"></date.issue>
+                <doc-id id-string="000ad412-7526-4472-8978-7aad3c19f2be"></doc-id>
+                <ed-msg info="Utvidet og oppdatert."></ed-msg>
+              </docdata>
+            </head>
+            <body>
+              <body.head>
+                <hedline>
+                  <hl1>Ukraina bekrefter angrep mot russisk oljeraffineri</hl1>
+                </hedline>
+                <byline>NTB-Reuters</byline>
+                <dateline>MOSKVA, Feb 17 NTB -</dateline>
+                <abstract>
+                  <p>Det har brutt ut brann på Ilskij-raffineriet i Krasnodar-regionen i Russland etter et droneangrep. Ukraina bekrefter at de sto bak angrepet.</p>
+                </abstract>
+              </body.head>
+              <body.content>
+                <p>Lokale myndigheter i regionen sier at et reservoar med oljeprodukter ble skadet i angrepet, og bekreftet at det står i brann.
+</p>
+                <p>Ukrainske militærmyndigheter sier tirsdag at de angrep raffineriet, som blir beskrevet som et av de største sør i Russland.
+</p>
+                <p>Et droneangrep rammet også byen Volna ved Svartehavet, der et oljelager tok fyr, opplyser lokale myndigheter. Senere ble det meldt at brannen var slukket.
+</p>
+                <p>Havnen Taman ligger i Volna. Terminalen håndterer oljeprodukter, korn, kull og andre varer og var også mål for et ukrainsk angrep søndag.
+</p>
+                <p>Det russiske forsvarsdepartementet hevder å ha skutt ned 151 ukrainske droner i løpet av natten, ifølge det statlige russiske nyhetsbyrået Tass.
+</p>
+                <p>Russland rettet samtidig et storstilt drone- og rakettangrep mot Ukraina, og tok i bruk 396 droner og 29 missiler, ifølge det ukrainske luftforsvaret. Blant annet skal mål i Odesa-regionen ha blitt truffet.
+</p>
+                <p>Ifølge Ukrainas viseenergiminister ble tre arbeidere drept da en russisk drone traff bilen deres nær Slovjansk-kraftverket i Donetsk øst i landet.(©NTB)</p>
+              </body.content>
+              <body.end>
+                <tagline>Utvidet og oppdatert.</tagline>
+              </body.end>
+            </body>
+          </nitf>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

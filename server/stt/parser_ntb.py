@@ -10,6 +10,7 @@
 
 from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
 from superdesk.io.registry import register_feed_parser
+from superdesk import get_resource_service
 import logging
 
 logger = logging.getLogger(__name__)
@@ -63,9 +64,35 @@ class NTBNewsMLFeedParser(NewsMLTwoFeedParser):
             case _:
                 item["anpa_category"].append({"qcode": "12", "name": "Tiedotepalvelu"})
 
-        # Make sure 'subject' is found in item, default valus is empty list
-        if "subject" not in item:
-            item.setdefault("subject", [])
+        # Make sure 'subject' is found in item, default value is empty list
+        item.setdefault("subject", [])
+
+        # Load active topics from controlled vocabulary, keyed by qcode
+        try:
+            topics_items = get_resource_service("vocabularies").get_items("topics")
+            topics_by_qcode = {t["qcode"]: t for t in (topics_items or [])}
+        except Exception:
+            topics_by_qcode = {}
+
+        # Extract subjects from XML and match against active topics CV
+        subject_elements = xml.xpath(
+            "/n:newsMessage/n:itemSet/n:newsItem/n:contentMeta/n:subject",
+            namespaces=ns,
+        )
+        seen_qcodes = set()
+        for subj_el in subject_elements:
+            raw_qcode = subj_el.get("qcode", "")
+            if not raw_qcode.startswith("subj:"):
+                continue
+            numeric_code = raw_qcode[5:]  # strip "subj:" prefix
+            if not numeric_code.isdigit():
+                continue  # skip non-numeric codes like "Utenriks"
+            if numeric_code in seen_qcodes:
+                continue
+            topic = topics_by_qcode.get(numeric_code)
+            if topic:
+                item["subject"].append(topic)
+                seen_qcodes.add(numeric_code)
 
         # Always add NTB and STT as sources
         item["subject"].append({"qcode": "NTB", "name": "NTB", "scheme": "sttsource"})
