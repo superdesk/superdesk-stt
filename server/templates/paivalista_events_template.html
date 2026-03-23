@@ -15,6 +15,13 @@
     {%- endif -%}
 {%- endmacro %}
 
+{% macro ensure_sentence_end(text) -%}
+    {%- set value = text | trim -%}
+    {%- if value -%}
+        {{- value if value.endswith('.') or value.endswith('?') or value.endswith('!') else value ~ '.' -}}
+    {%- endif -%}
+{%- endmacro %}
+
 {#-- MAIN LOOP — sort first, then print a <h3> when the day changes --#}
 {% set ns = namespace(cur='') %}
 {% for item in rows | sort(attribute='dates.start') %}
@@ -29,9 +36,18 @@
         <p>{{ item.dates.start | fi_time }} {{ item.name }}</p>
     {% endif %}
 
-    {# Short definition --------------------------------------------------- #}
-    {% if item.definition_short %}
-        <p>{{ item.definition_short }}</p>
+    {# Short definition + invitation details ------------------------------ #}
+    {% set text_ns = namespace(parts=[]) %}
+    {% set definition_short = item.definition_short | trim if item.definition_short is defined and item.definition_short else '' %}
+    {% set invitation_details = item.invitation_details | trim if item.invitation_details is defined and item.invitation_details else '' %}
+    {% if definition_short %}
+        {% set _ = text_ns.parts.append(ensure_sentence_end(definition_short)) %}
+    {% endif %}
+    {% if invitation_details %}
+        {% set _ = text_ns.parts.append(ensure_sentence_end(invitation_details)) %}
+    {% endif %}
+    {% if text_ns.parts %}
+        <p>{{ text_ns.parts | join(' ') }}</p>
     {% endif %}
 
     {# Location ----------------------------------------------------------- #}
