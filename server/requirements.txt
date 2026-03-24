@@ -390,7 +390,7 @@ six==1.17.0
     #   python-dateutil
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.4.1-rc1
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@3.4.0-rc.1
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.4.0
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
