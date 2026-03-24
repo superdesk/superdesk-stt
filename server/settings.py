@@ -152,6 +152,7 @@ INSTALLED_APPS = [
     "stt.oikaisut_korjaukset_export",
     "stt.stt_tt_new_parse_ninjs",
     "stt.io.feed_parsers.stt_events_csv_parse",
+    "stt.io.feed_parsers.stt_image_iptc",
     "stt.io.feeding_services.stt_http_with_since",
     "stt.io.feeding_services.stt_tt_content_api",
     "stt.io.feed_parsers.stt_tt_parse_content_api",
