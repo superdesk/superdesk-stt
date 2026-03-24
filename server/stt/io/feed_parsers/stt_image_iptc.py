@@ -120,7 +120,7 @@ class SttImageIPTCFeedParser(FileFeedParser):
             return datetime.strptime(datetime_string, self.DATETIME_FORMAT)
         except ValueError:
             try:
-                arrow.get(datetime_string).datetime
+                return arrow.get(datetime_string).datetime
             except ValueError:
                 return
 
