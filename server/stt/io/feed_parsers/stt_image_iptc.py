@@ -113,16 +113,16 @@ class SttImageIPTCFeedParser(FileFeedParser):
 
     def parse_date_time(self, date, time):
         if not date or not time:
-            return
+            return None
 
         datetime_string = "{}T{}".format(date, time)
         try:
             return datetime.strptime(datetime_string, self.DATETIME_FORMAT)
         except ValueError:
             try:
-                arrow.get(datetime_string).datetime
+                return arrow.get(datetime_string).datetime
             except ValueError:
-                return
+                return None
 
     def parse_meta(self, item, metadata):
         datetime_created = self.parse_date_time(
