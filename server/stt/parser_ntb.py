@@ -71,7 +71,12 @@ class NTBNewsMLFeedParser(NewsMLTwoFeedParser):
         try:
             topics_items = get_resource_service("vocabularies").get_items("topics")
             topics_by_qcode = {t["qcode"]: t for t in (topics_items or [])}
-        except Exception:
+        except Exception as exc:
+            logger.warning(
+                "Failed to load topics vocabulary from 'vocabularies' service via get_items('topics'): %s",
+                exc,
+                exc_info=True,
+            )
             topics_by_qcode = {}
 
         # Extract subjects from XML and match against active topics CV
