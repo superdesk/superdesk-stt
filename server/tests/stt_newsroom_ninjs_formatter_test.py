@@ -128,6 +128,14 @@ class STTNewsroomNinjsFormatterTest(TestCase):
         self.formatter.update_editorial_note(ninjs)
         self.assertEqual(ninjs.get("ednote"), "Public note")
 
+    async def test_update_editorial_note_public_ednote_nbsp(self):
+        ninjs = {
+            "subject": [],
+            "extra": {"sttpublicednote": "<p>&nbsp;Public note</p>"},
+        }
+        self.formatter.update_editorial_note(ninjs)
+        self.assertEqual(ninjs.get("ednote"), "Public note")
+
     async def test_update_editorial_note_no_notes(self):
         ninjs = {"subject": [], "ednote": "Base"}
         self.formatter.update_editorial_note(ninjs)

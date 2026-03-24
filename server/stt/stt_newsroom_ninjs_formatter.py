@@ -1,6 +1,7 @@
 import logging
 import re
 from typing import Dict, List
+import html
 
 from superdesk import get_resource_service
 from superdesk.publish.formatters import NewsroomNinjsFormatter
@@ -146,9 +147,9 @@ class STTNewsroomNinjsFormatter(NewsroomNinjsFormatter):
                 newsroom_note = subject.get("name")
                 break
 
-        public_ednote = re.sub(
-            r"<[^>]+>", "", ninjs.get("extra", {}).get("sttpublicednote", "") or ""
-        ).strip()
+        raw_public_ednote = ninjs.get("extra", {}).get("sttpublicednote", "") or ""
+        public_ednote_stripped = re.sub(r"<[^>]+>", "", raw_public_ednote)
+        public_ednote = html.unescape(public_ednote_stripped).strip()
 
         if not newsroom_note and not public_ednote:
             return
