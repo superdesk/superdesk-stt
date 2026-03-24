@@ -24,8 +24,14 @@ def include_only_mediatilaisuudet_items(
     return filtered_items
 
 
+def include_only_published_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    # include only items in states that represent published events
+    return [item for item in items if item.get("state") in ("scheduled", "rescheduled")]
+
+
 def format_paivalista_for_export(items):
     rows = items or []
+    rows = include_only_published_items(rows)
     rows = include_only_mediatilaisuudet_items(rows)
 
     return {"rows": rows}
