@@ -577,8 +577,8 @@
                     "undo",
                     "redo",
                     "formatting marks",
-                    "insert-thin-space",
-                    "insert-ndash"
+                    "INSERT_CHAR_thin-space",
+                    "INSERT_CHAR_ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,
@@ -918,8 +918,8 @@
                     "h3",
                     "undo",
                     "redo",
-                    "insert-thin-space",
-                    "insert-ndash"
+                    "INSERT_CHAR_thin-space",
+                    "INSERT_CHAR_ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,
@@ -1256,8 +1256,8 @@
                     "redo",
                     "EDITOR_TAG_company",
                     "EDITOR_TAG_person",
-                    "insert-thin-space",
-                    "insert-ndash"
+                    "INSERT_CHAR_thin-space",
+                    "INSERT_CHAR_ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,

@@ -17,22 +17,58 @@ module.exports = function (grunt) {
     vocabulariesToExcludeAsFields: ['sttsubj'],
 
     authoring: {
-      customEditorTags: [
-        {
-          id: 'company',
-          icon: 'business',
-          label: 'Yritys',
-          borderColor: 'tag-color-2',
-          tooltip: 'Yritys (Ctrl+3)',
-        },
-        {
-          id: 'person',
-          icon: 'user',
-          label: 'Henkilö',
-          borderColor: 'tag-color-1',
-          tooltip: 'Henkilö (Ctrl+6)',
-        },
-      ],
+      customEditorFeatures: {
+        inlineStyles: [
+          {
+            id: 'company',
+            type: 'inline-style',
+            icon: 'business',
+            label: 'Yritys',
+            borderColor: 'tag-color-2',
+            tooltip: 'Yritys',
+            shortcut: {
+              key: '3',
+              modifiers: ['primary'],
+            },
+          },
+          {
+            id: 'person',
+            type: 'inline-style',
+            icon: 'user',
+            label: 'Henkilö',
+            borderColor: 'tag-color-1',
+            tooltip: 'Henkilö',
+            shortcut: {
+              key: '6',
+              modifiers: ['primary'],
+            },
+          },
+        ],
+        characterInsertions: [
+          {
+            id: 'ndash',
+            type: 'character-insertion',
+            character: '\u2013',
+            icon: 'n-dash',
+            label: 'Ndash',
+            shortcut: {
+              key: '-',
+              modifiers: ['primary', 'alt'],
+            },
+          },
+          {
+            id: 'thin-space',
+            type: 'character-insertion',
+            character: '\u2009',
+            icon: 'thin_space',
+            label: 'Thin space',
+            shortcut: {
+              key: ' ',
+              modifiers: ['primary', 'alt', 'shift'],
+            },
+          },
+        ],
+      },
     },
 
     /* landing page after login */
