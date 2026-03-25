@@ -576,7 +576,9 @@
                     "link",
                     "undo",
                     "redo",
-                    "formatting marks"
+                    "formatting marks",
+                    "insert-thin-space",
+                    "insert-ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,
@@ -915,7 +917,9 @@
                     "link",
                     "h3",
                     "undo",
-                    "redo"
+                    "redo",
+                    "insert-thin-space",
+                    "insert-ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,
@@ -1251,7 +1255,9 @@
                     "undo",
                     "redo",
                     "EDITOR_TAG_company",
-                    "EDITOR_TAG_person"
+                    "EDITOR_TAG_person",
+                    "insert-thin-space",
+                    "insert-ndash"
                 ],
                 "cleanPastedHTML": false,
                 "editor3": true,
