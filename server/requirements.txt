@@ -44,7 +44,6 @@ billiard==4.2.4
     # via celery
 blinker==1.9.0
     # via
-    #   elastic-apm
     #   flask
     #   flask-mail
     #   quart
@@ -73,7 +72,6 @@ cerberus==1.3.8
     #   superdesk-core
 certifi==2026.2.25
     # via
-    #   elastic-apm
     #   elasticsearch
     #   requests
     #   sentry-sdk
@@ -113,10 +111,6 @@ deepdiff==8.6.2
 dnspython==2.8.0
     # via pymongo
 draftjs-exporter[lxml]==5.1.0
-    # via superdesk-core
-ecs-logging==2.3.0
-    # via elastic-apm
-elastic-apm[flask]==6.25.0
     # via superdesk-core
 elasticsearch[async]==7.17.13
     # via
@@ -354,7 +348,7 @@ regex==2026.1.15
     # via superdesk-core
 reportlab==4.4.10
     # via superdesk-core
-requests==2.32.5
+requests==2.33.0
     # via
     #   google-api-core
     #   python-twitter
@@ -410,7 +404,6 @@ unidecode==1.4.0
 urllib3==2.6.3
     # via
     #   botocore
-    #   elastic-apm
     #   elasticsearch
     #   requests
     #   sentry-sdk
@@ -429,9 +422,7 @@ werkzeug==3.1.6
     #   flask
     #   quart
 wrapt==1.17.3
-    # via
-    #   aiobotocore
-    #   elastic-apm
+    # via aiobotocore
 wsproto==1.3.2
     # via hypercorn
 xmlsec==1.3.14
