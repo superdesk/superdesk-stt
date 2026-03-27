@@ -25,7 +25,6 @@ module.exports = function (grunt) {
             icon: 'business',
             label: 'Yritys',
             borderColor: 'tag-color-2',
-            tooltip: 'Yritys',
             shortcut: {
               key: '3',
               modifiers: ['primary'],
@@ -37,7 +36,6 @@ module.exports = function (grunt) {
             icon: 'user',
             label: 'Henkilö',
             borderColor: 'tag-color-1',
-            tooltip: 'Henkilö',
             shortcut: {
               key: '6',
               modifiers: ['primary'],
