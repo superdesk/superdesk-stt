@@ -7,9 +7,9 @@
 
 {#-- A helper macro: replicates printPaivalistaLocation --#}
 {% macro paivalista_location(location) -%}
-    {%- set loc = location[0] if location and location[0].address.name else None -%}
+    {%- set loc = location[0] if location and location[0] and location[0].address else None -%}
     {%- if loc %}
-        {{- loc.address.name -}}
+        {{- (loc.address.name or loc.name) -}}
         {%- if loc.address.line and loc.address.line[0].strip() -%}, {{ loc.address.line[0] }}{%- endif -%}
         {%- if loc.address.city -%}, {{ loc.address.city }}{%- endif -%}
     {%- endif -%}
@@ -39,12 +39,13 @@
     {# Short definition + invitation details ------------------------------ #}
     {% set text_ns = namespace(parts=[]) %}
     {% set definition_short = item.definition_short | trim if item.definition_short is defined and item.definition_short else '' %}
-    {% set invitation_details = item.invitation_details | trim if item.invitation_details is defined and item.invitation_details else '' %}
+    {# Registration details (already HTML, keep it “safe”) ---------------- #}
+    {% set registration_details = item.registration_details | safe if item.registration_details is defined and item.registration_details else '' %}
     {% if definition_short %}
         {% set _ = text_ns.parts.append(ensure_sentence_end(definition_short)) %}
     {% endif %}
-    {% if invitation_details %}
-        {% set _ = text_ns.parts.append(ensure_sentence_end(invitation_details)) %}
+    {% if registration_details %}
+        {% set _ = text_ns.parts.append(ensure_sentence_end(registration_details)) %}
     {% endif %}
     {% if text_ns.parts %}
         <p>{{ text_ns.parts | join(' ') }}</p>
@@ -55,9 +56,6 @@
         {% set loc_text = paivalista_location(item.location) %}
         {% if loc_text %}<p>{{ loc_text }}</p>{% endif %}
     {% endif %}
-
-    {# Registration details (already HTML, keep it “safe”) ---------------- #}
-    {{ item.registration_details | safe }}
 
     <p></p>
 {% endfor %}
