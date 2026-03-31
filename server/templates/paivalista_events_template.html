@@ -36,7 +36,7 @@
         <p>{{ item.dates.start | fi_time }} {{ item.name }}</p>
     {% endif %}
 
-    {# Short definition + invitation details ------------------------------ #}
+    {# Short definition + registration details ------------------------------ #}
     {% set text_ns = namespace(parts=[]) %}
     {% set definition_short = item.definition_short | trim if item.definition_short is defined and item.definition_short else '' %}
     {# Registration details (already HTML, keep it “safe”) ---------------- #}
