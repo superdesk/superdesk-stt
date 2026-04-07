@@ -11,6 +11,7 @@
 import logging
 import os
 import json
+from pathlib import Path
 from google.oauth2 import service_account
 from google.cloud import translate_v3 as translate
 
@@ -20,26 +21,44 @@ logger = logging.getLogger(__name__)
 class AutoTranslateItem:
     """
     AutoTranslateItem wraps Google Translate V3 calls.
-    It loads service account JSON credentials from the env var
-    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON and initializes the client.
+    It loads service account JSON credentials from
+    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH, or falls back to
+    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON, then initializes the client.
     """
 
     def __init__(self):
+        credentials_path = os.getenv("GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH")
         credentials_json = os.getenv("GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON")
-        if not credentials_json:
-            logger.error("Env var GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON not set")
-            raise EnvironmentError(
-                "GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON is required"
-            )
-        try:
-            info = json.loads(credentials_json)
-        except json.JSONDecodeError as e:
+
+        if credentials_path:
+            try:
+                with Path(credentials_path).open("r", encoding="utf-8") as f:
+                    info = json.load(f)
+            except (OSError, json.JSONDecodeError) as e:
+                logger.error(
+                    "Invalid credentials file in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH: %s",
+                    e,
+                )
+                raise ValueError(
+                    "Invalid credentials file in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH"
+                ) from e
+        elif credentials_json:
+            try:
+                info = json.loads(credentials_json)
+            except json.JSONDecodeError as e:
+                logger.error(
+                    "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON: %s", e
+                )
+                raise ValueError(
+                    "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON"
+                ) from e
+        else:
             logger.error(
-                "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON: %s", e
+                "Neither GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH nor GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON is set"
             )
-            raise ValueError(
-                "Invalid JSON in GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON"
-            ) from e
+            raise EnvironmentError(
+                "GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH or GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON is required"
+            )
         credentials = service_account.Credentials.from_service_account_info(info)
         self.client = translate.TranslationServiceAsyncClient(credentials=credentials)
 
