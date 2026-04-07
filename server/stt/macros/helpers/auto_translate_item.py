@@ -21,8 +21,9 @@ logger = logging.getLogger(__name__)
 class AutoTranslateItem:
     """
     AutoTranslateItem wraps Google Translate V3 calls.
-    It loads service account JSON credentials from the env var
-    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON and initializes the client.
+    It loads service account JSON credentials from
+    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_PATH, or falls back to
+    GOOGLE_CLOUD_TRANSLATE_CREDENTIALS_JSON, then initializes the client.
     """
 
     def __init__(self):
@@ -31,7 +32,7 @@ class AutoTranslateItem:
 
         if credentials_path:
             try:
-                with Path(credentials_path).open("r") as f:
+                with Path(credentials_path).open("r", encoding="utf-8") as f:
                     info = json.load(f)
             except (OSError, json.JSONDecodeError) as e:
                 logger.error(
