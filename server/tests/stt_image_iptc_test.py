@@ -11,7 +11,7 @@
 import io
 import unittest
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from superdesk.media.iim_codes import TAG
 
@@ -109,12 +109,22 @@ class SttImageIPTCFeedParserTest(unittest.TestCase):
         """Absent IPTC tags must not create keys in the item dict."""
         item = {}
         self.parser.parse_meta(item, {})
-        for field in ("headline", "byline", "slugline", "description_text", "keywords", "ednote", "copyrightnotice"):
+        for field in (
+            "headline",
+            "byline",
+            "slugline",
+            "description_text",
+            "keywords",
+            "ednote",
+            "copyrightnotice",
+        ):
             self.assertNotIn(field, item)
 
     def test_parse_meta_sets_firstcreated_from_date_and_time_tags(self):
         item = {}
-        self.parser.parse_meta(item, {TAG.DATE_CREATED: "20230515", TAG.TIME_CREATED: "120000+0000"})
+        self.parser.parse_meta(
+            item, {TAG.DATE_CREATED: "20230515", TAG.TIME_CREATED: "120000+0000"}
+        )
         self.assertIn("firstcreated", item)
         self.assertEqual(item["firstcreated"].year, 2023)
         self.assertEqual(item["firstcreated"].month, 5)
@@ -209,8 +219,9 @@ class SttImageIPTCGetMetadataTest(unittest.TestCase):
 
     def _run_with_iptc(self, iptc_dict):
         """Call _get_iptc_metadata with a mocked IPTC payload."""
-        with patch("stt.io.feed_parsers.stt_image_iptc.Image") as mock_image, \
-             patch("stt.io.feed_parsers.stt_image_iptc.IptcImagePlugin") as mock_plugin:
+        with patch("stt.io.feed_parsers.stt_image_iptc.Image"), patch(
+            "stt.io.feed_parsers.stt_image_iptc.IptcImagePlugin"
+        ) as mock_plugin:
             mock_plugin.getiptcinfo.return_value = iptc_dict
             return self.parser._get_iptc_metadata(self.stream)
 
@@ -243,10 +254,12 @@ class SttImageIPTCGetMetadataTest(unittest.TestCase):
         Latin-1, which was the regression: they were silently dropped.
         """
         # mirrors the real caption: – "Hyvä matsi saatiin"
-        raw = " \x96 \x93Hyv\xe4 matsi saatiin\x94".encode("cp1252")
+        # raw = " \x96 \x93Hyv\xe4 matsi saatiin\x94".encode("cp1252")
+        raw = " – “Hyvä matsi saatiin”".encode("cp1252")
+
         result = self._run_with_iptc({self._CAPTION: raw})
         caption = result[TAG.CAPTION_ABSTRACT]
-        self.assertIn("–", caption)   # en-dash  0x96
+        self.assertIn("–", caption)  # en-dash  0x96
         self.assertIn("\u201c", caption)  # left curly quote  0x93
         self.assertIn("\u201d", caption)  # right curly quote 0x94
         self.assertIn("Hyvä", caption)
