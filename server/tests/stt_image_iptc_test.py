@@ -7,10 +7,11 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-#
 
+import io
 import unittest
 from datetime import datetime
+from unittest.mock import patch
 
 from superdesk.media.iim_codes import TAG
 
@@ -200,3 +201,143 @@ class SttImageIPTCFeedParserTest(unittest.TestCase):
     def test_allowed_ext_includes_jpeg_extensions(self):
         for ext in (".jpg", ".jpeg"):
             self.assertIn(ext, self.parser.ALLOWED_EXT)
+
+
+class SttImageIPTCGetMetadataTest(unittest.TestCase):
+    """Tests for _get_iptc_metadata — charset-aware IPTC decoding."""
+
+    # IIM record/tag codes used in assertions
+    _HEADLINE = (2, 105)
+    _CAPTION = (2, 120)
+    _BYLINE = (2, 80)
+    _KEYWORDS = (2, 25)
+    _CHARSET = (1, 90)
+
+    def setUp(self):
+        self.parser = SttImageIPTCFeedParser()
+        self.stream = io.BytesIO(b"fake-jpeg-bytes")
+
+    def _run_with_iptc(self, iptc_dict):
+        """Call _get_iptc_metadata with a mocked IPTC payload."""
+        with patch("stt.io.feed_parsers.stt_image_iptc.Image"), patch(
+            "stt.io.feed_parsers.stt_image_iptc.IptcImagePlugin"
+        ) as mock_plugin:
+            mock_plugin.getiptcinfo.return_value = iptc_dict
+            return self.parser._get_iptc_metadata(self.stream)
+
+    # ------------------------------------------------------------------
+    # Empty / missing IPTC block
+    # ------------------------------------------------------------------
+
+    def test_returns_empty_dict_when_no_iptc(self):
+        """getiptcinfo returning None must yield an empty metadata dict."""
+        self.assertEqual(self._run_with_iptc(None), {})
+
+    def test_returns_empty_dict_when_iptc_empty(self):
+        """An empty IPTC block must yield an empty metadata dict."""
+        self.assertEqual(self._run_with_iptc({}), {})
+
+    # ------------------------------------------------------------------
+    # Default encoding: CP1252
+    # ------------------------------------------------------------------
+
+    def test_nordic_characters_decoded_without_charset_tag(self):
+        """ä ö å Ä Ö Å must decode correctly when no charset tag is present."""
+        iptc = {self._HEADLINE: "Pääministeri".encode("cp1252")}
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.HEADLINE], "Pääministeri")
+
+    def test_cp1252_typographic_characters_not_dropped(self):
+        """En-dash (0x96) and curly quotes (0x93/0x94) must survive decoding.
+
+        These bytes are printable in CP1252 but invisible C1 control codes in
+        Latin-1, which was the regression: they were silently dropped.
+        """
+        # mirrors the real caption: – "Hyvä matsi saatiin"
+        # raw = " \x96 \x93Hyv\xe4 matsi saatiin\x94".encode("cp1252")
+        raw = " – “Hyvä matsi saatiin”".encode("cp1252")
+
+        result = self._run_with_iptc({self._CAPTION: raw})
+        caption = result[TAG.CAPTION_ABSTRACT]
+        self.assertIn("–", caption)  # en-dash  0x96
+        self.assertIn("\u201c", caption)  # left curly quote  0x93
+        self.assertIn("\u201d", caption)  # right curly quote 0x94
+        self.assertIn("Hyvä", caption)
+
+    def test_full_range_of_nordic_letters(self):
+        """All six Nordic letters must round-trip through the default CP1252 path."""
+        nordic = "äöåÄÖÅ"
+        iptc = {self._BYLINE: nordic.encode("cp1252")}
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.BY_LINE], nordic)
+
+    # ------------------------------------------------------------------
+    # Explicit UTF-8 charset tag
+    # ------------------------------------------------------------------
+
+    def test_utf8_used_when_charset_tag_declares_utf8(self):
+        """Record 1 Tag 90 containing ESC % G must switch decoding to UTF-8."""
+        iptc = {
+            self._CHARSET: b"\x1b%G",
+            self._HEADLINE: "Pääministeri".encode("utf-8"),
+        }
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.HEADLINE], "Pääministeri")
+
+    def test_utf8_marker_detected_when_embedded_in_longer_value(self):
+        """ESC % G must be recognised even when surrounded by other bytes."""
+        iptc = {
+            self._CHARSET: b"\x1b\x28\x42\x1b%G",  # extra escape before marker
+            self._HEADLINE: "Pääministeri".encode("utf-8"),
+        }
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.HEADLINE], "Pääministeri")
+
+    def test_cp1252_used_when_charset_tag_absent(self):
+        """Absence of the charset tag must result in CP1252 decoding, not UTF-8."""
+        # 0xe4 0xe4 is valid CP1252 (ää) but invalid UTF-8
+        iptc = {self._HEADLINE: b"P\xe4\xe4ministeri"}
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.HEADLINE], "Pääministeri")
+
+    # ------------------------------------------------------------------
+    # Tag filtering
+    # ------------------------------------------------------------------
+
+    def test_unknown_tag_codes_are_skipped(self):
+        """Codes absent from iim_codes must be silently ignored."""
+        iptc = {
+            (9, 99): b"should be ignored",
+            self._HEADLINE: b"Known",
+        }
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(list(result.keys()), [TAG.HEADLINE])
+
+    def test_charset_tag_not_present_in_returned_metadata(self):
+        """Record 1 Tag 90 is a control field and must not appear in the output."""
+        iptc = {
+            self._CHARSET: b"\x1b%G",
+            self._HEADLINE: "Otsikko".encode("utf-8"),
+        }
+        result = self._run_with_iptc(iptc)
+        # The charset tag name would be absent from iim_codes; verify it didn't
+        # sneak in under any key
+        self.assertNotIn((1, 90), result)
+        self.assertEqual(len(result), 1)
+
+    # ------------------------------------------------------------------
+    # Multi-value fields (e.g. Keywords)
+    # ------------------------------------------------------------------
+
+    def test_list_values_each_element_decoded(self):
+        """Multi-value IPTC fields must have every byte element decoded."""
+        iptc = {self._KEYWORDS: [b"ravit", "talvi\xe4".encode("cp1252")]}
+        result = self._run_with_iptc(iptc)
+        self.assertEqual(result[TAG.KEYWORDS], ["ravit", "talviä"])
+
+    def test_list_values_non_bytes_elements_passed_through(self):
+        """Non-bytes items inside a list field must be kept as-is."""
+        iptc = {self._KEYWORDS: [b"bytes-kw", "already-str"]}
+        result = self._run_with_iptc(iptc)
+        self.assertIn("bytes-kw", result[TAG.KEYWORDS])
+        self.assertIn("already-str", result[TAG.KEYWORDS])

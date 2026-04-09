@@ -20,8 +20,9 @@ from superdesk.io.feed_parsers import FileFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.errors import ParserError
 from superdesk.media.media_operations import process_file_from_stream
-from superdesk.media.image import get_meta_iptc
-from superdesk.media.iim_codes import TAG
+from PIL import Image, IptcImagePlugin
+
+from superdesk.media.iim_codes import TAG, iim_codes
 from superdesk.metadata.item import GUID_TAG, CONTENT_TYPE
 from superdesk.metadata import utils
 from superdesk.media.renditions import generate_renditions, get_renditions_spec
@@ -94,7 +95,7 @@ class SttImageIPTCFeedParser(FileFeedParser):
             filemeta.set_filemeta(item, file_metadata)
             f.seek(0)
 
-            metadata = get_meta_iptc(f)
+            metadata = self._get_iptc_metadata(f)
             f.seek(0)
             self.parse_meta(item, metadata)
 
@@ -111,9 +112,49 @@ class SttImageIPTCFeedParser(FileFeedParser):
             item["renditions"] = renditions
         return item
 
+    # ESC % G: ISO 2022 escape sequence signalling UTF-8 in IPTC record 1 tag 90
+    _IPTC_UTF8_MARKER = b"\x1b%G"
+
+    def _get_iptc_metadata(self, f):
+        """Read IPTC metadata with correct encoding.
+
+        Checks IPTC Record 1, Tag 90 (Coded Character Set) for an explicit
+        UTF-8 declaration (ESC % G).  When absent — the common case for legacy
+        Finnish/Nordic news-agency images written by Photoshop or similar tools
+        — falls back to Windows-1252 (CP1252).  CP1252 is a superset of
+        Latin-1: Nordic characters (ä, ö, å …) are identical, but CP1252 also
+        correctly maps the 0x80-0x9F range to printable typographic characters
+        (en/em dashes, curly quotes, ellipsis …) that Latin-1 leaves as
+        invisible C1 control codes.
+        """
+        f.seek(0)
+        img = Image.open(f)
+        iptc_raw = IptcImagePlugin.getiptcinfo(img)
+
+        if not iptc_raw:
+            return {}
+
+        charset_value = iptc_raw.get((1, 90), b"")
+        encoding = "utf-8" if self._IPTC_UTF8_MARKER in charset_value else "cp1252"
+
+        metadata = {}
+        for code, value in iptc_raw.items():
+            try:
+                tag = iim_codes[code]
+            except KeyError:
+                continue
+            if isinstance(value, list):
+                metadata[tag] = [
+                    v.decode(encoding, errors="replace") if isinstance(v, bytes) else v
+                    for v in value
+                ]
+            elif isinstance(value, bytes):
+                metadata[tag] = value.decode(encoding, errors="replace")
+        return metadata
+
     def parse_date_time(self, date, time):
         if not date or not time:
-            return None
+            return
 
         datetime_string = "{}T{}".format(date, time)
         try:
@@ -122,7 +163,7 @@ class SttImageIPTCFeedParser(FileFeedParser):
             try:
                 return arrow.get(datetime_string).datetime
             except ValueError:
-                return None
+                return
 
     def parse_meta(self, item, metadata):
         datetime_created = self.parse_date_time(
