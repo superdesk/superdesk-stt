@@ -1,6 +1,6 @@
 honcho
 python3-saml
-google-cloud-translate==3.25.0
+google-cloud-translate==3.26.0
 celery-redbeat
 pymongo==4.9.2
 
