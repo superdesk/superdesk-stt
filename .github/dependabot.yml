@@ -15,14 +15,19 @@ updates:
     schedule:
       interval: "daily"
 
+  # only update direct dependencies on the next branch
   - package-ecosystem: "npm"
     directory: "/client"
     target-branch: "next"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
 
   - package-ecosystem: "pip"
     directory: "/server"
     target-branch: "next"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "direct"
