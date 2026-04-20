@@ -1,7 +1,9 @@
-from datetime import datetime, time, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Dict, List, Any, Optional, Tuple
 import logging
 from zoneinfo import ZoneInfo
+
+from dateutil import parser
 
 from stt.constants import STT_TIMEZONE
 from stt.helpers.mongo_helpers import (
@@ -70,8 +72,52 @@ def _merge_unique_items_by_id(
     return merged
 
 
-def _get_previous_day_evening_items() -> List[Dict[str, Any]]:
-    start_dt, end_dt = _get_previous_day_evening_window_utc()
+def _get_reference_datetime_from_items(
+    items: List[Dict[str, Any]],
+) -> Optional[datetime]:
+    """Return the latest valid planning_date from items as an aware UTC datetime."""
+
+    planning_datetimes: List[datetime] = []
+    for item in items or []:
+        if not isinstance(item, dict):
+            continue
+        planning_date = item.get("planning_date")
+        parsed = _parse_planning_date(planning_date)
+        if parsed is not None:
+            planning_datetimes.append(parsed)
+
+    if not planning_datetimes:
+        return None
+
+    return max(planning_datetimes)
+
+
+def _parse_planning_date(value: Any) -> Optional[datetime]:
+    """Parse a planning_date value into an aware UTC datetime."""
+
+    if isinstance(value, datetime):
+        parsed = value
+    elif isinstance(value, date):
+        parsed = datetime.combine(value, time.min, tzinfo=_HELSINKI)
+    elif isinstance(value, str):
+        try:
+            parsed = parser.isoparse(value)
+        except (TypeError, ValueError):
+            return None
+    else:
+        return None
+
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=_HELSINKI)
+
+    return parsed.astimezone(timezone.utc)
+
+
+def _get_previous_day_evening_items(
+    items: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    reference_dt = _get_reference_datetime_from_items(items)
+    start_dt, end_dt = _get_previous_day_evening_window_utc(reference_dt)
     return get_planning_items_with_published_corrections_between(
         start_dt,
         end_dt,
@@ -238,7 +284,7 @@ def enrich_oikaisut_korjaukset_for_export(
         Dict[str, List[Dict[str, Any]]]: Dictionary with two keys: oikaisut and korjaukset.
     """
     rows = items or []
-    rows = _merge_unique_items_by_id(rows, _get_previous_day_evening_items())
+    rows = _merge_unique_items_by_id(rows, _get_previous_day_evening_items(rows))
     if not rows:
         return {"oikaisut": [], "korjaukset": []}
     rows_grouped = _group_items_by_type(rows)
