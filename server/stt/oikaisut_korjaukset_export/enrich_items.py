@@ -1,10 +1,136 @@
-from typing import Dict, List, Any
+from datetime import date, datetime, time, timedelta, timezone
+from typing import Dict, List, Any, Optional, Tuple
 import logging
+from zoneinfo import ZoneInfo
 
-from stt.helpers.mongo_helpers import find_many
+from dateutil import parser
+
+from stt.constants import STT_TIMEZONE
+from stt.helpers.mongo_helpers import (
+    find_many,
+    get_planning_items_with_published_corrections_between,
+)
 from stt.helpers.template_helpers import exclude_drafts
 
 logger = logging.getLogger(__name__)
+
+_HELSINKI = ZoneInfo(STT_TIMEZONE)
+
+
+def _get_previous_day_evening_window_utc(
+    now: Optional[datetime] = None,
+) -> Tuple[datetime, datetime]:
+    """Return the previous day's 20:00-00:00 Helsinki window in UTC."""
+
+    current_time = now
+    if current_time is None:
+        current_time = datetime.now(timezone.utc)
+    elif current_time.tzinfo is None:
+        current_time = current_time.replace(tzinfo=timezone.utc)
+    else:
+        current_time = current_time.astimezone(timezone.utc)
+
+    now_local = current_time.astimezone(_HELSINKI)
+    today_local = now_local.date()
+    previous_day_local = today_local - timedelta(days=1)
+
+    start_local = datetime.combine(
+        previous_day_local,
+        time(20, 0),
+        tzinfo=_HELSINKI,
+    )
+    end_local = datetime.combine(today_local, time.min, tzinfo=_HELSINKI)
+    return start_local.astimezone(timezone.utc), end_local.astimezone(timezone.utc)
+
+
+def _merge_unique_items_by_id(
+    items: List[Dict[str, Any]],
+    extra_items: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Append extra planning items while preserving order and uniqueness."""
+
+    merged = list(items or [])
+    seen_ids = {
+        str(item.get("_id"))
+        for item in merged
+        if isinstance(item, dict) and item.get("_id")
+    }
+
+    for item in extra_items or []:
+        if not isinstance(item, dict):
+            continue
+        item_id = item.get("_id")
+        if not item_id:
+            merged.append(item)
+            continue
+        normalized_item_id = str(item_id)
+        if normalized_item_id in seen_ids:
+            continue
+        seen_ids.add(normalized_item_id)
+        merged.append(item)
+
+    return merged
+
+
+def _get_reference_datetime_from_items(
+    items: List[Dict[str, Any]],
+) -> Optional[datetime]:
+    """Return the latest valid planning_date from items as an aware UTC datetime."""
+
+    planning_datetimes: List[datetime] = []
+    for item in items or []:
+        if not isinstance(item, dict):
+            continue
+        planning_date = item.get("planning_date")
+        parsed = _parse_planning_date(planning_date)
+        if parsed is not None:
+            planning_datetimes.append(parsed)
+
+    if not planning_datetimes:
+        return None
+
+    return max(planning_datetimes)
+
+
+def _parse_planning_date(value: Any) -> Optional[datetime]:
+    """Parse a planning_date value into an aware UTC datetime."""
+
+    if isinstance(value, datetime):
+        parsed = value
+    elif isinstance(value, date):
+        parsed = datetime.combine(value, time.min, tzinfo=_HELSINKI)
+    elif isinstance(value, str):
+        try:
+            parsed = parser.isoparse(value)
+        except (TypeError, ValueError):
+            return None
+    else:
+        return None
+
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=_HELSINKI)
+
+    return parsed.astimezone(timezone.utc)
+
+
+def _get_previous_day_evening_items(
+    items: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    reference_dt = _get_reference_datetime_from_items(items)
+    start_dt, end_dt = _get_previous_day_evening_window_utc(reference_dt)
+    return get_planning_items_with_published_corrections_between(
+        start_dt,
+        end_dt,
+        projection={
+            "_id": 1,
+            "anpa_category": 1,
+            "internal_coverages": 1,
+            "planning_date": 1,
+            "priority": 1,
+            "slugline": 1,
+            "state": 1,
+        },
+    )
 
 
 def _is_oikaisu(item: Dict[str, Any]) -> bool:
@@ -38,12 +164,14 @@ def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, A
         {"planning_id": planning_id, "item_state": "published"},
         projection={"item_id": 1, "_id": 0},
     )
-    # then loop through delivery results and get full items from "published" collection by matching item_id
+    # then loop through delivery results and get full items from
+    # "published" collection by matching item_id
     published_items = []
     for delivery in deliveries:
         item_id = delivery.get("item_id")
         if item_id:
-            # include only items that have state "corrected" (Korjaus) or genre.qcode "sttgenre:11" (Oikaisu)
+            # include only items that have state "corrected" (Korjaus) or
+            # genre.qcode "sttgenre:11" (Oikaisu)
             items = find_many(
                 "published",
                 {
@@ -77,7 +205,8 @@ def _get_related_corrected_published_items(planning_id: str) -> List[Dict[str, A
                 # add all found items to published_items
                 published_items.extend(items)
 
-    # If there is at least one oikaisu for this planning_id, ignore korjaus items.
+    # If there is at least one oikaisu for this planning_id,
+    # ignore korjaus items.
     if any(_is_oikaisu(item) for item in published_items):
         published_items = [
             item for item in published_items if item.get("state") != "corrected"
@@ -94,7 +223,8 @@ def _enrich_item(item: Dict[str, Any]) -> Dict[str, Any]:
     related_items = _get_related_corrected_published_items(planning_id)
     if related_items:
         item["related_corrected_published_items"] = related_items
-        # if item has "internal_coverages" field, we can remove it to reduce output size
+        # if item has "internal_coverages" field,
+        # we can remove it to reduce output size
         if "internal_coverages" in item:
             del item["internal_coverages"]
     return item
@@ -108,11 +238,13 @@ def _group_items_by_type(
     # exclude draft items
     items = exclude_drafts(items)
     for item in items:
-        # enrich item so we can check if it has related corrected published items
+        # enrich item so we can check if it has
+        # related corrected published items
         item = _enrich_item(item)
         # loop item.related_corrected_published_items and check for "state"
         # if state is "corrected" then it should be put to "korjaukset" array
-        # if state is not "corrected", then it should be put to "oikaisut" array
+        # if state is not "corrected", then it should be put
+        # to "oikaisut" array
         related_items = item.get("related_corrected_published_items", [])
         item_without_related_corrected_published_items = {
             k: v for k, v in item.items() if k != "related_corrected_published_items"
@@ -120,14 +252,16 @@ def _group_items_by_type(
         for related_item in related_items:
             state = related_item.get("state")
             if state == "corrected":
-                # add item_without_related_corrected_published_items to corrected_item and then add related_item to it
+                # add item_without_related_corrected_published_items to
+                # corrected_item and then add related_item to it
                 corrected_item = {
                     **item_without_related_corrected_published_items,
                     "corrected_published_item": related_item,
                 }
                 korjaukset.append(corrected_item)
             else:
-                # add item_without_related_corrected_published_items to corrected_item and then add related_item to it
+                # add item_without_related_corrected_published_items to
+                # corrected_item and then add related_item to it
                 corrected_item = {
                     **item_without_related_corrected_published_items,
                     "corrected_published_item": related_item,
@@ -150,6 +284,7 @@ def enrich_oikaisut_korjaukset_for_export(
         Dict[str, List[Dict[str, Any]]]: Dictionary with two keys: oikaisut and korjaukset.
     """
     rows = items or []
+    rows = _merge_unique_items_by_id(rows, _get_previous_day_evening_items(rows))
     if not rows:
         return {"oikaisut": [], "korjaukset": []}
     rows_grouped = _group_items_by_type(rows)
