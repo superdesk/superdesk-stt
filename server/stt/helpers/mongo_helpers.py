@@ -1,6 +1,7 @@
 """Shared helpers for querying Superdesk resources with optional projection support."""
 
 import logging
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from superdesk import get_resource_service
@@ -294,3 +295,107 @@ def get_published_items_by_planning_id_and_genre_qcodes(
     # Stable ordering for exports/UI usage: newest first when the field exists.
     items.sort(key=lambda item: (item or {}).get("versioncreated") or "", reverse=True)
     return items
+
+
+def get_planning_items_with_published_corrections_between(
+    start_dt: datetime,
+    end_dt: datetime,
+    projection: Optional[Dict[str, int]] = None,
+) -> List[Dict[str, Any]]:
+    """Return planning items linked to late published oikaisu/korjaus content.
+
+    The relation is resolved through:
+
+        published.item_id
+        -> delivery.item_id
+        -> delivery.planning_id
+        -> planning._id
+
+    Only published items whose ``firstpublished`` value is within the half-open
+    interval ``[start_dt, end_dt)`` are considered.
+    Matching published items must also satisfy the export rules for this feed:
+    either ``state == 'corrected'`` or ``genre.qcode == 'sttgenre:11'``, and
+    ``profile != 'nettiuutinen'``.
+    """
+
+    if not start_dt or not end_dt or start_dt >= end_dt:
+        return []
+
+    try:
+        async_app = get_current_async_app()
+        collection = async_app.wsgi.data.get_mongo_collection("published")
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.exception(
+            (
+                "Unable to access published Mongo collection "
+                "via service/driver "
+                "(%s: %s)"
+            ),
+            exc.__class__.__name__,
+            exc,
+        )
+        return []
+
+    pipeline = [
+        {
+            "$match": {
+                "firstpublished": {"$gte": start_dt, "$lt": end_dt},
+                "$or": [
+                    {"state": "corrected"},
+                    {"genre.qcode": "sttgenre:11"},
+                ],
+                "profile": {"$ne": "nettiuutinen"},
+            }
+        },
+        {"$project": {"item_id": 1, "_id": 0}},
+        {
+            "$lookup": {
+                "from": "delivery",
+                "let": {"published_item_id": "$item_id"},
+                "pipeline": [
+                    {
+                        "$match": {
+                            "$expr": {
+                                "$and": [
+                                    {
+                                        "$eq": [
+                                            "$item_id",
+                                            "$$published_item_id",
+                                        ]
+                                    },
+                                    {"$eq": ["$item_state", "published"]},
+                                ]
+                            }
+                        }
+                    },
+                    {"$project": {"planning_id": 1, "_id": 0}},
+                ],
+                "as": "deliveries",
+            }
+        },
+        {"$unwind": "$deliveries"},
+        {"$group": {"_id": "$deliveries.planning_id"}},
+    ]
+
+    try:
+        planning_ids = [
+            doc.get("_id")
+            for doc in collection.aggregate(pipeline)
+            if isinstance(doc, dict) and doc.get("_id")
+        ]
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.exception(
+            ("Error aggregating planning ids for published corrections " "(%s: %s)"),
+            exc.__class__.__name__,
+            exc,
+        )
+        return []
+
+    if not planning_ids:
+        return []
+
+    return find_many(
+        "planning",
+        {"_id": {"$in": planning_ids}},
+        projection=projection,
+    )
