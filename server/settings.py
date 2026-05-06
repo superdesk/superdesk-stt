@@ -134,6 +134,7 @@ INSTALLED_APPS = [
     "stt.stt_parse_lottery_veikkaus",
     "stt.signal_hooks",
     "stt.stt_parse_businesswire",
+    "stt.stt_parse_sttinfo",
     "planning",
     "apps.languages",
     "stt.spellcheckers.stt_fin",
