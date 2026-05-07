@@ -226,6 +226,7 @@ class STTInfoRelease(NewsMLOneFeedParser):
                 "urgency": 3,
                 "version": 1,
                 "anpa_category": [{"qcode": "12", "name": "Tiedotepalvelu"}],
+                "genre": [{"qcode": "sttgenre:1", "name": "Uutinen"}],
                 "firstcreated": utcnow(),
                 "versioncreated": utcnow(),
             }
