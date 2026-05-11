@@ -3,6 +3,7 @@ python3-saml
 google-cloud-translate==3.26.0
 celery-redbeat
 pymongo==4.9.2
+beautifulsoup4==4.14.3
 
 git+https://github.com/superdesk/superdesk-core.git@release/3.5#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@release/3.5#egg=superdesk-planning
