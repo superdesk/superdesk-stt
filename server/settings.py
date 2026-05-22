@@ -266,7 +266,6 @@ SYNC_EVENT_FIELDS_TO_PLANNING = [
     "slugline",
     "name",
     "ednote",
-    "internal_note",
     "language",
     "definition_short",
 ]
