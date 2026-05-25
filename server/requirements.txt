@@ -388,7 +388,7 @@ soupsieve==2.8.3
     # via beautifulsoup4
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.5.0
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.5.0
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.5.1
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn

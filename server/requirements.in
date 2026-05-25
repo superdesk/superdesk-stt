@@ -6,4 +6,4 @@ pymongo==4.9.2
 beautifulsoup4==4.14.3
 
 git+https://github.com/superdesk/superdesk-core.git@v3.5.0#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@v3.5.0#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-planning.git@v3.5.1#egg=superdesk-planning
