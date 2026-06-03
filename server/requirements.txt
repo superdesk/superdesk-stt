@@ -14,7 +14,7 @@ aiofiles==25.1.0
     #   quart
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.4
+aiohttp==3.14.0
     # via
     #   aiobotocore
     #   elasticsearch
@@ -400,6 +400,7 @@ types-pytz==2026.1.1.20260304
     # via quart-babel
 typing-extensions==4.15.0
     # via
+    #   aiohttp
     #   aiosignal
     #   asgiref
     #   beautifulsoup4
