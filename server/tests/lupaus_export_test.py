@@ -28,6 +28,18 @@ class LupausExportTestCase(unittest.TestCase):
                 {
                     "news_coverage_status": {"qcode": "ncostat:int"},
                     "planning": {
+                        "g2_content_type": "text",
+                        "fields": [
+                            {
+                                "field": "sttpicturewhatabout",
+                                "value": "Text coverage description",
+                            }
+                        ],
+                    },
+                },
+                {
+                    "news_coverage_status": {"qcode": "ncostat:int"},
+                    "planning": {
                         "g2_content_type": "picture",
                         "subject": [
                             {"scheme": "sttimagetype", "name": "Kuvaaja paikalla"}
@@ -77,7 +89,12 @@ class LupausExportTestCase(unittest.TestCase):
         self.assertEqual({"qcode": "ncostat:int"}, status)
         self.assertEqual({"imagetypes": ["Kuvaaja paikalla"]}, imagetypes)
         self.assertEqual(
-            {"sttpicturewhatabout": ["Allowed description"]},
+            {
+                "sttpicturewhatabout": [
+                    "Text coverage description",
+                    "Allowed description",
+                ]
+            },
             picturewhatabouts,
         )
 
