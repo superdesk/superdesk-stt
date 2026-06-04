@@ -74,7 +74,9 @@ class LupausExportTestCase(unittest.TestCase):
             ]
         }
 
-        status = enrich_related._get_planning_coverages_metadata(planning_item, "teksti")
+        status = enrich_related._get_planning_coverages_metadata(
+            planning_item, "teksti"
+        )
         imagetypes = enrich_related._get_planning_coverages_metadata(
             planning_item,
             "kuva",

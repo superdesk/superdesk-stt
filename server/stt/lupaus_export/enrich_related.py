@@ -107,11 +107,7 @@ def _is_excluded_pictureservice_coverage(cov: Dict[str, Any]) -> bool:
 def _filter_coverages(coverages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Remove coverages excluded by STT picture-service subject markers."""
 
-    return [
-        cov
-        for cov in coverages
-        if not _is_excluded_pictureservice_coverage(cov)
-    ]
+    return [cov for cov in coverages if not _is_excluded_pictureservice_coverage(cov)]
 
 
 def _get_planning_coverages_metadata(
@@ -286,9 +282,7 @@ def _load_coverages_from_mongo(pl_id: str, item_type: str) -> List[Dict[str, Any
     if not isinstance(coverages, list):
         return []
 
-    return _filter_coverages(
-        [cov for cov in coverages if isinstance(cov, dict)]
-    )
+    return _filter_coverages([cov for cov in coverages if isinstance(cov, dict)])
 
 
 def get_priority_from_agenda_item(item: Dict[str, Any]) -> str:
