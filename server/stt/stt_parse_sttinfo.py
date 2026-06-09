@@ -26,31 +26,34 @@ class STTInfoRelease(NewsMLOneFeedParser):
     label = "STT Info tiedotteet"
 
     # User for cleaning unwanted markup
-    ALLOWED_TAGS = ["p", "b", "a", "br", "h1", "h2", "h3"]
+    ALLOWED_TAGS = ["p", "b", "a", "br", "h1", "h2", "h3", "li", "dt", "dd", "strong"]
     ALLOWED_ATTRS = {"a": ["href"]}
+    REMOVABLE_TAGS = ["figcaption"]
 
-    # Example of replacing links in text with old Neo style output.
-    # TAG_CONVERSION_TABLE = [
-    #     { "source": "li", "destination": "p", "prefix": "- " },
-    #     { "source": "dt", "destination": "p", "prefix": "- " },
-    #     { "source": "dd", "destination": "p", "prefix": "- " },
-    #     { "source": "strong", "destination": "b", "prefix": "" },
-    #     { "source": "em", "destination": "p", "prefix": "" },
-    #     {
-    #         "source": "a",
-    #         "action": "replace",
-    #         "template": '"{href}": "{text}"',
-    #         "attributes": ["href"],
-    #         "text": True
-    #     }
-    # ]
+    """ Example of replacing links in text with old Neo style output. """
+    """
+    TAG_CONVERSION_TABLE = [
+        { "source": "li", "destination": "p", "prefix": "- " },
+        { "source": "dt", "destination": "p", "prefix": "- " },
+        { "source": "dd", "destination": "p", "prefix": "- " },
+        { "source": "strong", "destination": "b", "prefix": "" },
+        { "source": "em", "destination": "p", "prefix": "" },
+        {
+            "source": "a",
+            "action": "replace",
+            "template": '"{href}": "{text}"',
+            "attributes": ["href"],
+            "text": True
+        }
+    ]
+
+    """
 
     TAG_CONVERSION_TABLE = [
         {"source": "li", "destination": "p", "prefix": "- "},
         {"source": "dt", "destination": "p", "prefix": "- "},
         {"source": "dd", "destination": "p", "prefix": "- "},
         {"source": "strong", "destination": "b", "prefix": ""},
-        {"source": "em", "destination": "p", "prefix": ""},
     ]
 
     def __init__(self):
@@ -93,20 +96,35 @@ class STTInfoRelease(NewsMLOneFeedParser):
 
         for tag in fragment.find_all(True):
 
+            if tag.parent is None:
+                continue
+
             tagName = tag.name.lower()
-            item = conversionMap.get(tagName)
 
-            if item:
-                if item.get("actione") == "replace":
-                    self.conversionTableReplaceAction(item, tag)
-                else:
-                    tag.name = item["destination"]
-                    tag.insert(0, item["prefix"])
-                    tagName = tag.name
+            # Does tag belong to removable tags?
+            if tagName in self.REMOVABLE_TAGS:
+                tag.decompose()
+                continue
 
+            # If tag is not in the allowed list, unwrap it
             if tagName not in self.ALLOWED_TAGS:
                 tag.unwrap()
                 continue
+
+            # If tag is allowed, check possible conversions
+            item = conversionMap.get(tagName)
+
+            if item:
+                if item.get("action") == "replace":
+                    self.conversionTableReplaceAction(item, tag)
+                    continue
+                else:
+                    tag.name = item["destination"]
+
+                if item.get("prefix"):
+                    tag.insert(0, item["prefix"])
+
+                    tagName = tag.name.lower()
 
             # Filter attributes
             allowedAttrs = self.ALLOWED_ATTRS.get(tagName, [])
@@ -120,7 +138,7 @@ class STTInfoRelease(NewsMLOneFeedParser):
             xml = deepcopy(xml)
 
             # Genereate headline in form of: "*** Tiedote/<publisher>: <title of the release> ***"
-            headline = "*** Tiedote/{publisher}: {title}".format(
+            headline = "*** Tiedote/{publisher}: {title} ***".format(
                 publisher=xml.xpath("/release/publisher/name")[0].text,
                 title=xml.xpath("/release/title")[0].text,
             )
@@ -214,7 +232,7 @@ class STTInfoRelease(NewsMLOneFeedParser):
             boilerplateTag = soup.find("boilerplate")
 
             if boilerplateTag:
-                body += "<p>" + boilerplateTag.get_text() + "</p>"
+                body += "<p>" + self.removeUnwantedMarkup(boilerplateTag) + "</p>"
 
             item = {
                 "guid": generate_guid(type=GUID_TAG),
