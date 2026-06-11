@@ -30,24 +30,37 @@ class STTInfoRelease(NewsMLOneFeedParser):
     ALLOWED_ATTRS = {"a": ["href"]}
     REMOVABLE_TAGS = ["figcaption"]
 
-    """ Example of replacing links in text with old Neo style output. """
-    """
-    TAG_CONVERSION_TABLE = [
-        { "source": "li", "destination": "p", "prefix": "- " },
-        { "source": "dt", "destination": "p", "prefix": "- " },
-        { "source": "dd", "destination": "p", "prefix": "- " },
-        { "source": "strong", "destination": "b", "prefix": "" },
-        { "source": "em", "destination": "p", "prefix": "" },
-        {
-            "source": "a",
-            "action": "replace",
-            "template": '"{href}": "{text}"',
-            "attributes": ["href"],
-            "text": True
-        }
-    ]
+    # Example of replacing links in text with old Neo style output.
 
-    """
+    #
+
+    # TAG_CONVERSION_TABLE = [
+
+    #     {"source": "li", "destination": "p", "prefix": "- "},
+
+    #     {"source": "dt", "destination": "p", "prefix": "- "},
+
+    #     {"source": "dd", "destination": "p", "prefix": "- "},
+
+    #     {"source": "strong", "destination": "b", "prefix": ""},
+
+    #     {"source": "em", "destination": "p", "prefix": ""},
+
+    #     {
+
+    #         "source": "a",
+
+    #         "action": "replace",
+
+    #         "template": '"{href}": "{text}"',
+
+    #         "attributes": ["href"],
+
+    #         "text": True,
+
+    #     },
+
+    # ]
 
     TAG_CONVERSION_TABLE = [
         {"source": "li", "destination": "p", "prefix": "- "},
