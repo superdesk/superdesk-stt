@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import html
 import logging
 import os
 import json
@@ -83,7 +84,7 @@ class AutoTranslateItem:
                 "target_language_code": target_language,
             }
         )
-        return result.translations[0].translated_text
+        return html.unescape(result.translations[0].translated_text)
 
     async def auto_translate_item(self, item, **kwargs):
         """

@@ -102,7 +102,11 @@ async def link_coverages_to_content(item: Item, original: Item | None = None):
             continue
 
         _copy_metadata_from_article_to_coverage(coverage, content)
-        _update_coverage_assignment_details(coverage, content)
+        _update_coverage_assignment_details(
+            coverage,
+            content,
+            assignment_state=ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+        )
         coverage_id_to_content_id_map[coverage_id] = content["_id"]
 
     updated_coverage_ids = coverage_id_to_content_id_map.keys()
@@ -133,6 +137,7 @@ async def link_coverages_to_content(item: Item, original: Item | None = None):
             await _link_assignment_and_content(
                 assignment_id, coverage_id, coverage_id_to_content_id_map[coverage_id]
             )
+            await _complete_assignment(assignment_id)
         except Exception as err:
             logger.exception(err)
             logger.error("Failed to link coverage assignment to content")
@@ -215,7 +220,11 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
             return
 
         _copy_metadata_from_article_to_coverage(coverage, item)
-        _update_coverage_assignment_details(coverage, item)
+        _update_coverage_assignment_details(
+            coverage,
+            item,
+            assignment_state=ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+        )
     else:
         # Set the metadata for the new coverage
         try:
@@ -253,7 +262,11 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
                 # No Assignment currently exists, add ``assigned_to`` details so the Planning module
                 # will automatically create one for us
                 _copy_metadata_from_article_to_coverage(existing_coverage, item)
-                _update_coverage_assignment_details(existing_coverage, item)
+                _update_coverage_assignment_details(
+                    existing_coverage,
+                    item,
+                    assignment_state=ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+                )
             else:
                 # An Assignment already exists for this coverage,
                 # Add another Assignment for this coverage, and link it to the content
@@ -308,7 +321,11 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
             }
 
             _copy_metadata_from_article_to_coverage(new_coverage, item)
-            _update_coverage_assignment_details(new_coverage, item)
+            _update_coverage_assignment_details(
+                new_coverage,
+                item,
+                assignment_state=ASSIGNMENT_WORKFLOW_STATE.COMPLETED,
+            )
 
             # Remove placeholder text coverage and add the new one
             planning_updates["coverages"] = [
@@ -362,6 +379,7 @@ async def before_content_published(item: Item, updates: Dict[str, Any]):
         await _link_assignment_and_content(
             assignment_id, coverage_id, str(item.get("guid")), True
         )
+        await _complete_assignment(assignment_id)
     except Exception:
         logger.exception(
             "Failed to link coverage assignment to content",
@@ -424,6 +442,7 @@ async def _get_content_item_by_uris(uris: List[str]) -> Optional[Item]:
 def _update_coverage_assignment_details(
     coverage: Dict[str, Any],
     content: Item,
+    assignment_state: Optional[str] = None,
 ):
     """Assign Desk, workflow state etc to coverage"""
 
@@ -432,7 +451,8 @@ def _update_coverage_assignment_details(
     coverage["assigned_to"].update(
         {
             "desk": (content.get("task") or {}).get("desk"),
-            "state": (
+            "state": assignment_state
+            or (
                 ASSIGNMENT_WORKFLOW_STATE.COMPLETED
                 if content.get("pubstatus") is not None
                 else ASSIGNMENT_WORKFLOW_STATE.IN_PROGRESS
@@ -483,4 +503,22 @@ async def _link_assignment_and_content(
                 "item_state": CONTENT_STATE.PUBLISHED,
             }
         ]
+    )
+
+
+async def _complete_assignment(assignment_id: ObjectId):
+    assignment_service = get_resource_service("assignments")
+    assignment = await assignment_service.find_one_async(req=None, _id=assignment_id)
+    if not assignment:
+        logger.warning("Failed to complete assignment: Assignment not found")
+        return
+
+    await get_resource_service("assignments_complete").update_async(
+        assignment["_id"],
+        {
+            "assigned_to": {"state": ASSIGNMENT_WORKFLOW_STATE.COMPLETED},
+            # This runs in ingest hooks without an authenticated user.
+            "proxy_user": None,
+        },
+        assignment,
     )
