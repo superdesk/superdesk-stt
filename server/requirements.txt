@@ -44,7 +44,7 @@ babel==2.18.0
     # via quart-babel
 bcrypt==5.0.0
     # via superdesk-core
-beautifulsoup4==4.14.3
+beautifulsoup4==4.15.0
     # via -r requirements.in
 billiard==4.2.4
     # via celery
