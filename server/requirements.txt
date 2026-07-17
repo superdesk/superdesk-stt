@@ -18,6 +18,7 @@ aiohttp==3.13.4
     # via
     #   aiobotocore
     #   elasticsearch
+    #   superdesk-core
 aioitertools==0.13.0
     # via aiobotocore
 aiosignal==1.4.0
@@ -384,11 +385,11 @@ six==1.17.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-soupsieve==2.8.3
+soupsieve==2.8.4
     # via beautifulsoup4
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.5.0
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.5.1
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.5.4
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.5.5
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
