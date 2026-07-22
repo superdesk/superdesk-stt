@@ -397,3 +397,5 @@ ALLOW_UPDATING_EMBARGOED_ITEMS = True
 # Retain coverage status and assignee details when duplicating planning items
 PLANNING_DUPLICATE_RETAIN_COVERAGE_STATUS = True
 PLANNING_DUPLICATE_RETAIN_ASSIGNEE_DETAILS = True
+
+CELERY_USE_ASYNC_WORKER = True
