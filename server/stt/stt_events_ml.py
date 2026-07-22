@@ -13,6 +13,7 @@ from planning.feed_parsers.events_ml import EventsMLParser
 
 from .common import (
     STTParserMixin,
+    parse_content_subject_sync,
     planning_xml_contains_remove_signal,
     unpost_or_spike_event_or_planning,
     remove_date_portion_from_id,
@@ -133,6 +134,9 @@ class STTEventsMLParser(STTParserMixin, EventsMLParser):
 
         return items_to_ingest
 
+    def parse_content_subject(self, tree, item):
+        parse_content_subject_sync(self, tree, item)
+
     def datetime(self, value):
         """When there is no timezone info, assume it's Helsinki timezone."""
         parsed = super().datetime(value)
@@ -178,7 +182,7 @@ class STTEventsMLParser(STTParserMixin, EventsMLParser):
                 qcode = (
                     f"type{qcode}"  # add prefix to avoid conflict with sttdepartment
                 )
-                name = self.getVocabulary(
+                name = await self.getVocabulary(
                     "event_type", qcode, related.find(self.qname("name")).text
                 )
                 item.setdefault("subject", []).append(

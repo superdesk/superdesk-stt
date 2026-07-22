@@ -16,6 +16,7 @@ from planning.common import get_coverage_from_planning
 
 from .common import (
     STTParserMixin,
+    parse_content_subject_sync,
     planning_xml_contains_remove_signal,
     unpost_or_spike_event_or_planning,
     remove_date_portion_from_id,
@@ -51,6 +52,9 @@ class STTPlanningMLParser(STTParserMixin, PlanningMLParser):
             if await original_item_exists("planning", item_id)
             else remove_date_portion_from_id(item_id)
         )
+
+    def parse_content_subject(self, tree, item):
+        parse_content_subject_sync(self, tree, item)
 
     async def parse_item(
         self, tree: Element, original: Optional[Planning]
