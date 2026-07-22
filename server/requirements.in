@@ -2,8 +2,7 @@ honcho
 python3-saml
 google-cloud-translate==3.27.0
 celery-redbeat
-pymongo==4.9.2
 beautifulsoup4==4.15.0
 
-git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-core.git@release/3.6#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@release/3.6#egg=superdesk-planning
