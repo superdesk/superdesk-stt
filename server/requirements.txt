@@ -387,7 +387,7 @@ six==1.17.0
     #   python-dateutil
 soupsieve==2.8.4
     # via beautifulsoup4
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.5.1
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v3.5.2
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v3.5.5
     # via -r requirements.in

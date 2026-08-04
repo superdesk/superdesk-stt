@@ -5,5 +5,5 @@ celery-redbeat
 pymongo==4.9.2
 beautifulsoup4==4.15.0
 
-git+https://github.com/superdesk/superdesk-core.git@v3.5.1#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-core.git@v3.5.2#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@v3.5.5#egg=superdesk-planning
