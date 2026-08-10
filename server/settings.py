@@ -11,6 +11,7 @@
 
 import os
 from pathlib import Path
+import socket
 
 from superdesk.default_settings import (
     env,
@@ -19,6 +20,10 @@ from superdesk.default_settings import (
     SAML_PATH,
     CORE_APPS as _core_apps,
     strtobool,
+    CELERY_BROKER_TRANSPORT_OPTIONS,
+    WS_REDIS_KEEPALIVE_IDLE,
+    WS_REDIS_KEEPALIVE_INTERVAL,
+    WS_REDIS_KEEPALIVE_COUNT,
 )
 
 ABS_PATH = str(Path(__file__).resolve().parent)
@@ -397,3 +402,25 @@ ALLOW_UPDATING_EMBARGOED_ITEMS = True
 # Retain coverage status and assignee details when duplicating planning items
 PLANNING_DUPLICATE_RETAIN_COVERAGE_STATUS = True
 PLANNING_DUPLICATE_RETAIN_ASSIGNEE_DETAILS = True
+
+
+if "socket_keepalive" not in CELERY_BROKER_TRANSPORT_OPTIONS:
+    # Enable Socket Keepalive (in Linux or macOS only)
+    if hasattr(socket, 'TCP_KEEPIDLE'):
+        # Linux specifics
+        CELERY_BROKER_TRANSPORT_OPTIONS.update({
+            # Enable socket keepalive,
+            "socket_keepalive": True,
+            "socket_keepalive_options": {
+                socket.TCP_KEEPIDLE: WS_REDIS_KEEPALIVE_IDLE,  # defaults to 30
+                socket.TCP_KEEPINTVL: WS_REDIS_KEEPALIVE_INTERVAL,  # defaults to 10
+                socket.TCP_KEEPCNT: WS_REDIS_KEEPALIVE_COUNT,  # defaults to 3
+            },
+        })
+    elif hasattr(socket, 'TCP_KEEPALIVE'):
+        # macOS specifics
+        CELERY_BROKER_TRANSPORT_OPTIONS.update({
+            # Enable socket keepalive,
+            "socket_keepalive": True,
+            "socket_keepalive_options": {socket.TCP_KEEPALIVE: WS_REDIS_KEEPALIVE_IDLE},
+        })
