@@ -406,21 +406,27 @@ PLANNING_DUPLICATE_RETAIN_ASSIGNEE_DETAILS = True
 
 if "socket_keepalive" not in CELERY_BROKER_TRANSPORT_OPTIONS:
     # Enable Socket Keepalive (in Linux or macOS only)
-    if hasattr(socket, 'TCP_KEEPIDLE'):
+    if hasattr(socket, "TCP_KEEPIDLE"):
         # Linux specifics
-        CELERY_BROKER_TRANSPORT_OPTIONS.update({
-            # Enable socket keepalive,
-            "socket_keepalive": True,
-            "socket_keepalive_options": {
-                socket.TCP_KEEPIDLE: WS_REDIS_KEEPALIVE_IDLE,  # defaults to 30
-                socket.TCP_KEEPINTVL: WS_REDIS_KEEPALIVE_INTERVAL,  # defaults to 10
-                socket.TCP_KEEPCNT: WS_REDIS_KEEPALIVE_COUNT,  # defaults to 3
-            },
-        })
-    elif hasattr(socket, 'TCP_KEEPALIVE'):
+        CELERY_BROKER_TRANSPORT_OPTIONS.update(
+            {
+                # Enable socket keepalive,
+                "socket_keepalive": True,
+                "socket_keepalive_options": {
+                    socket.TCP_KEEPIDLE: WS_REDIS_KEEPALIVE_IDLE,  # defaults to 30
+                    socket.TCP_KEEPINTVL: WS_REDIS_KEEPALIVE_INTERVAL,  # defaults to 10
+                    socket.TCP_KEEPCNT: WS_REDIS_KEEPALIVE_COUNT,  # defaults to 3
+                },
+            }
+        )
+    elif hasattr(socket, "TCP_KEEPALIVE"):
         # macOS specifics
-        CELERY_BROKER_TRANSPORT_OPTIONS.update({
-            # Enable socket keepalive,
-            "socket_keepalive": True,
-            "socket_keepalive_options": {socket.TCP_KEEPALIVE: WS_REDIS_KEEPALIVE_IDLE},
-        })
+        CELERY_BROKER_TRANSPORT_OPTIONS.update(
+            {
+                # Enable socket keepalive,
+                "socket_keepalive": True,
+                "socket_keepalive_options": {
+                    socket.TCP_KEEPALIVE: WS_REDIS_KEEPALIVE_IDLE
+                },
+            }
+        )
