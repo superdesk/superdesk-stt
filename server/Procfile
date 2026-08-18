@@ -1,6 +1,7 @@
 rest: hypercorn -c file:hypercorn_config.py wsgi:application
 wamp: python3 -u ws.py
-work: celery -A worker worker
+work: celery -A worker worker -X "${SUPERDESK_CELERY_PREFIX}media"
 beat: celery -A worker beat -S redbeat.RedBeatScheduler --max-interval 10
 capi: hypercorn -c file:hypercorn_config.py -w "${CAPI_WORKERS:-2}" content_api.wsgi:application
 papi: hypercorn -c file:hypercorn_config.py -w "${PAPI_WORKERS:-2}" prod_api.wsgi:application
+work_media: celery -A worker worker -Q "${SUPERDESK_CELERY_PREFIX}media" -c 2

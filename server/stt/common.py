@@ -192,6 +192,45 @@ def is_online_version(item: Item) -> bool:
     )
 
 
+def parse_content_subject_sync(parser, tree, item):
+    """Compatibility helper for parser chains that still call parse_content_subject synchronously.
+
+    Some upstream parser paths are still sync while NewsML subject parsing became async.
+    This helper keeps subject extraction working for local parsers that run in sync call sites.
+    """
+
+    item["subject"] = []
+    for subject_elt in tree.findall(parser.qname("subject")):
+        qcode_parts = subject_elt.get("qcode", "").split(":")
+        if len(qcode_parts) != 2 or qcode_parts[0] not in parser.SUBJ_QCODE_PREFIXES:
+            continue
+
+        scheme = parser.SUBJ_QCODE_PREFIXES[qcode_parts[0]]
+        if scheme is None:
+            # This is a main subject, keep qcode as display name.
+            name = qcode_parts[1]
+        else:
+            name_elt = subject_elt.find(parser.qname("name"))
+            name = name_elt.text if name_elt is not None and name_elt.text else ""
+
+            # Try to resolve name from local vocabulary entries when available.
+            try:
+                for cv_item in parser.get_cv_items(scheme):
+                    if cv_item.get("qcode") == qcode_parts[1] and cv_item.get(
+                        "is_active", True
+                    ):
+                        name = cv_item.get("name", name)
+                        break
+            except Exception:
+                # Fallback to XML-provided name.
+                pass
+
+        subject_data = {"qcode": qcode_parts[1], "name": name}
+        if scheme:
+            subject_data["scheme"] = scheme
+        item["subject"].append(subject_data)
+
+
 class STTParserMixin:
 
     async def parse(self, xml, provider=None):

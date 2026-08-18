@@ -23,7 +23,7 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
             if item.get("place"):
                 self.parse_place(item)
             await self.set_extra_fields(item, xml)
-            self.fix_genre(item)
+            await self.fix_genre(item)
         return items
 
     def parse_inline_content(self, tree, item):
@@ -140,8 +140,8 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
         except AttributeError:
             pass
 
-    def parse_content_meta(self, tree, item):
-        super().parse_content_meta(tree, item)
+    async def parse_content_meta(self, tree, item):
+        await super().parse_content_meta(tree, item)
         if item.get("source"):
             file_sources = item["source"].split("-")
             cv_sources = self.get_cv_items("sttsource")
@@ -165,11 +165,11 @@ class STTParser(STTParserMixin, STTNewsMLFeedParser):
         for place in place_list:
             place["scheme"] = None
 
-    def fix_genre(self, item):
+    async def fix_genre(self, item):
         if item.get("genre"):
             for genre in item["genre"]:
                 genre["qcode"] = "sttgenre:" + genre["qcode"]
-                genre["name"] = self.getVocabulary(
+                genre["name"] = await self.getVocabulary(
                     "genre", genre["qcode"], genre["name"]
                 )
 
