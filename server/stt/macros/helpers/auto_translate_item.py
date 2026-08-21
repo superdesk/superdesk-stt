@@ -95,6 +95,7 @@ class AutoTranslateItem:
             text_to_translate = item.get("body_html", "")
             headline = item.get("headline", "")
             translated_headline_en = await self.translate_text(headline, "en-US")
+            translated_headline_sv = await self.translate_text(headline, "sv")
             translated_text_en = await self.translate_text(text_to_translate, "en-US")
             translated_text_sv = await self.translate_text(text_to_translate, "sv")
 
@@ -102,6 +103,7 @@ class AutoTranslateItem:
                 "original_headline": headline,
                 "original_text": text_to_translate,
                 "translated_headline_en": translated_headline_en,
+                "translated_headline_sv": translated_headline_sv,
                 "translated_text_en": translated_text_en,
                 "translated_text_sv": translated_text_sv,
                 "error": False,

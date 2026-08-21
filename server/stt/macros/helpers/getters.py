@@ -1,3 +1,6 @@
+import html
+
+
 def get_headline_for_item(translated_item):
     # headline should be english version like
     """
@@ -26,6 +29,10 @@ def get_body_html_for_item(translated_item, item):
     *** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***
     """
     body_html += "<p><b>*** ANSVARSFRISKRIVNING: DETTA ÄR EN AUTOMATISK ÖVERSÄTTNING FRÅN FINSKA ***</b></p>"
+    # and then add swedish version of the headline
+    translated_headline_sv = translated_item.get("translated_headline_sv", "")
+    if translated_headline_sv:
+        body_html += f"<h2>{html.escape(translated_headline_sv)}</h2>"
     # and then add swedish version of the text
     body_html += f"{translated_item.get('translated_text_sv', '')}"
     # then add:
@@ -33,6 +40,10 @@ def get_body_html_for_item(translated_item, item):
     *** ORIGINAL TEXT ***
     """
     body_html += "<p><b>*** ORIGINAL TEXT ***</b></p>"
+    # and then add the original headline
+    original_headline = translated_item.get("original_headline", "")
+    if original_headline:
+        body_html += f"<h2>{html.escape(original_headline)}</h2>"
     # and then add the original text
     body_html += f"{item.get('body_html', '')}"
     # and return the body html
