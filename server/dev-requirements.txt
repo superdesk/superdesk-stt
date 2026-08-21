@@ -12,7 +12,7 @@ pytest-asyncio==1.4.0
 responses==0.26.2
 aioresponses==0.7.9
 requests-mock==1.12.1
-aiomoto[sqs]==0.5.3
+aiomoto[sqs]==0.5.4
 
 types-requests~=2.33.0
 types-python-dateutil~=2.9.0
