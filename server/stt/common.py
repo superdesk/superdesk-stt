@@ -47,6 +47,8 @@ async def upsert_location(
             saved_location = await locations_service.find_one_async(
                 req=None, _id=existing_location["_id"]
             )
+            if saved_location is None:
+                saved_location = updated_location
         else:
             saved_location = existing_location
         saved_location["qcode"] = custom_guid
