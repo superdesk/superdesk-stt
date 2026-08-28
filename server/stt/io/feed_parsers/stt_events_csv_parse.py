@@ -20,6 +20,8 @@ from bson import ObjectId
 import logging
 from settings import DEFAULT_TIMEZONE
 
+from ...common import upsert_location
+
 
 logger = logging.getLogger(__name__)
 
@@ -494,45 +496,21 @@ class EventsCSVFeedParser(FeedParser):
             location = _build_location(r)
             if location:
                 try:
-                    locations_service = get_resource_service("locations")
-                    if locations_service is not None:
-                        # Create a unique identifier for the location
-                        location_parts = []
-                        if location.get("name"):
-                            location_parts.append(location["name"])
-                        if location.get("address", {}).get("locality"):
-                            location_parts.append(location["address"]["locality"])
-                        if location_parts:
-                            location_id = _slugify("_".join(location_parts))
-                            custom_guid = f"urn:stt:location:csv:{location_id}"
-                            location["qcode"] = custom_guid
-
-                            existing_location = locations_service.find_one(
-                                req=None, guid=custom_guid
-                            )
-
-                            if existing_location:
-                                updated_location = {**existing_location, **location}
-                                location_id = existing_location["_id"]
-                                locations_service.update(
-                                    location_id, updated_location, existing_location
-                                )
-                                saved_location = locations_service.find_one(
-                                    req=None, _id=location_id
-                                )
-                                saved_location["qcode"] = custom_guid
-                            else:
-                                location["guid"] = custom_guid
-                                location_ids = locations_service.post([location])
-                                saved_location = locations_service.find_one(
-                                    req=None, _id=location_ids[0]
-                                )
-                                if saved_location:
-                                    saved_location["qcode"] = custom_guid
-
-                            event["location"] = [saved_location]
-                        else:
-                            event["location"] = [location]
+                    # Create a unique identifier for the location
+                    location_parts = []
+                    if location.get("name"):
+                        location_parts.append(location["name"])
+                    if location.get("address", {}).get("locality"):
+                        location_parts.append(location["address"]["locality"])
+                    if location_parts:
+                        location_slug = _slugify("_".join(location_parts))
+                        custom_guid = f"urn:stt:location:csv:{location_slug}"
+                        saved_location = await upsert_location(location, custom_guid)
+                        event["location"] = (
+                            [saved_location] if saved_location else [location]
+                        )
+                    else:
+                        event["location"] = [location]
                 except Exception as e:
                     logger.warning(
                         f"Failed to save location for event {event.get('name')}: {e}"

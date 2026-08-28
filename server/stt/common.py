@@ -1,4 +1,4 @@
-from typing import Dict, Any, TypedDict
+from typing import Dict, Any, Optional, TypedDict
 import logging
 from copy import deepcopy
 
@@ -17,6 +17,49 @@ from planning.planning.planning_spike import process_spike_planning_item
 
 
 logger = logging.getLogger(__name__)
+
+
+async def upsert_location(
+    location: Dict[str, Any], custom_guid: str
+) -> Optional[Dict[str, Any]]:
+    """Create or update a ``locations`` resource item identified by ``custom_guid``.
+
+    Skips the actual update if nothing would change, to avoid mongo raising
+    "Item was not updated ... it has changed from the original" on a no-op save.
+    Returns the saved location (with ``qcode`` set to ``custom_guid``), or ``None``
+    if the ``locations`` resource service is unavailable.
+    """
+    locations_service = get_resource_service("locations")
+    if locations_service is None:
+        return None
+
+    location = {**location, "qcode": custom_guid}
+    existing_location = await locations_service.find_one_async(
+        req=None, guid=custom_guid
+    )
+
+    if existing_location:
+        updated_location = {**existing_location, **location}
+        if updated_location != existing_location:
+            await locations_service.update_async(
+                existing_location["_id"], updated_location, existing_location
+            )
+            saved_location = await locations_service.find_one_async(
+                req=None, _id=existing_location["_id"]
+            )
+        else:
+            saved_location = existing_location
+        saved_location["qcode"] = custom_guid
+        return saved_location
+
+    location["guid"] = custom_guid
+    location_ids = await locations_service.post_async([location])
+    saved_location = await locations_service.find_one_async(
+        req=None, _id=location_ids[0]
+    )
+    if saved_location:
+        saved_location["qcode"] = custom_guid
+    return saved_location
 
 
 class Item(TypedDict):
