@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Iterable, List
+from typing import Dict, Iterable, List
 from typing_extensions import override
 from urllib.parse import quote
 from yarl import URL
@@ -106,7 +106,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         Async to match the base class contract.
         """
         # Reuse the synchronous fetch logic so legacy patches in tests keep working.
-        json_items = self._fetch_tt_data(provider, update)
+        json_items = await self._fetch_tt_data(provider, update)
         if not isinstance(json_items, list):
             json_items = [json_items]
 
@@ -205,11 +205,13 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 page_url = page_url.replace(f"trs={trs_value}", f"trs={encoded_trs}", 1)
 
             # Use base class HTTP retry infrastructure
-            async with self._get_with_retry(provider, page_url, timeout=timeout) as response:
+            async with self._get_with_retry(
+                provider, page_url, timeout=timeout
+            ) as response:
                 response.raise_for_status()
 
                 # Use base class JSON parsing with error handling
-                data = self._safe_json(response, provider)
+                data = await self._safe_json(response, provider)
 
             if total is None and isinstance(data, dict):
                 # `total` may not always be present; handle gracefully

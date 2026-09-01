@@ -29,7 +29,7 @@ RETRY_METHODS = {"HEAD", "GET", "OPTIONS"}
 
 def _get_retry_delay(attempt: int, header_value: str | None) -> float:
     if not header_value:
-        return BACKOFF_BASE * (2 ** attempt)
+        return BACKOFF_BASE * (2**attempt)
 
     # Retry-After can be either seconds or an HTTP date
     try:
@@ -43,7 +43,7 @@ def _get_retry_delay(attempt: int, header_value: str | None) -> float:
             retry_at = retry_at.replace(tzinfo=timezone.utc)
         return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
     except (TypeError, ValueError, OverflowError):
-        return BACKOFF_BASE * (2 ** attempt)
+        return BACKOFF_BASE * (2**attempt)
 
 
 class STTContentAPIService(HTTPFeedingServiceBase):
@@ -124,7 +124,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         url: str | None = None,
         *,
         params: dict[str, Any] | None = None,
-        timeout: int | None = None
+        timeout: int | None = None,
     ) -> AsyncIterator[aiohttp.ClientResponse]:
         base_url, api_key = self._get_config(provider)
         headers = self._headers(api_key)
@@ -142,7 +142,9 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         # urllib3 Retry.total is "number of retries", so attempts = retries + 1
         for attempt in range(MAX_RETRIES + 1):
             try:
-                async with session.get(url, headers=headers, params=params, timeout=http_timeout) as response:
+                async with session.get(
+                    url, headers=headers, params=params, timeout=http_timeout
+                ) as response:
                     if response.status not in RETRY_STATUSES:
                         # This is a valid response status, return to the caller so they can
                         # use the response
@@ -154,14 +156,16 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                         yield response
                         return
 
-                    delay = _get_retry_delay(attempt, response.headers.get("Retry-After"))
+                    delay = _get_retry_delay(
+                        attempt, response.headers.get("Retry-After")
+                    )
                     logger.warning(
                         "GET %s returned retryable status %s; retrying in %.2fs (attempt %d/%d)",
                         url,
                         response.status,
                         delay,
                         attempt + 1,
-                        MAX_RETRIES
+                        MAX_RETRIES,
                     )
 
                 # Important: sleep after exiting `async with session.get(...)`,
@@ -169,24 +173,24 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 await asyncio.sleep(delay)
 
             except (
-                    aiohttp.ClientConnectionError,
-                    aiohttp.ServerDisconnectedError,
-                    aiohttp.ClientPayloadError,
-                    asyncio.TimeoutError,
+                aiohttp.ClientConnectionError,
+                aiohttp.ServerDisconnectedError,
+                aiohttp.ClientPayloadError,
+                asyncio.TimeoutError,
             ) as exc:
                 last_exc = exc
 
                 if attempt >= MAX_RETRIES:
                     raise
 
-                delay = BACKOFF_BASE * (2 ** attempt)
+                delay = BACKOFF_BASE * (2**attempt)
                 logger.warning(
                     "GET %s failed with %s; retrying in %.2fs (attempt %d/%d)",
                     url,
                     type(exc).__name__,
                     delay,
                     attempt + 1,
-                    MAX_RETRIES
+                    MAX_RETRIES,
                 )
                 await asyncio.sleep(delay)
 
@@ -298,7 +302,9 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 raise IngestApiError.apiGeneralError(ex, provider)
         return all_items
 
-    async def _safe_json(self, response: aiohttp.ClientResponse, provider: dict) -> dict:
+    async def _safe_json(
+        self, response: aiohttp.ClientResponse, provider: dict
+    ) -> dict:
         try:
             return await response.json() or {}
         except Exception as ex:
