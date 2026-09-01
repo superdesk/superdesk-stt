@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-
 import logging
-from datetime import datetime
-from typing import Any, Dict, Iterable, List, Optional, Tuple
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
+from datetime import datetime, timezone
+from typing import Any, Dict, Iterable, List, Tuple
+import email.utils
+import asyncio
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+import aiohttp
 
 from superdesk.errors import IngestApiError, ParserError
 from superdesk.io.registry import register_feeding_service
@@ -17,12 +19,31 @@ logger = logging.getLogger(__name__)
 
 utcfromtimestamp = datetime.utcfromtimestamp
 
-# HTTP request timeout (seconds)
-DEFAULT_TIMEOUT = 30
 # Maximum number of retries for transient errors (429/5xx). This is retries, not attempts.
 MAX_RETRIES = 3
 # Base seconds for exponential backoff (1, 2, 4, ...)
 BACKOFF_BASE = 1.0
+RETRY_STATUSES = {429, *range(500, 600)}
+RETRY_METHODS = {"HEAD", "GET", "OPTIONS"}
+
+
+def _get_retry_delay(attempt: int, header_value: str | None) -> float:
+    if not header_value:
+        return BACKOFF_BASE * (2 ** attempt)
+
+    # Retry-After can be either seconds or an HTTP date
+    try:
+        return max(0.0, float(header_value))
+    except ValueError:
+        pass
+
+    try:
+        retry_at = email.utils.parsedate_to_datetime(header_value)
+        if retry_at.tzinfo is None:
+            retry_at = retry_at.replace(tzinfo=timezone.utc)
+        return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
+    except (TypeError, ValueError, OverflowError):
+        return BACKOFF_BASE * (2 ** attempt)
 
 
 class STTContentAPIService(HTTPFeedingServiceBase):
@@ -58,25 +79,6 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
     def __init__(self):
         super().__init__()
-        self._session: requests.Session = requests.Session()
-        # Configure automatic retries on the session (built-in urllib3 retries)
-        # NOTE: urllib3's `Retry.total` is the number of *retries* (not attempts).
-        # Since MAX_RETRIES is already defined as "maximum number of retries",
-        # we pass it directly to Retry without subtracting 1.
-        _retry = Retry(
-            total=MAX_RETRIES,
-            connect=MAX_RETRIES,
-            read=MAX_RETRIES,
-            status=MAX_RETRIES,
-            backoff_factor=BACKOFF_BASE,
-            status_forcelist={429, *range(500, 600)},
-            allowed_methods=frozenset({"HEAD", "GET", "OPTIONS"}),
-            respect_retry_after_header=True,
-            raise_on_status=False,
-        )
-        _adapter = HTTPAdapter(max_retries=_retry)
-        self._session.mount("http://", _adapter)
-        self._session.mount("https://", _adapter)
 
     # ------------------------------ helpers ------------------------------
 
@@ -113,37 +115,97 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         }
         return params
 
-    # Always use a shared requests.Session for connection reuse; no provider toggle needed.
-
     # ------------------------------ HTTP helpers ------------------------------
 
-    def _get_with_retry(
+    @asynccontextmanager
+    async def _get_with_retry(
         self,
-        url: str,
+        provider: dict,
+        url: str | None = None,
         *,
-        headers: Dict[str, str],
-        params: Optional[Dict[str, Any]] = None,
-        timeout: int = DEFAULT_TIMEOUT,
-    ) -> requests.Response:
-        """Perform GET using a Session configured with urllib3 automatic retries.
+        params: dict[str, Any] | None = None,
+        timeout: int | None = None
+    ) -> AsyncIterator[aiohttp.ClientResponse]:
+        base_url, api_key = self._get_config(provider)
+        headers = self._headers(api_key)
+        url = url or base_url
 
-        Retries/backoff/status handling are managed by HTTPAdapter/Retry.
-        """
-        return self._session.get(url, headers=headers, params=params, timeout=timeout)
+        session = await self.http_session()
+        last_exc: BaseException | None = None
+
+        http_timeout: aiohttp.ClientTimeout
+        if timeout is not None:
+            http_timeout = aiohttp.ClientTimeout(timeout)
+        else:
+            http_timeout = self.http_timeout
+
+        # urllib3 Retry.total is "number of retries", so attempts = retries + 1
+        for attempt in range(MAX_RETRIES + 1):
+            try:
+                async with session.get(url, headers=headers, params=params, timeout=http_timeout) as response:
+                    if response.status not in RETRY_STATUSES:
+                        # This is a valid response status, return to the caller so they can
+                        # use the response
+                        yield response
+                        return
+                    elif attempt >= MAX_RETRIES:
+                        # Do not retry after final attempt. Yield it so the caller can call
+                        # raise_for_status() and handle the final HTTP error normally.
+                        yield response
+                        return
+
+                    delay = _get_retry_delay(attempt, response.headers.get("Retry-After"))
+                    logger.warning(
+                        "GET %s returned retryable status %s; retrying in %.2fs (attempt %d/%d)",
+                        url,
+                        response.status,
+                        delay,
+                        attempt + 1,
+                        MAX_RETRIES
+                    )
+
+                # Important: sleep after exiting `async with session.get(...)`,
+                # so the retryable response is already released before waiting.
+                await asyncio.sleep(delay)
+
+            except (
+                    aiohttp.ClientConnectionError,
+                    aiohttp.ServerDisconnectedError,
+                    aiohttp.ClientPayloadError,
+                    asyncio.TimeoutError,
+            ) as exc:
+                last_exc = exc
+
+                if attempt >= MAX_RETRIES:
+                    raise
+
+                delay = BACKOFF_BASE * (2 ** attempt)
+                logger.warning(
+                    "GET %s failed with %s; retrying in %.2fs (attempt %d/%d)",
+                    url,
+                    type(exc).__name__,
+                    delay,
+                    attempt + 1,
+                    MAX_RETRIES
+                )
+                await asyncio.sleep(delay)
+
+        if last_exc:
+            raise last_exc
+
+        raise RuntimeError("Unexpected retry loop exit")
 
     # ------------------------------ lifecycle ------------------------------
 
-    def _test(self, provider):
+    async def _test(self, provider: dict) -> None:
         """
         Make a tiny request to validate URL + Authorization.
         """
         # Use the provider passed by the runner; avoid accessing self.config here
         # because self.provider may not be set yet by the framework
-        url, api_key = self._get_config(provider)
-        headers = self._headers(api_key)
         # Small request to validate; reuses retry helper for robustness
-        response = self._get_with_retry(url, headers=headers, timeout=DEFAULT_TIMEOUT)
-        response.raise_for_status()
+        async with self._get_with_retry(provider) as response:
+            response.raise_for_status()
 
     async def _update(self, provider, update) -> Iterable[Iterable[Dict]]:
         """
@@ -159,7 +221,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         else:
             since_iso = ""
 
-        json_items = self._fetch_data(provider, since_iso)
+        json_items = await self._fetch_data(provider, since_iso)
         parsed_items = []
 
         for item in json_items:
@@ -195,10 +257,9 @@ class STTContentAPIService(HTTPFeedingServiceBase):
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
         return [parsed_items]
 
-    def _fetch_data(self, provider, since_iso: str) -> List[Dict]:
+    async def _fetch_data(self, provider: dict, since_iso: str) -> list[dict]:
         logger.debug("Fetching data from Content API ...")
         url, api_key = self._get_config(provider)
-        headers = self._headers(api_key)
 
         logger.info(
             "Starting Content API fetch from %s (since: %s)",
@@ -217,11 +278,10 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 if since_param and since_iso:
                     params[since_param] = since_iso
 
-                response = self._get_with_retry(
-                    url, params=params, headers=headers, timeout=DEFAULT_TIMEOUT
-                )
-                response.raise_for_status()
-                data = self._safe_json(response, provider)
+                async with self._get_with_retry(provider, params=params) as response:
+                    response.raise_for_status()
+                    data = await self._safe_json(response, provider)
+
                 batch = self._extract_batch(data)
                 if not batch:
                     break
@@ -238,13 +298,13 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 raise IngestApiError.apiGeneralError(ex, provider)
         return all_items
 
-    def _safe_json(self, response, provider) -> Any:
+    async def _safe_json(self, response: aiohttp.ClientResponse, provider: dict) -> dict:
         try:
-            return response.json() or {}
+            return await response.json() or {}
         except Exception as ex:
             logger.error(
                 "Failed to parse JSON from Content API (status: %d, content-type: %s)",
-                response.status_code,
+                response.status,
                 response.headers.get("content-type", "unknown"),
             )
             parse_error = Exception(f"JSON parse error: {ex}")

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import asyncio
 import inspect
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List
 from typing_extensions import override
 from urllib.parse import quote
-import aiohttp
 from yarl import URL
 from superdesk.io.registry import register_feeding_service
 from .stt_content_api import STTContentAPIService as BaseSTTContentAPIService
@@ -147,7 +145,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         parsed_items = [it for it in parsed_items if isinstance(it, dict)]
         return [parsed_items]
 
-    def _fetch_tt_data(self, provider, update) -> List[Dict]:
+    async def _fetch_tt_data(self, provider, update) -> List[Dict]:
         """
         Fetch all items from TT Content API with pagination.
         Uses `s` (page size) and `fr` (offset) according to docs, and the
@@ -160,7 +158,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
           - since_minutes: int fallback lookback (default 1440)
         """
         url, api_key = self._get_config(provider)
-        headers = self._headers(api_key)
 
         config = provider.get("config", {})
         page_size = int(config.get("page_size", 50))
@@ -208,11 +205,11 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
                 page_url = page_url.replace(f"trs={trs_value}", f"trs={encoded_trs}", 1)
 
             # Use base class HTTP retry infrastructure
-            response = self._get_with_retry(page_url, headers=headers, timeout=timeout)
-            response.raise_for_status()
+            async with self._get_with_retry(provider, page_url, timeout=timeout) as response:
+                response.raise_for_status()
 
-            # Use base class JSON parsing with error handling
-            data = self._safe_json(response, provider)
+                # Use base class JSON parsing with error handling
+                data = self._safe_json(response, provider)
 
             if total is None and isinstance(data, dict):
                 # `total` may not always be present; handle gracefully
@@ -251,111 +248,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
             return hits
         else:
             return []
-
-    async def _afetch_tt_data(self, provider, update) -> List[Dict]:
-        """
-        Async fetch all items from TT Content API with pagination using aiohttp.
-        Handles retries per page, returns list of dict items only.
-        """
-        url, api_key = self._get_config(provider)
-        headers = self._headers(api_key)
-
-        config = provider.get("config", {})
-        page_size = int(config.get("page_size", 50))
-        max_pages = int(config.get("max_pages", 200))
-        timeout = int(config.get("timeout", 60))
-
-        trs_value: str | None = None
-        last_updated_str = None
-        if isinstance(update, dict):
-            last_updated_str = update.get("last_updated") or update.get("last_update")
-        dt_from: datetime | None = None
-        if isinstance(last_updated_str, str):
-            try:
-                dt_from = datetime.fromisoformat(
-                    last_updated_str.replace("Z", "+00:00")
-                )
-            except Exception:
-                dt_from = None
-        if dt_from is None:
-            minutes = int(config.get("since_minutes", 1440))
-            dt_from = datetime.now(timezone.utc) - timedelta(minutes=minutes)
-        dt_from = dt_from.astimezone(timezone.utc).replace(microsecond=0)
-        trs_value = dt_from.strftime("%Y-%m-%d")
-
-        base = URL(url)
-        qs = dict(base.query)
-
-        items: List[Dict] = []
-        offset = 0
-        total = None
-        no_more_results = False
-
-        session_timeout = aiohttp.ClientTimeout(total=timeout)
-        async with aiohttp.ClientSession(timeout=session_timeout) as session:
-            for page in range(max_pages):
-                qs.update({"s": str(page_size), "fr": str(offset)})
-                if trs_value:
-                    qs["trs"] = trs_value
-                page_url = str(base.with_query(qs))
-                if trs_value:
-                    encoded_trs = quote(trs_value, safe="")
-                    page_url = page_url.replace(
-                        f"trs={trs_value}", f"trs={encoded_trs}", 1
-                    )
-                attempt = 0
-                while attempt < 3:
-                    try:
-                        async with session.get(page_url, headers=headers) as resp:
-                            if resp.status >= 400:
-                                raise aiohttp.ClientResponseError(
-                                    resp.request_info,
-                                    resp.history,
-                                    status=resp.status,
-                                    message=await resp.text(),
-                                    headers=resp.headers,
-                                )
-                            try:
-                                data: Any = await resp.json(content_type=None)
-                            except Exception as ex:
-                                # Unexpected JSON error: abort pagination
-                                raise ParserError.parseMessageError(
-                                    ex, provider, data=None
-                                )
-
-                            if total is None and isinstance(data, dict):
-                                total = data.get("total")
-
-                            batch = self._extract_tt_items_from_response(data)
-                            if isinstance(batch, list) and batch:
-                                items.extend(
-                                    [it for it in batch if isinstance(it, dict)]
-                                )
-                                # Successful fetch for this page -> break retry loop
-                                break
-                            else:
-                                # No more results; stop paginating after current page
-                                no_more_results = True
-                                break
-
-                    except aiohttp.ClientResponseError as ex:
-                        attempt += 1
-                        if attempt >= 3:
-                            # Retries exhausted for HTTP error -> surface as parser error
-                            raise ParserError.parseMessageError(ex, provider, data=None)
-                        await asyncio.sleep(2 ** (attempt - 1))
-
-                    except Exception as ex:
-                        # Any other unexpected exception: abort immediately
-                        raise ParserError.parseMessageError(ex, provider, data=None)
-
-                if no_more_results:
-                    break
-
-                offset += page_size
-                if isinstance(total, int) and offset >= total:
-                    break
-        return [it for it in items if isinstance(it, dict)]
 
 
 register_feeding_service(STTTTContentAPIService)
