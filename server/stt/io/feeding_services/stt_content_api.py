@@ -263,7 +263,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
     async def _fetch_data(self, provider: dict, since_iso: str) -> list[dict]:
         logger.debug("Fetching data from Content API ...")
-        url, api_key = self._get_config(provider)
+        url, _ = self._get_config(provider)
 
         logger.info(
             "Starting Content API fetch from %s (since: %s)",

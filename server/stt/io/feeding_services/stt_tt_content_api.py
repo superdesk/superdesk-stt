@@ -105,7 +105,6 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
         TT-specific update that fetches all pages and yields parsed dict items.
         Async to match the base class contract.
         """
-        # Reuse the synchronous fetch logic so legacy patches in tests keep working.
         json_items = await self._fetch_tt_data(provider, update)
         if not isinstance(json_items, list):
             json_items = [json_items]
@@ -157,7 +156,7 @@ class STTTTContentAPIService(BaseSTTContentAPIService):
           - timeout: int per-request timeout (default 60)
           - since_minutes: int fallback lookback (default 1440)
         """
-        url, api_key = self._get_config(provider)
+        url, _ = self._get_config(provider)
 
         config = provider.get("config", {})
         page_size = int(config.get("page_size", 50))
