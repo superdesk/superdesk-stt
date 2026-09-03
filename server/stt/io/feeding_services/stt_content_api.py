@@ -304,9 +304,10 @@ class STTContentAPIService(HTTPFeedingServiceBase):
 
     async def _safe_json(
         self, response: aiohttp.ClientResponse, provider: dict
-    ) -> dict:
+    ) -> Any:
         try:
-            return await response.json() or {}
+            data = await response.json()
+            return data if data is not None else {}
         except Exception as ex:
             logger.error(
                 "Failed to parse JSON from Content API (status: %d, content-type: %s)",
