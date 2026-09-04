@@ -1,13 +1,13 @@
 import os
 from unittest.mock import patch
-from flask import json
 
-import responses
-from responses import matchers
+from yarl import URL
+from flask import json
 
 from tests import TestCase
 from stt.io.feeding_services.stt_content_api import STTContentAPIService
 from stt.io.feed_parsers.stt_parse_content_api import ContentAPIItemParser
+from superdesk.tests.http_mocks import mock_http
 
 
 def fixture(filename):
@@ -33,10 +33,11 @@ class STTContentAPITestCase(TestCase):
         else:
             self.item = {}
 
-    def setUp(self):
-        super().setUp()
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
         self.service = STTContentAPIService()
         self.parser = ContentAPIItemParser()
+        self.http_mock = mock_http(self)
 
     def test_instance(self):
         """Test service instance creation and basic properties."""
@@ -74,22 +75,21 @@ class STTContentAPITestCase(TestCase):
 
         self.assertEqual({"page": 5}, params)
 
-    def test_config_validation(self):
+    async def test_config_validation(self):
         """Test configuration validation in _test method."""
         # Test missing URL
         provider = {"config": {"api_key": "test"}}
 
         with self.assertRaises(Exception):
-            self.service._test(provider)
+            await self.service._test(provider)
 
         # Test missing API key
         provider = {"config": {"url": "https://example.com"}}
 
         with self.assertRaises(Exception):
-            self.service._test(provider)
+            await self.service._test(provider)
 
-    @responses.activate
-    def test_fetch_data_single_page(self):
+    async def test_fetch_data_single_page(self):
         """Test _fetch_data with single page response using fixture data."""
         # Use first 2 items from fixture for testing
         test_items = self.fixture_data["_items"][:2]
@@ -99,24 +99,22 @@ class STTContentAPITestCase(TestCase):
             "_meta": {"total": 2},
         }
         url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            url,
-            json=mock_response_data,
-            status=200,
-            match=[matchers.query_param_matcher({"page": "1"})],
-        )
+        # self.http_mock.get(re.compile(rf"^{url}(\?.*)?$"), status=200, payload=mock_response_data)
+        self.http_mock.get(f"{url}?page=1", status=200, payload=mock_response_data)
         provider = {
             "config": {
                 "url": url,
                 "api_key": "Bearer TEST_TOKEN",
             }
         }
-        items = self.service._fetch_data(provider, "2024-01-01T00:00:00Z")
+        items = await self.service._fetch_data(provider, "2024-01-01T00:00:00Z")
+
         # Verify a single request was made
-        self.assertEqual(1, len(responses.calls))
+        mocked_requests = self.http_mock.requests[("GET", URL(f"{url}?page=1"))]
+        self.assertEqual(1, len(mocked_requests))
+
         # Verify headers
-        req_headers = responses.calls[0].request.headers
+        req_headers = mocked_requests[0].kwargs.get("headers", {})
         self.assertEqual("Bearer TEST_TOKEN", req_headers.get("Authorization"))
         self.assertEqual("application/json", req_headers.get("Accept"))
         # Verify items returned
@@ -124,35 +122,30 @@ class STTContentAPITestCase(TestCase):
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
         self.assertEqual(test_items[1]["uri"], items[1]["uri"])
 
-    @responses.activate
-    def test_fetch_data_pagination(self):
+    async def test_fetch_data_pagination(self):
         """Test _fetch_data with multiple pages using fixture data."""
         # Split fixture items across two pages
         all_items = self.fixture_data["_items"][:4]
         page1_items = all_items[:2]
         page2_items = all_items[2:4]
         base_url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            base_url,
-            json={
+        self.http_mock.get(
+            f"{base_url}?page=1",
+            status=200,
+            payload={
                 "_items": page1_items,
                 "_links": {"next": {"href": "/contentapi/items?page=2"}},
                 "_meta": {"total": 4},
             },
-            status=200,
-            match=[matchers.query_param_matcher({"page": "1"})],
         )
-        responses.add(
-            responses.GET,
-            base_url,
-            json={
+        self.http_mock.get(
+            f"{base_url}?page=2",
+            status=200,
+            payload={
                 "_items": page2_items,
                 "_links": {},
                 "_meta": {"total": 4},
             },
-            status=200,
-            match=[matchers.query_param_matcher({"page": "2"})],
         )
         provider = {
             "config": {
@@ -160,20 +153,22 @@ class STTContentAPITestCase(TestCase):
                 "api_key": "test_token",  # Test without Bearer prefix
             }
         }
-        items = self.service._fetch_data(provider, "")
-        self.assertEqual(2, len(responses.calls))
-        # Check Authorization header on first call
-        self.assertEqual(
-            "Bearer test_token", responses.calls[0].request.headers.get("Authorization")
+        items = await self.service._fetch_data(provider, "")
+
+        mocked_requests = (
+            self.http_mock.requests[("GET", URL(f"{base_url}?page=1"))]
+            + self.http_mock.requests[("GET", URL(f"{base_url}?page=2"))]
         )
+        self.assertEqual(2, len(mocked_requests))
+        req_headers = mocked_requests[0].kwargs.get("headers", {})
+        self.assertEqual("Bearer test_token", req_headers.get("Authorization"))
         # Should return all items
         self.assertEqual(4, len(items))
         self.assertEqual(
             [item["uri"] for item in all_items], [item["uri"] for item in items]
         )
 
-    @responses.activate
-    def test_fetch_data_different_response_formats(self):
+    async def test_fetch_data_different_response_formats(self):
         """Test _fetch_data handles various API response formats: _items, items, results, docs, direct array, and fallback."""
         test_items = self.fixture_data["_items"][:2]
 
@@ -191,14 +186,11 @@ class STTContentAPITestCase(TestCase):
 
         for i, response_format in enumerate(formats):
             with self.subTest(format_index=i):
-                responses.reset()
+                self.http_mock.clear()
+                self.http_mock.requests.clear()
                 base_url = "https://api.example.com/contentapi/items"
-                responses.add(
-                    responses.GET,
-                    base_url,
-                    json=response_format,
-                    status=200,
-                    match=[matchers.query_param_matcher({"page": "1"})],
+                self.http_mock.get(
+                    f"{base_url}?page=1", status=200, payload=response_format
                 )
                 provider = {
                     "config": {
@@ -206,35 +198,34 @@ class STTContentAPITestCase(TestCase):
                         "api_key": "Bearer test_token",
                     }
                 }
-                items = self.service._fetch_data(provider, "")
-                self.assertEqual(1, len(responses.calls))
+                items = await self.service._fetch_data(provider, "")
+                self.assertEqual(
+                    1, len(self.http_mock.requests[("GET", URL(f"{base_url}?page=1"))])
+                )
                 self.assertEqual(2, len(items))
                 self.assertEqual(test_items[0]["uri"], items[0]["uri"])
                 self.assertEqual(test_items[1]["uri"], items[1]["uri"])
 
         # Test fallback format (extracts all dict values from object)
-        responses.reset()
+        self.http_mock.clear()
+        self.http_mock.requests.clear()
         fallback_response = {
             "item1": test_items[0],
             "item2": test_items[1],
             "metadata": {"source": "test", "count": 2},
         }
         base_url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            base_url,
-            json=fallback_response,
-            status=200,
-            match=[responses.matchers.query_param_matcher({"page": "1"})],
-        )
+        self.http_mock.get(f"{base_url}?page=1", status=200, payload=fallback_response)
         provider = {
             "config": {
                 "url": base_url,
                 "api_key": "Bearer test_token",
             }
         }
-        items = self.service._fetch_data(provider, "")
-        self.assertEqual(1, len(responses.calls))
+        items = await self.service._fetch_data(provider, "")
+        self.assertEqual(
+            1, len(self.http_mock.requests[("GET", URL(f"{base_url}?page=1"))])
+        )
         # Should extract ALL dict values (item1, item2, metadata)
         self.assertEqual(3, len(items))
         # Verify test items are included
@@ -242,39 +233,25 @@ class STTContentAPITestCase(TestCase):
         expected_uris = {test_items[0]["uri"], test_items[1]["uri"]}
         self.assertEqual(expected_uris, item_uris)
 
-    @responses.activate
-    def test_fetch_data_list_response(self):
+    async def test_fetch_data_list_response(self):
         """Test _fetch_data with direct list response."""
         test_items = self.fixture_data["_items"][:2]
         url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            url,
-            json=test_items,
-            status=200,
-            match=[matchers.query_param_matcher({"page": "1"})],
-        )
+        self.http_mock.get(f"{url}?page=1", status=200, payload=test_items)
         provider = {
             "config": {
                 "url": url,
                 "api_key": "Bearer TOKEN123",
             }
         }
-        items = self.service._fetch_data(provider, "")
+        items = await self.service._fetch_data(provider, "")
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
-    @responses.activate
-    def test_fetch_data_error_handling(self):
+    async def test_fetch_data_error_handling(self):
         """Test error handling in _fetch_data."""
         url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            url,
-            json={},
-            status=404,
-            match=[matchers.query_param_matcher({"page": "1"})],
-        )
+        self.http_mock.get(f"{url}?page=1", status=404, payload={})
         provider = {
             "config": {
                 "url": url,
@@ -282,7 +259,7 @@ class STTContentAPITestCase(TestCase):
             }
         }
         with self.assertRaises(Exception):
-            self.service._fetch_data(provider, "")
+            await self.service._fetch_data(provider, "")
 
     async def test_parser_with_fixture_data(self):
         """Test parser with real fixture data."""
@@ -389,19 +366,12 @@ class STTContentAPITestCase(TestCase):
             self.assertEqual("usable", parsed_item["pubstatus"])
             self.assertEqual(test_items[i]["uri"], parsed_item["uri"])
 
-    @responses.activate
     async def test_update_with_parser_integration(self):
         """Test _update method with parser integration using fixture data."""
         test_items = self.fixture_data["_items"][:2]
         mock_response_data = {"_items": test_items, "_links": {}}
         url = "https://api.example.com/contentapi/items"
-        responses.add(
-            responses.GET,
-            url,
-            json=mock_response_data,
-            status=200,
-            match=[matchers.query_param_matcher({"page": "1"})],
-        )
+        self.http_mock.get(f"{url}?page=1", status=200, payload=mock_response_data)
 
         # Mock the parser to avoid full Superdesk infrastructure requirements
         def mock_get_feed_parser(provider, item=None):

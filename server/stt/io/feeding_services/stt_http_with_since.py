@@ -3,7 +3,6 @@ import inspect
 import json
 import os
 import logging
-import requests
 from tempfile import NamedTemporaryFile
 from typing import Any, Dict, List, Optional
 
@@ -107,10 +106,21 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
         IngestApiError.apiGeneralError().get_error_description(),
     ]
 
-    session = None
     auth_token = None
 
     # Parser is bound via registry to NinJS (see registration at bottom of file)
+
+    async def get_auth_header(self):
+        if not self.auth_token:
+            raise IngestApiError(
+                "MISSING_AUTH_TOKEN",
+                "Auth token is required but not set in provider configuration.",
+            )
+
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json",
+        }
 
     async def _update(self, provider, update):
         """Fetch and parse a provider update, yielding a single batch of NinJS items.
@@ -138,18 +148,15 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
         # Pick up the auth token from the provider configuration for this run
         self.auth_token = provider.get("config", {}).get("auth_token")
-        if not self.auth_token:
-            raise IngestApiError(
-                "MISSING_AUTH_TOKEN",
-                "Auth token is required but not set in provider configuration.",
-            )
         parser = await self.get_feed_parser(provider)
-        items = []
-        self.session = requests.Session()
-        response = self.fetch(provider, update)
+        url = self._build_url(provider)
+        logger.info("Fetching URL: {}".format(url))
+
+        async with self.get_url(url) as response:
+            response.raise_for_status()
+            content = await response.read()
 
         # Parse by feeding one item at a time to the NinJS parser
-        content = response.content or b""
         items = await self._parse_items_via_ninjs(parser, content, provider)
 
         if isinstance(items, list):
@@ -189,42 +196,6 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
             since = datetime.datetime.now(datetime.timezone.utc)
         sep = "&" if "?" in base else "?"
         return f"{base}{sep}since={since.isoformat().replace('+00:00', 'Z')}"
-
-    def fetch(self, provider, update):
-        """
-        Fetch data from the provider endpoint using an authenticated GET request.
-
-        Builds the request URL from the provided provider configuration, attaches a Bearer
-        token from self.auth_token, and issues the request using self.session. Logs the
-        target URL at WARNING level. The response status is validated via raise_for_status(),
-        and the full requests.Response object is returned so callers can access .content,
-        .json(), headers, etc.
-
-        Args:
-            provider (Mapping[str, Any]): Provider configuration. If 'timeout' (seconds)
-                is provided, it overrides the request timeout (default: 30).
-            update (Any): Unused placeholder to conform to the feeder interface.
-
-        Returns:
-            requests.Response: The HTTP response object from the provider.
-
-        Raises:
-            requests.exceptions.HTTPError: If the HTTP response indicates an error status.
-            requests.exceptions.RequestException: For network-related errors, including
-                timeouts and connection issues.
-        """
-        url = self._build_url(provider)
-        logger.info("Fetching URL: {}".format(url))
-        headers = {
-            "Authorization": f"Bearer {self.auth_token}",
-            "Content-Type": "application/json",
-        }
-        resp = self.session.get(
-            url, headers=headers, timeout=provider.get("timeout", 30)
-        )
-        resp.raise_for_status()
-        # return the full Response so callers can access .content as needed
-        return resp
 
     async def _parse_items_via_ninjs(self, parser, content: bytes, provider):
         """Pass a single item at a time to the NinJS parser.
