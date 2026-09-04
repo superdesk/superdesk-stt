@@ -302,9 +302,7 @@ class STTContentAPIService(HTTPFeedingServiceBase):
                 raise IngestApiError.apiGeneralError(ex, provider)
         return all_items
 
-    async def _safe_json(
-        self, response: aiohttp.ClientResponse, provider: dict
-    ) -> Any:
+    async def _safe_json(self, response: aiohttp.ClientResponse, provider: dict) -> Any:
         try:
             data = await response.json()
             return data if data is not None else {}
