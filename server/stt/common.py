@@ -19,6 +19,30 @@ from planning.planning.planning_spike import process_spike_planning_item
 logger = logging.getLogger(__name__)
 
 
+def location_has_changes(existing: Dict[str, Any], incoming: Dict[str, Any]) -> bool:
+    """Return True when the incoming location differs from the stored one.
+
+    Missing keys in the incoming payload are treated as no change, so sparse
+    updates do not trigger a needless write when only metadata like ``qcode`` is
+    added by the upsert layer itself.
+    """
+
+    for key, incoming_value in incoming.items():
+        if key not in existing:
+            continue
+
+        existing_value = existing[key]
+        if isinstance(existing_value, dict) and isinstance(incoming_value, dict):
+            if location_has_changes(existing_value, incoming_value):
+                return True
+            continue
+
+        if existing_value != incoming_value:
+            return True
+
+    return False
+
+
 async def upsert_location(
     location: Dict[str, Any], custom_guid: str
 ) -> Optional[Dict[str, Any]]:
@@ -40,7 +64,7 @@ async def upsert_location(
 
     if existing_location:
         updated_location = {**existing_location, **location}
-        if updated_location != existing_location:
+        if location_has_changes(existing_location, updated_location):
             await locations_service.update_async(
                 existing_location["_id"], updated_location, existing_location
             )
