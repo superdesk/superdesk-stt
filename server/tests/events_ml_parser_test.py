@@ -261,3 +261,22 @@ class STTEventsMLParserContactInfoTest(TestCase):
         )
         self.assertIn("qcode", location)
         self.assertEqual(location["qcode"], guid)
+
+    async def test_location_reingest_is_a_no_op_when_unchanged(self):
+        # Ingest once to create the location in the DB
+        await self.parse_source_content()
+        guid = self.item["location"][0]["guid"]
+
+        locations_service = get_resource_service("locations")
+        stored = locations_service.find_one(req=None, guid=guid)
+        self.assertIsNotNone(stored)
+        etag_before = stored["_etag"]
+        updated_before = stored["_updated"]
+
+        # Re-ingesting the exact same content must not raise (mongo would reject an
+        # update where nothing actually changed) and must not perform a write.
+        await self.parse_source_content()
+
+        stored_after = locations_service.find_one(req=None, guid=guid)
+        self.assertEqual(stored_after["_etag"], etag_before)
+        self.assertEqual(stored_after["_updated"], updated_before)

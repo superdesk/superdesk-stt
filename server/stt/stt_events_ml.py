@@ -18,6 +18,7 @@ from .common import (
     unpost_or_spike_event_or_planning,
     remove_date_portion_from_id,
     original_item_exists,
+    upsert_location,
 )
 
 logger = logging.getLogger(__name__)
@@ -301,44 +302,20 @@ class STTEventsMLParser(STTParserMixin, EventsMLParser):
                 pass
 
         # Save location to database if it doesn't exist
-        locations_service = get_resource_service("locations")
-        if locations_service is not None:
-            try:
-                stt_id = (
-                    location.get("address", {}).get("extra", {}).get("sttlocationalias")
-                )
+        try:
+            stt_id = (
+                location.get("address", {}).get("extra", {}).get("sttlocationalias")
+            )
 
-                if stt_id:
-                    custom_guid = f"urn:stt:location:{stt_id}"
-                    location["qcode"] = custom_guid
-                    existing_location = await locations_service.find_one_async(
-                        req=None, guid=custom_guid
-                    )
+            if stt_id:
+                custom_guid = f"urn:stt:location:{stt_id}"
+                saved_location = await upsert_location(location, custom_guid)
+                item["location"] = [saved_location] if saved_location else [location]
+            else:
+                item["location"] = [location]
 
-                    if existing_location:
-                        updated_location = {**existing_location, **location}
-                        location_id = existing_location["_id"]
-                        await locations_service.update_async(
-                            location_id, updated_location, existing_location
-                        )
-                        saved_location = await locations_service.find_one_async(
-                            req=None, _id=location_id
-                        )
-                        saved_location["qcode"] = custom_guid
-                    else:
-                        location["guid"] = custom_guid
-                        location_ids = await locations_service.post_async([location])
-                        saved_location = await locations_service.find_one_async(
-                            req=None, _id=location_ids[0]
-                        )
-                        if saved_location:
-                            saved_location["qcode"] = custom_guid
-                    item["location"] = [saved_location]
-                else:
-                    item["location"] = [location]
-
-            except AttributeError:
-                pass
+        except AttributeError:
+            pass
 
     async def set_contact_details(self, item: Dict[str, Any], event_details: Element):
         for contact_info in event_details.findall(self.qname("contactInfo")):

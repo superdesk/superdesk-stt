@@ -251,6 +251,15 @@ module.exports = function (grunt) {
             {fieldId: 'state'},
           ],
         },
+        // Cards for linked planning items in the Event and Assignment previews
+        card_view: {
+          firstLine: [
+            {fieldId: 'priority', position: 'start', fieldOptions: {hideLabel: true}},
+            {fieldId: 'slugline', position: 'start'},
+            {fieldId: 'internalnote', position: 'start'},
+            {fieldId: 'coverages', position: 'end'},
+          ],
+        },
       },
       event_list_item: {
         firstLine: [
@@ -290,6 +299,16 @@ module.exports = function (grunt) {
             {fieldId: 'event_datetime', position: 'start'},
             {fieldId: 'name', position: 'start'},
             {fieldId: 'state', position: 'end'},
+          ],
+        },
+        // Cards for linked events in the Planning and Assignment previews
+        card_view: {
+          firstLine: [
+            {fieldId: 'event_datetime', position: 'start'},
+            {fieldId: 'name', position: 'start'},
+          ],
+          secondLine: [
+            {fieldId: 'location', position: 'start'},
           ],
         },
       },

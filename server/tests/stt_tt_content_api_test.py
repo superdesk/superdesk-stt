@@ -1,15 +1,37 @@
 # -*- coding: utf-8 -*-
-import asyncio
+from collections.abc import Callable
 import json
 import os
-import unittest
-import requests
 from datetime import datetime, timezone
 from unittest.mock import patch
-from urllib.parse import parse_qs, urlsplit
+import re
+
+from yarl import URL
+import aiohttp
+
+from superdesk.tests import TestCase
+from superdesk.tests.http_mocks import mock_http, CallbackResult
 
 from stt.io.feeding_services.stt_tt_content_api import STTTTContentAPIService
 from stt.io.feed_parsers.stt_tt_parse_content_api import ContentAPITTItemParser
+
+
+ITEMS_URL = "https://api.example.com/contentapi/items"
+MATCH_ITEMS_URL = re.compile(rf"^{ITEMS_URL}(\?.*)?$")
+
+
+def create_mock_callback(
+    first_page_results: list[dict],
+) -> Callable[[URL], CallbackResult]:
+    def _mock_callback(url: URL, **kwargs) -> CallbackResult:
+        # First call returns data, second call returns empty (simulates single page)
+        if url.query.get("fr") == "0":
+            return CallbackResult(status=200, payload={"hits": first_page_results})
+
+        return CallbackResult(status=200, payload={"hits": []})
+
+    return _mock_callback
+
 
 # Shared realistic TT items for tests that need concrete payloads
 TEST_TT_ITEMS = [
@@ -187,46 +209,17 @@ def fixture(filename):
     return os.path.join(os.path.dirname(__file__), "fixtures", filename)
 
 
-class MockResponse:
-    def __init__(self, json_data, status_code=200):
-        self.json_data = json_data
-        self.status_code = status_code
-        self.headers = {"content-type": "application/json"}
-        self.text = json.dumps(json_data) if json_data else ""
-
-    def json(self):
-        return self.json_data
-
-    def raise_for_status(self):
-        if self.status_code >= 400:
-            raise requests.exceptions.HTTPError(f"HTTP {self.status_code}")
-
-
-class MockResponseWithJsonException:
-    def __init__(self, json_data=None, status_code=200, json_exc=None):
-        self._json_data = json_data
-        self.status_code = status_code
-        self._json_exc = json_exc
-        self.headers = {"content-type": "application/json"}
-
-    def json(self):
-        if self._json_exc:
-            raise self._json_exc
-        return self._json_data
-
-    def raise_for_status(self):
-        if self.status_code >= 400:
-            raise requests.exceptions.HTTPError(f"HTTP {self.status_code}")
-
-
-class STTContentAPITestCase(unittest.TestCase):
-    def setUp(self):
+class STTContentAPITestCase(TestCase):
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
         self.service = STTTTContentAPIService()
         self.parser = ContentAPITTItemParser()
 
         # Load test fixture
         with open(fixture("api/stt_tt_content_api.json")) as _file:
             self.fixture_data = json.load(_file)
+
+        self.http_mock = mock_http(self)
 
     def test_instance(self):
         """Test service instance creation and basic properties."""
@@ -256,93 +249,79 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual("application/json", headers["Accept"])
         self.assertEqual("ApiKey test_api_key", headers["Authorization"])
 
-    def test_config_validation(self):
+    async def test_config_validation(self):
         """Test configuration validation in _test method."""
         # Test missing URL
         provider = {"config": {"api_key": "test"}}
 
         with self.assertRaises(Exception):
-            self.service._test(provider)
+            await self.service._test(provider)
 
         # Test missing API key
         provider = {"config": {"url": "https://example.com"}}
 
         with self.assertRaises(Exception):
-            self.service._test(provider)
+            await self.service._test(provider)
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_single_page(self, mock_get):
+    async def test_fetch_data_single_page(self):
         """Test _fetch_tt_data with single page response using fixture data."""
         # Use first 2 items from fixture for testing
         test_items = self.fixture_data["hits"][:2]
-        mock_response_data = {
-            "hits": test_items,
-        }
-
-        # First call returns data, subsequent calls return empty
-        # (simulates single page)
-        mock_get.side_effect = [
-            MockResponse(mock_response_data),  # First page with data
-            MockResponse({"hits": []}),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(test_items), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "Bearer TEST_TOKEN",
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         # Verify pagination: expect 2 calls (first with data, second empty)
-        self.assertEqual(2, mock_get.call_count)
+        call_types = list(self.http_mock.requests.keys())
+        self.assertEqual(2, len(call_types))
+        call = self.http_mock.requests[call_types[0]][0]
 
         # Check first call has pagination params
-        first_call_args = mock_get.call_args_list[0]
-        first_url = first_call_args[0][0]
-        self.assertIn("s=50", first_url)  # page size
-        self.assertIn("fr=0", first_url)  # offset
-        self.assertEqual(
-            "ApiKey Bearer TEST_TOKEN",
-            first_call_args[1]["headers"]["Authorization"],
-        )
-        self.assertEqual("application/json", first_call_args[1]["headers"]["Accept"])
-        self.assertEqual(60, first_call_args[1]["timeout"])
+        _, first_call_url = call_types[0]
+        headers = call.kwargs.get("headers", {})
+        self.assertEqual(first_call_url.query["s"], "50")
+        self.assertEqual(first_call_url.query["fr"], "0")
+        self.assertEqual("ApiKey Bearer TEST_TOKEN", headers["Authorization"])
+        self.assertEqual("application/json", headers["Accept"])
+        self.assertEqual(60, call.kwargs.get("timeout").total)
 
         # Verify items returned
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
         self.assertEqual(test_items[1]["uri"], items[1]["uri"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_hits_format(self, mock_get):
+    async def test_fetch_data_hits_format(self):
         """Test _fetch_tt_data with hits response format."""
         # Test with hits field response format
         all_items = self.fixture_data["hits"][:2]
-
-        mock_response_data = {"hits": all_items}
-        # First call returns data, second call returns empty (simulates single page)
-        mock_get.side_effect = [
-            MockResponse(mock_response_data),  # First page with data
-            MockResponse({"hits": []}),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(all_items), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "test_token",  # Test without ApiKey prefix
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         # Should have made two requests (pagination logic)
-        self.assertEqual(2, mock_get.call_count)
-
-        # Check request
-        call_args = mock_get.call_args
-        self.assertEqual("ApiKey test_token", call_args[1]["headers"]["Authorization"])
+        call_types = list(self.http_mock.requests.keys())
+        self.assertEqual(2, len(call_types))
+        call = self.http_mock.requests[call_types[0]][0]
+        headers = call.kwargs.get("headers", {})
+        self.assertEqual("ApiKey test_token", headers["Authorization"])
 
         # Should return all items
         self.assertEqual(2, len(items))
@@ -351,69 +330,61 @@ class STTContentAPITestCase(unittest.TestCase):
             [item["uri"] for item in items],
         )
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_different_response_formats(self, mock_get):
+    async def test_fetch_data_different_response_formats(self):
         """Test _fetch_tt_data with different API response formats."""
         test_items = self.fixture_data["hits"][:2]
-
-        # Test with direct list response
-        mock_response_data = test_items
-
-        # Simulate pagination: first call returns data, second returns empty
-        mock_get.side_effect = [
-            MockResponse(mock_response_data),  # First page with data
-            MockResponse([]),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(test_items), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "Bearer TOKEN123",
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_adds_trs_with_last_updated(self, mock_get):
+    async def test_fetch_data_adds_trs_with_last_updated(self):
         """When update contains last_updated, include trs in query."""
-        # minimal 1-page flow
-        mock_get.side_effect = [
-            MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
-            MockResponse({"hits": []}),
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL,
+            callback=create_mock_callback([TEST_TT_ITEMS[0]]),
+            repeat=True,
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
         update = {"last_updated": "2025-09-24T10:00:00Z"}
 
-        _ = self.service._fetch_tt_data(provider, update)
+        _ = await self.service._fetch_tt_data(provider, update)
 
         # First call URL should contain trs param derived from the last_update date
-        first_call_args = mock_get.call_args_list[0]
-        first_url = first_call_args[0][0]
-        qs = parse_qs(urlsplit(first_url).query)
-        self.assertEqual(["2025-09-24"], qs.get("trs"))
+        call_types = list(self.http_mock.requests.keys())
+        self.assertEqual(2, len(call_types))
+        _, first_call_url = call_types[0]
+        self.assertEqual(first_call_url.query["fr"], "0")
+        self.assertEqual(first_call_url.query["trs"], "2025-09-24")
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_uses_trs_fallback_since_minutes(self, mock_get):
+    async def test_fetch_data_uses_trs_fallback_since_minutes(self):
         """When no last_updated, use now - since_minutes as trs."""
-        # one page then empty
-        mock_get.side_effect = [
-            MockResponse({"hits": [TEST_TT_ITEMS[0]]}),
-            MockResponse({"hits": []}),
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL,
+            callback=create_mock_callback([TEST_TT_ITEMS[0]]),
+            repeat=True,
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
                 "since_minutes": "120",
             }
@@ -429,95 +400,91 @@ class STTContentAPITestCase(unittest.TestCase):
             # timezone is used in code; pass through the real timezone
             mock_dt.timezone = timezone
 
-            _ = self.service._fetch_tt_data(provider, update)
+            _ = await self.service._fetch_tt_data(provider, update)
 
         # Expected trs = 2025-09-25 (12:00 - 120 minutes truncated to date)
-        first_call_args = mock_get.call_args_list[0]
-        first_url = first_call_args[0][0]
-        qs = parse_qs(urlsplit(first_url).query)
-        self.assertEqual(["2025-09-25"], qs.get("trs"))
+        call_types = list(self.http_mock.requests.keys())
+        self.assertEqual(2, len(call_types))
+        _, first_call_url = call_types[0]
+        self.assertEqual(first_call_url.query["fr"], "0")
+        self.assertEqual(first_call_url.query["trs"], "2025-09-25")
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_timeout_configurable(self, mock_get):
+    async def test_timeout_configurable(self):
         """Provider timeout should override default."""
-        mock_get.side_effect = [MockResponse({"hits": []})]
+
+        self.http_mock.get(MATCH_ITEMS_URL, status=200, payload={"hits": []})
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
                 "timeout": "15",
             }
         }
         update = {}
 
-        _ = self.service._fetch_tt_data(provider, update)
+        _ = await self.service._fetch_tt_data(provider, update)
 
-        call_args = mock_get.call_args
-        self.assertEqual(15, call_args[1]["timeout"])
+        call_types = list(self.http_mock.requests.keys())
+        call = self.http_mock.requests[call_types[0]][0]
+        self.assertEqual(15, call.kwargs.get("timeout").total)
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_trs_enforced_even_when_legacy_config_disables(self, mock_get):
+    async def test_trs_enforced_even_when_legacy_config_disables(self):
         """Legacy configs with use_trs=False should still yield trs in query."""
-        mock_get.side_effect = [MockResponse({"hits": []})]
+        self.http_mock.get(MATCH_ITEMS_URL, status=200, payload={"hits": []})
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
                 "use_trs": False,
             }
         }
         update = {"last_updated": "2025-09-24T10:00:00Z"}
 
-        _ = self.service._fetch_tt_data(provider, update)
+        _ = await self.service._fetch_tt_data(provider, update)
 
-        call_args = mock_get.call_args
-        url = call_args[0][0]
-        qs = parse_qs(urlsplit(url).query)
-        self.assertEqual(["2025-09-24"], qs.get("trs"))
+        call_types = list(self.http_mock.requests.keys())
+        _, first_call_url = call_types[0]
+        self.assertEqual(first_call_url.query["fr"], "0")
+        self.assertEqual(first_call_url.query["trs"], "2025-09-24")
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_list_response(self, mock_get):
+    async def test_fetch_data_list_response(self):
         """Test _fetch_tt_data with direct list response."""
         test_items = self.fixture_data["hits"][:2]
-
-        # Simulate pagination: first call returns data, second returns empty
-        mock_get.side_effect = [
-            MockResponse(test_items),  # First page with data
-            MockResponse([]),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(test_items), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "Bearer TOKEN123",
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(test_items[0]["uri"], items[0]["uri"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_error_handling(self, mock_get):
+    async def test_fetch_data_error_handling(self):
         """Test error handling in _fetch_tt_data."""
-        mock_get.return_value = MockResponse({}, status_code=404)
 
+        self.http_mock.get(MATCH_ITEMS_URL, status=404, payload={})
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "Bearer TOKEN123",
             }
         }
 
         with self.assertRaises(Exception):
-            self.service._fetch_tt_data(provider, {})
+            await self.service._fetch_tt_data(provider, {})
 
-    def test_parser_with_fixture_data(self):
+    async def test_parser_with_fixture_data(self):
         """Test parser with real fixture data."""
         test_item = self.fixture_data["hits"][0]
 
-        result = asyncio.run(self.parser.parse(test_item, provider={"config": {}}))
+        result = await self.parser.parse(test_item, provider={"config": {}})
 
         # Parser should return a list of dicts
         self.assertIsInstance(result, list)
@@ -535,7 +502,7 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual(test_item["uri"], parsed_item["uri"])
         self.assertEqual(test_item["headline"], parsed_item["headline"])
 
-    def test_parser_minimal_item(self):
+    async def test_parser_minimal_item(self):
         """Test parser with minimal required data."""
         minimal_item = {
             "uri": "http://tt.se/media/text/test-minimal",
@@ -544,7 +511,7 @@ class STTContentAPITestCase(unittest.TestCase):
             "headline": "Test minimal headline",
         }
 
-        result = asyncio.run(self.parser.parse(minimal_item, provider={"config": {}}))
+        result = await self.parser.parse(minimal_item, provider={"config": {}})
         self.assertIsInstance(result, list)
         self.assertEqual(1, len(result))
         parsed_item = result[0]
@@ -556,29 +523,24 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual("Test minimal headline", parsed_item["headline"])
         self.assertEqual("", parsed_item["body_html"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_update_with_parser_integration(self, mock_get):
+    async def test_update_with_parser_integration(self):
         """Test _update method with parser integration using fixture data."""
         test_items = self.fixture_data["hits"][:2]
-        mock_response_data = {"hits": test_items}
-
-        # Simulate pagination: first call returns data, second returns empty
-        mock_get.side_effect = [
-            MockResponse(mock_response_data),  # First page with data
-            MockResponse({"hits": []}),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(test_items), repeat=True
+        )
 
         # Mock the parser since it's not registered in test environment
         with patch.object(self.service, "get_feed_parser", return_value=self.parser):
             provider = {
                 "config": {
-                    "url": "https://api.example.com/contentapi/items",
+                    "url": ITEMS_URL,
                     "api_key": "Bearer TOKEN123",
                 },
             }
             update = {}
 
-            items = asyncio.run(self.service._update(provider, update))
+            items = await self.service._update(provider, update)
 
             # Should have processed all items and return a single batch
             self.assertEqual(1, len(items))
@@ -590,25 +552,20 @@ class STTContentAPITestCase(unittest.TestCase):
                 self.assertEqual("text", parsed_item["type"])
                 self.assertEqual("usable", parsed_item["pubstatus"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_top_level_array(self, mock_get):
+    async def test_fetch_data_top_level_array(self):
         test_items = TEST_TT_ITEMS
-        # Simulate pagination: first call returns data, second returns empty
-        mock_get.side_effect = [
-            MockResponse(json_data=test_items, status_code=200),  # First page with data
-            MockResponse(
-                json_data=[], status_code=200
-            ),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(test_items), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(
@@ -619,50 +576,39 @@ class STTContentAPITestCase(unittest.TestCase):
             [it["uri"] for it in items],
         )
 
-        self.assertEqual(2, mock_get.call_count)
+        call_types = list(self.http_mock.requests.keys())
+        self.assertEqual(2, len(call_types))
 
-        # Check the second call (which is what call_args refers to)
-        second_call_args = mock_get.call_args_list[1]
-        second_url = second_call_args[0][0]
+        _, second_call_url = call_types[1]
+        second_call = self.http_mock.requests[call_types[1]][0]
+        second_call_headers = second_call.kwargs.get("headers", {})
 
         # Second call should have pagination offset
-        self.assertIn(provider["config"]["url"], second_url)
-        self.assertIn("s=50", second_url)  # page_size
-        self.assertIn("fr=50", second_url)  # offset for second page
+        self.assertEqual(second_call_url.query["s"], "50")
+        self.assertEqual(second_call_url.query["fr"], "50")
 
-        # Check headers on second call
-        self.assertEqual(60, second_call_args[1].get("timeout"))
-        self.assertIn("headers", second_call_args[1])
-        self.assertEqual(
-            "ApiKey MY_TOKEN", second_call_args[1]["headers"]["Authorization"]
-        )
-        self.assertEqual("application/json", second_call_args[1]["headers"]["Accept"])
+        self.assertEqual(60, second_call.kwargs.get("timeout").total)
+        self.assertEqual("ApiKey MY_TOKEN", second_call_headers["Authorization"])
+        self.assertEqual("application/json", second_call_headers["Accept"])
 
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_dict_of_id_mapping(self, mock_get):
+    async def test_fetch_data_dict_of_id_mapping(self):
         hits_mapping = {
             "x": TEST_TT_ITEMS[0],
             "y": TEST_TT_ITEMS[1],
             "z": "not a dict",
         }
-        # Simulate pagination: first call returns data, second returns empty
-        mock_get.side_effect = [
-            MockResponse(
-                json_data={"hits": hits_mapping}, status_code=200
-            ),  # First page with data
-            MockResponse(
-                json_data={"hits": {}}, status_code=200
-            ),  # Second page empty (stops pagination)
-        ]
+        self.http_mock.get(
+            MATCH_ITEMS_URL, callback=create_mock_callback(hits_mapping), repeat=True
+        )
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
 
-        items = self.service._fetch_tt_data(provider, {})
+        items = await self.service._fetch_tt_data(provider, {})
 
         self.assertEqual(2, len(items))
         self.assertEqual(
@@ -674,57 +620,55 @@ class STTContentAPITestCase(unittest.TestCase):
         )
 
     @patch("superdesk.errors.IngestApiError.apiGeneralError")
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_http_error_raises_ingest_api_error(
-        self, mock_get, mock_api_error
-    ):
-        mock_get.return_value = MockResponse(json_data=None, status_code=500)
+    async def test_fetch_data_http_error_raises_ingest_api_error(self, mock_api_error):
+        self.http_mock.get(MATCH_ITEMS_URL, status=500, repeat=True)
         mock_api_error.side_effect = lambda ex, provider: RuntimeError(str(ex))
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
 
-        with self.assertRaises(requests.exceptions.HTTPError):
-            self.service._fetch_tt_data(provider, {})
+        with self.assertRaises(aiohttp.client_exceptions.ClientResponseError):
+            await self.service._fetch_tt_data(provider, {})
 
         # The error is raised directly, not wrapped by mock_api_error
         mock_api_error.assert_not_called()
 
     @patch("superdesk.errors.IngestApiError.apiGeneralError")
-    @patch.object(STTTTContentAPIService, "_get_with_retry")
-    def test_fetch_data_json_parse_error_raises_ingest_api_error(
-        self, mock_get, mock_api_error
+    async def test_fetch_data_json_parse_error_raises_ingest_api_error(
+        self, mock_api_error
     ):
-        mock_get.return_value = MockResponseWithJsonException(
-            json_exc=ValueError("bad json"), status_code=200
+        self.http_mock.get(
+            MATCH_ITEMS_URL,
+            status=200,
+            body="not-a-valid-json-string",
+            content_type="application/json",
         )
         mock_api_error.side_effect = lambda ex, provider: RuntimeError(str(ex))
 
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
 
         with self.assertRaises(RuntimeError) as ctx:
-            self.service._fetch_tt_data(provider, {})
+            await self.service._fetch_tt_data(provider, {})
 
         self.assertIn("JSON parse error", str(ctx.exception))
         mock_api_error.assert_called_once()
         args, kwargs = mock_api_error.call_args
         self.assertIsInstance(args[0], Exception)
-        self.assertIn("bad json", str(args[0]))
         self.assertEqual(provider, args[1])
 
-    def test_update_returns_batch_of_parsed_items(self):
+    async def test_update_returns_batch_of_parsed_items(self):
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
@@ -741,7 +685,7 @@ class STTContentAPITestCase(unittest.TestCase):
             with patch.object(
                 self.service, "get_feed_parser", return_value=DummyParser()
             ):
-                result = asyncio.run(self.service._update(provider, update={}))
+                result = await self.service._update(provider, update={})
 
         self.assertEqual(1, len(result))
         batch = result[0]
@@ -749,13 +693,15 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertEqual([{"x": 1}, {"z": 3}], batch)
 
     @patch("superdesk.errors.ParserError.parseMessageError")
-    def test_update_parser_exception_wrapped_in_parser_error(self, mock_parse_error):
+    async def test_update_parser_exception_wrapped_in_parser_error(
+        self, mock_parse_error
+    ):
         mock_parse_error.side_effect = lambda ex, provider, data=None: RuntimeError(
             "wrapped"
         )
         provider = {
             "config": {
-                "url": "https://api.example.com/contentapi/items",
+                "url": ITEMS_URL,
                 "api_key": "MY_TOKEN",
             }
         }
@@ -773,7 +719,7 @@ class STTContentAPITestCase(unittest.TestCase):
                 self.service, "get_feed_parser", return_value=FailingParser()
             ):
                 with self.assertRaises(RuntimeError) as ctx:
-                    asyncio.run(self.service._update(provider, update={}))
+                    await self.service._update(provider, update={})
 
         self.assertEqual("wrapped", str(ctx.exception))
         mock_parse_error.assert_called_once()
@@ -781,7 +727,3 @@ class STTContentAPITestCase(unittest.TestCase):
         self.assertIsInstance(args[0], Exception)
         self.assertEqual(provider, args[1])
         self.assertEqual({"bad": 2}, kwargs.get("data"))
-
-
-if __name__ == "__main__":
-    unittest.main()

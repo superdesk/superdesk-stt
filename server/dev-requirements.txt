@@ -2,17 +2,17 @@
 
 black==25.12.0
 behave==1.2.6
-mypy==2.3.0
+mypy==2.3.1
 flake8==7.3.0
 pep8==1.7.1
 httmock==1.4.0
 wooper==0.4.4
 pytest==9.1.1
 pytest-asyncio==1.4.0
-responses==0.26.2
+responses==0.26.3
 aioresponses==0.7.9
 requests-mock==1.12.1
-aiomoto[sqs]==0.5.3
+aiomoto[sqs]==0.5.4
 
 types-requests~=2.33.0
 types-python-dateutil~=2.9.0
