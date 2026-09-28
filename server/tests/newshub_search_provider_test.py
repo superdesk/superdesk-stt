@@ -59,6 +59,57 @@ class NewshubSearchProviderTestCase(unittest.TestCase):
         self.assertEqual(extended["firstcreated"].tzinfo, timezone.utc)
         self.assertEqual(extended["versioncreated"].tzinfo, timezone.utc)
 
+    def test_extend_data_item_lowercases_profile(self):
+        item = {"_id": "urn:newsml:stt.fi::12345", "profile": "Nettiuutinen"}
+
+        extended = self.provider.extend_data_item(item)
+
+        self.assertEqual(extended["profile"], "nettiuutinen")
+
+    def test_set_anpa_category_maps_service_code_to_qcode(self):
+        self.provider._get_cv_items = lambda vocabulary_id: [
+            {"qcode": "9", "name": "Politiikka"},
+            {"qcode": "1", "name": "Kotimaa"},
+        ]
+        item = {
+            "service": [
+                {"code": "9", "name": "Politiikka", "schema": None, "scheme": None},
+                {"code": "999", "name": "Unknown"},
+            ]
+        }
+
+        self.provider.set_anpa_category(item)
+
+        self.assertEqual(item["anpa_category"], [{"qcode": "9", "name": "Politiikka"}])
+
+    def test_set_anpa_category_without_service(self):
+        item = {}
+
+        self.provider.set_anpa_category(item)
+
+        self.assertNotIn("anpa_category", item)
+
+    def test_set_stt_sources_maps_source_string_to_subjects(self):
+        self.provider._get_cv_items = lambda vocabulary_id: [
+            {"qcode": "STT", "name": "STT"},
+            {"qcode": "Veikkaus", "name": "Veikkaus"},
+        ]
+        item = {
+            "source": "STT-Veikkaus-Unknown",
+            "subject": [{"qcode": "STT", "name": "STT", "scheme": "sttsource"}],
+        }
+
+        self.provider.set_stt_sources(item)
+
+        self.assertEqual(item["source"], "STT-Veikkaus-Unknown")
+        self.assertEqual(
+            item["subject"],
+            [
+                {"qcode": "STT", "name": "STT", "scheme": "sttsource"},
+                {"qcode": "Veikkaus", "name": "Veikkaus", "scheme": "sttsource"},
+            ],
+        )
+
     def test_get_search_text_quotes_and_escapes_byline(self):
         query = {
             "query": {

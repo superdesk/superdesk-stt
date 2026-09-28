@@ -64,7 +64,10 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     )
 
     def __init__(self, provider):
-        logger.info(f"Newshub search provider: init {provider}")
+        logger.info(
+            f"Newshub search provider: init {provider.get('name')} "
+            f"({provider.get('_id')})"
+        )
         super().__init__(provider)
         self.base_url = provider.get("config", {}).get("url") or self.base_url
         self.api_token = provider.get("config", {}).get("password")
@@ -130,11 +133,89 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         item["search_provider"] = self.provider.get("search_provider", "newshub")
         item["fetch_endpoint"] = "search_providers_proxy"
 
+        # Newshub returns the content profile label (e.g. "Nettiuutinen"), but
+        # the client loads the profile by its _id, which is lowercase in STT.
+        if isinstance(item.get("profile"), str):
+            item["profile"] = item["profile"].lower()
+
         fetch_guid = self._get_fetch_guid(item)
         if fetch_guid:
             item.setdefault("guid", fetch_guid)
 
         return item
+
+    def _get_cv_items(self, vocabulary_id: str) -> list[dict]:
+        return superdesk.get_resource_service("vocabularies").get_items(vocabulary_id)
+
+    def set_stt_sources(self, item: dict) -> None:
+        """
+        Map Newshub ``source`` string (e.g. ``STT-Veikkaus``)
+        to sttsource subjects.
+        """
+        source = item.get("source")
+        if not source or not isinstance(source, str):
+            return
+
+        try:
+            cv_sources = {cv["qcode"]: cv for cv in self._get_cv_items("sttsource")}
+        except Exception as e:
+            logger.warning(f"Failed to load sttsource vocabulary: {e}")
+            return
+
+        subject = item["subject"] = item.get("subject") or []
+        existing = {
+            s.get("qcode")
+            for s in subject
+            if isinstance(s, dict) and s.get("scheme") == "sttsource"
+        }
+        for code in source.split("-"):
+            code = code.strip()
+            if not code or code in existing:
+                continue
+            cv_source = cv_sources.get(code)
+            if cv_source:
+                subject.append(
+                    {
+                        "qcode": cv_source["qcode"],
+                        "name": cv_source.get("name"),
+                        "scheme": "sttsource",
+                    }
+                )
+                existing.add(code)
+            else:
+                logger.warning(f"Unknown Newshub source: {code}")
+
+    def set_anpa_category(self, item: dict) -> None:
+        """
+        Map Newshub ``service`` codes to ``anpa_category``
+        via the categories CV.
+        """
+        codes = [
+            str(service["code"])
+            for service in item.get("service") or []
+            if isinstance(service, dict) and service.get("code") is not None
+        ]
+        if not codes:
+            return
+
+        try:
+            categories = {cv["qcode"]: cv for cv in self._get_cv_items("categories")}
+        except Exception as e:
+            logger.warning(f"Failed to load categories vocabulary: {e}")
+            return
+
+        anpa_category = []
+        for code in codes:
+            category = categories.get(code)
+            if category:
+                anpa_category.append(
+                    {"qcode": category["qcode"], "name": category.get("name")}
+                )
+            else:
+                logger.warning(f"Unknown Newshub service code: {code}")
+
+        if anpa_category:
+            item["anpa_category"] = anpa_category
 
     async def find_async(
         self, query: dict, params: dict | None = None
@@ -206,24 +287,30 @@ class NewshubSearchProvider(superdesk.SearchProvider):
         self, session: aiohttp.ClientSession, item_id: str
     ) -> dict | None:
         logger.info(f"Fetch item: {item_id}")
-        search_id = item_id
-        if not str(search_id).startswith("urn:"):
-            search_id = f"urn:newsml:stt.fi::{item_id}"
+        # Some Newshub instances use plain ids, others STT urns - try both
+        search_ids = [str(item_id)]
+        if not search_ids[0].startswith("urn:"):
+            search_ids.append(f"urn:newsml:stt.fi::{item_id}")
 
-        api_params = {
-            "q": f'_id:"{search_id}"',
-            "include_fields": self.INCLUDE_FIELDS,
-        }
-        try:
-            data = await self.api_get(session, self.search_endpoint, api_params)
-            items = data.get(self.items_field, []) if data else []
-            if not items:
-                logger.warning("No item found.")
+        for search_id in search_ids:
+            api_params = {
+                "q": f'_id:"{search_id}"',
+                "include_fields": self.INCLUDE_FIELDS,
+            }
+            try:
+                data = await self.api_get(session, self.search_endpoint, api_params)
+            except ClientResponseError as e:
+                logger.error(f"Request failed: {e}")
                 return None
-        except ClientResponseError as e:
-            logger.error(f"Request failed: {e}")
-            return None
-        return self.extend_data_item(items[0])
+            items = data.get(self.items_field, []) if data else []
+            if items:
+                item = self.extend_data_item(items[0])
+                self.set_anpa_category(item)
+                self.set_stt_sources(item)
+                return item
+
+        logger.warning(f"No item found for {item_id}.")
+        return None
 
     async def api_get(
         self, session: aiohttp.ClientSession, endpoint: str, params: dict
@@ -289,7 +376,9 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     def available(self):
         if not self.api_token:
             logger.warning(
-                "API token is not set for {label}, please set it to the password variable to use it"
+                "API token is not set for {label}, "
+                "please set it to the password "
+                "variable to use it"
             )
             return False
         return True
