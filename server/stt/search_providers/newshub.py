@@ -288,12 +288,14 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     ) -> dict | None:
         logger.info(f"Fetch item: {item_id}")
         # Some Newshub instances use plain ids, others STT urns - try both
-        search_id = str(item_id)
-        urn_prefix = "urn:newsml:stt.fi::"
-        if search_id.startswith(urn_prefix):
-            search_ids = [search_id.removeprefix(urn_prefix), search_id]
-        else:
-            search_ids = [search_id, f"{urn_prefix}{search_id}"]
+        search_id = str(item_id)
+
+        urn_prefix = "urn:newsml:stt.fi::"
+
+        if search_id.startswith(urn_prefix):
+            search_ids = [search_id.removeprefix(urn_prefix), search_id]
+        else:
+            search_ids = [search_id, f"{urn_prefix}{search_id}"]
 
         for search_id in search_ids:
             api_params = {
@@ -379,7 +381,7 @@ class NewshubSearchProvider(superdesk.SearchProvider):
     def available(self):
         if not self.api_token:
             logger.warning(
-                "API token is not set for {label}, "
+                f"API token is not set for {self.label}, "
                 "please set it to the password "
                 "variable to use it"
             )
