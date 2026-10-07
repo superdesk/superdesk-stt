@@ -1,6 +1,6 @@
 honcho
 python3-saml
-google-cloud-translate==3.27.0
+google-cloud-translate==3.28.0
 celery-redbeat
 beautifulsoup4==4.15.0
 
