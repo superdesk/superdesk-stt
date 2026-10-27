@@ -4,5 +4,5 @@ google-cloud-translate==3.28.0
 celery-redbeat
 beautifulsoup4==4.15.0
 
-git+https://github.com/superdesk/superdesk-core.git@release/3.6#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@release/3.6#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-core.git@3f4ee10#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@0b85b24#egg=superdesk-planning
