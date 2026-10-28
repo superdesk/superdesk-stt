@@ -111,15 +111,16 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
     # Parser is bound via registry to NinJS (see registration at bottom of file)
 
     async def get_auth_header(self):
-        if not self.auth_token:
-            raise IngestApiError(
-                "MISSING_AUTH_TOKEN",
-                "Auth token is required but not set in provider configuration.",
-            )
+        # Core passes this value as aiohttp's ``auth`` argument, which only accepts BasicAuth.
+        # The Bearer token is sent as a request header instead (see ``get_request_kwargs``).
+        return None
 
+    def get_request_kwargs(self) -> dict:
         return {
-            "Authorization": f"Bearer {self.auth_token}",
-            "Content-Type": "application/json",
+            "headers": {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json",
+            }
         }
 
     async def _update(self, provider, update):
@@ -148,6 +149,13 @@ class STTWithSinceHTTPFeedingService(HTTPFeedingService):
 
         # Pick up the auth token from the provider configuration for this run
         self.auth_token = provider.get("config", {}).get("auth_token")
+        if not self.auth_token:
+            raise IngestApiError.apiAuthError(
+                ValueError(
+                    "Auth token is required but not set in provider configuration."
+                ),
+                provider=provider,
+            )
         parser = await self.get_feed_parser(provider)
         url = self._build_url(provider)
         logger.info("Fetching URL: {}".format(url))
