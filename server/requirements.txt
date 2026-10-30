@@ -118,7 +118,7 @@ cryptography==50.0.0
     #   jwcrypto
 deepdiff==9.1.0
     # via superdesk-planning
-dnspython==2.8.0
+dnspython==2.9.0
     # via pymongo
 draftjs-exporter[lxml]==5.2.0
     # via superdesk-core
