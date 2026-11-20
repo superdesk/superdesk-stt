@@ -5,4 +5,4 @@ celery-redbeat
 beautifulsoup4==4.15.0
 
 git+https://github.com/superdesk/superdesk-core.git@v3.6-rc4#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@v3.6-rc2#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-planning.git@release/3.6#egg=superdesk-planning
